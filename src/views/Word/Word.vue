@@ -8,8 +8,8 @@
 
 
   <div class="words-cards-wrapper">
-    <my-List-item v-for="item in words" :key="item.text" :word="item" >
-    </my-List-item>
+    <MyListItem v-for="item in words" :key="item.text" :word="item" >
+    </MyListItem>
   </div>
 
   <div class="home_footer">
@@ -24,33 +24,37 @@
 <script setup lang="ts">
 
 
-import {AppInfo} from "../../../config";
+import {AppInfo} from "@/config";
 import { ElMessage} from "element-plus";
 import {isEmpty, truncate} from "lodash";
-import {testData} from "../../../testData";
+import {testData} from "@/testData";
 import CryptoJS from "crypto-js";
-import {useStore} from "@/store";
 import {ref} from "vue";
 import type {YdParams} from "@/types/words";
-// import MyListItem from "@/views/Word/components/MyListItem.vue";
 
-const store = useStore();
+import {useWordsStore} from "@/stores/words.ts";
+import {storeToRefs} from "pinia";
+import MyListItem from "@/views/Word/components/MyListItem.vue";
 
 const word = ref('');
 
-const words = store.state.words.words
+const wordsStore = useWordsStore();
+const {words} = storeToRefs(wordsStore)
+
 
 
 
 
 
 const clearWord = () => {
-  store.commit('words/clearWords');
+  wordsStore.clearWords()
+  // store.commit('words/clearWords');
   ElMessage.success('清除成功');
 }
 const initWord = () => {
   clearWord()
-  store.commit('words/updateWords', testData);
+  wordsStore.updateWords(testData)
+  // store.commit('words/updateWords', testData);
   ElMessage.success('初始化成功');
 }
 
@@ -94,19 +98,23 @@ const addWord = (word: string) => {
   }
 
   console.log(JSON.stringify(params) + '-------')
-
-  store.dispatch('words/translation', params).then(res => {
+  wordsStore.translation(params).then(res => {
+  // store.dispatch('words/translation', params).then(res => {
     let resData = res.data;
     console.log(JSON.stringify(resData));
     if (resData.errorCode === '0' && !isEmpty(res)) {
-      let oldWords = store.state.words.words;
+
+      // let oldWords = store.state.words.words;
+      let oldWords = words.value
       let newWords = {
-        "word": resData.query,
+        "text": resData.query,
         "explainedInChinese": resData.translation[0],
         "pronunciation": resData.tSpeakUrl
       };
-      const data = oldWords ? [...oldWords, newWords] : newWords
-      store.commit('words/updateWords', data);
+      const data = oldWords ? [...oldWords, newWords] : [newWords]
+
+      wordsStore.updateWords(data)
+      // store.commit('words/updateWords', data);
       ElMessage.success('成功');
       // router.push('/')
     } else {

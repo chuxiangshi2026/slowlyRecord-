@@ -15,12 +15,12 @@
 import _ from 'lodash'
 import type {RouteRecordName} from "vue-router";
 import {useRouter,useRoute} from "vue-router";
-import {useStore} from "@/store";
+// import {useStore} from "@/store";
 import {ref} from "vue";
-const  store = useStore()
+// const  store = useStore()
 const route = useRoute()
 const router = useRouter()
-const permission = store.state.users.infos.permission;
+// const permission = store.state.users.infos.permission;
 
 
 const isCollapse = ref(true)
