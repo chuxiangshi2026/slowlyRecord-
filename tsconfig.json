@@ -1,4 +1,18 @@
 {
+  "compilerOptions": {
+    "types": [
+      "utools-api-types",
+      "element-plus/global"
+    ]
+  },
+  "includes": [
+    // 如果使用ts或者框架，请添加需要类型提示的文件范围
+    // 案例：
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "src/*.vue",
+    "preload.js"
+  ],
   "files": [],
   "references": [
     {

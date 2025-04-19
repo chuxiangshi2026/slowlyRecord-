@@ -8,8 +8,8 @@
 
 
   <div class="words-cards-wrapper">
-    <MyListItem v-for="item in words" :key="item.text" :word="item" >
-    </MyListItem>
+    <my-list-item v-for="item in words" :key="item.text" :word="item"  :style="item.isReview ? '': 'display:none' " >
+    </my-list-item>
   </div>
 
   <div class="home_footer">
@@ -109,7 +109,15 @@ const addWord = (word: string) => {
       let newWords = {
         "text": resData.query,
         "explainedInChinese": resData.translation[0],
-        "pronunciation": resData.tSpeakUrl
+        "pronunciation": resData.tSpeakUrl,
+        "isWord": true,
+        "isReview": true,
+        "creatTime": new Date(),
+        "reviewTime": new Date(),
+        "level": 0,
+        // "image": resData.image
+        // phonetic: resData.phonetic,
+        // updateTime: new Date()
       };
       const data = oldWords ? [...oldWords, newWords] : [newWords]
 
@@ -123,6 +131,7 @@ const addWord = (word: string) => {
     }
   })
 }
+
 
 
 </script>
