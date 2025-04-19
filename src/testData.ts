@@ -1,15 +1,17 @@
-export const testData= [{
+import type {Word} from "@/types/words";
+
+export const testData:Word[]= [{
   _id: '1', // 添加 _id
   _rev: '1', // 添加 _rev
   // 是否需要复习
   isReview: true,
   text: 'abandon',
-  isWord: true,
+  // isWord: true,
   creatTime: new Date(),
   reviewTime: new Date(),
   // updateTime: '2023-01-03',
   explainedInChinese: '放弃',
-  level: 7,
+  level: 0,
   image: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
   pronunciation: 'https://fanyi.baidu.com/gettts?lan=en&text=abandon&spd=3&source=web',
   phonetic: '[əˈbændən]'
@@ -18,12 +20,12 @@ export const testData= [{
   _rev: '2', // 添加 _rev
   isReview: true,
   text: 'book',
-  isWord: true,
+  // isWord: true,
   creatTime: new Date(),
   reviewTime: new Date(),
   // updateTime: '2023-01-03',
   explainedInChinese: '书',
-  level: 1,
+  level: 0,
   image: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
   pronunciation: 'https://fanyi.baidu.com/gettts?lan=en&text=abandon&spd=3&source=web',
   phonetic: '[əˈbændən]'

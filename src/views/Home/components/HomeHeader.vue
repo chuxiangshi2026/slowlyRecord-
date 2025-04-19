@@ -5,7 +5,7 @@
             <i class="iconfont icon-icon-test"></i>
             <i class="iconfont icon-typescript"></i>
           </span>
-    <span class="home-header-title">在线考勤系统</span>
+    <span class="home-header-title">慢记</span>
 
     <el-dropdown>
       <el-badge :value="12">
