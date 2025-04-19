@@ -1,20 +1,22 @@
 export interface Word {
     _id?: string,
     _rev?:string,
+    // 是否显示，是否需要复习
+    isReview:boolean,
     // 单词|文本
     text?: string,
     // 是否是单词
     isWord?: boolean
-    // 创建时间
-    creatTime?: String
-    // 上次复习时间
-    reviewTime?: String
+    // 创建时间 创建生成
+    creatTime: Date
+    // 上次复习时间 第一次创建生成
+    reviewTime: Date
     // 更新时间
-    updateTime?: String
+    // updateTime?: String
     // 中文解释
     explainedInChinese: string
     // 等级
-    level?: number | 'done'
+    level: number
     // 图片
     image?: string
     // 发音
