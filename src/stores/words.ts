@@ -1,32 +1,72 @@
 import {ref} from "vue";
 import type {Word, YdParams} from "@/types/words";
 import {defineStore} from "pinia";
+import {parse, stringify} from 'zipson'
+// import { serializer } from '@/utils/jsonSerializeUtil';
 import http from "@/utils/http.ts";
 
 
 export const useWordsStore =
     defineStore('words',
-        () => {
-            const words = ref<Word[]>([])
 
-            // 创建状态，更新状态
-            function updateWords(payload: Word[]) {
-                words.value = payload
-                // addWord(words)
-            }
-
-            function clearWords() {
-                words.value = []
-            }
-
-            // 异步提交状态，动作
-            async function translation(payload: YdParams) {
-                return await http.get('/', {...payload})
-            }
-
-            return {words, updateWords, clearWords, translation}
-        },
         {
-            persist: true,
+            state: () => ({
+                // words : ref<Word[]>([])
+                words: ref<Word[]>([])
+            }),
+            persist: {
+                key: 'words',
+                // serializer: {
+                //     deserialize: parse,
+                //     serialize: stringify
+                // }
+            },
+            actions: {
+                // 创建状态，更新状态
+                updateWords(payload: Word[]) {
+                    this.words = payload
+                    // addWord(words)
+                },
+
+                clearWords() {
+                    this.words = []
+                },
+                updateWord(word: Word) {
+                    const index = this.words.findIndex(w => w.text === word.text);
+                    if (index !== -1) {
+                        this.words[index] = word; // 修改指定元素
+                    }
+                },
+
+                // 异步提交状态，动作
+                async translation(payload: YdParams) {
+                    return await http.get('/', {...payload})
+                }
+
+            }
         }
+
+        // () => {
+        //     const words = ref<Word[]>([])
+        //
+        //     // 创建状态，更新状态
+        //     function updateWords(payload: Word[]) {
+        //         words.value = payload
+        //         // addWord(words)
+        //     }
+        //
+        //     function clearWords() {
+        //         words.value = []
+        //     }
+        //
+        //     // 异步提交状态，动作
+        //     async function translation(payload: YdParams) {
+        //         return await http.get('/', {...payload})
+        //     }
+        //
+        //     return {words, updateWords, clearWords, translation}
+        // },
+        // {
+        //     persist: true,
+        // }
     )

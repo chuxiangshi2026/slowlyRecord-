@@ -16,7 +16,7 @@
   <el-calendar v-model="date">
     <template #header>
       <!--      @click="handlePutTime"-->
-      <el-button type="primary">在线签到</el-button>
+      <el-button type="primary">签到</el-button>
       <el-space>
         <el-button plain>{{ year }}年</el-button>
         <el-select v-model="month" @change="handleChange">

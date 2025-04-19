@@ -52,11 +52,11 @@ const routes: Array<RouteRecordRaw> = [
         component: Sign,
         meta: {
           menu: true,
-          title: '在线打卡签到',
+          title: '打卡',
           icon: 'calendar',
         },
       },
-      {
+     /* {
         path: 'exception',
         name: 'exception',
         component: Exception,
@@ -85,7 +85,7 @@ const routes: Array<RouteRecordRaw> = [
           title: '我的考勤审批',
           icon: 'finished',
         }
-      }
+      }*/
     ]
   },
   {

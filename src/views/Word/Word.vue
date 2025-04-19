@@ -8,9 +8,16 @@
 
 
   <div class="words-cards-wrapper">
-    <my-list-item v-for="item in words" :key="item.text" :word="item"  :style="item.isReview ? '': 'display:none' " >
+    <my-list-item v-if="words.length>0" v-for="(item,index) in words"
+                  :key="index"
+                  :word="item"
+                  :style="item.isReview ? '': 'display:none' "
+                  v-model="words[index]"
+                  @delete="deleteWord(index)"
+    >
     </my-list-item>
   </div>
+<!--     旧版本的写法 @forget="(childValue)=>forget(item,childValue)"-->
 
   <div class="home_footer">
     <div><span>单词总数: 2228</span><span>待复习: 1109</span><span>已记完: 1119</span></div>
@@ -29,14 +36,19 @@ import { ElMessage} from "element-plus";
 import {isEmpty, truncate} from "lodash";
 import {testData} from "@/testData";
 import CryptoJS from "crypto-js";
-import {ref} from "vue";
-import type {YdParams} from "@/types/words";
+import {onMounted, ref} from "vue";
+import type {Word, YdParams} from "@/types/words";
 
 import {useWordsStore} from "@/stores/words.ts";
 import {storeToRefs} from "pinia";
 import MyListItem from "@/views/Word/components/MyListItem.vue";
-
+import { v4 as uuidv4 } from 'uuid';
 const word = ref('');
+
+// onMounted(()=>{
+//   initWord()
+// })
+
 
 const wordsStore = useWordsStore();
 const {words} = storeToRefs(wordsStore)
@@ -46,15 +58,26 @@ const {words} = storeToRefs(wordsStore)
 
 
 
+
+
+
+
+/*const forget = (word: Word,childValue:string) => {
+  // 重置复习间隔
+  // word.level = word.level == 0 ? 0 : word.level--;
+  console.log(JSON.stringify(word) + '222222222222222'+childValue)
+}*/
+
+
+
+
 const clearWord = () => {
   wordsStore.clearWords()
-  // store.commit('words/clearWords');
   ElMessage.success('清除成功');
 }
 const initWord = () => {
   clearWord()
   wordsStore.updateWords(testData)
-  // store.commit('words/updateWords', testData);
   ElMessage.success('初始化成功');
 }
 
@@ -106,15 +129,19 @@ const addWord = (word: string) => {
 
       // let oldWords = store.state.words.words;
       let oldWords = words.value
-      let newWords = {
+      let newWords:Word = {
         "text": resData.query,
         "explainedInChinese": resData.translation[0],
         "pronunciation": resData.tSpeakUrl,
-        "isWord": true,
         "isReview": true,
         "creatTime": new Date(),
         "reviewTime": new Date(),
         "level": 0,
+        "_id": uuidv4(), // 假设_id为必填项
+        "_rev": '', // 假设_rev为必填项
+        "image": '', // 假设image为必填项
+        "phonetic": '', // 假设phonetic为必填项
+
         // "image": resData.image
         // phonetic: resData.phonetic,
         // updateTime: new Date()
@@ -122,7 +149,6 @@ const addWord = (word: string) => {
       const data = oldWords ? [...oldWords, newWords] : [newWords]
 
       wordsStore.updateWords(data)
-      // store.commit('words/updateWords', data);
       ElMessage.success('成功');
       // router.push('/')
     } else {
@@ -132,6 +158,10 @@ const addWord = (word: string) => {
   })
 }
 
+
+const deleteWord = (index: number) => {
+  words.value.splice(index, 1)
+}
 
 
 </script>

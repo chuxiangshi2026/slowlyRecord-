@@ -4,9 +4,8 @@ export interface Word {
     // 是否显示，是否需要复习
     isReview:boolean,
     // 单词|文本
-    text?: string,
-    // 是否是单词
-    isWord?: boolean
+    text: string,
+    // 是否是单词   isWord : boolean
     // 创建时间 创建生成
     creatTime: Date
     // 上次复习时间 第一次创建生成
@@ -16,11 +15,11 @@ export interface Word {
     // 中文解释
     explainedInChinese: string
     // 等级
-    level: number
+    level: 0|1|2|3|4|5|6|7|8|9|10|11|12
     // 图片
     image?: string
     // 发音
-    pronunciation: string,
+    pronunciation?: string,
     // 音标
     phonetic?: string
 }
