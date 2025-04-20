@@ -1,5 +1,5 @@
-export interface Word {
-    _id?: string,
+export interface Word extends UToolsApi.DbDoc{
+    _id: string,
     _rev?:string,
     // 是否显示，是否需要复习
     isReview:boolean,

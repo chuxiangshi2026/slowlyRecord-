@@ -1,4 +1,4 @@
-import {APP_KEY, FROM, KEY, TO} from "@/constants";
+import {APP_KEY, DB_KEY, FROM, KEY, TO} from "@/constants";
 import {isEmpty, truncate} from "lodash";
 import CryptoJS from "crypto-js";
 import type {Word, YdParams} from "@/types/words";
@@ -43,18 +43,17 @@ const getParam = (query: string) => {
 
 const getInitWord = (text: string, explainedInChinese: string, pronunciation: string, image: string = '', phonetic: string = '') => {
     let newWords: Word = {
-        text: text,
-        explainedInChinese: explainedInChinese,
-        explainedHidden: false,
-        pronunciation: pronunciation,
-        isReview: true,
-        creatTime: new Date(),
-        reviewTime: new Date(),
-        level: 0,
-        _id: uuidv4(), // 假设_id为必填项
-        _rev: '', // 假设_rev为必填项
-        image: image, // 假设image为必填项
-        phonetic: phonetic, // 假设phonetic为必填项
+        "text": text,
+        "explainedInChinese": explainedInChinese,
+        "explainedHidden": false,
+        "pronunciation": pronunciation,
+        "isReview": true,
+        "creatTime": new Date(),
+        "reviewTime": new Date(),
+        "level": 0,
+        "_id": DB_KEY+uuidv4(), // 假设_id为必填项
+        "image": image, // 假设image为必填项
+        "phonetic": phonetic, // 假设phonetic为必填项
 
         // "image": resData.image
         // phonetic: resData.phonetic,
@@ -100,6 +99,7 @@ const addWord = async (wordText: string) => {
                 findWord.pronunciation = resData.tSpeakUrl
                 findWord.phonetic = ''
                 wordsStore.updateWord(findWord)
+                console.log('添加单个单词成功');
                 // ElMessage.success('添加成功');
                 return
             }
@@ -127,7 +127,9 @@ const addWord = async (wordText: string) => {
 
             const data = oldWords ? [newWords, ...oldWords] : [newWords]
 
+            console.log(data, '更新单词成功');
             wordsStore.updateWords(data)
+
             // ElMessage.success('成功');
             // router.push('/')
         } else {
