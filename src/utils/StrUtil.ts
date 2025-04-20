@@ -1,10 +1,16 @@
-import {APP_KEY,  FROM, KEY, TO} from "@/constants";
-import {truncate} from "lodash";
+import {APP_KEY, FROM, KEY, TO} from "@/constants";
+import {isEmpty, truncate} from "lodash";
 import CryptoJS from "crypto-js";
 import type {Word, YdParams} from "@/types/words";
 import {v4 as uuidv4} from "uuid";
+import {ElMessage} from "element-plus";
+import {useWordsStore} from "@/stores/words.ts";
+import {storeToRefs} from "pinia";
 
-const getParam = (query:string) => {
+import {getActivePinia} from 'pinia';
+
+
+const getParam = (query: string) => {
 
     const salt = (new Date).getTime();
     const curtime = Math.round(new Date().getTime() / 1000);
@@ -35,19 +41,20 @@ const getParam = (query:string) => {
 }
 
 
-const getInitWord = (text:string,explainedInChinese:string,pronunciation:string,image:string='',phonetic:string='') => {
+const getInitWord = (text: string, explainedInChinese: string, pronunciation: string, image: string = '', phonetic: string = '') => {
     let newWords: Word = {
-        "text": text,
-        "explainedInChinese": explainedInChinese,
-        "pronunciation": pronunciation,
-        "isReview": true,
-        "creatTime": new Date(),
-        "reviewTime": new Date(),
-        "level": 0,
-        "_id": uuidv4(), // 假设_id为必填项
-        "_rev": '', // 假设_rev为必填项
-        "image": image, // 假设image为必填项
-        "phonetic": phonetic, // 假设phonetic为必填项
+        text: text,
+        explainedInChinese: explainedInChinese,
+        explainedHidden: false,
+        pronunciation: pronunciation,
+        isReview: true,
+        creatTime: new Date(),
+        reviewTime: new Date(),
+        level: 0,
+        _id: uuidv4(), // 假设_id为必填项
+        _rev: '', // 假设_rev为必填项
+        image: image, // 假设image为必填项
+        phonetic: phonetic, // 假设phonetic为必填项
 
         // "image": resData.image
         // phonetic: resData.phonetic,
@@ -56,4 +63,78 @@ const getInitWord = (text:string,explainedInChinese:string,pronunciation:string,
     return newWords;
 }
 
-export {getParam,getInitWord}
+// const wordsStore = useWordsStore();
+// const {words} = storeToRefs(wordsStore)
+const addWord = async (wordText: string) => {
+
+
+    const pinia = getActivePinia(); // 获取活动的 Pinia 实例
+    if (!pinia) {
+        throw new Error('Pinia 未初始化，请确保在 Vue 应用中正确注册 Pinia。');
+    }
+
+    const wordsStore = useWordsStore(pinia); // 传入 Pinia 实例
+    const {words} = storeToRefs(wordsStore)
+
+    let findWord = words.value.find((item: Word) => {
+        if (item.text === wordText) {
+            return item
+        }
+    });
+
+    if (findWord) {
+        console.log('单词已存在');
+        // 如果有这个单词
+        if (findWord.explainedInChinese) {
+            console.log('翻译已存在');
+            ElMessage.success('单词已存在');
+            return
+        }
+
+        const params: YdParams = getParam(wordText)
+        wordsStore.translation(params).then(res => {
+            let resData = res.data;
+            if (resData.errorCode === '0' && !isEmpty(res)) {
+                findWord.explainedInChinese = res.data.translation[0]
+                findWord.isReview = true
+                findWord.pronunciation = resData.tSpeakUrl
+                findWord.phonetic = ''
+                wordsStore.updateWord(findWord)
+                // ElMessage.success('添加成功');
+                return
+            }
+        })
+
+        ElMessage.error('添加失败');
+        return;
+    }
+
+
+    const params: YdParams = getParam(wordText)
+
+
+    console.log(JSON.stringify(params) + '-------')
+    wordsStore.translation(params).then(res => {
+        // 先判断有没有这个单词，有的话看下这个单词有没有翻译，有的话不做处理，没有更新这个单词
+
+        let resData = res.data;
+        console.log(JSON.stringify(resData));
+        if (resData.errorCode === '0' && !isEmpty(res)) {
+
+            // let oldWords = store.state.words.words;
+            let oldWords = words.value
+            let newWords = getInitWord(resData.query, resData.translation[0], resData.tSpeakUrl, '', '')
+
+            const data = oldWords ? [newWords, ...oldWords] : [newWords]
+
+            wordsStore.updateWords(data)
+            // ElMessage.success('成功');
+            // router.push('/')
+        } else {
+            ElMessage.error('失败');
+            // ElMessage.error(res.data.errmsg)
+        }
+    })
+}
+
+export {getParam, getInitWord, addWord}
