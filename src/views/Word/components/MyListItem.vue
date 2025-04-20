@@ -12,7 +12,7 @@
     <div class="operate">
       <div>
         <i class="iconfont icon-player iconHover" @click="play"></i>
-        <i class="iconfont icon-translate iconHover" @click="translation"></i>
+        <i class="iconfont icon-translate iconHover" @click="translation()"></i>
       </div>
       <div>
         <i class="iconfont icon-check iconHover" @click="remember"></i>
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div>
-      <div class="translation" :hidden="explainedHidden">
+      <div class="translation" :hidden="word.explainedHidden">
         <div class="translate-editable" contenteditable="true">{{ word.explainedInChinese }}</div>
       </div>
       <div class="sentence_wrapper achieve"></div>
@@ -47,16 +47,15 @@ import {useWordsStore} from "@/stores/words.ts";
 import {storeToRefs} from "pinia";
 
 
-const explainedHidden = ref(true);
+// const explainedHidden = ref(true);
 
 
 const wordsStore = useWordsStore();
 // const {words} = storeToRefs(wordsStore)
 
 // 翻译
-const translation = (): boolean => {
-  explainedHidden.value = !explainedHidden.value;
-  return explainedHidden.value;
+const translation = () => {
+  wordModel.value.explainedHidden = !wordModel.value.explainedHidden;
 }
 
 
@@ -77,7 +76,7 @@ const remember = () => {
   let level = wordModel.value.level;
 
   if (!reviewTime || !(reviewTime instanceof Date)) {
-    console.log(typeof reviewTime+'fddddddddd');
+    console.log(typeof reviewTime + 'fddddddddd');
   }
 
   const startReviewTime = reviewTime.getTime() + DEFAULT_INTERVALS[level] * 60 * 1000;
@@ -101,7 +100,7 @@ const remember = () => {
   // 是否复习，改为false
   wordModel.value.isReview = false;
 
-
+  wordModel.value.explainedHidden = true;
 
   // wordsStore.updateWord(wordModel.value)
 
@@ -117,6 +116,8 @@ const forget = () => {
   if (wordModel.value && wordModel.value.level > 0) {
     wordModel.value.level--;
   }
+  wordModel.value.level===0?wordModel.value.explainedHidden=false:wordModel.value.explainedHidden=true;
+
 }
 // 删除单词
 const deleteWord = () => {
