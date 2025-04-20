@@ -43,6 +43,7 @@ interface YdParams {
     signType: string,
     // 当前UTC时间戳(秒)
     curtime: number,
+    ext: string
     // 用户上传的术语表
     // vocabId: vocabId,
 }

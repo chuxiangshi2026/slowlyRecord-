@@ -34,6 +34,7 @@ const getParam = (query: string) => {
         signType: "v3",
         // 当前UTC时间戳(秒)
         curtime: curtime,
+        ext:'mp3'
         // 用户上传的术语表
         // vocabId: vocabId,
     }
@@ -118,12 +119,12 @@ const addWord = async (wordText: string) => {
         // 先判断有没有这个单词，有的话看下这个单词有没有翻译，有的话不做处理，没有更新这个单词
 
         let resData = res.data;
-        // console.log(JSON.stringify(resData));
+        console.log(JSON.stringify(resData),'翻译后的返回结果');
         if (resData.errorCode === '0' && !isEmpty(res)) {
 
             // let oldWords = store.state.words.words;
             let oldWords = words.value
-            let newWords = getInitWord(resData.query, resData.translation[0], resData.tSpeakUrl, '', '')
+            let newWords = getInitWord(resData.query, resData.translation[0], resData.speakUrl, '', '')
 
             const data = oldWords ? [newWords, ...oldWords] : [newWords]
 
