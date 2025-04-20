@@ -6,10 +6,12 @@
 <script setup lang="ts">
 import {RouterView} from 'vue-router'
 
-import {onMounted, ref} from 'vue';
+import {onMounted} from 'vue';
 import {useWordsStore} from "@/stores/words.ts";
 import {storeToRefs} from "pinia";
 import {DEFAULT_INTERVALS} from "@/constants";
+import {addWord} from "@/utils/StrUtil.ts";
+import {listDbWords} from "@/utils/DbUtil.ts";
 
 const wordsStore = useWordsStore();
 const {words} = storeToRefs(wordsStore)
@@ -19,7 +21,6 @@ onMounted(() => {
 
   // 首页刷新时触发   自动更新需要复习的单词
   updateReview();
-
 
 
   window.utools.onPluginEnter(async (action: PluginEnterAction) => {
@@ -41,30 +42,34 @@ onMounted(() => {
       // item.
     })*/
 
-    // app版本
-    const currentVerson = window.services.getAppVerson()
-    // 数据库版本
-    const previousVerson = window.services.wordModel.getAppVersionFromDb()
-    // 有返回false   null返回ture
-    let b = !previousVerson?.version;
-    if (
-        //   ?.  链式调用，空返回 undef
-        b ||
-        currentVerson !== previousVerson?.version
-    ) {
-      // 没有版本或版本不一致   指定为最新版本
-      window.services.wordModel.setAppVerson(currentVerson)
-      // 显示更新通知
-      // dispatch(updateshowNotification(true))
-      console.log('新版，更新version', currentVerson)
-    }
+    /*  // app版本
+      const currentVerson = window.services.getAppVerson()
+      // 数据库版本
+      const previousVerson = window.services.wordModel.getAppVersionFromDb()
+      // 有返回false   null返回ture
+      let b = !previousVerson?.version;
+      if (
+          //   ?.  链式调用，空返回 undef
+          b ||
+          currentVerson !== previousVerson?.version
+      ) {
+        // 没有版本或版本不一致   指定为最新版本
+        window.services.wordModel.setAppVerson(currentVerson)
+        // 显示更新通知
+        // dispatch(updateshowNotification(true))
+        console.log('新版，更新version', currentVerson)
+      }*/
 
 
     // await initUtoolSetting()
 
-    // if (action.code === 'add vocabulary') {
-    //   handlePluginAddWord(action)
-    // }
+
+    if (action.code === 'add') {
+      // 把单词翻译了，添加到 列表中
+      // console.log('==================', action)
+
+      await   handlePluginAddWord(action)
+    }
 
     // if (action.code === 'review') {
     //   handlePluginReview()
@@ -114,14 +119,34 @@ onMounted(() => {
       route.value = ''
     })*/
 
+
+  async function handlePluginAddWord(action: PluginEnterAction) {
+    // const needclose = !!utoolsSettingRef.current?.closeAfterAddWord
+    // 隐藏主窗口
+    // if (needclose) window.utools.hideMainWindow()
+
+
+    // console.log('addWord====================', action.payload)
+    await addWord(action.payload)
+  }
+
   //更新需要复习的单词
   function updateReview() {
+    // 获取本地的数据，如果是空或和数据库的大小不一致，比较数据，留最新的
+    let dbWords = listDbWords();
+    console.log(dbWords, 'dbWords')
+    if (!words||words.value.length !=dbWords.length) {
+      words.value = dbWords
+      console.log('同步数据库数据到本地')
+    }
+
+
     // console.log(words.value, typeof words.value[0].reviewTime, '9999999')
     for (const item of words.value) {
       // item.isReview = true
       // console.log(item)
-      item.reviewTime = new Date(item.reviewTime)
-      item.creatTime = new Date(item.creatTime)
+      item.reviewTime = new Date(item.reviewTime);
+      item.creatTime = new Date(item.creatTime);
       let reviewTime = item.reviewTime.getTime() + DEFAULT_INTERVALS[item.level] * 60 * 1000;
       let now = Date.now();
       // console.log(now, reviewTime, '00000111111', item.isReview)

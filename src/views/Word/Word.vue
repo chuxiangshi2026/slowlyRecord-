@@ -1,14 +1,14 @@
 <template>
 
-  <!--  <el-button type="primary" @click="clearWord">清空单词</el-button>-->
-  <!--  <el-button type="primary" @click="initWord">初始化单词</el-button>-->
+    <el-button type="primary" @click="clearWord">清空单词</el-button>
+    <el-button type="primary" @click="initWord">初始化单词</el-button>
 
-<!--  <el-row>
+  <el-row>
     <el-col>
       <el-button :span="2" type="primary" @click="addWord(word)">添加单词</el-button>
       <el-input :span="6" v-model="word" placeholder="请输入单词"></el-input>
     </el-col>
-  </el-row>-->
+  </el-row>
 
 
   <div class="words-cards-wrapper">
@@ -65,6 +65,7 @@ const forgetCount = computed(() => {
 
 const clearWord = () => {
   wordsStore.clearWords()
+  cleanDbWord()
   ElMessage.success('清除成功');
 }
 const initWord = () => {
@@ -74,12 +75,14 @@ const initWord = () => {
 }
 
 import {addWord} from "@/utils/StrUtil.ts";
+import {cleanDbWord, removeDbWordById} from "@/utils/DbUtil.ts";
 
 
 
 
 const deleteWord = (index: number) => {
   words.value.splice(index, 1)
+  removeDbWordById(words.value[index]._id)
 }
 
 

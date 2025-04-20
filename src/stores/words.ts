@@ -4,6 +4,7 @@ import {defineStore} from "pinia";
 import {parse, stringify} from 'zipson'
 // import { serializer } from '@/utils/jsonSerializeUtil';
 import http from "@/utils/http.ts";
+import {addDbWord, updateDbWordList} from "@/utils/DbUtil.ts";
 
 
 export const useWordsStore =
@@ -24,18 +25,27 @@ export const useWordsStore =
             actions: {
                 // 创建状态，更新状态
                 updateWords(payload: Word[]) {
+
                     this.words = payload
                     // addWord(words)
+
+                    // const cleanedDocs = payload.map(doc => JSON.parse(JSON.stringify(doc)));
+                    console.log(payload, '更新单词');
+                    updateDbWordList(payload)
+
                 },
 
                 clearWords() {
                     this.words = []
+
+
                 },
                 updateWord(word: Word) {
                     const index = this.words.findIndex(w => w.text === word.text);
                     if (index !== -1) {
                         this.words[index] = word; // 修改指定元素
                     }
+                    addDbWord(word)
                 },
 
                 // 异步提交状态，动作
