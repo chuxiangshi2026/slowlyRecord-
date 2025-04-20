@@ -11,7 +11,11 @@
     </div>
     <div class="operate">
       <div>
-        <i class="iconfont icon-player iconHover" @click="play"></i>
+        <i class="iconfont icon-player iconHover" @click="play">
+        </i>
+            <!-- 添加audio标签  -->
+        <audio ref="audioPlayer" :src="word.pronunciation" hidden></audio>
+
         <i class="iconfont icon-translate iconHover" @click="translation()"></i>
       </div>
       <div>
@@ -59,8 +63,17 @@ const translation = () => {
 }
 
 
+// 获取audio元素的引用
+const audioPlayer = ref<HTMLAudioElement | null>(null);
+
 // 播放语音
 const play = () => {
+
+  if (audioPlayer.value) {
+    audioPlayer.value.play().catch(error => {
+      console.error('播放失败:', error);
+    });
+  }
 
 }
 
