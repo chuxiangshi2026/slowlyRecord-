@@ -26,7 +26,7 @@
     </div>
     <div>
       <div class="translation" :hidden="word.explainedHidden">
-        <div class="translate-editable" contenteditable="true">{{ word.explainedInChinese }}</div>
+        <div class="translate-editable" contenteditable="true">{{ word.explains }}</div>
       </div>
       <div class="sentence_wrapper achieve"></div>
     </div>
@@ -84,31 +84,31 @@ const remember = () => {
   //如果 当前时间大于  上次复习时间+当前等级*默认复习间隔 且小于上次复习时间+（当前等级+3）*默认复习间隔  等级+1
   // 当前时间
   const now = new Date().getTime();
-  let reviewTime = wordModel.value.reviewTime;
+  let learnDate = wordModel.value.learnDate;
   // 开始复习时间 (上次复习时间 + 当前等级对应的默认复习间隔)
   let level = wordModel.value.level;
   // todo 这里序列化不是时间类型
-  /*if (!reviewTime || !(reviewTime instanceof Date)) {
-    console.log(typeof reviewTime + 'fddddddddd');
+  /*if (!learnDate || !(learnDate instanceof Date)) {
+    console.log(typeof learnDate + 'fddddddddd');
   }*/
 
-  const startReviewTime = reviewTime.getTime() + DEFAULT_INTERVALS[level] * 60 * 1000;
+  const startLearnDate = learnDate.getTime() + DEFAULT_INTERVALS[level] * 60 * 1000;
 
   // 结束复习时间 (上次复习时间 + (当前等级 + 3) 对应的默认复习间隔)
-  const endReviewTime = reviewTime.getTime() + DEFAULT_INTERVALS[Math.min(level + 3, DEFAULT_INTERVALS.length - 1)] * 60 * 1000;
+  const endLearnDate = learnDate.getTime() + DEFAULT_INTERVALS[Math.min(level + 3, DEFAULT_INTERVALS.length - 1)] * 60 * 1000;
 
   // 判断是否满足条件
-  if (now > startReviewTime && now < endReviewTime) {
+  if (now > startLearnDate && now < endLearnDate) {
     // 等级+1
     wordModel.value.level++;
   } else {
     // 否则等级不变，仅更新复习时间
     console.log("未满足升级条件");
-    // console.log(wordModel.value.reviewTime.toLocaleTimeString()+'3333333');
+    // console.log(wordModel.value.learnDate.toLocaleTimeString()+'3333333');
   }
 
   // 更新复习时间
-  wordModel.value.reviewTime = new Date();
+  wordModel.value.learnDate = new Date();
 
   // 是否复习，改为false
   wordModel.value.isReview = false;

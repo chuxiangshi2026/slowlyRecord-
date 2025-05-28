@@ -102,7 +102,7 @@ const exportWords = () => {
 
   // 将单词列表转换为字符串
   /*  const content = words.value
-        .map(word => `${word.text},${word.explainedInChinese},${word.pronunciation}`) // 按需调整字段
+        .map(word => `${word.text},${word.explains},${word.pronunciation}`) // 按需调整字段
         .join('\n'); // 每行一个单词
 
     // 创建Blob对象
@@ -111,12 +111,12 @@ const exportWords = () => {
   // 过滤为指定属性
   const filteredWords = words.value.map(word => ({
     text: word.text,
-    explainedInChinese: word.explainedInChinese,
+    explains: word.explains,
     explainedHidden: word.explainedHidden,
     pronunciation: word.pronunciation,
     isReview: word.isReview,
-    creatTime: word.creatTime,
-    reviewTime: word.reviewTime,
+    ctime: word.ctime,
+    learnDate: word.learnDate,
     level: word.level
   }));
 
@@ -167,7 +167,7 @@ const importWords = () => {
                 // 校验必填字段
                 return (
                     typeof word.text === 'string' &&
-                    typeof word.explainedInChinese === 'string' &&
+                    typeof word.explains === 'string' &&
                     typeof word.pronunciation === 'string'
                 );
               })
@@ -178,8 +178,8 @@ const importWords = () => {
                 phonetic: word.phonetic || '', // 补全phonetic属性
                 explainedHidden: word.explainedHidden || false, // 补全explainedHidden属性
                 isReview: word.isReview || true, // 补全isReview属性
-                creatTime: word.creatTime || new Date(), // 补全creatTime属性
-                reviewTime: word.reviewTime || new Date(), // 补全reviewTime属性
+                ctime: word.ctime || new Date(), // 补全ctime属性
+                learnDate: word.learnDate || new Date(), // 补全learnDate属性
                 level: word.level || 0, // 补全level属性
               }));
 
@@ -247,12 +247,12 @@ const parseFileContent = (content: string): Word[] => {
       .filter(line => line.length > 0) // 过滤空行
       .map(line => ({
         text: line,
-        explainedInChinese: '',
+        explains: '',
         explainedHidden: false,
         pronunciation: '',
         isReview: true,
-        creatTime: new Date(),
-        reviewTime: new Date(),
+        ctime: new Date(),
+        learnDate: new Date(),
         level: 0,
         _id: `imported-${Date.now()}-${Math.random()}`, // 生成唯一ID
         _rev: undefined,
