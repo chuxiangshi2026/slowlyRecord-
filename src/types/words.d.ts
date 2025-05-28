@@ -7,13 +7,13 @@ export interface Word extends UToolsApi.DbDoc{
     text: string,
     // 是否是单词   isWord : boolean
     // 创建时间 创建生成
-    creatTime: Date
+    ctime: Date
     // 上次复习时间 第一次创建生成
-    reviewTime: Date
+    learnDate: Date
     // 更新时间
     // updateTime?: String
     // 中文解释
-    explainedInChinese: string
+    explains: string
     // 是否隐藏中文   true不显示
     explainedHidden: boolean
     // 等级

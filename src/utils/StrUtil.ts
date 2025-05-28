@@ -42,15 +42,15 @@ const getParam = (query: string) => {
 }
 
 
-const getInitWord = (text: string, explainedInChinese: string, pronunciation: string, image: string = '', phonetic: string = '') => {
+const getInitWord = (text: string, explains: string, pronunciation: string, image: string = '', phonetic: string = '') => {
     let newWords: Word = {
         "text": text,
-        "explainedInChinese": explainedInChinese,
+        "explains": explains,
         "explainedHidden": false,
         "pronunciation": pronunciation,
         "isReview": true,
-        "creatTime": new Date(),
-        "reviewTime": new Date(),
+        "ctime": new Date(),
+        "learnDate": new Date(),
         "level": 0,
         "_id": DB_KEY+uuidv4(), // 假设_id为必填项
         "image": image, // 假设image为必填项
@@ -85,7 +85,7 @@ const addWord = async (wordText: string) => {
     if (findWord) {
         console.log('单词已存在');
         // 如果有这个单词
-        if (findWord.explainedInChinese) {
+        if (findWord.explains) {
             console.log('翻译已存在');
             ElMessage.success('单词已存在');
             return
@@ -95,7 +95,7 @@ const addWord = async (wordText: string) => {
         wordsStore.translation(params).then(res => {
             let resData = res.data;
             if (resData.errorCode === '0' && !isEmpty(res)) {
-                findWord.explainedInChinese = res.data.translation[0]
+                findWord.explains = res.data.translation[0]
                 findWord.isReview = true
                 findWord.pronunciation = resData.tSpeakUrl
                 findWord.phonetic = ''

@@ -35,7 +35,7 @@ onMounted(() => {
        }*/
     /*words.value.forEach((item) => {
       // 如果  当前时间>  上次复习时间+数组[等级]
-      /!*if (Date.now() > item.reviewTime.getTime() + DEFAULT_INTERVALS[item.level]) {
+      /!*if (Date.now() > item.learnDate.getTime() + DEFAULT_INTERVALS[item.level]) {
         item.isReview = true
       }*!/
       item.isReview = true
@@ -141,16 +141,16 @@ onMounted(() => {
     }
 
 
-    // console.log(words.value, typeof words.value[0].reviewTime, '9999999')
+    // console.log(words.value, typeof words.value[0].learnDate, '9999999')
     for (const item of words.value) {
       // item.isReview = true
       // console.log(item)
-      item.reviewTime = new Date(item.reviewTime);
-      item.creatTime = new Date(item.creatTime);
-      let reviewTime = item.reviewTime.getTime() + DEFAULT_INTERVALS[item.level] * 60 * 1000;
+      item.learnDate = new Date(item.learnDate);
+      item.ctime = new Date(item.ctime);
+      let learnDate = item.learnDate.getTime() + DEFAULT_INTERVALS[item.level] * 60 * 1000;
       let now = Date.now();
-      // console.log(now, reviewTime, '00000111111', item.isReview)
-      if (!item.isReview && now > reviewTime) {
+      // console.log(now, learnDate, '00000111111', item.isReview)
+      if (!item.isReview && now > learnDate) {
         item.isReview = true
         wordsStore.updateWord(item)
       }
