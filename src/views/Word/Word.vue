@@ -1,14 +1,14 @@
 <template>
 
-<!--  <el-button type="primary" @click="clearWord">清空单词</el-button>-->
-<!--  <el-button type="primary" @click="initWord">初始化单词</el-button>-->
+  <!--  <el-button type="primary" @click="clearWord">清空单词</el-button>-->
+  <!--  <el-button type="primary" @click="initWord">初始化单词</el-button>-->
 
-<!--  <el-row>-->
-<!--    <el-col>-->
-<!--      <el-button :span="2" type="primary" @click="addWord(word)">添加单词</el-button>-->
-<!--      <el-input :span="6" v-model="word" placeholder="请输入单词"></el-input>-->
-<!--    </el-col>-->
-<!--  </el-row>-->
+  <!--  <el-row>-->
+  <!--    <el-col>-->
+  <!--      <el-button :span="2" type="primary" @click="addWord(word)">添加单词</el-button>-->
+  <!--      <el-input :span="6" v-model="word" placeholder="请输入单词"></el-input>-->
+  <!--    </el-col>-->
+  <!--  </el-row>-->
 
 
   <div class="words-cards-wrapper">
@@ -28,15 +28,15 @@
         rememberCount
       }}</span><span>已记完: {{ forgetCount }}</span></div>
     <div>
-<!--      <i class="iconfont icon-setting"></i>-->
+      <!--      <i class="iconfont icon-setting"></i>-->
       <i class="iconfont icon-import" @click="importWords"></i>
       <i class="iconfont icon-export" @click="exportWords"></i>
       <a href="#/home/list" style="margin-left: 16px;">
-<!--        <i class="iconfont icon-list active"></i>-->
+        <!--        <i class="iconfont icon-list active"></i>-->
       </a>
-<!--      <a href="#/home/typing" style="margin-left: 16px;">-->
-<!--        <i class="iconfont icon-card "></i>-->
-<!--      </a>-->
+      <!--      <a href="#/home/typing" style="margin-left: 16px;">-->
+      <!--        <i class="iconfont icon-card "></i>-->
+      <!--      </a>-->
     </div>
   </div>
 </template>
@@ -167,8 +167,8 @@ const importWords = () => {
                 // 校验必填字段
                 return (
                     typeof word.text === 'string' &&
-                    typeof word.explains === 'string' &&
-                    typeof word.pronunciation === 'string'
+                    typeof word.explains === 'string'
+                    // && typeof word.pronunciation === 'string'
                 );
               })
               .map((word) => ({
