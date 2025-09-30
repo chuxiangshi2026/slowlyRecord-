@@ -1,12 +1,12 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-const Login = () => import('@/views/Login/Login.vue');
+// const Login = () => import('@/views/Login/Login.vue');
 const Home = () => import('@/views/Home/Home.vue');
 const Sign = () => import('@/views/Sign/Sign.vue');
 const Word = () => import('@/views/Word/Word.vue');
-const Exception = () => import('@/views/Exception/Exception.vue');
-const Apply = () => import('@/views/Apply/Apply.vue');
-const Check = () => import('@/views/Check/Check.vue');
+// const Exception = () => import('@/views/Exception/Exception.vue');
+// const Apply = () => import('@/views/Apply/Apply.vue');
+// const Check = () => import('@/views/Check/Check.vue');
 
 
 
@@ -88,11 +88,11 @@ const routes: Array<RouteRecordRaw> = [
       }*/
     ]
   },
-  {
-    path: '/login',
-    name: 'login',
-    component: Login
-  }
+  // {
+  //   path: '/login',
+  //   name: 'login',
+  //   component: Login
+  // }
 ]
 
 
@@ -103,8 +103,9 @@ const routes: Array<RouteRecordRaw> = [
 
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes
 })
 
 export default router
+// history: createWebHistory(import.meta.env.BASE_URL),

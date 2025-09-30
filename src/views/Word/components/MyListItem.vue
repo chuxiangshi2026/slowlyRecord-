@@ -85,6 +85,11 @@ const remember = () => {
   // 当前时间
   const now = new Date().getTime();
   let learnDate = wordModel.value.learnDate;
+
+  // 确保 learnDate 是 Date 对象
+  if (!(learnDate instanceof Date)) {
+    learnDate = new Date(learnDate);
+  }
   // 开始复习时间 (上次复习时间 + 当前等级对应的默认复习间隔)
   let level = wordModel.value.level;
   // todo 这里序列化不是时间类型
