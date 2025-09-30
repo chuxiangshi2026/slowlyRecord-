@@ -133,12 +133,12 @@ onMounted(() => {
   //更新需要复习的单词
   function updateReview() {
     // 获取本地的数据，如果是空或和数据库的大小不一致，比较数据，留最新的
-    let dbWords = listDbWords();
+    // let dbWords = listDbWords();
     // console.log(dbWords, 'dbWords')
-    if (!words||words.value.length !=dbWords.length) {
-      words.value = dbWords
-      console.log('同步数据库数据到本地')
-    }
+    // if (!words||words.value.length !=dbWords.length) {
+    //   words.value = dbWords
+    //   console.log('同步数据库数据到本地')
+    // }
 
 
     // console.log(words.value, typeof words.value[0].learnDate, '9999999')

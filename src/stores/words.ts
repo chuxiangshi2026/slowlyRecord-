@@ -31,6 +31,7 @@ export const useWordsStore =
 
                     // const cleanedDocs = payload.map(doc => JSON.parse(JSON.stringify(doc)));
                     // console.log(payload, '更新单词');
+                    // todo数据库
                     updateDbWordList(payload)
 
                 },
@@ -45,7 +46,8 @@ export const useWordsStore =
                     if (index !== -1) {
                         this.words[index] = word; // 修改指定元素
                     }
-                    addDbWord(word)
+                    // todo 数据库
+                    // addDbWord(word)
                 },
 
                 // 异步提交状态，动作
