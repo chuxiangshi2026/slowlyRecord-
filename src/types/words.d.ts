@@ -1,4 +1,7 @@
-export interface Word extends UToolsApi.DbDoc{
+/**
+ * 单词结构
+ */
+export interface Word extends DbDoc{
     _id: string,
     _rev?:string,
     // 是否显示，是否需要复习
@@ -22,10 +25,14 @@ export interface Word extends UToolsApi.DbDoc{
     image?: string
     // 发音
     pronunciation?: string,
+    // pronunciationblob?: ArrayBuffer,
     // 音标
     phonetic?: string
 }
 
+/**
+ * 有道请求参数结构
+ */
 interface YdParams {
     //待翻译文本
     q: string
