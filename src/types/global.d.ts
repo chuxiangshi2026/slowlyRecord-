@@ -1,4 +1,8 @@
+/// <reference types="utools-api-types" />
+// 引入 utools-api 与 element
+// 全局window对象声明
 interface Window {
+    // 把utoolsApits声明加入到全局对象,否则无法正常提示
     utools: UToolsApi
     posthog: any
     services: {
@@ -27,18 +31,18 @@ interface Window {
     }
 }
 
-
-
-
-interface UtoolsAction {
-    code: 'add_vocabulary' | 'kill' | string
-    type: string
-    payload: any
-    optional: { type: string; payload: any }[]
-}
-interface PluginEnterAction {
-    code: string
-    type: string
-    payload: any
-}
+//
+//
+//
+// interface UtoolsAction {
+//     code: 'add_vocabulary' | 'kill' | string
+//     type: string
+//     payload: any
+//     optional: { type: string; payload: any }[]
+// }
+// interface PluginEnterAction {
+//     code: string
+//     type: string
+//     payload: any
+// }
 
