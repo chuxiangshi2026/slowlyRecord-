@@ -13,7 +13,7 @@
       <div>
         <i class="iconfont icon-player iconHover" @click="play">
         </i>
-            <!-- 添加audio标签  -->
+        <!-- 添加audio标签  -->
         <audio ref="audioPlayer" :src="word.pronunciation" hidden></audio>
 
         <i class="iconfont icon-translate iconHover" @click="translation()"></i>
@@ -65,8 +65,41 @@ const translation = () => {
 
 // 获取audio元素的引用
 const audioPlayer = ref<HTMLAudioElement | null>(null);
+const localAudioUrl = ref<string | null>(null);
 
+// 获取本地存储的音频 Blob URL
+const getLocalAudioUrl = (wordId: string): string | null => {
+  const stored = localStorage.getItem(`audio_${wordId}`);
+  if (stored) {
+    try {
+      const blob = new Blob([new Uint8Array(JSON.parse(stored))], {type: 'audio/mpeg'});
+      return URL.createObjectURL(blob);
+    } catch (e) {
+      console.error('Failed to parse stored audio data:', e);
+    }
+  }
+  return null;
+};
+
+// 下载并存储音频文件
+const downloadAndStoreAudio = async (url: string, wordId: string) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    // 存储到 localStorage (注意：localStorage 有大小限制)
+    const arrayBuffer = await blob.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    localStorage.setItem(`audio_${wordId}`, JSON.stringify(Array.from(uint8Array)));
+
+    // 创建本地 URL
+    localAudioUrl.value = URL.createObjectURL(blob);
+  } catch (error) {
+    console.error('Failed to download and store audio:', error);
+  }
+};
 // 播放语音
+/*
 const play = () => {
 
   if (audioPlayer.value) {
@@ -76,6 +109,31 @@ const play = () => {
   }
 
 }
+*/
+
+// 播放音频
+const play = async () => {
+  const wordId = props.word.text; // 假设 word 对象有 id 属性
+
+  // 先尝试从本地获取音频 URL
+  localAudioUrl.value = getLocalAudioUrl(wordId);
+
+  // 如果本地没有，则下载并存储
+  if (!localAudioUrl.value && props.word.pronunciation) {
+    await downloadAndStoreAudio(props.word.pronunciation, wordId);
+  }
+
+  // 播放音频
+  const audioSrc = localAudioUrl.value || props.word.pronunciation;
+  if (audioPlayer.value && audioSrc) {
+    audioPlayer.value.src = audioSrc;
+    audioPlayer.value.play().catch(error => {
+      console.error('播放失败:', error);
+    });
+  } else {
+    console.warn('音频源无效，无法播放');
+  }
+};
 
 
 // 记住
@@ -134,7 +192,7 @@ const forget = () => {
   if (wordModel.value && wordModel.value.level > 0) {
     wordModel.value.level--;
   }
-  wordModel.value.level===0?wordModel.value.explainedHidden=false:wordModel.value.explainedHidden=true;
+  wordModel.value.level === 0 ? wordModel.value.explainedHidden = false : wordModel.value.explainedHidden = true;
 
 }
 // 删除单词
