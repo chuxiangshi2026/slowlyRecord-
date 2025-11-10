@@ -24,9 +24,11 @@
   <!--     旧版本的写法 @forget="(childValue)=>forget(item,childValue)"-->
 
   <div class="home_footer">
-    <div><span>单词总数: {{ wordsStore.count }}</span><span>待复习: {{
-        wordsStore.rememberCount
-      }}</span><span>已记完: {{ wordsStore.forgetCount }}</span></div>
+    <div>
+      <span>单词总数: {{ wordsStore.count }}</span>
+      <span>待复习: {{ wordsStore.rememberCount }}</span>
+      <span>已记完: {{ wordsStore.forgetCount }}</span>
+    </div>
     <div>
       <!--      <i class="iconfont icon-setting"></i>-->
       <i class="iconfont icon-import" @click="importWords"></i>
@@ -79,7 +81,6 @@ const initWord = () => {
   wordsStore.addAndUpdateWords(testData)
   ElMessage.success('初始化成功');
 }
-
 
 
 const deleteWord = (index: number) => {
@@ -291,7 +292,7 @@ const parseFileContent = (content: string): Word[] => {
 .home_footer {
   position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 98%;
   display: flex;
   align-items: center;
   justify-content: space-between;
