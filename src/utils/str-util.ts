@@ -39,7 +39,9 @@ const getParam = (query: string) => {
     return params;
 }
 
-
+/**
+ * 初始化单词状态
+ */
 const getInitWord = (text: string, explains: string, pronunciation: string, image: string = '', phonetic: string = '') => {
     let newWords: Word = {
         "text": text,
@@ -53,6 +55,7 @@ const getInitWord = (text: string, explains: string, pronunciation: string, imag
         "_id": DB_KEY + uuidv4(), // 假设_id为必填项
         "image": image, // 假设image为必填项
         "phonetic": phonetic, // 假设phonetic为必填项
+        "remember": false  // 默认未记住
 
         // "image": resData.image
         // phonetic: resData.phonetic,
@@ -61,6 +64,9 @@ const getInitWord = (text: string, explains: string, pronunciation: string, imag
     return newWords;
 }
 
+/**
+ * 添加单词
+ */
 const addWord = async (wordText: string) => {
 
 
@@ -84,8 +90,10 @@ const addWord = async (wordText: string) => {
                 findWord.explains = res.data.translation[0]
                 findWord.isReview = true
                 findWord.pronunciation = resData.tSpeakUrl
+                // todo 音标添加
                 findWord.phonetic = ''
-                wordsStore.updateWord(findWord)
+                findWord.remember = false
+                wordsStore.addAndUpdateWord(findWord)
                 console.log('添加单个单词成功');
                 // ElMessage.success('添加成功');
                 return
