@@ -12,22 +12,23 @@
 
 
   <div class="words-cards-wrapper">
-    <my-list-item v-if="wordsStore.count>0" v-for="(item,index) in wordsStore.words"
+    <MyListItem v-if="wordsStore.count>0" v-for="(item,index) in wordsStore.words"
                   :key="index"
                   :word="item"
                   :style="item.isReview ? '': 'display:none' "
                   v-model="wordsStore.words[index]"
                   @delete="deleteWord(index)"
     >
-    </my-list-item>
+    </MyListItem>
   </div>
   <!--     旧版本的写法 @forget="(childValue)=>forget(item,childValue)"-->
 
   <div class="home_footer">
     <div>
       <span>单词总数: {{ wordsStore.count }}</span>
-      <span>待复习: {{ wordsStore.rememberCount }}</span>
-      <span>已记完: {{ wordsStore.forgetCount }}</span>
+      <span>待复习: {{ wordsStore.forgetCount }}</span>
+      <span>已复习: {{ wordsStore.reviewCount}}</span>
+      <span>已记完: {{ wordsStore.rememberCount }}</span>
     </div>
     <div>
       <!--      <i class="iconfont icon-setting"></i>-->
@@ -48,22 +49,17 @@
 
 import {ElMessage} from "element-plus";
 import {testData} from "@/testData";
-import {computed} from "vue";
 import type {Word} from "@/types/words";
 
 import {useWordsStore} from "@/stores/words.ts";
-import {storeToRefs} from "pinia";
 import MyListItem from "@/views/Word/components/MyListItem.vue";
 import {v4 as uuidv4} from "uuid";
 import {DB_KEY} from "@/constants";
 
-// const word = ref('');
 
 
 const wordsStore = useWordsStore();
-// wordsStore.findWord('')
 
-// const {words} = storeToRefs(wordsStore)
 /**
  * 清空单词库
  * @since 2025/11/5
@@ -178,6 +174,7 @@ const importWords = () => {
                 ctime: word.ctime || new Date(), // 补全ctime属性
                 learnDate: word.learnDate || new Date(), // 补全learnDate属性
                 level: word.level || 0, // 补全level属性
+                remember: word.remember || false, // 补全remember属性
               }));
 
           // 去重：基于word.text属性
@@ -259,22 +256,12 @@ const parseFileContent = (content: string): Word[] => {
         _rev: undefined,
         image: '',
         phonetic: '',
+        remember: false
       }));
 };
 
 
-// /**
-//  * 计算属性,统计已记住的单词数
-//  */
-// const rememberCount = computed(() => {
-//   return words.value.filter((word: Word) => word.isReview).length
-// })
-// /**
-//  *计算属性,统计忘记的单词数
-//  */
-// const forgetCount = computed(() => {
-//   return words.value.length - rememberCount.value
-// })
+
 
 </script>
 

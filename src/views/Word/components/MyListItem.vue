@@ -21,6 +21,7 @@
       <div>
         <i class="iconfont icon-check iconHover" @click="remember"></i>
         <i class="iconfont icon-close iconHover" @click="forget"></i>
+        <i class="iconfont icon-lock iconHover" @click="remembered"></i>
         <i class="iconfont icon-delete iconHover" @click="deleteWord"></i>
       </div>
     </div>
@@ -136,7 +137,9 @@ const play = async () => {
 };
 
 
-// 记住
+/**
+ * 记住
+ */
 const remember = () => {
 
   //如果 当前时间大于  上次复习时间+当前等级*默认复习间隔 且小于上次复习时间+（当前等级+3）*默认复习间隔  等级+1
@@ -170,6 +173,10 @@ const remember = () => {
     // console.log(wordModel.value.learnDate.toLocaleTimeString()+'3333333');
   }
 
+  if (wordModel.value.level >= 12) {
+    wordModel.value.remember = true;
+  }
+
   // 更新复习时间
   wordModel.value.learnDate = new Date();
 
@@ -186,11 +193,33 @@ const remember = () => {
 
   console.log(JSON.stringify(props.word) + '123');
 }
+
+/**
+ * 永久记住,不再复习
+ */
+const remembered = () => {
+
+  // 更新复习时间
+  wordModel.value.learnDate = new Date();
+
+  wordModel.value.level = 12
+  // 是否复习，改为false
+  wordModel.value.isReview = false;
+
+  wordModel.value.explainedHidden = true;
+
+  wordModel.value.remember = true;
+
+}
+
 // 忘记
 const forget = () => {
   // emit('forget', 'childValue');
   if (wordModel.value && wordModel.value.level > 0) {
     wordModel.value.level--;
+  }
+  if (wordModel.value.level < 12) {
+    wordModel.value.remember = false;
   }
   wordModel.value.level === 0 ? wordModel.value.explainedHidden = false : wordModel.value.explainedHidden = true;
 

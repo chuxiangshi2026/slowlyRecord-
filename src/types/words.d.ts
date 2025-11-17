@@ -28,6 +28,10 @@ export interface Word extends DbDoc{
     // pronunciationblob?: ArrayBuffer,
     // 音标
     phonetic?: string
+    /**
+     * 是否永久记住(等级>=12,状态是true)
+     */
+    remember: boolean
 }
 
 /**

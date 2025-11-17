@@ -21,17 +21,24 @@ export const useWordsStore =
             });
 
             /**
-             * 计算属性,统计已记住的单词数
+             * 计算属性,
+             * 待复习的单词数  (显示的数)
              */
-            const rememberCount = computed(() => {
+            const forgetCount = computed(() => {
                 return words.value.filter((word: Word) => word.isReview).length
             })
 
             /**
-             *计算属性,统计忘记的单词数
+             *计算属性,统计已复习的单词数 (不需要复习的 - 已记住数)
              */
-            const forgetCount = computed(() => {
-                return words.value.length - rememberCount.value
+            const reviewCount = computed(() => {
+                return words.value.filter((word: Word) => !word.isReview).length - rememberCount.value
+            })
+            /**
+             * 永久记住的单词数
+             */
+            const rememberCount = computed(() => {
+                return words.value.filter((word: Word) => word.remember).length
             })
 
 
@@ -161,9 +168,10 @@ export const useWordsStore =
                 words,
                 count,
                 rememberCount,
+                reviewCount,
                 forgetCount,
                 findWord,
-                updateWord: addAndUpdateWord,
+                addAndUpdateWord,
                 addAndUpdateWords,
                 translation,
                 removeWords,
