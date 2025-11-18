@@ -1,8 +1,8 @@
 @font-face {
     font-family: "iconfont"; /* Project id 4819179 */
-    src: url('iconfont.woff2?t=1763362451646') format('woff2'),
-    url('iconfont.woff?t=1763362451646') format('woff'),
-    url('iconfont.ttf?t=1763362451646') format('truetype');
+    src: url('iconfont.woff2?t=1763429391127') format('woff2'),
+    url('iconfont.woff?t=1763429391127') format('woff'),
+    url('iconfont.ttf?t=1763429391127') format('truetype');
 }
 
 .iconfont {
@@ -135,5 +135,13 @@
 
 .icon-lock:before {
     content: "\e676";
+}
+
+.icon-top:before {
+    content: "\e681";
+}
+
+.icon-down:before {
+    content: "\e703";
 }
 
