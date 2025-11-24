@@ -271,7 +271,7 @@ const exportWords = () => {
     text: word.text,
     explains: word.explains,
     explainedHidden: word.explainedHidden,
-    pronunciation: word.pronunciation,
+    // pronunciation: word.pronunciation, // 发音地址先不导出了
     isReview: word.isReview,
     ctime: word.ctime,
     learnDate: word.learnDate,
@@ -544,9 +544,9 @@ const exportTextWords = () => {
 
   // 过滤为指定属性
   // 将单词列表转换为字符串 (单词,释义 格式)
-
+  // , ${word.pronunciation} 发音地址,先不对外导出了,key泄露了
   const content = wordsStore.words.map(word =>
-      `${word.text}, ${word.explains},${word.explainedHidden}, ${word.pronunciation},${word.isReview}, ${word.ctime},${word.learnDate}, ${word.level}`)// 使用逗号分隔单词和释义
+      `${word.text}, ${word.explains},${word.explainedHidden},${word.isReview}, ${word.ctime},${word.learnDate}, ${word.level}`)// 使用逗号分隔单词和释义
       .join('\n');// 每行一个单词
 
 
