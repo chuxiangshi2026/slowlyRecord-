@@ -271,7 +271,7 @@ const exportWords = () => {
     text: word.text,
     explains: word.explains,
     explainedHidden: word.explainedHidden,
-    // pronunciation: word.pronunciation, // 发音地址先不导出了
+    // pronunciation: word.pronunciation, //音频文件太大了,不再导出了
     isReview: word.isReview,
     ctime: word.ctime,
     learnDate: word.learnDate,

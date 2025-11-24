@@ -71,7 +71,7 @@ const addWord = async (wordText: string) => {
 
     const wordsStore = useWordsStore(); // 传入 Pinia 实例
 
-    console.info('没修改之前的定位单词',wordsStore.lastAddedWordText)
+    console.info('没修改之前的定位单词', wordsStore.lastAddedWordText)
 
     let findWord = wordsStore.findWord(wordText)
     if (findWord) {
@@ -92,7 +92,7 @@ const addWord = async (wordText: string) => {
             if (resData.errorCode === '0' && !isEmpty(res)) {
                 findWord.explains = res.data.translation[0]
                 findWord.isReview = true
-                findWord.pronunciation = resData.tSpeakUrl
+                findWord.pronunciation = ''
                 // todo 音标添加
                 findWord.phonetic = ''
                 findWord.remember = false
