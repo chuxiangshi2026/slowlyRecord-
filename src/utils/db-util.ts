@@ -2,6 +2,7 @@ import type {Word} from "@/types/words";
 
 import {DB_KEY} from "@/constants";
 import {log} from "@/utils/logger"
+import cloneDeep from 'lodash.clonedeep';
 /**
  * 获取数据库全部的单词
  * @returns 返回数据库中所有单词的数组
@@ -20,20 +21,19 @@ function listDbWords(): Word[] {
 async function addAndUpdateDbWord(word: Word):Promise<DbReturn> {
     log.i('添加单个单词到数据库', word);
     // 转成字符串保存数据库,替换JSON.parse(JSON.stringify(word));
-    const cleanedWord = structuredClone(word)
-    //
-    return await window.utools.db.promises.put(cleanedWord);
-    // let result =
-    // if (result.ok) {
-    //
-    //     log.d("添加单个单词到数据库成功")
-    //     // 保存成功, 更新文档版本
-    //     word._rev = result.rev;
-    // } else if (result.error) {
-    //     // 保存出错，打印错误原因
-    //     console.log('保存单个单词到数据库报错', result.message);
-    // }
+    const cleanedWord = cloneDeep(word)
+    // console.log('查看去重后的序列化数据',word)
+    let result = await window.utools.db.promises.put(cleanedWord);
 
+    if (result.ok) {
+        log.d("添加单个单词到数据库成功")
+        // 保存成功, 更新文档版本
+        word._rev = result.rev;
+    } else if (result.error) {
+        // 保存出错，打印错误原因
+        console.log('保存单个单词到数据库报错', result.message);
+    }
+    return result
 }
 
 /**
@@ -43,7 +43,7 @@ async function addAndUpdateDbWord(word: Word):Promise<DbReturn> {
 async function updateDbWordList(docs: Word[]): Promise<DbReturn[]> {
     log.i('批量添加的单词列表', docs);
     // 清理或克隆对象
-    const cleanedDocs = docs.map(doc => JSON.parse(JSON.stringify(doc)));
+    const cleanedDocs = docs.map(doc => cloneDeep(doc));
     // 检查cleanedDocs是否为空
     if (cleanedDocs.length === 0) {
         console.log('没有需要更新的文档');
@@ -52,13 +52,7 @@ async function updateDbWordList(docs: Word[]): Promise<DbReturn[]> {
     // 批量更新数据库
     const results = window.utools.db.bulkDocs(cleanedDocs);
 
-    /*console.log(results, '批量更新结果');
-    const docs1 = window.utools.db.allDocs()
-    console.log(docs1, '获取批量结果');
-    if (!results) {
-        console.error('批量更新失败', results);
-        return [];
-    }*/
+
     results.forEach((ret: DbReturn) => {
         // console.log(ret, '更新结果');
         // 更新文档版本
@@ -99,10 +93,6 @@ function cleanDbWord() {
         // 删除失败，打印错误原因
         console.log(result.message);
     }
-    // const words = listDbWords();
-    // words.forEach((word: Word) => {
-    //     removeDbWordById(word._id);
-    // })
 }
 
 /**

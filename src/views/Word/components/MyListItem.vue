@@ -55,7 +55,9 @@ const emit = defineEmits(['translation', 'remember', 'forget', 'delete'])
 
 import {ref} from "vue";
 import {DEFAULT_INTERVALS} from "@/constants";
-
+import {useUsersStore} from "@/stores/users.ts";
+import {useWordsStore} from "@/stores/words.ts";
+const wordsStore = useWordsStore();
 
 // 翻译
 const translation = () => {
@@ -160,6 +162,28 @@ const remember = () => {
   // 结束复习时间 (上次复习时间 + (当前等级 + 3) 对应的默认复习间隔)
   const endLearnDate = learnDate.getTime() + DEFAULT_INTERVALS[Math.min(level + 3, DEFAULT_INTERVALS.length - 1)] * 60 * 1000;
 
+
+
+  if (wordModel.value.level >= 12) {
+    wordModel.value.remember = true;
+  }
+
+
+  //更新复习时间  ,todo 如果一直复习,可以一直无法升级,如果只有升级后更新 可能一开始就无法更新,
+  wordModel.value.learnDate = new Date();
+
+  // 是否复习，改为false
+  wordModel.value.isReview = false;
+
+  wordModel.value.explainedHidden = true;
+
+
+
+  // 发送事件通知父组件
+  // emit('remember', props.word);
+
+  console.log('缓存单词数据' , JSON.stringify(props.word));
+
   // 判断是否满足条件
   if (now > startLearnDate && now < endLearnDate) {
     // 等级+1
@@ -169,26 +193,7 @@ const remember = () => {
     console.log("未满足升级条件");
     // console.log(wordModel.value.learnDate.toLocaleTimeString()+'3333333');
   }
-
-  if (wordModel.value.level >= 12) {
-    wordModel.value.remember = true;
-  }
-
-  // 更新复习时间
-  wordModel.value.learnDate = new Date();
-
-  // 是否复习，改为false
-  wordModel.value.isReview = false;
-
-  wordModel.value.explainedHidden = true;
-
-  // wordsStore.updateWord(wordModel.value)
-
-
-  // 发送事件通知父组件
-  // emit('remember', props.word);
-
-  console.log(JSON.stringify(props.word) + '123');
+  wordsStore.addAndUpdateWord(wordModel.value)
 }
 
 /**
@@ -207,6 +212,8 @@ const remembered = () => {
 
   wordModel.value.remember = true;
 
+
+  wordsStore.addAndUpdateWord(wordModel.value)
 }
 
 // 忘记
@@ -220,6 +227,7 @@ const forget = () => {
   }
   wordModel.value.level === 0 ? wordModel.value.explainedHidden = false : wordModel.value.explainedHidden = true;
 
+  wordsStore.addAndUpdateWord(wordModel.value)
 }
 // 删除单词
 const deleteWord = () => {

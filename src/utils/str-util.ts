@@ -118,11 +118,8 @@ const addWord = async (wordText: string) => {
         // 先判断有没有这个单词，有的话看下这个单词有没有翻译，有的话不做处理，没有更新这个单词
 
         let resData = res.data;
-        console.log(JSON.stringify(resData), '翻译后的返回结果');
+        console.log('翻译后的返回结果', JSON.stringify(resData));
         if (resData.errorCode === '0' && !isEmpty(res)) {
-            //解构写法
-            // const { words } = storeToRefs(wordsStore)
-            // words.value
             let oldWords = wordsStore.words
             let newWords = getInitWord(resData.query, resData.translation[0], resData.speakUrl, '', '')
 

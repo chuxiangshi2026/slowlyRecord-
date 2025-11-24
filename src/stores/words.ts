@@ -18,7 +18,6 @@ export const useWordsStore =
             const lastAddedWordText = ref('')    // 新增：记录最新添加的单词
 
 
-
             // 总单词数
             const count = computed(() => {
                 return words.value.length;
@@ -47,10 +46,9 @@ export const useWordsStore =
 
             // actions 用普通函数
             function setLastAddedWordText(text: string) {
-                console.log('更新定位单词',text)
+                console.log('更新定位单词', text)
                 lastAddedWordText.value = text
             }
-
 
 
             /**
@@ -66,6 +64,7 @@ export const useWordsStore =
              */
             function listWords(): Word[] {
                 let dbWords = listDbWords();
+                // console.log('读取的数据库', dbWords)
                 if (!words || words.value.length != dbWords.length) {
                     console.log('数据库与缓存数据不一致')
                 }
@@ -78,11 +77,12 @@ export const useWordsStore =
              * 批量添加单词
              */
             function pushWords(payload: Word[]) {
+                log.i("批量去重添加单词", payload)
                 const uniquePayload = payload.filter(newWord =>
                     !words.value.some(existingWord => existingWord.text === newWord.text)
                 );
                 words.value.push(...uniquePayload);
-                log.i(payload, '批量添加去重后的单词', uniquePayload);
+                console.log(payload, '批量添加去重后的单词', uniquePayload);
             }
 
             /**
@@ -126,10 +126,12 @@ export const useWordsStore =
             }
 
             function deleteWord(index: number): void {
+                // 先保存要删除的单词ID
+                const wordId = words.value[index]._id;
                 // 删除index索引下的数值,删除长度为1
                 words.value.splice(index, 1)
                 // 按id删除单词
-                removeDbWordById(words.value[index]._id)
+                removeDbWordById(wordId)
             }
 
             /**
@@ -155,16 +157,19 @@ export const useWordsStore =
              * @param word
              */
             function addAndUpdateWord(word: Word): void {
-
+                console.log("更新数据库单个词", word)
                 const index = words.value.findIndex(w => w.text === word.text);
                 if (index !== -1) {
-                    words.value[index] = word; // 修改指定元素
+                    Object.assign(words.value[index], word); // 修改指定元素
                 } else {
                     pushWords([word])
                 }
                 addAndUpdateDbWord(word).then(() => {
-                    log.i("添加单个词到数据库")
+                    console.log("添加单个词到数据库", word)
                 })
+
+                let data = listDbWords();
+                // console.log('添加数据库后查看数据库', data)
                 // 更新 数据库 这里要判断 数据库中是否有这个单词
             }
 
