@@ -97,6 +97,12 @@ import {DB_KEY} from "@/constants";
 import {nextTick, ref, watch} from "vue";
 import {addWord, getParam} from "@/utils/str-util.ts";
 import {formatDateTime} from "@/utils/date-util.ts";
+import {
+  filterWordsForJsonExport,
+  filterWordsForTextExport,
+  parseFileContent,
+  validateImportedWords
+} from "@/utils/word-util.ts";
 
 
 const word = ref('')
@@ -258,26 +264,9 @@ const exportWords = () => {
     return;
   }
 
-  // 将单词列表转换为字符串
-  /*  const content = words.value
-        .map(word => `${word.text},${word.explains},${word.pronunciation}`) // 按需调整字段
-        .join('\n'); // 每行一个单词
-
-    // 创建Blob对象
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });*/
-
   // 过滤为指定属性
+  const filteredWords = filterWordsForJsonExport(wordsStore.words);
 
-  const filteredWords = wordsStore.words.map(word => ({
-    text: word.text,
-    explains: word.explains,
-    explainedHidden: word.explainedHidden,
-    // pronunciation: word.pronunciation, //音频文件太大了,不再导出了
-    isReview: word.isReview,
-    ctime: formatDateTime(word.ctime),
-    learnDate: formatDateTime(word.learnDate),
-    level: word.level
-  }));
 
   // 将单词列表转换为JSON字符串
   const content = JSON.stringify(filteredWords, null, 2); // 格式化JSON
@@ -321,29 +310,8 @@ const importWords = () => {
           const importedWords: any[] = JSON.parse(content);
 
           // 校验数据格式并补全属性
-          const validatedWords = importedWords
-              .filter((word) => {
-                // 校验必填字段
-                return (
-                    typeof word.text === 'string'
-                    // && typeof word.explains === 'string'
-                    // && typeof word.pronunciation === 'string'
-                );
-              })
-              .map((word) => ({
-                ...word,
-                _id: word._id || DB_KEY + uuidv4(), // 添加_id属性
-                image: word.image || '', // 补全image属性
-                phonetic: word.phonetic || '', // 补全phonetic属性
-                explainedHidden: word.explainedHidden || false, // 补全explainedHidden属性
-                isReview: word.isReview || true, // 补全isReview属性
-                ctime: word.ctime ? new Date(word.ctime) : new Date(), // 确保是Date对象
-                learnDate: word.learnDate ? new Date(word.learnDate) : new Date(), // 确保是Date对象
-                level: word.level || 1, // 补全level属性
-                remember: word.remember || false, // 补全remember属性
-                explains: word.explains || '', // 确保有explains属性
-                pronunciation: word.pronunciation || '' // 确保有发音属性
-              }));
+          const validatedWords = validateImportedWords(importedWords);
+
 
           // 去重：基于word.text属性
           const uniqueWords = validatedWords.filter((importedWord) => {
@@ -503,76 +471,6 @@ const importTextWords = () => {
   fileInput.click(); // 触发文件选择
 }
 
-/**
- * 解析文件内容为单词列表
- * @param content 文件内容
- * @returns 单词列表
- */
-const parseFileContent = (content: string): Word[] => {
-  const lines = content.split(/\r?\n/); // 按行分割，兼容Windows和Unix换行符
-  return lines
-      .map(line => line.trim()) // 去除空格
-      .filter(line => line.length > 0) // 过滤空行
-      .map(line => {
-        // 处理CSV格式，如果包含逗号则分割
-        const parts = line.includes(',') ? line.split(',') : [line];
-
-        // 解析创建时间和学习时间
-        let ctime: Date | string = new Date();
-        let learnDate: Date | string = new Date();
-        // 如果parts数组长度足够，且对应位置有时间字符串，则尝试解析
-        if (parts.length >= 5 && parts[4]) {
-          // 检查是否为格式化的时间字符串 YYYY-MM-DD HH:mm:ss
-          const timeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-          if (timeRegex.test(parts[4].trim())) {
-            ctime = parts[4].trim();
-          } else {
-            // 尝试解析为日期对象
-            const parsedDate = new Date(parts[4].trim());
-            if (!isNaN(parsedDate.getTime())) {
-              ctime = parsedDate;
-            }
-          }
-        }
-
-        if (parts.length >= 6 && parts[5]) {
-          // 检查是否为格式化的时间字符串 YYYY-MM-DD HH:mm:ss
-          const timeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-          if (timeRegex.test(parts[5].trim())) {
-            learnDate = parts[5].trim();
-          } else {
-            // 尝试解析为日期对象
-            const parsedDate = new Date(parts[5].trim());
-            if (!isNaN(parsedDate.getTime())) {
-              learnDate = parsedDate;
-            }
-          }
-        }
-
-        // 解析等级，确保它是 0-12 之间的有效值
-        const levelStr = parts[6] ? parts[6].trim() : '1';
-        let level: 0|1|2|3|4|5|6|7|8|9|10|11|12 = 1;
-        const parsedLevel = parseInt(levelStr);
-        if (!isNaN(parsedLevel) && parsedLevel >= 0 && parsedLevel <= 12) {
-          level = parsedLevel as 0|1|2|3|4|5|6|7|8|9|10|11|12;
-        }
-
-
-        return {
-          text: parts[0].trim(), // 第一列作为单词
-          explains: parts[1] ? parts[1].trim() : '', // 第二列作为释义（如果有）
-          explainedHidden: parts[2] ? parts[2].trim() === 'true' : false,
-          isReview: parts[3] ? parts[3].trim() === 'true' : true,
-          ctime: new Date(ctime), // 确保是Date对象
-          learnDate: new Date(learnDate), // 确保是Date对象
-          level: level,
-          _id: DB_KEY + uuidv4(), // 生成唯一ID
-          image: '',
-          phonetic: '', // 音标将在翻译时填充
-          remember: false
-        };
-      });
-};
 
 /**
  * 导出单词到txt文件
@@ -587,9 +485,7 @@ const exportTextWords = () => {
   // 过滤为指定属性
   // 将单词列表转换为字符串 (单词,释义 格式)
   // , ${word.pronunciation} 发音地址,先不对外导出了,key泄露了
-  const content = wordsStore.words.map(word =>
-      `${word.text}, ${word.explains},${word.explainedHidden},${word.isReview}, ${formatDateTime(word.ctime)},${formatDateTime(word.learnDate)}, ${word.level}`)// 使用逗号分隔单词和释义
-      .join('\n');// 每行一个单词
+  const content = filterWordsForTextExport(wordsStore.words);
 
 
   // 创建Blob对象
