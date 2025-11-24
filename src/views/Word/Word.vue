@@ -3,12 +3,12 @@
   <!--  <el-button type="primary" @click="clearWord">清空单词</el-button>-->
   <!--  <el-button type="primary" @click="initWord">初始化单词</el-button>-->
 
-  <!--  <el-row>-->
-  <!--    <el-col>-->
-  <!--      <el-button :span="2" type="primary" @click="addWord(word)">添加单词</el-button>-->
-  <!--      <el-input :span="6" v-model="word" placeholder="请输入单词"></el-input>-->
-  <!--    </el-col>-->
-  <!--  </el-row>-->
+  <!--    <el-row>
+        <el-col>
+          <el-input :span="6" v-model="word" placeholder="请输入单词"></el-input>
+          <el-button :span="2" type="primary" @click="addWord(word)">添加单词</el-button>
+        </el-col>
+      </el-row>-->
 
 
   <div v-if="wordsStore.count > 0">
@@ -36,13 +36,35 @@
     </div>
     <div>
       <!--      <i class="iconfont icon-setting"></i>-->
-<!--      <i class="iconfont icon-time" @click="scrollToWordByText('disk')"></i>-->
+      <!--      <i class="iconfont icon-time" @click="scrollToWordByText('disk')"></i>-->
       <i class="iconfont icon-top" @click="scrollToTop"></i>
       <i class="iconfont icon-down" @click="scrollToBottom"></i>
       <i class="iconfont icon-visible" @click="visibleExplained"></i>
       <i class="iconfont icon-invisible" @click="invisibleExplained"></i>
-      <i class="iconfont icon-import" @click="importWords"></i>
-      <i class="iconfont icon-export" @click="exportWords"></i>
+<!--      <i class="iconfont icon-import" @click="importWords"></i>
+      <i class="iconfont icon-export" @click="exportWords"></i>-->
+
+      <!-- 导入下拉菜单 -->
+      <el-dropdown @command="handleImportCommand">
+        <i class="iconfont icon-import"></i>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="importJson">导入JSON</el-dropdown-item>
+            <el-dropdown-item command="importText">导入TXT/CSV</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
+      <!-- 导出下拉菜单 -->
+      <el-dropdown @command="handleExportCommand">
+        <i class="iconfont icon-export"></i>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="exportJson">导出JSON</el-dropdown-item>
+            <el-dropdown-item command="exportText">导出TXT</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <!--      <a href="#/home/list" style="margin-left: 16px;">-->
       <!--        &lt;!&ndash;        <i class="iconfont icon-list active"></i>&ndash;&gt;-->
       <!--      </a>-->
@@ -65,11 +87,12 @@ import MyListItem from "@/views/Word/components/MyListItem.vue";
 import {v4 as uuidv4} from "uuid";
 import {DB_KEY} from "@/constants";
 import {nextTick, ref, watch} from "vue";
+import {addWord, getParam} from "@/utils/str-util.ts";
 
+
+const word = ref('')
 
 const wordsStore = useWordsStore();
-
-
 /*
   单词滚动模块
  */
@@ -83,9 +106,9 @@ const setItemRef = (el: any, index: number) => {
   if (el && el.$el) {
     itemRefs.value[index] = el.$el;
   }
- /* if (el) {
-    itemRefs.value[index] = el
-  }*/
+  /* if (el) {
+     itemRefs.value[index] = el
+   }*/
 }
 
 // 滚动到指定索引的单词
@@ -160,7 +183,37 @@ watch(() => wordsStore.lastAddedWordText, (wordText) => {
       }, 100)
     })
   }
-}, { immediate: true })
+}, {immediate: true})
+
+
+
+/**
+ * 处理导入命令
+ */
+const handleImportCommand = (command: string) => {
+  switch (command) {
+    case 'importJson':
+      importWords();
+      break;
+    case 'importText':
+      importTextWords();
+      break;
+  }
+};
+
+/**
+ * 处理导出命令
+ */
+const handleExportCommand = (command: string) => {
+  switch (command) {
+    case 'exportJson':
+      exportWords();
+      break;
+    case 'exportText':
+      exportTextWords();
+      break;
+  }
+};
 
 
 /**
@@ -264,14 +317,14 @@ const importWords = () => {
               .filter((word) => {
                 // 校验必填字段
                 return (
-                    typeof word.text === 'string' &&
-                    typeof word.explains === 'string'
+                    typeof word.text === 'string'
+                    // && typeof word.explains === 'string'
                     // && typeof word.pronunciation === 'string'
                 );
               })
               .map((word) => ({
                 ...word,
-                _id: DB_KEY + uuidv4(), // 添加_id属性
+                _id: word._id || DB_KEY + uuidv4(), // 添加_id属性
                 image: word.image || '', // 补全image属性
                 phonetic: word.phonetic || '', // 补全phonetic属性
                 explainedHidden: word.explainedHidden || false, // 补全explainedHidden属性
@@ -280,6 +333,8 @@ const importWords = () => {
                 learnDate: word.learnDate || new Date(), // 补全learnDate属性
                 level: word.level || 1, // 补全level属性
                 remember: word.remember || false, // 补全remember属性
+                explains: word.explains || '', // 确保有explains属性
+                pronunciation: word.pronunciation || '' // 确保有发音属性
               }));
 
           // 去重：基于word.text属性
@@ -288,18 +343,38 @@ const importWords = () => {
           });
 
           if (uniqueWords.length > 0) {
-            // 将去重后的单词列表添加到存储
-            wordsStore.addAndUpdateWords(uniqueWords).then(() => {
-              scrollToBottom()
-              ElMessage.success('导入成功');
-            }, error => {
-              ElMessage.success('导入失败');
-            });
+            // 检查是否有需要翻译的单词（没有释义的）
+            const wordsNeedingTranslation = uniqueWords.filter(word => !word.explains);
 
+            if (wordsNeedingTranslation.length > 0) {
+              ElMessage.info(`检测到${wordsNeedingTranslation.length}个单词需要翻译，正在翻译中...`);
+
+              // 逐个翻译需要翻译的单词
+              translateWordsSequentially(wordsNeedingTranslation).then(translatedWords => {
+                // 合并翻译后的单词和已有释义的单词
+                const wordsWithTranslations = uniqueWords.map(word => {
+                  const translated = translatedWords.find(tw => tw.text === word.text);
+                  return translated ? {...word, ...translated} : word;
+                });
+
+                // 将单词列表添加到存储
+                wordsStore.addAndUpdateWords(wordsWithTranslations).then(() => {
+                  scrollToBottom()
+                  ElMessage.success(`成功导入${uniqueWords.length}个单词`);
+                });
+              });
+            } else {
+              // 所有单词都有释义，直接导入
+              wordsStore.addAndUpdateWords(uniqueWords).then(() => {
+                scrollToBottom()
+                ElMessage.success(`成功导入${uniqueWords.length}个单词`);
+              });
+            }
           } else {
             ElMessage.warning('没有新单词可导入或文件内容为空');
           }
         } catch (error) {
+          console.error(error);
           ElMessage.error('文件解析失败，请检查文件格式');
         }
       };
@@ -309,34 +384,115 @@ const importWords = () => {
   fileInput.click(); // 触发文件选择
 };
 
+/**
+ * 逐个翻译单词（避免API频率限制）
+ */
+const translateWordsSequentially = async (words: any[]): Promise<any[]> => {
+  const translatedWords: any[] = [];
+
+  for (const word of words) {
+    try {
+      const params = getParam(word.text);
+      const res = await wordsStore.translation(params);
+
+      if (res.data.errorCode === '0' && res.data.translation) {
+        translatedWords.push({
+          text: word.text,
+          explains: res.data.translation[0],
+          pronunciation: res.data.speakUrl || '',
+          phonetic: res.data.basic?.phonetic || ''
+        });
+      }
+
+      // 添加延迟避免API频率限制
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } catch (error) {
+      console.error(`翻译单词 "${word.text}" 失败:`, error);
+      // 即使某个单词翻译失败，也继续翻译下一个
+    }
+  }
+
+  return translatedWords;
+};
 
 /**
  * 通过txt批量导入单词
  */
-const imporTextWords = () => {
+const importTextWords = () => {
 // 创建文件输入元素
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
-  fileInput.accept = '.txt,.csv,.json'; // 限制文件类型
-  fileInput.onchange = (event) => {
+  fileInput.accept = '.txt,.csv'; // 限制文件类型
+  fileInput.onchange = async (event) => {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        const wordList = parseFileContent(content); // 解析文件内容
-        if (wordList.length > 0) {
-          wordsStore.addAndUpdateWords(wordList); // 添加到存储
-          ElMessage.success('导入成功');
-        } else {
-          ElMessage.warning('文件内容为空或格式不正确');
+      reader.onload = async (e) => {
+        try {
+          const content = e.target?.result as string;
+          const wordList = parseFileContent(content); // 解析文件内容
+
+          if (wordList.length > 0) {
+            // 校验导入的单词数据
+            const validatedWords = wordList.filter(word => {
+              // 校验必填字段
+              return typeof word.text === 'string' && word.text.trim() !== '';
+            });
+
+            if (validatedWords.length === 0) {
+              ElMessage.warning('文件中没有有效的单词');
+              return;
+            }
+
+            // 去重：基于word.text属性
+            const uniqueWords = validatedWords.filter((importedWord) => {
+              return !wordsStore.words.some((existingWord) => existingWord.text === importedWord.text);
+            });
+
+            if (uniqueWords.length === 0) {
+              ElMessage.warning('没有新单词可导入（可能已存在）');
+              return;
+            }
+
+            // 检查是否有需要翻译的单词（没有释义或发音的）
+            const wordsNeedingTranslation = uniqueWords.filter(word => !word.explains || !word.pronunciation);
+
+            if (wordsNeedingTranslation.length > 0) {
+              ElMessage.info(`检测到${wordsNeedingTranslation.length}个单词需要翻译，正在翻译中...`);
+
+              // 逐个翻译需要翻译的单词
+              const translatedWords = await translateWordsSequentially(wordsNeedingTranslation);
+
+              // 合并翻译后的单词和已有释义的单词
+              const wordsWithTranslations = uniqueWords.map(word => {
+                const translated = translatedWords.find(tw => tw.text === word.text);
+                return translated ? {...word, ...translated} : word;
+              });
+
+              // 将单词列表添加到存储
+              wordsStore.addAndUpdateWords(wordsWithTranslations).then(() => {
+                scrollToBottom();
+                ElMessage.success(`成功导入${uniqueWords.length}个单词`);
+              });
+            } else {
+              // 所有单词都有释义和发音，直接导入
+              wordsStore.addAndUpdateWords(uniqueWords).then(() => {
+                scrollToBottom();
+                ElMessage.success(`成功导入${uniqueWords.length}个单词`);
+              });
+            }
+          } else {
+            ElMessage.warning('文件内容为空或格式不正确');
+          }
+        } catch (error) {
+          console.error(error);
+          ElMessage.error('导入失败，请检查文件格式');
         }
       };
       reader.readAsText(file); // 读取文件内容
     }
   };
   fileInput.click(); // 触发文件选择
-
 }
 
 /**
@@ -345,26 +501,65 @@ const imporTextWords = () => {
  * @returns 单词列表
  */
 const parseFileContent = (content: string): Word[] => {
-  const lines = content.split('\n'); // 按行分割
+  const lines = content.split(/\r?\n/); // 按行分割，兼容Windows和Unix换行符
   return lines
       .map(line => line.trim()) // 去除空格
       .filter(line => line.length > 0) // 过滤空行
-      .map(line => ({
-        text: line,
-        explains: '',
-        explainedHidden: false,
-        pronunciation: '',
-        isReview: true,
-        ctime: new Date(),
-        learnDate: new Date(),
-        level: 0,
-        _id: `imported-${Date.now()}-${Math.random()}`, // 生成唯一ID
-        _rev: undefined,
-        image: '',
-        phonetic: '',
-        remember: false
-      }));
+      .map(line => {
+        // 处理CSV格式，如果包含逗号则分割
+        const parts = line.includes(',') ? line.split(',') : [line];
+        return {
+          text: parts[0].trim(), // 第一列作为单词
+          explains: parts[1] ? parts[1].trim() : '', // 第二列作为释义（如果有）
+          explainedHidden: false,
+          pronunciation: '', // 发音将在翻译时填充
+          isReview: true,
+          ctime: new Date(),
+          learnDate: new Date(),
+          level: 1,
+          _id: DB_KEY + uuidv4(), // 生成唯一ID
+          image: '',
+          phonetic: '', // 音标将在翻译时填充
+          remember: false
+        };
+      });
 };
+
+/**
+ * 导出单词到txt文件
+ */
+const exportTextWords = () => {
+  if (wordsStore.count === 0) {
+    ElMessage.warning('没有单词可导出');
+    return;
+  }
+
+
+  // 过滤为指定属性
+  // 将单词列表转换为字符串 (单词,释义 格式)
+
+  const content = wordsStore.words.map(word =>
+      `${word.text}, ${word.explains},${word.explainedHidden}, ${word.pronunciation},${word.isReview}, ${word.ctime},${word.learnDate}, ${word.level}`)// 使用逗号分隔单词和释义
+      .join('\n');// 每行一个单词
+
+
+  // 创建Blob对象
+  const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+
+  // 创建下载链接
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'words_export.txt'; // 文件名
+  link.style.display = 'none';
+
+  // 触发下载
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  ElMessage.success('导出成功');
+}
+
 
 /**
  * 显示全部解释

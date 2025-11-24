@@ -26,8 +26,6 @@ onMounted(() => {
   window.utools.onPluginEnter(async (action: PluginEnterAction) => {
 
 
-    // 进入插件时触发 ,
-    wordsStore.upReview()
 
     /*  // app版本
       const currentVerson = window.services.getAppVerson()
