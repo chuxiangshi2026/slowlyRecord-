@@ -51,9 +51,14 @@
 
   <div class="home_footer">
     <div>
-      <span :class="{ 'remembered-highlight': listMode==0 }" @click="showOnlyForget"> 待复习: {{ wordsStore.forgetCount }} </span>
-      <span :class="{ 'remembered-highlight': listMode==1 }" @click="showOnlyReview"> 已复习: {{ wordsStore.reviewCount }} </span>
-      <span :class="{ 'remembered-highlight': listMode==2 }" @click="showOnlyRemembered"> 已记完: {{ wordsStore.rememberCount }} </span>
+      <span :class="{ 'remembered-highlight': listMode==0 }" @click="showOnlyForget"> 待复习: {{
+          wordsStore.forgetCount
+        }} </span>
+      <span :class="{ 'remembered-highlight': listMode==1 }" @click="showOnlyReview"> 已复习: {{
+          wordsStore.reviewCount
+        }} </span>
+      <span :class="{ 'remembered-highlight': listMode==2 }"
+            @click="showOnlyRemembered"> 已记完: {{ wordsStore.rememberCount }} </span>
       <span :class="{ 'remembered-highlight': listMode==3 }" @click="showAll"> 单词总数: {{ wordsStore.count }} </span>
     </div>
     <div>
@@ -149,15 +154,15 @@ const showOnlyForget = () => {
 }
 
 const showOnlyReview = () => {
-  listMode.value = listMode.value === 0 ? 1 : 0;
+  listMode.value = listMode.value != 1 ? 1 : 0;
 }
 
 // 切换只显示已记住的单词
 const showOnlyRemembered = () => {
-  listMode.value = listMode.value === 0 ? 2 : 0;
+  listMode.value = listMode.value != 2 ? 2 : 0;
 }
 const showAll = () => {
-  listMode.value = listMode.value === 0 ? 3 : 0;
+  listMode.value = listMode.value != 3 ? 3 : 0;
 }
 
 
