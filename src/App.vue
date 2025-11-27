@@ -168,7 +168,7 @@ function updateReview() {
 <style lang="scss">
 //scoped
 @use '@/assets/styles/reset.scss';
-@use '@/assets/styles/common.scss';
+//@use '@/assets/styles/common.scss';
 
 @use '@/assets/styles/card-item.scss';
 @use '@/assets/styles/index.scss';
