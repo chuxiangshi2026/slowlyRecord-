@@ -22,11 +22,28 @@
       "cmds": [
         {
           "type": "over",
-          "label": "加入单词簿"
+          "label": "加入单词簿",
+          "minLength": 1
         }
+      ]
+    },
+    {
+      "code": "huaci",
+      "explain": "划词添加",
+      "cmds": [
+        {
+          "type": "over",
+          "label": "划词添加",
+          "minLength": 1
+        },
+        "划词添加"
       ]
     }
   ],
+  "permissions": {
+    "clipboard": true,
+    "system": true
+  },
   "$schema": "../node_modules/utools-api-types/resource/utools.schema.json"
 }
 
