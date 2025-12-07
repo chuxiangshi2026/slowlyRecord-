@@ -14,15 +14,8 @@ import {addWord} from "@/utils/str-util.ts";
 import {ElMessage} from "element-plus";
 
 const wordsStore = useWordsStore();
-// const {words} = storeToRefs(wordsStore)
 
-// 添加模拟按键方法
-const simulateKeyOperations = {
-  // 模拟复制操作
-  copy: () => {
-    window.services.simulateCopy();
-  }
-}
+
 
 
 window.utools.onPluginEnter(async (action: PluginEnterAction) => {
