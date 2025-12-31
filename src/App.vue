@@ -201,6 +201,12 @@ async function handlePluginAddWord(action: PluginEnterAction) {
   // 传入 scrollToWordByText 作为回调函数
   await addWord(action.payload)
 
+//   退出插件
+
+  // 检查快捷键是否启用
+  if (wordsStore.pluginStatus) {
+     utools.hideMainWindow();
+  }
 }
 
 /**

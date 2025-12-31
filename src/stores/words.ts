@@ -23,6 +23,8 @@ export const useWordsStore =
 
             const currentTranslationPlatform = ref<TranslationPlatform>('youdao'); // 默认使用有道翻译
 
+            // 添加单词后自动退出插件
+            const pluginStatus = ref(true);
             // 快捷键启用状态
             const shortcutEnabled = ref(true); // 默认启用快捷键
             // 总单词数
@@ -55,6 +57,12 @@ export const useWordsStore =
             function setLastAddedWordText(text: string) {
                 console.log('更新定位单词', text)
                 lastAddedWordText.value = text
+            }
+
+
+            function setClosePlugin(status: boolean) {
+                console.log('更新定位单词', status)
+                pluginStatus.value = status
             }
 
 
@@ -508,11 +516,13 @@ export const useWordsStore =
                 lastAddedWordText,
                 currentTranslationPlatform,
                 count,
+                pluginStatus,
                 rememberCount,
                 reviewCount,
                 forgetCount,
                 shortcutEnabled,
                 setLastAddedWordText,
+                setClosePlugin,
                 setTranslationPlatform,
                 setShortcutEnabled,
                 findWord,
