@@ -1,7 +1,8 @@
 <template>
 
   <!--ref="root"-->
-  <div class="list-item" ref="itemRef"  tabindex="0" @keydown="handleKeyDown" @click="onClick" :class="{ 'first-item': isFocus }">
+  <div class="list-item" :class="{ 'shortcut-enabled': wordsStore.shortcutEnabled, 'first-item': isFocus }" ref="itemRef"  tabindex="0" @keydown="handleKeyDown" @click="onClick">
+
     <p class="word">
       {{ word.text }}
       <span class="phonetic">{{ word.phonetic }}</span>
@@ -96,7 +97,7 @@ onMounted(async () => {
   if (props.isFirst) {
     await nextTick(); // 确保DOM渲染完成
     setTimeout(() => {
-      if (itemRef.value) {
+      if (wordsStore.shortcutEnabled && itemRef.value) {
         itemRef.value.focus();
         isFocus.value = true;
       }
@@ -109,6 +110,10 @@ onMounted(async () => {
 const explanationRef = ref<HTMLElement | null>(null);
 // 处理键盘事件
 const handleKeydown = (event: KeyboardEvent) => {
+  // 检查快捷键是否启用
+  /*if (!wordsStore.shortcutEnabled) {
+    return;
+  }*/
   // 检查是否按下了 Ctrl+Enter
   if (event.ctrlKey && event.key === 'Enter') {
     saveExplanation(event);
@@ -121,10 +126,20 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
-
+// 检查快捷键是否启用
+// const isShortcutEnabled = () => {
+//   wordsStore.shortcutEnabled
+//   const savedStatus = localStorage.getItem('shortcutEnabled');
+//   return savedStatus !== null ? savedStatus === 'true' : true; // 默认启用
+// };
 
 // 新增键盘事件处理
 const handleKeyDown = (event: KeyboardEvent) => {
+
+  // 检查快捷键是否启用
+  if (!wordsStore.shortcutEnabled) {
+    return;
+  }
   console.log("快捷键")
   // 检查是否按下 Shift+R (记住)
   if (event.shiftKey && event.key.toLowerCase() === 'r') {
@@ -154,7 +169,8 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
 // 点击事件处理 - 获取焦点
 const onClick = () => {
-  if (itemRef.value) {
+  // 检查快捷键是否启用，只有启用时才获取焦点
+  if (wordsStore.shortcutEnabled && itemRef.value) {
     itemRef.value.focus();
   }
 };
@@ -494,6 +510,17 @@ const deleteWord = () => {
 .list-item:focus {
   outline: 1px solid #409eff; /* Element Plus 主色调 */
   border-radius: 2px;
+}
+
+/* 只有在快捷键启用时才显示聚焦效果 */
+.list-item.shortcut-enabled:focus {
+  outline: 1px solid #409eff; /* Element Plus 主色调 */
+  border-radius: 2px;
+}
+
+/* 快捷键关闭时不显示聚焦效果 */
+.list-item:not(.shortcut-enabled):focus {
+  outline: none;
 }
 
 </style>
