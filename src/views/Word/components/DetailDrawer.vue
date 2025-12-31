@@ -142,7 +142,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {ref, watch, computed, onMounted} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {useWordsStore} from "@/stores/words.ts";
 import type {TranslationPlatform} from "@/types/words";
 // import BasicInfoForm from './BasicInfoForm.vue'
@@ -158,10 +158,10 @@ const props = defineProps({
   }
 })
 // 退出插件
-const exitThePlugin = ref(true)
+const exitThePlugin = ref(false)
 
 
-const shortcutEnabled = ref(true) // 快捷键开关状态
+const shortcutEnabled = ref(false) // 快捷键开关状态
 // const autoFocusFirstItem = ref(true) // 自动聚焦第一个单词状态
 
 // 实现快捷键开关功能
@@ -171,32 +171,20 @@ const openTheShortcut = () => {
 }
 // 在组件挂载时读取快捷键状态
 onMounted(() => {
-  const savedStatus = wordsStore.shortcutEnabled
   // const savedStatus = localStorage.getItem('shortcutEnabled')
-  if (savedStatus !== null) {
-    shortcutEnabled.value = savedStatus
-  }
+  shortcutEnabled.value = wordsStore.shortcutEnabled
+
+  // const savedStatus = localStorage.getItem('shortcutEnabled')
+  exitThePlugin.value = wordsStore.pluginStatus
+
+  // const savedStatus = localStorage.getItem('shortcutEnabled')
+  tranApi.value = wordsStore.currentTranslationPlatform
 })
 
 const onCloseAfterAddSwitchChange = () => {
   wordsStore.setClosePlugin(exitThePlugin.value)
 }
 
-const listShortcuts = [
-  {desc: '记得首个单词', shortcut: 'Shift + R'},
-  {desc: '忘记首个单词', shortcut: 'Shift + F'},
-  {desc: '首个单词发音', shortcut: 'Shift + P'},
-  {desc: '翻译首个单词', shortcut: 'Shift + T'},
-  {desc: '保存释义', shortcut: 'Ctrl + Enter'}
-]
-
-const cardShortcuts = [
-  {desc: '下一个', shortcut: 'Shift + >'},
-  {desc: '上一个', shortcut: 'Shift + <'},
-  {desc: '单词发音', shortcut: 'Shift + P'},
-  {desc: '模式切换', shortcut: 'Shift + M'},
-  {desc: '开启/关闭翻译', shortcut: 'Shift + T'},
-]
 
 let wordsStore = useWordsStore();
 
@@ -252,6 +240,23 @@ const save = () => {
   emit('save', detailData.value)
   close()
 }
+
+
+const listShortcuts = [
+  {desc: '记得首个单词', shortcut: 'Shift + R'},
+  {desc: '忘记首个单词', shortcut: 'Shift + F'},
+  {desc: '首个单词发音', shortcut: 'Shift + P'},
+  {desc: '翻译首个单词', shortcut: 'Shift + T'},
+  {desc: '保存释义', shortcut: 'Ctrl + Enter'}
+]
+
+const cardShortcuts = [
+  {desc: '下一个', shortcut: 'Shift + >'},
+  {desc: '上一个', shortcut: 'Shift + <'},
+  {desc: '单词发音', shortcut: 'Shift + P'},
+  {desc: '模式切换', shortcut: 'Shift + M'},
+  {desc: '开启/关闭翻译', shortcut: 'Shift + T'},
+]
 </script>
 <style scoped lang="scss">
 .el-drawer {
@@ -317,8 +322,8 @@ const save = () => {
   }
 }
 
-.el-switch{
+.el-switch {
   --el-switch-on-color: #c1bbbb;
-  --el-switch-off-color: rgba(113,109,109,0.29);
+  --el-switch-off-color: rgba(113, 109, 109, 0.29);
 }
 </style>
