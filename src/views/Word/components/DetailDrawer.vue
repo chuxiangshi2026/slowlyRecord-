@@ -179,7 +179,7 @@ onMounted(() => {
 })
 
 const onCloseAfterAddSwitchChange = () => {
-  wordsStore.setTranslationPlatform(tranApi.value)
+  wordsStore.setClosePlugin(exitThePlugin.value)
 }
 
 const listShortcuts = [

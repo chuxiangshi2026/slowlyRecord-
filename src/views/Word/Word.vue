@@ -70,7 +70,9 @@
       <span :class="{ 'remembered-highlight': listMode==3 }" @click="showAll"> 单词总数: {{ wordsStore.count }} </span>
     </div>
     <div>
-            <i class="iconfont icon-setting" @click="drawerVisible = true"></i>
+      <el-tooltip class="box-item" effect="dark" content="设置" placement="top" popper-class="small-tooltip">
+            <i class="iconfont icon-setting"  @click="drawerVisible = true"></i>
+      </el-tooltip>
 <!--            <i class="iconfont icon-time" @click="scrollToWordByText('disk')"></i>-->
       <el-tooltip class="box-item" effect="dark" content="置顶" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-top" @click="scrollToTop"></i>
