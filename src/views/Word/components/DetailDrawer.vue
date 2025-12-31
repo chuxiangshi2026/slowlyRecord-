@@ -27,12 +27,11 @@
       <div class="setting-item">
         <div class="content">加入单词后退出插件</div>
         <el-switch class="shorcut-desc"
-                   v-model="value1"
+                   v-model="exitThePlugin"
                    inline-prompt
                    size="large"
                    active-text="开"
                    inactive-text="关"
-                   style="--el-switch-on-color: #c1bbbb; --el-switch-off-color: rgba(113,109,109,0.29)"
                    @change="onCloseAfterAddSwitchChange"
         />
       </div>
@@ -51,6 +50,20 @@
 
           />
         </el-select>
+      </div>
+    </div>
+
+    <div class="titles">
+      <div class="setting-item">
+        <div class="content">启用快捷键</div>
+        <el-switch class="shorcut-desc"
+                   v-model="shortcutEnabled"
+                   inline-prompt
+                   size="large"
+                   active-text="开"
+                   inactive-text="关"
+                   @change="openTheShortcut"
+        />
       </div>
     </div>
 
@@ -129,7 +142,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {ref, watch, computed} from 'vue'
+import {ref, watch, computed, onMounted} from 'vue'
 import {useWordsStore} from "@/stores/words.ts";
 import type {TranslationPlatform} from "@/types/words";
 // import BasicInfoForm from './BasicInfoForm.vue'
@@ -144,12 +157,29 @@ const props = defineProps({
     default: '设置'
   }
 })
+// 退出插件
+const exitThePlugin = ref(true)
 
-const value1 = ref(true)
 
+const shortcutEnabled = ref(true) // 快捷键开关状态
+// const autoFocusFirstItem = ref(true) // 自动聚焦第一个单词状态
+
+// 实现快捷键开关功能
+const openTheShortcut = () => {
+  // 可以在这里添加持久化保存快捷键状态的逻辑
+  wordsStore.setShortcutEnabled(shortcutEnabled.value)
+}
+// 在组件挂载时读取快捷键状态
+onMounted(() => {
+  const savedStatus = wordsStore.shortcutEnabled
+  // const savedStatus = localStorage.getItem('shortcutEnabled')
+  if (savedStatus !== null) {
+    shortcutEnabled.value = savedStatus
+  }
+})
 
 const onCloseAfterAddSwitchChange = () => {
-
+  wordsStore.setTranslationPlatform(tranApi.value)
 }
 
 const listShortcuts = [
@@ -157,7 +187,7 @@ const listShortcuts = [
   {desc: '忘记首个单词', shortcut: 'Shift + F'},
   {desc: '首个单词发音', shortcut: 'Shift + P'},
   {desc: '翻译首个单词', shortcut: 'Shift + T'},
-  {desc: '确定编辑释义', shortcut: 'Ctrl + Enter'}
+  {desc: '保存释义', shortcut: 'Ctrl + Enter'}
 ]
 
 const cardShortcuts = [
@@ -287,4 +317,8 @@ const save = () => {
   }
 }
 
+.el-switch{
+  --el-switch-on-color: #c1bbbb;
+  --el-switch-off-color: rgba(113,109,109,0.29);
+}
 </style>

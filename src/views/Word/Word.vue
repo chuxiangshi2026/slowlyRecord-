@@ -358,8 +358,15 @@ watch([() => listMode.value, () => showFilteredWords.value], async () => {
   // 等待虚拟滚动器渲染完成
   setTimeout(() => {
     if (showFilteredWords.value.length > 0) {
-      // 尝试聚焦到第一个元素
-      focusFirstItem();
+      // 检查快捷键是否启用，只有启用时才聚焦到第一个元素
+      const shortcutEnabled = localStorage.getItem('shortcutEnabled');
+      const autoFocusEnabled = localStorage.getItem('autoFocusFirstItem');
+      const shouldAutoFocus = shortcutEnabled !== 'false' && autoFocusEnabled !== 'false';
+
+      if (shouldAutoFocus) {
+        // 尝试聚焦到第一个元素
+        focusFirstItem();
+      }
     }
   }, 100);
 }, {immediate: true});
@@ -368,6 +375,14 @@ watch([() => listMode.value, () => showFilteredWords.value], async () => {
 // 聚焦到第一个元素
 const focusFirstItem = async () => {
   await nextTick(); // 确保DOM已更新
+  // 检查快捷键是否启用，只有启用时才聚焦
+  const shortcutEnabled = localStorage.getItem('shortcutEnabled');
+  const shouldFocus = shortcutEnabled !== 'false';
+
+  if (!shouldFocus) {
+    return; // 如果快捷键被禁用，则不执行聚焦
+  }
+
   // 延迟一段时间以确保虚拟滚动器已渲染元素
   setTimeout(() => {
     const firstElement = document.querySelector('.list-item');

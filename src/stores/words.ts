@@ -23,7 +23,8 @@ export const useWordsStore =
 
             const currentTranslationPlatform = ref<TranslationPlatform>('youdao'); // 默认使用有道翻译
 
-
+            // 快捷键启用状态
+            const shortcutEnabled = ref(true); // 默认启用快捷键
             // 总单词数
             const count = computed(() => {
                 return words.value.length;
@@ -62,6 +63,12 @@ export const useWordsStore =
              */
             function setTranslationPlatform(platform: TranslationPlatform) {
                 currentTranslationPlatform.value = platform;
+            }
+
+
+
+            function setShortcutEnabled(enabled: boolean) {
+                shortcutEnabled.value = enabled;
             }
 
             /**
@@ -504,8 +511,10 @@ export const useWordsStore =
                 rememberCount,
                 reviewCount,
                 forgetCount,
+                shortcutEnabled,
                 setLastAddedWordText,
                 setTranslationPlatform,
+                setShortcutEnabled,
                 findWord,
                 addAndUpdateWord,
                 addAndUpdateWords,
