@@ -23,7 +23,7 @@
         </el-tooltip>
       </div>
       <div>
-        <el-tooltip class="box-item" effect="dark" content="记住" placement="" popper-class="small-tooltip">
+        <el-tooltip class="box-item" effect="dark" content="记住" placement="top" popper-class="small-tooltip">
           <i class="iconfont icon-check iconHover" @click="remember" :class="{ disabled: disableActions!=0 }"></i>
         </el-tooltip>
         <el-tooltip class="box-item" effect="dark" content="忘记" placement="top" popper-class="small-tooltip">
@@ -83,11 +83,11 @@ const wordModel = defineModel<Word>({required: true})
 const emit = defineEmits(['translation', 'remember', 'forget', 'delete'])
 
 
-import {nextTick, onMounted, ref} from "vue";
 import {DEFAULT_INTERVALS} from "@/constants";
 // import {useUsersStore} from "@/stores/users.ts";
 import {useWordsStore} from "@/stores/words.ts";
 import {bufferToWave, downloadAndStoreAudio} from "@/utils/audio-util.ts";
+import {nextTick, onMounted, ref} from "vue";
 
 const wordsStore = useWordsStore();
 // 是否处于焦点状态
@@ -140,7 +140,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
   if (!wordsStore.shortcutEnabled) {
     return;
   }
-  console.log("快捷键")
+  // console.log("快捷键")
   // 检查是否按下 Shift+R (记住)
   if (event.shiftKey && event.key.toLowerCase() === 'r') {
     console.log("shift+r快捷键被按下")
