@@ -401,7 +401,11 @@ const remember = () => {
   let learnDate = wordModel.value.learnDate;
 
   // 确保 learnDate 是 Date 对象
-
+  if (typeof learnDate === 'string') {
+    learnDate = new Date(learnDate);
+  } else if (!(learnDate instanceof Date)) {
+    learnDate = new Date(); // 如果不是有效的日期，使用当前时间
+  }
   // 开始复习时间 (上次复习时间 + 当前等级对应的默认复习间隔)
   let level = wordModel.value.level;
   // todo 这里序列化不是时间类型
