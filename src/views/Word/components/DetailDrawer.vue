@@ -336,10 +336,10 @@ const save = () => {
 
 
 const listShortcuts = [
-  {desc: '记得首个单词', shortcut: 'Shift + R'},
-  {desc: '忘记首个单词', shortcut: 'Shift + F'},
-  {desc: '首个单词发音', shortcut: 'Shift + P'},
-  {desc: '翻译首个单词', shortcut: 'Shift + T'},
+  {desc: '记得选中单词', shortcut: 'Shift + R'},
+  {desc: '忘记选中单词', shortcut: 'Shift + F'},
+  {desc: '选中单词发音', shortcut: 'Shift + P'},
+  {desc: '翻译选中单词', shortcut: 'Shift + T'},
   {desc: '保存释义', shortcut: 'Ctrl + Enter'}
 ]
 

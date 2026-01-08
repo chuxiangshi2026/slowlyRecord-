@@ -33,11 +33,13 @@
         <MyListItem
             :word="item"
             :disable-actions="listMode"
-            :showExplained="showExplained"
-            hiddenExplain="hiddenExplain"
             v-model="wordsStore.words[getIndexInOriginalList(item)]"
             @delete="deleteWord(getIndexInOriginalList(item))"
+            :showExplained="showExplained"
         >
+          <!--          :hiddenExplain="hiddenExplain"-->
+          <!--            ref="visibleExplained"-->
+          <!--            ref="invisibleExplained"-->
         </MyListItem>
         <!--      </div>-->
       </RecycleScroller>
@@ -144,7 +146,7 @@ import {
 
 import {log} from "@/utils/logger.ts";
 import {RecycleScroller} from 'vue-virtual-scroller'
-import {addWord} from "@/utils/str-util.ts";
+// import {addWord} from "@/utils/str-util.ts";
 
 const word = ref('')
 
@@ -317,75 +319,69 @@ const scrollToBottom = () => {
  */
 const scrollToWordByText = (wordText: string) => {
   console.log("---------", wordText, wordsStore.lastAddedWordText)
-  const index = wordsStore.words.findIndex(word => word.text === wordText)
+  // const index = wordsStore.words.findIndex(word => word.text === wordText)
+  const index = showFilteredWords.value.findIndex(word => word.text === wordText)
   if (index !== -1) {
     scrollToWord(index)
+  } else {
+    setTimeout(() => {
+      const index = showFilteredWords.value.findIndex(word => word.text === wordText)
+      if (index !== -1) {
+        scrollToWord(index)
+      }
+    }, 120)
+    console.log('未找到此单词，无法定位')
   }
 }
 
 
-// 当新数据更新时 自动滚动到单词处
-// 监听 Store 中的 lastAddedWordText 状态
-watch(() => wordsStore.lastAddedWordText, (wordText) => {
-  console.log("数据更新单词为空，不滚动", wordText);
-  if (wordText) {
-    console.log("数据更新，滚动到此单词处:", wordText);
-    nextTick(() => {  // 等待 DOM 更新
-      // 添加延时确保虚拟滚动器已渲染完成
-      setTimeout(() => {
-        scrollToWordByText(wordText)  // 调用组件内的滚动方法
-        // 清空状态，避免重复触发
-        // 延迟清空状态，确保滚动执行完成
-        setTimeout(() => {
-          wordsStore.setLastAddedWordText('')
-        }, 100)
-      }, 50) // 添加50ms延时，确保虚拟滚动器渲染完成
-    })
-  }
-}, {immediate: true})
-
-
 // 监听列表模式和单词数据变化，自动聚焦到第一个元素
 watch([() => listMode.value, () => showFilteredWords.value], async () => {
+  // 检查快捷键是否启用，只有启用时才聚焦到第一个元素
+  if (!wordsStore.shortcutEnabled) {
+    return
+  }
+  console.log('自动聚焦到元素');
   await nextTick(); // 等待DOM更新
   // 等待虚拟滚动器渲染完成
-  setTimeout(() => {
-    if (showFilteredWords.value.length > 0) {
-      // 检查快捷键是否启用，只有启用时才聚焦到第一个元素
-      const shortcutEnabled = localStorage.getItem('shortcutEnabled');
-      const autoFocusEnabled = localStorage.getItem('autoFocusFirstItem');
-      const shouldAutoFocus = shortcutEnabled !== 'false' && autoFocusEnabled !== 'false';
-
-      if (shouldAutoFocus) {
-        // 尝试聚焦到第一个元素
-        focusFirstItem();
-      }
+  if (showFilteredWords.value.length > 0) {
+    // 尝试聚焦到第一个元素
+    // 聚焦到指定元素
+    console.log('聚焦单词', wordsStore.lastFocusWordText)
+    if (wordsStore.lastFocusWordText.length > 0) {
+      focusElement('[data-word="' + wordsStore.lastFocusWordText + '"]')
+    } else {
+      focusElement('.list-item');
     }
-  }, 100);
+  }
+  // setTimeout(() => {
+  // }, 50);
 }, {immediate: true});
 
 
-// 聚焦到第一个元素
-const focusFirstItem = async () => {
-  await nextTick(); // 确保DOM已更新
+// 聚焦到指定元素
+// focusElement('.list-item') - 聚焦到第一个列表项（等同于原来的focusFirstItem）
+// focusElement('.list-item:nth-child(5)') - 聚焦到第五个列表项
+// focusElement('#specific-id') - 聚焦到具有特定ID的元素
+// focusElement('[data-word="hello"]') - 聚焦到具有特定数据属性的元素
+const focusElement = async (selector: string) => {
   // 检查快捷键是否启用，只有启用时才聚焦
-  const shortcutEnabled = localStorage.getItem('shortcutEnabled');
-  const shouldFocus = shortcutEnabled !== 'false';
-
-  if (!shouldFocus) {
+  console.log('快捷键状态', wordsStore.shortcutEnabled)
+  if (!wordsStore.shortcutEnabled) {
     return; // 如果快捷键被禁用，则不执行聚焦
   }
+  await nextTick(); // 确保DOM已更新
 
   // 延迟一段时间以确保虚拟滚动器已渲染元素
   setTimeout(() => {
-    const firstElement = document.querySelector('.list-item');
-    if (firstElement) {
-      (firstElement as HTMLElement).focus();
-      // console.log('已聚焦到第一个单词项');
+    const element = document.querySelector(selector);
+    if (element) {
+      console.log(`已聚焦到指定元素: ${selector}`);
+      (element as HTMLElement).focus();
+      wordsStore.lastFocusWordText = ''
     }
   }, 200);
 };
-
 
 /**
  * 处理导入命令
@@ -695,23 +691,46 @@ const exportTextWords = () => {
 // 是否直接显示或隐藏全部释义（-1 原状态，1显示全部，0 隐藏全部）
 const showExplained = ref(-1)
 // 单独控制当前的卡片释义
-const hiddenExplain = ref('')
+// const hiddenExplain = ref('')
 /**
  * 显示全部解释
  */
 const visibleExplained = () => {
   showExplained.value = showExplained.value != 1 ? 1 : -1
-  hiddenExplain.value = ''
+  // wordsStore.hiddenExplain = ''
   // wordsStore.words.forEach(x => x.explainedHidden = false)
+  // hiddenExplain.value=''
 }
 /**
  * 隐藏全部解释
  */
 const invisibleExplained = () => {
-  hiddenExplain.value = ''
+  // wordsStore.hiddenExplain = ''
   showExplained.value = showExplained.value != 0 ? 0 : -1
+  // hiddenExplain.value=''
   // wordsStore.words.forEach(x => x.explainedHidden = true)
 }
+
+
+// 当新数据更新时 自动滚动到单词处  放到最后
+// 监听 Store 中的 lastAddedWordText 状态
+watch(() => wordsStore.lastAddedWordText, (wordText) => {
+  if (wordText) {
+    console.log("数据更新，滚动到此单词处:", wordText);
+    nextTick(() => {  // 等待 DOM 更新
+      // 添加延时确保虚拟滚动器已渲染完成
+      setTimeout(() => {
+        scrollToWordByText(wordText)  // 调用组件内的滚动方法
+        // 清空状态，避免重复触发
+        // 延迟清空状态，确保滚动执行完成
+        setTimeout(() => {
+          wordsStore.setLastAddedWordText('')
+        }, 100)
+      }, 50) // 添加50ms延时，确保虚拟滚动器渲染完成
+    })
+  }
+  console.log("清空滚动更新单词", wordText);
+}, {immediate: true})
 </script>
 
 <style scoped lang="scss">
