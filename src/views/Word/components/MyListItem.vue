@@ -1,9 +1,9 @@
 <template>
 
   <!--ref="root"-->
-  <div class="list-item" :class="{ 'shortcut-enabled': wordsStore.shortcutEnabled, 'first-item': isFocus }" ref="itemRef"  tabindex="0" @keydown="handleKeyDown" @click="onClick">
+  <div class="list-item" :class="{ 'shortcut-enabled': wordsStore.shortcutEnabled, 'first-item': isFocus }" ref="itemRef" :data-word="word.text"  tabindex="0" @keydown="handleKeyDown" @click="onClick">
 
-    <p class="word">
+    <p class="word" >
       {{ word.text }}
       <span class="phonetic">{{ word.phonetic }}</span>
     </p>
@@ -40,7 +40,8 @@
       </div>
     </div>
     <div>
-      <div class="translation" :hidden="hiddenExplain===word.text?word.explainedHidden: (showExplained===-1?word.explainedHidden:showExplained) == 0">
+<!--      hiddenExplain===word.text?word.explainedHidden: -->
+      <div class="translation" :hidden="(showExplained===-1?word.explainedHidden:showExplained) == 0">
         <!--             @keydown.ctrl.enter="saveExplanation"-->
         <div class="translate-editable" contenteditable="true"
              @blur="saveExplanation"
@@ -89,7 +90,7 @@ import {DEFAULT_INTERVALS} from "@/constants";
 // import {useUsersStore} from "@/stores/users.ts";
 import {useWordsStore} from "@/stores/words.ts";
 import {bufferToWave, downloadAndStoreAudio} from "@/utils/audio-util.ts";
-import {nextTick, onMounted, ref} from "vue";
+import {nextTick, onMounted, ref, toRef} from "vue";
 
 const wordsStore = useWordsStore();
 // 是否处于焦点状态
@@ -197,11 +198,14 @@ const saveExplanation = (event: Event) => {
 
 
 //不影响父组件的值 ，因为这个值不需要传回父组件
-const hiddenExplain = ref(props.hiddenExplain);
+// const hiddenExplain = ref(props.hiddenExplain);
+// const hiddenExplain = toRef(props, 'hiddenExplain');
+const hiddenExplain = ref('');
+// const hiddenExplain = ;
 // 翻译
 const translation = () => {
+  hiddenExplain.value = wordModel.value.text
   wordModel.value.explainedHidden = !wordModel.value.explainedHidden;
-  hiddenExplain.value=wordModel.value.text
 }
 
 

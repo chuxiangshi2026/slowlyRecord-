@@ -43,13 +43,17 @@ export const useWordsStore =
             const words = ref<Word[]>([])
 
             const lastAddedWordText = ref('')    //记录最新添加的单词
+            const lastFocusWordText = ref('')    //记录最新添加的单词
 
             const currentTranslationPlatform = ref<TranslationPlatform>('youdao'); // 默认使用有道翻译
 
             // 添加单词后自动退出插件
-            const pluginStatus = ref(true);
-            // 快捷键启用状态
-            const shortcutEnabled = ref(true); // 默认启用快捷键
+            const pluginStatus = ref(false);
+            // 默认关闭快捷键
+            const shortcutEnabled = ref(false);
+            // 当前操作释义的单词
+            // const hiddenExplain = ref('');
+
             // 总单词数
             const count = computed(() => {
                 return words.value.length;
@@ -256,6 +260,8 @@ export const useWordsStore =
                 words,
                 lastAddedWordText,
                 currentTranslationPlatform,
+                lastFocusWordText,
+                // hiddenExplain,
                 count,
                 pluginStatus,
                 rememberCount,
