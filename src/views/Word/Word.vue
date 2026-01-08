@@ -3,12 +3,14 @@
   <!--  <el-button type="primary" @click="clearWord">清空单词</el-button>-->
   <!--  <el-button type="primary" @click="initWord">初始化单词</el-button>-->
 
-  <!--      <el-row>
-          <el-col>
-            <el-input :span="6" v-model="word" placeholder="请输入单词"></el-input>
-            <el-button :span="2" type="primary" @click="addWord(word)">添加单词</el-button>
-          </el-col>
-        </el-row>-->
+<!--  <el-row>
+    <el-col>
+      <el-input :span="6" v-model="word" placeholder="请输入单词"></el-input>
+      &lt;!&ndash;            <el-button :span="2" type="primary" @click="addWord(word)">添加单词</el-button>&ndash;&gt;
+      <el-button :span="2" type="primary" @click="scrollToWordByText(word)">滚动到单词</el-button>
+
+    </el-col>
+  </el-row>-->
 
   <div v-if="showWords">暂无数据,请在主界面输入框添加单词</div>
   <div v-else>
@@ -32,6 +34,7 @@
             :word="item"
             :disable-actions="listMode"
             :showExplained="showExplained"
+            hiddenExplain="hiddenExplain"
             v-model="wordsStore.words[getIndexInOriginalList(item)]"
             @delete="deleteWord(getIndexInOriginalList(item))"
         >
@@ -140,8 +143,10 @@ import {
 } from "@/utils/word-util.ts";
 
 import {log} from "@/utils/logger.ts";
-import { RecycleScroller } from 'vue-virtual-scroller'
-// const word = ref('')
+import {RecycleScroller} from 'vue-virtual-scroller'
+import {addWord} from "@/utils/str-util.ts";
+
+const word = ref('')
 
 const wordsStore = useWordsStore();
 
@@ -223,6 +228,12 @@ const setItemRef = (el: any, index: number) => {
 
 // 滚动到指定索引的单词
 const scrollToWord = (index: number) => {
+  // 检查索引是否有效，如果单词列表为空或索引无效，则不执行滚动
+  if (index < 0 || !showFilteredWords.value || showFilteredWords.value.length === 0) {
+    console.log("索引无效或单词列表为空，不执行滚动:", index);
+    return;
+  }
+
   nextTick(() => {
     // 使用虚拟滚动时，直接计算滚动位置
     const scroller = document.querySelector('.scroller')
@@ -256,26 +267,6 @@ const scrollToWord = (index: number) => {
         wordsStore.setLastAddedWordText('')
       }, 100)
     }
-
-
-    /*    if (itemRefs.value[index] && scrollContainer.value) {
-          const container = scrollContainer.value
-          const targetElement = itemRefs.value[index]
-
-          // 计算相对位置
-          const containerRect = container.getBoundingClientRect()
-          const targetRect = targetElement.getBoundingClientRect()
-
-          // 滚动到目标元素位置
-          container.scrollTop = container.scrollTop + targetRect.top - containerRect.top - 100
-
-
-          // 延迟清空状态，确保滚动执行完成
-          setTimeout(() => {
-            wordsStore.setLastAddedWordText('')
-          }, 100)
-        }
-          */
   })
 }
 
@@ -336,16 +327,19 @@ const scrollToWordByText = (wordText: string) => {
 // 当新数据更新时 自动滚动到单词处
 // 监听 Store 中的 lastAddedWordText 状态
 watch(() => wordsStore.lastAddedWordText, (wordText) => {
-  console.log("Watch triggered with wordText:", wordText);
+  console.log("数据更新单词为空，不滚动", wordText);
   if (wordText) {
+    console.log("数据更新，滚动到此单词处:", wordText);
     nextTick(() => {  // 等待 DOM 更新
-      console.log("Scrolling to word:", wordText);
-      scrollToWordByText(wordText)  // 调用组件内的滚动方法
-      // 清空状态，避免重复触发
-      // 延迟清空状态，确保滚动执行完成
+      // 添加延时确保虚拟滚动器已渲染完成
       setTimeout(() => {
-        wordsStore.setLastAddedWordText('')
-      }, 100)
+        scrollToWordByText(wordText)  // 调用组件内的滚动方法
+        // 清空状态，避免重复触发
+        // 延迟清空状态，确保滚动执行完成
+        setTimeout(() => {
+          wordsStore.setLastAddedWordText('')
+        }, 100)
+      }, 50) // 添加50ms延时，确保虚拟滚动器渲染完成
     })
   }
 }, {immediate: true})
@@ -700,17 +694,21 @@ const exportTextWords = () => {
 
 // 是否直接显示或隐藏全部释义（-1 原状态，1显示全部，0 隐藏全部）
 const showExplained = ref(-1)
+// 单独控制当前的卡片释义
+const hiddenExplain = ref('')
 /**
  * 显示全部解释
  */
 const visibleExplained = () => {
   showExplained.value = showExplained.value != 1 ? 1 : -1
+  hiddenExplain.value = ''
   // wordsStore.words.forEach(x => x.explainedHidden = false)
 }
 /**
  * 隐藏全部解释
  */
 const invisibleExplained = () => {
+  hiddenExplain.value = ''
   showExplained.value = showExplained.value != 0 ? 0 : -1
   // wordsStore.words.forEach(x => x.explainedHidden = true)
 }
