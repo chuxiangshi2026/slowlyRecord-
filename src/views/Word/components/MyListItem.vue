@@ -40,7 +40,7 @@
       </div>
     </div>
     <div>
-      <div class="translation" :hidden="(showExplained===-1?word.explainedHidden:showExplained) == 0">
+      <div class="translation" :hidden="hiddenExplain===word.text?word.explainedHidden: (showExplained===-1?word.explainedHidden:showExplained) == 0">
         <!--             @keydown.ctrl.enter="saveExplanation"-->
         <div class="translate-editable" contenteditable="true"
              @blur="saveExplanation"
@@ -74,12 +74,14 @@ const props = withDefaults(defineProps<{
   disableActions?: number  //0 待复习  1已复习  2 永久记住 3 全部
   showExplained?: number  //-1 显示原逻辑， 1显示全部 0 隐藏全部
   isFirst?: boolean  // 是否是第一个元素
+  hiddenExplain?: string
 }>(), {
   disableActions: 0,
   showExplained: -1,
-  isFirst: false
+  hiddenExplain: ''
 });
 const wordModel = defineModel<Word>({required: true})
+
 const emit = defineEmits(['translation', 'remember', 'forget', 'delete'])
 
 
@@ -194,9 +196,12 @@ const saveExplanation = (event: Event) => {
 }
 
 
+//不影响父组件的值 ，因为这个值不需要传回父组件
+const hiddenExplain = ref(props.hiddenExplain);
 // 翻译
 const translation = () => {
   wordModel.value.explainedHidden = !wordModel.value.explainedHidden;
+  hiddenExplain.value=wordModel.value.text
 }
 
 
