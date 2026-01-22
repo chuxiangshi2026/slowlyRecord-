@@ -121,10 +121,10 @@ npm run build
 使用方法: 主输入框输入任一正确单词后,选择"加入单词簿"，自动翻译后加入学习列表显示,主界面输入review关键字，可进入单词列表复习，
 每次有效复习后会更新单词等级，延长下次复习时间，直到完成长期记忆。翻译内容支持修改，单词列表支持导入，导出。
 导入支持json,txt,csv三种文件类型,每种类型有两种模板格式
-1. 直接单词换行![img.png](img.png)
+1. 直接单词换行![img.png](images/img.png)
 2. 完整结构,方便保留上次状态
-    - json![img_1.png](img_1.png)
-    - txt![img_2.png](img_2.png)
+    - json![img_1.png](images/img_1.png)
+    - txt![img_2.png](images/img_2.png)
 
 
 
@@ -132,15 +132,15 @@ npm run build
 ## 授权管理
 - 阿里云配置
   - 开通翻译api调用服务https://mt.console.aliyun.com/service
-  - 创建专用账户，勾选使用永久 AccessKey 访问。![img_4.png](img_4.png)
-  - 复制AccessKey ID和AccessKey Secret,页面关闭后无法再次查看![img_5.png](img_5.png)
-  - 点击添加授权https://ram.console.aliyun.com/users一定要同时打开管理机器翻译权限，否则无法调用 ![img_3.png](img_3.png)
+  - 创建专用账户，勾选使用永久 AccessKey 访问。![img_4.png](images/img_4.png)
+  - 复制AccessKey ID和AccessKey Secret,页面关闭后无法再次查看![img_5.png](images/img_5.png)
+  - 点击添加授权https://ram.console.aliyun.com/users一定要同时打开管理机器翻译权限，否则无法调用 ![img_3.png](images/img_3.png)
 - 百度去appkey设置
   - 注册登陆，申请成为开发者
   - https://api.fanyi.baidu.com/manage/developer
   - 开通通用文本翻译
   - https://fanyi-api.baidu.com/choose![img_6.png](img_6.png)
-  - 在开发者信息中找到appid与密钥![img_7.png](img_7.png)
+  - 在开发者信息中找到appid与密钥![img_7.png](images/img_7.png)
 - 有道key
   - https://ai.youdao.com/console/#/service-singleton/text-translation
   - 创建应用选择文本翻译
