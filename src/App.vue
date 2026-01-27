@@ -18,7 +18,7 @@ import {onMounted, onUnmounted, ref} from 'vue';
 import {useWordsStore} from "@/stores/words.ts";
 // import {storeToRefs} from "pinia";
 import {DEFAULT_INTERVALS} from "@/constants";
-import {addWord} from "@/utils/str-util.ts";
+import {addWord, batchAddWords} from "@/utils/str-util.ts";
 import {ElMessage} from "element-plus";
 import {ocrTranslate} from "@/utils/pic-translate.ts";
 // import path from "node:path";
@@ -231,7 +231,7 @@ function handleSelectOCRItem(region: any) {
 
   if (word) {
     console.log('待添加的选中单词'+`[${word}]`)
-    addWord(`${word}`.trim());
+    batchAddWords([`${word}`.trim()]);
     // ElMessage.success(`已保存: ${word} - ${translation}`);
   } else {
     ElMessage.warning('单词或翻译内容为空');
@@ -335,7 +335,7 @@ function checkShearBoardAddWork(text: string) {
   if (textError) {
     ElMessage.error('请先用光标选中单词');
   } else {
-    addWord(text)
+    batchAddWords([text])
     // ElMessage.success(text);
   }
 }
@@ -421,7 +421,7 @@ async function handlePluginAddWord(payload: string) {
 
   // console.log('addWord====================', action.payload)
   // 传入 scrollToWordByText 作为回调函数
-  await addWord(payload)
+  await batchAddWords([payload])
 
 //   退出插件
 

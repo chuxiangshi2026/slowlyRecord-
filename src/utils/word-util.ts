@@ -2,6 +2,8 @@ import type { Word } from "@/types/words";
 import { DB_KEY } from "@/constants";
 import { v4 as uuidv4 } from "uuid";
 import { formatDateTime } from "@/utils/date-util";
+import { useWordsStore } from "@/stores/words.ts";
+import { ElMessage } from "element-plus";
 
 /**
  * 解析文件内容为单词列表
@@ -134,3 +136,80 @@ export const validateImportedWords = (words: any[]): any[] => {
         }));
 };
 
+/**
+ * 批量翻译和添加单词
+ * @param words 要添加的单词列表
+ * @param onProgress 进度回调函数
+ */
+export const batchTranslateAndAddWords = async (
+    words: string[],
+    onProgress?: (processedCount: number, totalCount: number) => void
+) => {
+    const wordsStore = useWordsStore();
+
+    // 过滤重复单词，保持唯一性
+    const uniqueWords = [...new Set(words.map(w => w.trim()))].filter(w => w.length > 0);
+
+    if (uniqueWords.length === 0) {
+        ElMessage.warning("没有有效的单词可添加");
+        return;
+    }
+
+    const totalCount = uniqueWords.length;
+    let processedCount = 0;
+
+    // 逐个处理单词，避免API调用过于频繁
+    for (const wordText of uniqueWords) {
+        try {
+            // 检查单词是否已存在
+            const existingWord = wordsStore.findWord(wordText);
+
+            if (existingWord) {
+                // 如果单词已存在，更新其状态
+                existingWord.isReview = true;
+                existingWord.explainedHidden = false;
+                await wordsStore.addAndUpdateWord(existingWord);
+            } else {
+                // 如果单词不存在，调用翻译API
+                const res = await wordsStore.translateWithPlatform(wordText);
+
+                if (res.success) {
+                    // 创建新单词对象
+                    const newWord: Word = {
+                        text: wordText,
+                        explains: res.explains || wordText,
+                        explainedHidden: false,
+                        pronunciation: res.pronunciation || '',
+                        isReview: true,
+                        ctime: new Date(),
+                        learnDate: new Date(),
+                        level: 1,
+                        _id: DB_KEY + uuidv4(),
+                        image: '',
+                        phonetic: res.phonetic || '',
+                        remember: false
+                    };
+
+                    // 添加到存储
+                    await wordsStore.addAndUpdateWords([newWord]);
+                } else {
+                    console.error(`翻译失败: ${wordText}`);
+                }
+            }
+        } catch (error) {
+            console.error(`处理单词失败 ${wordText}:`, error);
+        } finally {
+            processedCount++;
+
+            // 调用进度回调
+            if (onProgress) {
+                onProgress(processedCount, totalCount);
+            }
+
+            // 添加短暂延迟，避免API调用过于频繁
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+    }
+
+    // ElMessage.success(`成功添加 ${processedCount} 个单词`);
+};
