@@ -6,6 +6,7 @@ import {v4 as uuidv4} from "uuid";
 import {ElMessage} from "element-plus";
 import {useWordsStore} from "@/stores/words.ts";
 import {log} from "@/utils/logger.ts";
+import { batchTranslateAndAddWords } from "./word-util.ts";
 
 
 /**
@@ -118,4 +119,29 @@ const addWord = async (wordText: string) => {
         wordsStore.setLastAddedWordText('');
     })
 }
-export {getInitWord, addWord}
+
+/**
+ * 批量添加单词
+ */
+const batchAddWords = async (wordTexts: string[]) => {
+  console.log('批量添加单词', wordTexts);
+
+  // const wordsStore = useWordsStore();
+
+  // 过滤掉空单词
+  const filteredWords = wordTexts.filter(word => word.trim().length > 0);
+
+  if (filteredWords.length === 0) {
+    ElMessage.warning("没有有效的单词可添加");
+    return;
+  }
+
+  // 使用批量翻译和添加功能
+  await batchTranslateAndAddWords(filteredWords, (processedCount: number, totalCount: number) => {
+    // if (totalCount > 0) {
+    //   ElMessage.info(`正在处理: ${processedCount}/${totalCount}`);
+    // }
+  });
+};
+
+export {getInitWord, addWord, batchAddWords}

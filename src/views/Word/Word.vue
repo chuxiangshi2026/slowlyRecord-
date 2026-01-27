@@ -146,7 +146,7 @@ import {
 
 import {log} from "@/utils/logger.ts";
 import {RecycleScroller} from 'vue-virtual-scroller'
-import {addWord} from "@/utils/str-util.ts";
+import {addWord, batchAddWords} from "@/utils/str-util.ts";
 
 const word = ref('')
 
