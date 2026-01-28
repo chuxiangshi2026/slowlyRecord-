@@ -25,10 +25,11 @@ import {RouterView, useRouter} from 'vue-router'
 import {onMounted, onUnmounted, ref} from 'vue';
 import {useWordsStore} from "@/stores/words.ts";
 // import {storeToRefs} from "pinia";
-import {DEFAULT_INTERVALS} from "@/constants";
+import {DEFAULT_INTERVALS, USAGE_LIMITS} from "@/constants";
 import {addWord, batchAddWords} from "@/utils/str-util.ts";
 import {ElMessage} from "element-plus";
-import {ocrTranslate} from "@/utils/pic-translate.ts";
+import {ocrTranslate, ocrTranslateMultiPlatform} from "@/utils/pic-translate.ts";
+import {isOverDailyLimit, incrementUsageCounter, hasCustomApiKey, getCurrentUsageCount} from "@/utils/usage-counter.ts";
 // import path from "node:path";
 import picData from '../picdata.json';
 import OCRSelector from '@/views/Word/components/OCRSelector.vue';
@@ -120,8 +121,8 @@ utools.onPluginEnter(async (action) => {
   if (action.code === 'huaduan' && action.from == 'main') {
 
     getSelectedTextFromSystem().then(text => {
-      // 显示文本选择面板
-      displayTextSelection(text);
+          // 显示文本选择面板
+          displayTextSelection(text);
         }
     );
   }
@@ -141,8 +142,28 @@ utools.onPluginEnter(async (action) => {
     console.log('文件对象', file.name, file.type, file.size)
     utools.showMainWindow()
     try {
-      // 'en', 'zh-CHS'
-      const result = await ocrTranslate(file, AppInfo['youdao'].appkey, AppInfo['youdao'].key, 'en', 'zh-CHS');
+      // 获取当前选择的翻译平台
+      const currentPlatform = wordsStore.currentTranslationPlatform || 'youdao';
+
+      // 检查是否超出了每日使用限制（如果没有自定义API密钥）
+      if (!hasCustomApiKey(currentPlatform)) {
+        // 截图翻译使用独立的计数
+        if (isOverDailyLimit('ocr')) {
+          const usedCount = getCurrentUsageCount('ocr');
+          ElMessage.error(`每日免费截图翻译次数已达上限 (${usedCount}/${USAGE_LIMITS.OCR_DAILY_LIMIT} 次)，请设置自定义API密钥以继续使用`);
+          return;
+        }
+      }
+
+      let result;
+      if (currentPlatform === 'youdao') {
+        // 使用原有有道OCR翻译
+        const {appkey, key} = wordsStore.getApiKey('youdao');
+        result = await ocrTranslate(file, appkey, key, 'en', 'zh-CHS');
+      } else {
+        // 使用多平台OCR翻译
+        result = await ocrTranslateMultiPlatform(file, currentPlatform);
+      }
 
       // const result = picData;
       console.log(result)
@@ -168,7 +189,12 @@ utools.onPluginEnter(async (action) => {
 
       // preview.value = URL.createObjectURL(blob)
     } catch (err: any) {
-      alert(err.message || '翻译失败')
+      // 检查是否是使用次数超限的错误
+      if (err.message && err.message.includes('每日免费使用次数已达上限')) {
+        ElMessage.error(err.message);
+      } else {
+        alert(err.message || '翻译失败')
+      }
     }
   }
   // }
@@ -494,7 +520,6 @@ function updateReview() {
   console.log(dbWords, 'dbWords')
   // 过滤掉word为空字符串的单词
   dbWords = dbWords.filter((item: any) => item.word && item.word.trim() !== '');
-
 
   // console.log(words.value, typeof words.value[0].learnDate, '9999999')
   for (const item of dbWords) {

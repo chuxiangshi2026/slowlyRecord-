@@ -1,147 +1,15 @@
-import { sha256 } from 'js-sha256';
-
-// 根据官方文档定义 API 请求参数类型[citation:1]
-export interface YoudaoImgTransRequest {
-    type: string; // 固定为 '1'，表示Base64
-    q: string;    // 图片的Base64编码字符串 (需URL编码)
-    from: string; // 源语言，如 'en'
-    to: string;   // 目标语言，如 'zh-CHS'
-    appKey: string;
-    salt: string; // UUID，用于签名
-    sign: string;
-    signType: string; // 固定为 'v3'
-    curtime: string;  // 当前UTC时间戳（秒）
-    ext?: string;     // 可选，如 'mp3'
-    docType?: string; // 固定为 'json'
-    render?: string;  // 是否返回渲染图，'0'或'1'
-}
-
-// API 响应数据类型（根据文档简化，可依据实际返回字段扩展）[citation:1]
-export interface YoudaoImgTransResponse {
-    errorCode: string;
-    lanFrom: string;
-    lanTo: string;
-    resRegions?: Array<{
-        context: string;
-        tranContent: string;
-        boundingBox: string;
-    }>;
-    translation?: string[]; // 如果返回了整合的翻译结果
-}
-
-
-
-
-/*
-/!**
- * 生成调用有道图片翻译API所需的签名
- * 签名规则：sign = sha256(appKey + input + salt + curtime + appSecret)
- * 其中，input的计算方式为：
- *   - 如果q长度 > 20: input = q前10个字符 + q长度 + q后10个字符
- *   - 如果q长度 <= 20: input = q
- * @param appKey 应用ID
- * @param appSecret 应用密钥
- * @param q 图片的Base64编码字符串（未URL编码的原始字符串）
- * @param salt 随机字符串
- * @param curtime 当前时间戳（秒）
- * @returns 计算得到的签名
- *!/
-function generateSign(
-    appKey: string,
-    appSecret: string,
-    q: string,
-    salt: string,
-    curtime: string
-): string {
-    let input = q;
-    if (q.length > 20) {
-        input = q.substring(0, 10) + q.length + q.substring(q.length - 10);
-    }
-    const signStr = appKey + input + salt + curtime + appSecret;
-    return sha256(signStr);
-}
-
-/!**
- * 调用有道图片翻译API
- * @param imageBase64 图片的Base64编码字符串（不含data:image前缀）
- * @param from 源语言代码
- * @param to 目标语言代码
- * @param appKey 应用ID
- * @param appSecret 应用密钥
- * @returns  Promise解析为API响应数据
- *!/
-export async function translateImage(
-    imageBase64: string,
-    from: string,
-    to: string,
-    appKey: string,
-    appSecret: string
-): Promise<YoudaoImgTransResponse> {
-    const salt = Date.now().toString(); // 简单生成salt，也可用UUID
-    const curtime = Math.round(Date.now() / 1000).toString();
-
-    // 1. 生成签名（使用原始的Base64字符串）
-    const sign = generateSign(appKey, appSecret, imageBase64, salt, curtime);
-
-    // 2. 构建请求参数（注意：q参数需要URL编码）
-    const params: YoudaoImgTransRequest = {
-        type: '1',
-        q: encodeURIComponent(imageBase64), // 发送前进行URL编码[citation:1]
-        from,
-        to,
-        appKey,
-        salt,
-        sign,
-        signType: 'v3',
-        curtime,
-        docType: 'json',
-        render: '0' // 不需要服务端返回渲染图
-    };
-
-    // 3. 使用FormData发送POST请求
-    const formData = new FormData();
-    Object.entries(params).forEach(([key, value]) => {
-        formData.append(key, value);
-    });
-
-    const response = await fetch('https://openapi.youdao.com/ocrtransapi', {
-        method: 'POST',
-        body: formData
-    });
-
-    if (!response.ok) {
-        throw new Error(`网络请求失败: ${response.status}`);
-    }
-
-    return await response.json() as YoudaoImgTransResponse;
-}
-
-/!**
- * 将File对象转换为纯Base64字符串（不含data:image前缀）
- * @param file 图片文件
- * @returns Promise解析为Base64字符串
- *!/
-export function fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            // 移除 data:image/png;base64, 前缀
-            const base64WithPrefix = reader.result as string;
-            const base64 = base64WithPrefix.split(',')[1];
-            resolve(base64);
-        };
-        reader.onerror = (error) => reject(error);
-    });
-}
-*/
-
-import axios from 'axios'
+import axios, {type AxiosError} from 'axios'
 import CryptoJS from 'crypto-js'
+import {translateWithPlatform} from './translation-api';
+import {isOverDailyLimit, incrementUsageCounter, hasCustomApiKey, getCurrentUsageCount} from './usage-counter';
+import {useWordsStore} from "@/stores/words.ts";
+import {USAGE_LIMITS} from "@/constants";
+import type {TranslationPlatform} from "@/types/words";
+import {AppInfo} from "@/config.ts";
 
 const API = 'https://openapi.youdao.com/ocrtransapi'
 
-/** 符合官方要求的“截断”逻辑 */
+/** 符合官方要求的"截断"逻辑 */
 function truncate(q: string) {
     const len = q.length
     return len <= 20 ? q : q.slice(0, 10) + len + q.slice(-10)
@@ -169,24 +37,17 @@ function fileToBase64(file: File): Promise<string> {
     })
 }
 
-
-
-
 export interface OcrResult {
     errorCode: string
     resRegions?: Array<{
         boundingBox: string
-        // color: "default"
-        // colors: ['default']
-        context: "(action.code === 'jietu'"
-        dir: "h"
-        lang: "ms"
-        lineheight: 31
-        linesCount: 1
-        tranContent: "（action.code === 'jietu'" }>
+        context: string
+        tranContent: string
+    }>
 }
 
-/** 统一入口：传入 File 对象，返回 Promise<OcrResult> */
+
+/** 有道图片翻译：传入 File 对象，返回 Promise<OcrResult> */
 export async function ocrTranslate(
     file: File,
     appKey: string,
@@ -195,7 +56,7 @@ export async function ocrTranslate(
     to = 'zh-CHS'
 ): Promise<OcrResult> {
     const img = await fileToBase64(file)
-    console.log("base64",img.length)
+    console.log("base64", img.length)
     // 验证base64数据是否有效（检查是否包含字母数字+/=字符）
     const isValidBase64 = /^[A-Za-z0-9+/]*={0,2}$/.test(img);
     console.log("base64格式是否有效:", isValidBase64);
@@ -215,8 +76,297 @@ export async function ocrTranslate(
         curtime
     })
 
-    const { data } = await axios.post(API, params, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    const {data} = await axios.post(API, params, {
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     })
     return data as OcrResult
+}
+
+// 新增：多平台OCR翻译函数
+export async function ocrTranslateMultiPlatform(
+    file: File,
+    platform: TranslationPlatform
+): Promise<OcrResult> {
+    // 检查是否超出了每日使用限制
+    if (!hasCustomApiKey(platform)) {
+        // 如果没有自定义API密钥，检查是否超过每日限制
+        // OCR翻译使用独立的计数
+        if (isOverDailyLimit('ocr')) {
+            const usedCount = getCurrentUsageCount('ocr');
+            throw new Error(`每日免费截图翻译次数已达上限 (${usedCount}/${USAGE_LIMITS.OCR_DAILY_LIMIT} 次)，请设置自定义API密钥以继续使用`);
+        }
+
+        // 增加使用计数
+        const newCount = incrementUsageCounter('ocr');
+        console.log(`OCR使用次数: ${newCount}/${USAGE_LIMITS.OCR_DAILY_LIMIT}`);
+    }
+
+    const wordsStore = useWordsStore();
+
+    // const { appkey, key } = wordsStore.getApiKey(platform);
+    const {appkey, key} = getApiKey(platform);
+    console.log('appkey+key', appkey, key)
+
+    // 如果是使用有道平台，继续使用原有的OCR翻译
+    if (platform === 'youdao') {
+        return ocrTranslate(file, appkey, key, 'en', 'zh-CHS');
+    } else if (platform === 'baidu') {
+        // 百度OCR API的调用逻辑
+        return await ocrTranslateBaidu(file, appkey, key);
+    } else if (platform === 'ali') {
+
+
+        // 阿里OCR API的调用逻辑
+        return await ocrTranslateAli(file, appkey, key);
+    }
+
+    return {
+        errorCode: '500',
+        resRegions: []
+    };
+}
+
+/**
+ * 获取当前使用的API密钥 - 优先使用用户设置的，否则使用默认配置
+ */
+function getApiKey(provider: TranslationPlatform) {
+    const wordsStore = useWordsStore();
+    const userKeys = wordsStore.getApiKey(provider);
+    // 如果用户设置了密钥（非空且非纯空格），则使用用户设置的；否则使用默认配置
+    const trimmedAppKey = userKeys.appkey?.trim();
+    const trimmedKey = userKeys.key?.trim();
+    return {
+        appkey: (trimmedAppKey && trimmedAppKey.length > 0) ? trimmedAppKey : AppInfo[provider].appkey,
+        key: (trimmedKey && trimmedKey.length > 0) ? trimmedKey : AppInfo[provider].key
+    };
+}
+
+// 百度OCR翻译实现
+async function ocrTranslateBaidu(file: File, apiKey: string, secretKey: string): Promise<OcrResult> {
+    try {
+        // 获取图片的base64编码
+        const img = await fileToBase64(file);
+
+        // 尝试通过后端代理调用百度OCR
+        const response = await axios.post('/api/baidu-ocr', {
+            image: img,
+            apiKey: apiKey,
+            secretKey: secretKey
+        });
+
+        const ocrData = response.data;
+
+        if (ocrData.words_result && ocrData.words_result.length > 0) {
+            const results = [];
+
+            // 对每个识别的文本进行翻译
+            for (const wordResult of ocrData.words_result) {
+                const text = wordResult.words;
+
+                // 使用翻译API进行翻译
+                const translationResult = await translateWithPlatform(text, 'baidu');
+
+                results.push({
+                    context: text,
+                    tranContent: translationResult.success ? translationResult.explains : text,
+                    boundingBox: wordResult.location ?
+                        `${wordResult.location.left},${wordResult.location.top},${wordResult.location.width},${wordResult.location.height}` : ''
+                });
+            }
+
+            return {
+                errorCode: '0',
+                resRegions: results
+            };
+        } else {
+            return {
+                errorCode: ocrData.error_code || '52001',
+                resRegions: []
+            };
+        }
+    } catch (error) {
+        console.error('百度OCR识别失败:', error);
+        return {
+            errorCode: '52001',
+            resRegions: []
+        };
+    }
+}
+
+// 阿里图片翻译实现
+/** 主函数：阿里云图片翻译（普通版） */
+export async function ocrTranslateAli(
+    file: File,
+    accessKeyId: string,
+    accessKeySecret: string,
+    targetLang = 'zh'
+): Promise<OcrResult> {
+    try {
+        const imgBase64 = await fileToBase64(file);
+
+        console.log('ak', accessKeyId, 'sk', accessKeySecret);
+        if (!accessKeyId || !accessKeySecret) {
+            alert('请先配置 AccessKeyId 和 AccessKeySecret');
+        }
+
+        /* ========== 1. 构造公共参数 ========== */
+        const timestamp = new Date().toISOString().replace(/\.\d{3}Z/, 'Z'); // 毫秒置 0
+        const nonce = Math.random().toString(36).substring(2, 15);
+        const params: Record<string, string> = {
+            Format: 'JSON',
+            Version: '2018-10-12',
+            AccessKeyId: accessKeyId,
+            SignatureMethod: 'HMAC-SHA1',
+            Timestamp: timestamp,
+            SignatureVersion: '1.0',
+            SignatureNonce: nonce,
+            Action: 'TranslateImage',
+            SourceLanguage: 'auto',
+            TargetLanguage: targetLang,
+            Image: imgBase64,
+            FormatType: 'image',
+            TaskType: 'Image',
+            Scene: 'general',   // ←新增
+            RegionId: 'cn-hangzhou'   // ←新增
+        };
+
+        /* ========== 2. 计算签名 ========== */
+        const sortedKeys = Object.keys(params).sort();
+        const canonical = sortedKeys
+            .filter(k => k !== 'Signature')
+            .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+            .join('&');
+        const stringToSign = `POST&${encodeURIComponent('/')}&${encodeURIComponent(canonical)}`;
+        const signature = CryptoJS.HmacSHA1(stringToSign, accessKeySecret + '&').toString(CryptoJS.enc.Base64);
+        params.Signature = signature;
+
+        /* ========== 3. 通过本地代理发送POST请求（避免跨域和大请求头问题） ========== */
+        const response = await axios.post('/api/ali', {}, {
+            params: params,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            timeout: 25000
+        });
+
+        console.log('success', response.data);
+        console.log("resp:", response);
+
+        /* ========== 4. 解析结果 ========== */
+        const d = response.data;
+        if (d?.Code === '200' && d.Data) {
+            return {
+                errorCode: '0',
+                resRegions: [{
+                    context: d.Data.SourceText || '',
+                    tranContent: d.Data.Translated || '',
+                    boundingBox: '0,0,100,50'
+                }]
+            };
+        }
+        return { errorCode: d.Code || '500', resRegions: [] };
+    } catch (e) {
+        console.error('[AliOcr] error:', e);
+        const code = (e as AxiosError)?.response?.status || 500;
+        return {errorCode: String(code), resRegions: []};
+    }
+}
+
+// 为前端优化的百度OCR翻译实现（使用CORS代理）
+export async function ocrTranslateBaiduWithProxy(
+    file: File,
+    apiKey: string,
+    secretKey: string,
+    corsProxyUrl?: string
+): Promise<OcrResult> {
+    try {
+        const img = await fileToBase64(file);
+
+        // 如果提供了CORS代理URL，使用代理调用
+        let apiUrl = `https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic`;
+        if (corsProxyUrl) {
+            apiUrl = `${corsProxyUrl}?url=${encodeURIComponent(apiUrl)}`;
+        }
+
+        // 首先获取访问令牌
+        const tokenUrl = `https://aip.baidubce.com/oauth/2.0/token`;
+        const tokenParams = new URLSearchParams({
+            grant_type: 'client_credentials',
+            client_id: apiKey,
+            client_secret: secretKey
+        });
+
+        // 使用代理获取token（如果提供）
+        let tokenApiUrl = tokenUrl;
+        if (corsProxyUrl) {
+            tokenApiUrl = `${corsProxyUrl}?url=${encodeURIComponent(tokenUrl)}`;
+        }
+
+        const tokenResponse = await axios.post(
+            tokenApiUrl,
+            tokenParams,
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+        );
+
+        const accessToken = tokenResponse.data.access_token;
+        if (!accessToken) {
+            throw new Error('Failed to get access token from Baidu');
+        }
+
+        // 使用token调用OCR API
+        const ocrParams = new URLSearchParams({
+            image: img,
+            language_type: 'ENG'
+        });
+
+        const ocrResponse = await axios.post(
+            `${apiUrl}?access_token=${accessToken}`,
+            ocrParams,
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+        );
+
+        const ocrData = ocrResponse.data;
+        if (ocrData.words_result && ocrData.words_result.length > 0) {
+            const results = [];
+
+            // 对每个识别的文本进行翻译
+            for (const wordResult of ocrData.words_result) {
+                const text = wordResult.words;
+
+                // 使用翻译API进行翻译
+                const translationResult = await translateWithPlatform(text, 'baidu');
+
+                results.push({
+                    context: text,
+                    tranContent: translationResult.success ? translationResult.explains : text,
+                    boundingBox: wordResult.location ?
+                        `${wordResult.location.left},${wordResult.location.top},${wordResult.location.width},${wordResult.location.height}` : ''
+                });
+            }
+
+            return {
+                errorCode: '0',
+                resRegions: results
+            };
+        } else {
+            return {
+                errorCode: ocrData.error_code || '52001',
+                resRegions: []
+            };
+        }
+    } catch (error) {
+        console.error('百度OCR识别失败:', error);
+        return {
+            errorCode: '52001',
+            resRegions: []
+        };
+    }
 }
