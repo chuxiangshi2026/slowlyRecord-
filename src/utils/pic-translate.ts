@@ -6,6 +6,7 @@ import {useWordsStore} from "@/stores/words.ts";
 import {USAGE_LIMITS} from "@/constants";
 import type {TranslationPlatform} from "@/types/words";
 import {AppInfo} from "@/config.ts";
+import picaliData from '../../picalidata.json';
 
 const API = 'https://openapi.youdao.com/ocrtransapi'
 
@@ -260,25 +261,57 @@ export async function ocrTranslateAli(
 
     const body = `${canonicalQueryString}&Signature=${rfc3986(signature)}`;
 
-    const res = await fetch('https://mt.cn-hangzhou.aliyuncs.com/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            'User-Agent': 'uTools-Plugin/1.0'
-        },
-        body
-    });
+    // const res = await fetch('https://mt.cn-hangzhou.aliyuncs.com/', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    //         'User-Agent': 'uTools-Plugin/1.0'
+    //     },
+    //     body
+    // });
 
-    const json = await res.json();
-    console.log('原始响应:', JSON.stringify(json, null, 2)); // ← 加这行
-    return {
-        errorCode: json.Code ?? 'UnknownError',
-        resRegions: json.Data?.translateImageResults?.map((it: any) => ({
-            boundingBox: it.bbox ?? '',
-            context: it.content ?? '',
-            tranContent: it.transContent ?? ''
-        })) ?? []
-    };
+    // const json = await res.json();
+    const json = picaliData;
+    // console.log('原始响应:', JSON.stringify(json, null, 2)); // ← 加这行
+    // 检查返回的数据结构并相应处理
+    if (json.Code === '200' && json.Data) {
+        // 根据实际的数据结构进行处理
+        // 从错误信息看，Data 包含的是图像处理结果，不是文本识别结果
+        // 因此我们返回空的结果数组
+        let resRegions = [];
+        if (json.Data.TemplateJson) {
+            try {
+                const templateData = JSON.parse(json.Data.TemplateJson);
+
+                // 提取文本元素及其翻译结果
+                const elements = templateData.children.filter((child: any) =>
+                    child.label === 'element' && child.type === 'text'
+                );
+
+                resRegions = elements.map((element: any) => {
+                    // ocrContent 是原始文本，content 是翻译后文本
+                    return {
+                        boundingBox: `${element.left || 0},${element.top || 0},${element.width || 0},${element.height || 0}`,
+                        context: element.ocrContent || '',      // 原始识别文本
+                        tranContent: element.content || ''      // 翻译后文本
+                    };
+                });
+            } catch (error) {
+                console.error('解析 TemplateJson 失败:', error);
+                resRegions = []; // 解析失败时返回空数组
+            }
+        }
+
+        return {
+            errorCode: json.Code,
+            resRegions: resRegions // 阿里云图片翻译返回的数据结构与我们期望的不同
+        };
+    } else {
+        return {
+            errorCode: json.Code ?? 'UnknownError',
+            resRegions: []
+        };
+    }
 }
 
 function rfc3986(str: string): string {
