@@ -23,10 +23,20 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 3000,
         proxy: {
-            '/api': { // 获取请求中带 /api 的请求
-                target: 'https://openapi.youdao.com/api',  // 后台服务器的源
+            '/api/youdao': { // 有道API代理
+                target: 'https://openapi.youdao.com',  // 后台服务器的源
                 changeOrigin: true,   // 修改源
-                rewrite: (path) => path.replace(/^\/api/, "")   //  /api 替换为空字符串
+                rewrite: (path) => path.replace(/^\/api\/youdao/, "")   //  /api/youdao 替换为空字符串
+            },
+            '/api/baidu-ocr': { // 百度OCR API代理
+                target: 'https://aip.baidubce.com',  // 后台服务器的源
+                changeOrigin: true,   // 修改源
+                rewrite: (path) => path.replace(/^\/api\/baidu-ocr/, "")   //  /api/baidu-ocr 替换为空字符串
+            },
+            '/api/ali': { // 阿里云API代理
+                target: 'https://mt.aliyuncs.com',  // 阿里云服务器
+                changeOrigin: true,   // 修改源
+                rewrite: path => path.replace(/^\/api\/ali/, '') // 去掉前缀
             }
         }
     }, css: {

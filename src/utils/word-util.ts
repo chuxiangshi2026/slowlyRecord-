@@ -1,9 +1,10 @@
 import type { Word } from "@/types/words";
-import { DB_KEY } from "@/constants";
+import {DB_KEY, USAGE_LIMITS} from "@/constants";
 import { v4 as uuidv4 } from "uuid";
 import { formatDateTime } from "@/utils/date-util";
 import { useWordsStore } from "@/stores/words.ts";
 import { ElMessage } from "element-plus";
+import { isOverDailyLimit, incrementUsageCounter, hasCustomApiKey, getCurrentUsageCount } from './usage-counter';
 
 /**
  * 解析文件内容为单词列表
@@ -161,6 +162,21 @@ export const batchTranslateAndAddWords = async (
     // 逐个处理单词，避免API调用过于频繁
     for (const wordText of uniqueWords) {
         try {
+            // 检查是否超出了每日使用限制
+            const currentPlatform = wordsStore.currentTranslationPlatform || 'youdao';
+            if (!hasCustomApiKey(currentPlatform)) {
+                // 如果没有自定义API密钥，检查是否超过每日限制
+                // 普通翻译和批量翻译一起计数
+                if (isOverDailyLimit('translation')) {
+                    const usedCount = getCurrentUsageCount('translation');
+                    ElMessage.error(`每日免费翻译次数已达上限 (${usedCount}/${USAGE_LIMITS.TRANSLATION_DAILY_LIMIT} 次)，请设置自定义API密钥以继续使用`);
+                    break; // 停止处理更多单词
+                }
+                
+                // 增加使用计数
+                incrementUsageCounter('translation');
+            }
+
             // 检查单词是否已存在
             const existingWord = wordsStore.findWord(wordText);
 

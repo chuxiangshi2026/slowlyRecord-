@@ -66,6 +66,7 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, computed } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useWordsStore } from '@/stores/words.ts';
 
 // 定义props和emits
 interface Props {
@@ -219,6 +220,10 @@ const addSelectedWords = () => {
     return;
   }
 
+  // 获取当前选择的翻译平台
+  const wordsStore = useWordsStore();
+  const currentPlatform = wordsStore.currentTranslationPlatform;
+
   // 为每个选中的单词创建一个项目并发出选择事件
   selectedWords.value.forEach(word => {
     // 查找对应的翻译内容
@@ -274,7 +279,7 @@ const closePanel = () => {
   background: rgba(0, 0, 0, 0.6);
   z-index: 9999;
   display: flex;
-  justify-content: center;
+  justify-center: center;
   align-items: center;
 }
 

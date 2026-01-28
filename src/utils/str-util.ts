@@ -7,7 +7,8 @@ import {ElMessage} from "element-plus";
 import {useWordsStore} from "@/stores/words.ts";
 import {log} from "@/utils/logger.ts";
 import { batchTranslateAndAddWords } from "./word-util.ts";
-
+import { isOverDailyLimit, incrementUsageCounter, hasCustomApiKey, getCurrentUsageCount } from "./usage-counter.ts";
+import { USAGE_LIMITS } from "@/constants";
 
 /**
  * 初始化单词状态
@@ -63,7 +64,19 @@ const addWord = async (wordText: string) => {
             ElMessage.success('单词已存在');
             return
         }
-        // console.log('当前翻译引擎', wordsStore.currentTranslationPlatform)
+        // 检查是否超出了每日使用限制
+        const currentPlatform = wordsStore.currentTranslationPlatform || 'youdao';
+        if (!hasCustomApiKey(currentPlatform)) {
+            if (isOverDailyLimit('translation')) {
+                const usedCount = getCurrentUsageCount('translation');
+                ElMessage.error(`每日免费翻译次数已达上限 (${usedCount}/${USAGE_LIMITS.TRANSLATION_DAILY_LIMIT} 次)，请设置自定义API密钥以继续使用`);
+                return;
+            }
+            
+            // 增加使用计数
+            incrementUsageCounter('translation');
+        }
+        
         //  有这个单词,但是没有 释义
         wordsStore.translateWithPlatform(wordText).then(res => {
             // console.log('返回结果', res)
@@ -94,7 +107,20 @@ const addWord = async (wordText: string) => {
         return;
     }
 
-
+    // 检查是否超出了每日使用限制
+    const currentPlatform = wordsStore.currentTranslationPlatform || 'youdao';
+    if (!hasCustomApiKey(currentPlatform)) {
+        if (isOverDailyLimit('translation')) {
+            const usedCount = getCurrentUsageCount('translation');
+            const remainingCount = USAGE_LIMITS.TRANSLATION_DAILY_LIMIT - usedCount;
+            ElMessage.error(`每日免费翻译次数已达上限 (${usedCount}/${USAGE_LIMITS.TRANSLATION_DAILY_LIMIT} 次)，今日还剩 ${Math.max(0, remainingCount)} 次，请设置自定义API密钥以继续使用`);
+            return;
+        }
+        
+        // 增加使用计数
+        incrementUsageCounter('translation');
+    }
+    
     wordsStore.translateWithPlatform(wordText).then(res => {
         console.log('返回翻译api结果', res)
 

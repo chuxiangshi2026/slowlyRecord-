@@ -53,6 +53,7 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, computed, watch } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useWordsStore } from '@/stores/words.ts';
 
 // 定义props和emits
 interface Props {
@@ -157,8 +158,12 @@ const addSelectedWords = () => {
     return;
   }
 
-  // 发出选择事件，传递选中的单词数组
-  emit('select', selectedWords.value);
+  // 获取当前选择的翻译平台
+  const wordsStore = useWordsStore();
+  const currentPlatform = wordsStore.currentTranslationPlatform;
+
+  // 发出选择事件，传递选中的单词数组和当前平台
+  emit('select', selectedWords.value, currentPlatform);
 
   ElMessage.success(`已添加 ${selectedWords.value.length} 个单词到列表`);
   closePanel();

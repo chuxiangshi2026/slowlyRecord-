@@ -7,7 +7,9 @@ import { truncate } from "lodash";
 import { FROM, TO } from "@/constants";
 import { AppInfo } from "@/config.ts";
 import {useWordsStore} from "@/stores/words.ts";
-
+import { isOverDailyLimit, incrementUsageCounter, hasCustomApiKey, getCurrentUsageCount } from './usage-counter';
+import { ElMessage } from 'element-plus';
+import { USAGE_LIMITS } from "@/constants";
 
 /**
  * 获取当前使用的API密钥 - 优先使用用户设置的，否则使用默认配置
@@ -69,7 +71,7 @@ function generateBaiduParams(query: string): any {
 /**
  * 生成阿里翻译参数
  */
-async function generateAliParams(query: string) {
+function generateAliParamsSync(query: string): any {
     const { appkey, key: accessKeySecret } = getApiKey('ali');
     const timestamp = new Date().toISOString().replace(/\.\d+Z/, 'Z');
 
@@ -89,33 +91,10 @@ async function generateAliParams(query: string) {
         Scene: 'general',
     };
 
-    // ────── 调试日志：打印待签名字符串 ──────
-    const sortedKeys = Object.keys(params).sort();
-    const canonicalQueryString = sortedKeys
-        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-        .join('&');
+    // 生成签名
+    const signature = buildSignature(params, accessKeySecret);
+    params.Signature = signature;
 
-    const stringToSign = `GET&${encodeURIComponent('/')}&${encodeURIComponent(canonicalQueryString)}`;
-
-    console.log('【待签名字符串(StringToSign)】');
-    console.log(stringToSign); // 复制这个值
-
-    // ────── 生成签名 ──────
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-        'raw',
-        encoder.encode(accessKeySecret + '&'),
-        { name: 'HMAC', hash: 'SHA-1' },
-        false,
-        ['sign']
-    );
-    const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(stringToSign));
-    const base64Signature = btoa(String.fromCharCode(...new Uint8Array(signature)));
-
-    console.log('【生成的签名】');
-    console.log(base64Signature); // 对比这个值
-
-    params.Signature = base64Signature;
     return params;
 }
 
@@ -164,6 +143,25 @@ function percentEncode(str: string): string {
 export async function translateWithPlatform(query: string, platform: TranslationPlatform = 'youdao'): Promise<TranslationResult> {
     console.log('待翻译参数', query)
     try {
+        // 检查是否超出了每日使用限制
+        if (!hasCustomApiKey(platform)) {
+            // 如果没有自定义API密钥，检查是否超过每日限制
+            // 普通翻译和批量翻译一起计数
+            const featureType = 'translation'; // 普通翻译与批量翻译共用计数
+
+            if (isOverDailyLimit(featureType)) {
+                const usedCount = getCurrentUsageCount(featureType);
+                return {
+                    success: false,
+                    errorMsg: `每日免费翻译次数已达上限 (${usedCount}/${USAGE_LIMITS.TRANSLATION_DAILY_LIMIT} 次)，请设置自定义API密钥以继续使用`
+                };
+            }
+
+            // 增加使用计数
+            const newCount = incrementUsageCounter(featureType);
+            console.log(`翻译使用次数: ${newCount}/${USAGE_LIMITS.TRANSLATION_DAILY_LIMIT}`);
+        }
+
         switch (platform) {
             case 'youdao':
                 console.log('调用有道')
@@ -190,17 +188,16 @@ export async function translateWithPlatform(query: string, platform: Translation
             case 'ali':
                 console.log('调用阿里翻译');
 
-                const aliParams = await generateAliParams(query);
+                const aliParams = generateAliParamsSync(query);
 
-                // 1. 修正URL（去掉末尾空格）
-                // 2. 手动构造查询字符串
+                // 手动构造查询字符串
                 const queryString = Object.entries(aliParams)
-                    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+                    .map(([key, value]) => `${encodeURIComponent(key as string)}=${encodeURIComponent(value as string)}`)
                     .join('&');
 
                 const fullUrl = `https://mt.aliyuncs.com/?${queryString}`;
 
-                // 3. 使用fetch或XMLHttpRequest发送请求
+                // 使用fetch发送请求
                 const aliResponse = await fetch(fullUrl, {
                     method: 'GET',
                     headers: {
@@ -325,5 +322,6 @@ export async function translation(payload: YdParams): Promise<AxiosResponse> {
 
 export default {
     translateWithPlatform,
-    translation
+    translation,
+    getApiKey
 };
