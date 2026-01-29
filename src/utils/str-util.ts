@@ -174,7 +174,8 @@ const batchTranslateAndAddWords = async (
         ElMessage.warning("没有可添加单词");
         return;
     }
-
+    wordsStore.setLastAddedWordText(<string>uniqueWords.at(-1))
+    wordsStore.lastFocusWordText = <string>uniqueWords.at(-1)
 
     // 过滤掉已存在且有翻译的单词
     const wordsToProcess = uniqueWords.filter(wordText => {
@@ -184,7 +185,7 @@ const batchTranslateAndAddWords = async (
     });
 
     if (wordsToProcess.length === 0) {
-        ElMessage.info("所有单词都已存在，无需处理");
+        ElMessage.info("单词都已存在，无需处理");
         return;
     }
 
@@ -273,8 +274,7 @@ const batchTranslateAndAddWords = async (
             }
             await new Promise(resolve => setTimeout(resolve, delay));
         }
-        wordsStore.setLastAddedWordText(<string>uniqueWords.at(-1))
-        wordsStore.lastFocusWordText = wordText
+
     }
     // 总 数 重复数 已存在数 失败数
 
