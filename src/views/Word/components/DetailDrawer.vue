@@ -150,8 +150,36 @@
 
     <h4 class="header">其他</h4>
     <div class="content">
+      <h5 style="text-align:center;">申请密钥</h5>
+      <p class="limit-info">
+        由于截图翻译调用成本较高，且个人时间有限（应该有更好的图片翻译方法），优先功能完善，在没有配置自己密钥时，暂时限制直接使用次数每日10次(后期看情况调整)，配置自己的密钥后不再限制，自己额度基本够用，截图主要使用者，希望尽量使用自己的免费额度</p>
+<!--      <div class="view-version-btn">-->
+
+        <div class="titles">
+          <div class="setting-item">
+            <div class="content">申请有道密钥</div>
+            <a href="#" @click.prevent="openUrl('https://ai.youdao.com/console/#/service-singleton/text-translation')"
+               class="external-link">跳转有道</a>
+          </div>
+        </div>
+        <div class="titles">
+          <div class="setting-item">
+            <div class="content">申请阿里密钥</div>
+            <a href="#" @click.prevent="openUrl('https://mt.console.aliyun.com/service')"
+               class="external-link">跳转阿里</a>
+          </div>
+        </div>
+        <div class="titles">
+          <div class="setting-item">
+            <div class="content">申请百度密钥</div>
+            <a href="#" @click.prevent="openUrl('https://fanyi-api.baidu.com/choose')"
+               class="external-link">跳转百度</a>
+          </div>
+        </div>
+      </div>
+
       <!--      <div class="view-version-btn" @click="updateshowNotification(true)">查看版本说明</div>-->
-    </div>
+<!--    </div>-->
 
     <!--    </Drawer>-->
 
@@ -245,6 +273,11 @@ const saveApiKeys = (provider: TranslationPlatform) => {
 const exitThePlugin = ref(false)
 
 
+const openUrl = (url: string) => {
+  utools.shellOpenExternal(url);
+}
+
+
 const shortcutEnabled = ref(false) // 快捷键开关状态
 // const autoFocusFirstItem = ref(true) // 自动聚焦第一个单词状态
 
@@ -269,14 +302,14 @@ const onCloseAfterAddSwitchChange = () => {
   wordsStore.setClosePlugin(exitThePlugin.value)
 }
 
-const kuaijiejian = (type:number) => {
+const kuaijiejian = (type: number) => {
   if (type == 1) {
     utools.redirectHotKeySetting("划词添加", true);
   }
-  if (type ==2) {
+  if (type == 2) {
     utools.redirectHotKeySetting("划段添加", true)
   }
-  if (type ==3) {
+  if (type == 3) {
     utools.redirectHotKeySetting("截图添加", true)
   }
 }
@@ -366,7 +399,7 @@ const cardShortcuts = [
     box-sizing: border-box;
 
     .view-version-btn {
-      background-color: #84acf1;; /* Green */
+      background-color: #7c7e7e;; /* Green */
       border: none;
       color: white;
       padding: 4px 8px;
@@ -419,5 +452,19 @@ const cardShortcuts = [
 .el-switch {
   --el-switch-on-color: #919399;
   --el-switch-off-color: rgba(113, 109, 109, 0.29);
+}
+
+.external-link {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #595757;
+  background-color: #f5f5f5;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
 }
 </style>
