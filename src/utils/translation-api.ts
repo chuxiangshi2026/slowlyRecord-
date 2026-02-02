@@ -221,6 +221,12 @@ export async function translateWithPlatform(query: string, platform: Translation
             case 'kimi':
                 console.log('调用Kimi')
                 return callKimi(query);
+            case 'ollama':
+                console.log('调用Ollama')
+                return callOllama(query);
+            case 'tencent':
+                console.log('调用腾讯翻译')
+                return callTencent(query);
             /*           case 'google':
                            // Google翻译API通常需要服务端实现，这里提供基本结构
                            const googleParams = {
@@ -380,7 +386,7 @@ async function callOllama(query: string): Promise<TranslationResult> {
 
         // 默认Ollama地址
         const ollamaUrl = baseUrl || 'http://localhost:11434';
-        const model = modelName || 'llama3';
+        const model = modelName || 'qwen2.5:0.5b';
 
         const response = await fetch(`${ollamaUrl}/api/generate`, {
             method: 'POST',
@@ -399,9 +405,30 @@ async function callOllama(query: string): Promise<TranslationResult> {
         }
 
         const data = await response.json();
+
+        // Ollama API 返回格式处理
+        let translationResult = '';
+        if (data.response) {
+            // 直接返回模式
+            translationResult = data.response.trim();
+        } else if (data.message && data.message.content) {
+            // 聊天模式返回
+            translationResult = data.message.content.trim();
+        } else if (typeof data === 'string') {
+            // 字符串直接返回
+            translationResult = data.trim();
+        } else {
+            // 其他情况尝试获取响应
+            translationResult = data.output || data.result || JSON.stringify(data);
+        }
+
+        if (!translationResult || translationResult.toLowerCase().includes('error')) {
+            throw new Error('Invalid response from Ollama: ' + translationResult);
+        }
+
         return {
             success: true,
-            explains: data.response || data.output || 'No response from Ollama'
+            explains: translationResult
         };
     } catch (error) {
         console.error('Ollama error:', error);
@@ -580,7 +607,7 @@ async function callKimi(query: string): Promise<TranslationResult> {
         log.i('Kimi/Moonshot response:', response);
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({error: {message: 'Unknown error'}}));
-            
+
             // 处理账户余额不足的情况
             if (response.status === 429 && errorData.error?.type === 'exceeded_current_quota_error') {
                 return {
@@ -588,7 +615,7 @@ async function callKimi(query: string): Promise<TranslationResult> {
                     errorMsg: 'Kimi API账户余额不足，请充值后重试或联系服务商'
                 };
             }
-            
+
             throw new Error(`Kimi/Moonshot request failed: ${response.status} - ${JSON.stringify(errorData)}`);
         }
 
@@ -606,7 +633,7 @@ async function callKimi(query: string): Promise<TranslationResult> {
     } catch (error) {
         console.error('Kimi error:', error);
         const errorMessage = (error as Error).message;
-        
+
         // 处理余额不足的特殊情况
         if (errorMessage.includes('insufficient balance')) {
             return {
@@ -614,7 +641,7 @@ async function callKimi(query: string): Promise<TranslationResult> {
                 errorMsg: 'Kimi API账户余额不足，请充值后重试'
             };
         }
-        
+
         return {
             success: false,
             errorMsg: 'Kimi service error: ' + errorMessage
@@ -625,10 +652,92 @@ async function callKimi(query: string): Promise<TranslationResult> {
 /**
  * 调用翻译接口
  */
+/**
+ * 处理腾讯翻译响应
+ */
+function handleTencentResponse(data: any): TranslationResult {
+    if (data.Response && data.Response.TargetText) {
+        const explains = data.Response.TargetText;
+        return {
+            success: true,
+            explains
+        };
+    } else {
+        return {
+            success: false,
+            errorMsg: `Tencent API error: ${data.Response?.Error?.Message || 'Unknown error'}`
+        };
+    }
+}
+
 export async function translation(payload: YdParams): Promise<AxiosResponse> {
     return await http.get('/', {...payload})
 }
 
+
+/**
+ * 调用腾讯翻译API
+ */
+async function callTencent(query: string): Promise<TranslationResult> {
+    try {
+        const {appkey: secretId, key: secretKey} = getTranslationApiKey('tencent');
+
+        if (!secretId || !secretKey) {
+            return {
+                success: false,
+                errorMsg: '腾讯翻译API密钥未配置，请在设置中填写SecretId和SecretKey'
+            };
+        }
+
+        // 腾讯翻译API参数
+        const params = {
+            SourceText: query,
+            Source: 'auto',
+            Target: 'zh',
+            ProjectId: 0
+        };
+
+        // 构造请求签名（简化版，实际需要按腾讯云规范生成签名）
+        const timestamp = Math.floor(Date.now() / 1000);
+        const nonce = Math.floor(Math.random() * 10000);
+
+        // 这里使用简化的请求方式，实际项目中需要按照腾讯云API规范实现签名
+        const response = await fetch('https://tmt.tencentcloudapi.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `TC3-HMAC-SHA256 Credential=${secretId}, SignedHeaders=content-type;host, Signature=TODO`
+            },
+            body: JSON.stringify({
+                Action: 'TextTranslate',
+                Version: '2018-03-21',
+                Region: 'ap-beijing',
+                ...params
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`腾讯翻译请求失败: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.Response && data.Response.TargetText) {
+            return {
+                success: true,
+                explains: data.Response.TargetText
+            };
+        } else {
+            throw new Error('腾讯翻译API返回格式错误: ' + JSON.stringify(data));
+        }
+    } catch (error) {
+        console.error('腾讯翻译错误:', error);
+        return {
+            success: false,
+            errorMsg: '腾讯翻译服务错误: ' + (error as Error).message
+        };
+    }
+}
 
 export default {
     translateWithPlatform,

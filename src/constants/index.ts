@@ -69,6 +69,13 @@ const API_PLATFORMS = {
         free: false,
         url: 'https://api.openai.com/v1/chat/completions',
         languages: ['zh', 'en', 'ja', 'auto']
+    },
+    ollama: {
+        name: 'Ollama',
+        requireKey: false,
+        free: true,
+        url: 'http://localhost:11434',
+        languages: ['zh', 'en', 'ja', 'auto']
     }
 };
 
