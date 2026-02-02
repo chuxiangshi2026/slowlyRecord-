@@ -207,12 +207,12 @@
         由于截图翻译调用成本较高，且个人时间有限（应该有更好的图片翻译方法），优先功能完善，在没有配置自己密钥时，暂时限制直接使用次数每日10次(后期看情况调整)，配置自己的密钥后不再限制，自己额度基本够用，截图主要使用者，希望尽量使用自己的免费额度</p>
       <!--      <div class="view-version-btn">-->
 
-      <div v-for="platform in TRANSLATION_PLATFORM_LINKS" 
-           :key="platform.key" 
+      <div v-for="platform in TRANSLATION_PLATFORM_LINKS"
+           :key="platform.key"
            class="titles">
         <div class="setting-item">
           <div class="content">{{ platform.content }}</div>
-          <a href="#" 
+          <a href="#"
              @click.prevent="openUrl(platform.url)"
              class="external-link">跳转{{ platform.name }}</a>
         </div>
@@ -414,15 +414,18 @@ let wordsStore = useWordsStore();
 const ocrApi = ref<OcrPlatform>('youdao')
 const ocrOptions = [
   {
+    value: 'tencent',
+    label: '腾讯',
+  }, {
+    value: 'baidu',
+    label: '百度',
+  },
+  {
     value: 'youdao',
     label: '有道',
   }, {
     value: 'ali',
     label: '阿里',
-  },
-  {
-    value: 'baidu',
-    label: '百度',
   }]
 const tranApi = ref<TranslationPlatform>('youdao')
 const options = [...ocrOptions,
@@ -441,9 +444,6 @@ const options = [...ocrOptions,
   }, {
     value: 'kimi',
     label: 'kimi',
-  }, {
-    value: 'tencent',
-    label: '腾讯翻译',
   }
 ]
 /*{

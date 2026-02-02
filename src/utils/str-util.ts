@@ -119,7 +119,7 @@ const addWord = async (wordText: string): Promise<{success: boolean, message: st
         // 增加使用计数
         incrementUsageCounter('translation');
     }
-
+    console.log('准备翻译')
     try {
         const res = await wordsStore.translateWithPlatform(wordText);
         log.i('返回翻译api结果', res)

@@ -716,6 +716,7 @@ async function callTencent(query: string): Promise<TranslationResult> {
             })
         });
 
+        log.i('腾讯翻译响应:', response);
         if (!response.ok) {
             throw new Error(`腾讯翻译请求失败: ${response.status} ${response.statusText}`);
         }
