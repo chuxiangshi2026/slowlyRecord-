@@ -2,7 +2,7 @@
   <el-drawer
       v-model="visible"
       :title="title"
-      size="400px"
+      size="430px"
       destroy-on-close
   >
 
@@ -156,8 +156,8 @@
           <!--          type="password"-->
           <el-input v-model="item.appkey"
                     @update:model-value="(val: string) => updateKey(index, 'appkey', val)"
-                    style="width: 115px"
-                    :placeholder="['ollama','deepseek', 'qwen', 'kimi'].includes(index)?'使用必需填写':'没有请留空'"
+                    style="width: 153px"
+                    :placeholder="'ollama'===index?'http://localhost:11434）':['ollama','deepseek', 'qwen', 'kimi'].includes(index)?'使用必需填写':'没有请留空'"
           />
         </span>
         <span class="shorcut-desc">
@@ -166,8 +166,8 @@
           <el-input v-model="item.key"
                     :disabled="['ollama','deepseek', 'qwen', 'kimi'].includes(index)"
                     @update:model-value="(val: string) => updateKey(index, 'key', val)"
-                    style="width: 190px"
-                    :placeholder="['ollama','deepseek', 'qwen', 'kimi'].includes(index)?'无需填写':'没有请留空'"/>
+                    style="width: 185px"
+                    :placeholder="'ollama'===index?'模型名如（qwen2.5:0.5b）':['deepseek', 'qwen', 'kimi'].includes(index)?'无需填写':'没有请留空'"/>
         </span>
       </div>
 
@@ -452,6 +452,9 @@ const options = [...ocrOptions,
   }, {
     value: 'kimi',
     label: 'kimi',
+  }, {
+    value: 'tencent',
+    label: '腾讯翻译',
   }
 ]
 /*{
