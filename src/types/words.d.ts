@@ -63,10 +63,10 @@ interface YdParams {
 /**
  * 翻译平台枚举 | 'google'
  */
-export type OcrPlatform = 'youdao' | 'baidu' | 'ali';
+export type OcrPlatform = 'tencent' | 'baidu' | 'youdao' | 'ali';
 
 
-export type TranslationPlatform = OcrPlatform | 'utoolsai' | 'deepseek' | 'qwen' | 'kimi' | 'ollama' | 'tencent';
+export type TranslationPlatform = OcrPlatform | 'utoolsai' | 'deepseek' | 'qwen' | 'kimi' | 'ollama' ;
 
 /**
  * 翻译结果结构

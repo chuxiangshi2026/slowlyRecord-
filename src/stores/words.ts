@@ -72,6 +72,7 @@ export const useWordsStore =
             const currentOcrPlatform = ref<OcrPlatform>('baidu'); // 默认使用百度识图
             // 用户翻译api密钥
             const userApiKeys: Ref<Record<TranslationPlatform, { appkey: string, key: string }>> = ref({
+                tencent: {appkey: '', key: ''},
                 ali: {appkey: '', key: ''},
                 youdao: {appkey: '', key: ''},
                 baidu: {appkey: '', key: ''},
@@ -82,6 +83,7 @@ export const useWordsStore =
                 kimi: {appkey: '', key: ''},
             })
             const userOcrApiKeys: Ref<Record<OcrPlatform, { appkey: string, key: string }>> = ref({
+                tencent: {appkey: '', key: ''},
                 ali: {appkey: '', key: ''},
                 youdao: {appkey: '', key: ''},
                 baidu: {appkey: '', key: ''},

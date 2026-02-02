@@ -173,7 +173,7 @@ export async function ocrMultiPlatform(
 
     // 如果是使用有道平台，继续使用原有的OCR翻译
 
-    return  ocrTranslateMultiPlatform(file,platform)
+    return  ocrTranslateMultiPlatform(file)
     // if (platform === 'youdao') {
     //     return ocrTranslate(file, appkey, key, 'en', 'zh-CHS');
     // } else if (platform === 'baidu') {

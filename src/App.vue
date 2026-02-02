@@ -212,6 +212,7 @@ utools.onPluginEnter(async (action) => {
         youdao: picData,
         baidu: baidupicData,
         ali: picaliData,
+        tencent: picaliData,
       }[currentPlatform];
 
       console.log('apprest:', result)
