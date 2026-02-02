@@ -103,5 +103,9 @@ const USAGE_LIMITS = {
  *数据库中集合名
  */
 const DB_KEY = 'words-list';
+/**
+ *数据库中用户设置集合名
+ */
+const DB_KEY_USER_SET = 'user-set';
 
-export {DEFAULT_INTERVALS, APP_KEY, KEY, FROM, TO, DB_KEY, USAGE_LIMITS};
+export {DEFAULT_INTERVALS, APP_KEY, KEY, FROM, TO, DB_KEY, DB_KEY_USER_SET, USAGE_LIMITS};

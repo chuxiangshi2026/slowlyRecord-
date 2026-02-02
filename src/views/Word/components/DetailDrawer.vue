@@ -52,6 +52,22 @@
         </el-select>
       </div>
     </div>
+    <div>
+      <div class="setting-item">
+        <div class="content">ocr图片识别引擎</div>
+        <!--        ;justify-content: space-between;  size="large"-->
+        <el-select class="shorcut-desc" v-model="ocrApi" @change="updateTranApi" placeholder="选择"
+                   style="width:100px">
+          <el-option
+              v-for="item in ocrOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+
+          />
+        </el-select>
+      </div>
+    </div>
 
     <div class="titles">
       <div class="setting-item">
@@ -127,20 +143,52 @@
     <!--     密钥设置模块 -->
     <h4 class="header">密钥</h4>
     <div class="content">
-      <h5 style="text-align:center;">个人密钥</h5>
+      <h5 style="text-align:center;">翻译密钥</h5>
       <div class="titles">
         <span class="title">AppId</span>
         <span class="title">SecretKey</span>
       </div>
-      <div v-for="(item,index) in apiKeys"
+      <!--      apiKeys-->
+      <div v-for="(item,index) in wordsStore.userApiKeys"
            :key="index" class="titles">
         <span class="shorcut-desc">
           {{ index }} AppKey
-          <el-input v-model="item.appkey" style="width: 115px" placeholder="没有请留空" type="password"/>
+          <!--          type="password"-->
+          <el-input v-model="item.appkey"
+                    @update:model-value="(val: string) => updateKey(index, 'appkey', val)"
+                    style="width: 115px" placeholder="没有请留空"/>
         </span>
         <span class="shorcut-desc">
           {{ index }} SecretKey
-          <el-input v-model="item.key" style="width: 190px" placeholder="没有请留空" type="password"/>
+          <!--          type="password"-->
+          <el-input v-model="item.key"
+                    @update:model-value="(val: string) => updateKey(index, 'key', val)"
+                    style="width: 190px" placeholder="没有请留空"/>
+        </span>
+      </div>
+
+
+      <h5 style="text-align:center;">ocr图片识别密钥</h5>
+      <div class="titles">
+        <span class="title">AppId</span>
+        <span class="title">SecretKey</span>
+      </div>
+      <!--      apiKeys-->
+      <div v-for="(item,index) in wordsStore.userOcrApiKeys"
+           :key="index" class="titles">
+        <span class="shorcut-desc">
+          {{ index }} AppKey
+          <!--          type="password"-->
+          <el-input v-model="item.appkey"
+                    @update:model-value="(val: string) => updateOcrKey(index, 'appkey', val)"
+                    style="width: 115px" placeholder="没有请留空"/>
+        </span>
+        <span class="shorcut-desc">
+          {{ index }} SecretKey
+          <!--          type="password"-->
+          <el-input v-model="item.key"
+                    @update:model-value="(val: string) => updateOcrKey(index, 'key', val)"
+                    style="width: 190px" placeholder="没有请留空"/>
         </span>
       </div>
     </div>
@@ -210,8 +258,10 @@
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref, watch} from 'vue'
 import {useWordsStore} from "@/stores/words.ts";
-import type {TranslationPlatform} from "@/types/words";
+import type {OcrPlatform, TranslationPlatform} from "@/types/words";
 import {AppInfo} from "@/config.ts";
+import {getSetDb} from "@/utils/user-set-db-util.ts";
+import {log} from "@/utils/logger.ts";
 // import BasicInfoForm from './BasicInfoForm.vue'
 // import AdvancedConfig from './AdvancedConfig.vue'
 // import LogTable from './LogTable.vue'
@@ -228,86 +278,96 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'save'])
 
 
+// 核心：定义明确的更新方法
+const updateKey = (index: TranslationPlatform, field: 'appkey' | 'key', val: string) => {
+  // 更新 store 中的 API 密钥
+  wordsStore.setApiKey(index, field === 'appkey' ? val : wordsStore.userApiKeys[index].appkey, field === 'key' ? val : wordsStore.userApiKeys[index].key);
+}
+const updateOcrKey = (index: OcrPlatform, field: 'appkey' | 'key', val: string) => {
+  log.i('updateOcrKey', index, field, val)
+  // 更新 store 中的 API 密钥
+  wordsStore.setOcrApiKey(index, field === 'appkey' ? val : wordsStore.userOcrApiKeys[index].appkey, field === 'key' ? val : wordsStore.userOcrApiKeys[index].key);
+}
 // 创建响应式API密钥数据，优先使用用户设置的值
-const apiKeys = reactive({
-  youdao: {
-    // || AppInfo.youdao.appkey
-    appkey: localStorage.getItem('api_key_youdao_appkey') || '',
-    // || AppInfo.youdao.key
-    key: localStorage.getItem('api_key_youdao_key') || ''
-  },
-  ali: {
-    // || AppInfo.ali.appkey
-    appkey: localStorage.getItem('api_key_ali_appkey') || '',
-    // || AppInfo.ali.key
-    key: localStorage.getItem('api_key_ali_key') || ''
-  },
-  baidu: {
-    // || AppInfo.baidu.appkey
-    appkey: localStorage.getItem('api_key_baidu_appkey') || '',
-    // || AppInfo.baidu.key
-    key: localStorage.getItem('api_key_baidu_key') || ''
-  },
-  utoolsai: {
-    appkey: localStorage.getItem('api_key_utoolsai_appkey') || '',
-    key: localStorage.getItem('api_key_utoolsai_key') || ''
-  },
-  ollama: {
-    appkey: localStorage.getItem('api_key_ollama_appkey') || '',
-    key: localStorage.getItem('api_key_ollama_key') || ''
-  },
-  deepseek: {
-    appkey: localStorage.getItem('api_key_deepseek_appkey') || '',
-    key: localStorage.getItem('api_key_deepseek_key') || ''
-  },
-  qwen: {
-    appkey: localStorage.getItem('api_key_qwen_appkey') || '',
-    key: localStorage.getItem('api_key_qwen_key') || ''
-  },
-  kimi: {
-    appkey: localStorage.getItem('api_key_kimi_appkey') || '',
-    key: localStorage.getItem('api_key_kimi_key') || ''
-  }
-} as Record<TranslationPlatform, { appkey: string; key: string }>)
+// const apiKeys = reactive({
+//   youdao: {
+//     // || AppInfo.youdao.appkey
+//     appkey: localStorage.getItem('api_key_youdao_appkey') || '',
+//     // || AppInfo.youdao.key
+//     key: localStorage.getItem('api_key_youdao_key') || ''
+//   },
+//   ali: {
+//     // || AppInfo.ali.appkey
+//     appkey: localStorage.getItem('api_key_ali_appkey') || '',
+//     // || AppInfo.ali.key
+//     key: localStorage.getItem('api_key_ali_key') || ''
+//   },
+//   baidu: {
+//     // || AppInfo.baidu.appkey
+//     appkey: localStorage.getItem('api_key_baidu_appkey') || '',
+//     // || AppInfo.baidu.key
+//     key: localStorage.getItem('api_key_baidu_key') || ''
+//   },
+//   utoolsai: {
+//     appkey: localStorage.getItem('api_key_utoolsai_appkey') || '',
+//     key: localStorage.getItem('api_key_utoolsai_key') || ''
+//   },
+//   ollama: {
+//     appkey: localStorage.getItem('api_key_ollama_appkey') || '',
+//     key: localStorage.getItem('api_key_ollama_key') || ''
+//   },
+//   deepseek: {
+//     appkey: localStorage.getItem('api_key_deepseek_appkey') || '',
+//     key: localStorage.getItem('api_key_deepseek_key') || ''
+//   },
+//   qwen: {
+//     appkey: localStorage.getItem('api_key_qwen_appkey') || '',
+//     key: localStorage.getItem('api_key_qwen_key') || ''
+//   },
+//   kimi: {
+//     appkey: localStorage.getItem('api_key_kimi_appkey') || '',
+//     key: localStorage.getItem('api_key_kimi_key') || ''
+//   }
+// } as Record<TranslationPlatform, { appkey: string; key: string }>)
 
 // 监听API密钥变化并保存
-watch(() => apiKeys.ali, () => {
-  saveApiKeys('ali')
-}, {deep: true})
-
-watch(() => apiKeys.youdao, () => {
-  saveApiKeys('youdao')
-}, {deep: true})
-
-watch(() => apiKeys.baidu, () => {
-  saveApiKeys('baidu')
-}, {deep: true})
-
-watch(() => apiKeys.utoolsai, () => {
-  saveApiKeys('utoolsai')
-}, {deep: true})
-
-watch(() => apiKeys.ollama, () => {
-  saveApiKeys('ollama')
-}, {deep: true})
-
-watch(() => apiKeys.deepseek, () => {
-  saveApiKeys('deepseek')
-}, {deep: true})
-
-watch(() => apiKeys.qwen, () => {
-  saveApiKeys('qwen')
-}, {deep: true})
-
-watch(() => apiKeys.kimi, () => {
-  saveApiKeys('kimi')
-}, {deep: true})
-
-const saveApiKeys = (provider: TranslationPlatform) => {
-  // 保存API密钥到本地存储
-  wordsStore.setApiKey(provider, apiKeys[provider].appkey, apiKeys[provider].key)
-  console.log(`${provider} API密钥已保存`, apiKeys[provider])
-}
+// watch(() => apiKeys.ali, () => {
+//   saveApiKeys('ali')
+// }, {deep: true})
+//
+// watch(() => apiKeys.youdao, () => {
+//   saveApiKeys('youdao')
+// }, {deep: true})
+//
+// watch(() => apiKeys.baidu, () => {
+//   saveApiKeys('baidu')
+// }, {deep: true})
+//
+// watch(() => apiKeys.utoolsai, () => {
+//   saveApiKeys('utoolsai')
+// }, {deep: true})
+//
+// watch(() => apiKeys.ollama, () => {
+//   saveApiKeys('ollama')
+// }, {deep: true})
+//
+// watch(() => apiKeys.deepseek, () => {
+//   saveApiKeys('deepseek')
+// }, {deep: true})
+//
+// watch(() => apiKeys.qwen, () => {
+//   saveApiKeys('qwen')
+// }, {deep: true})
+//
+// watch(() => apiKeys.kimi, () => {
+//   saveApiKeys('kimi')
+// }, {deep: true})
+//
+// const saveApiKeys = (provider: TranslationPlatform) => {
+//   // 保存API密钥到本地存储
+//   wordsStore.setApiKey(provider, apiKeys[provider].appkey, apiKeys[provider].key)
+//   console.log(`${provider} API密钥已保存`, apiKeys[provider])
+// }
 
 // 退出插件
 const exitThePlugin = ref(false)
@@ -357,8 +417,9 @@ const kuaijiejian = (type: number) => {
 
 let wordsStore = useWordsStore();
 
-const tranApi = ref<TranslationPlatform>('youdao')
-const options = [
+
+const ocrApi = ref<OcrPlatform>('youdao')
+const ocrOptions = [
   {
     value: 'youdao',
     label: '有道',
@@ -369,7 +430,9 @@ const options = [
   {
     value: 'baidu',
     label: '百度',
-  },
+  }]
+const tranApi = ref<TranslationPlatform>('youdao')
+const options = [...ocrOptions,
   {
     value: 'utoolsai',
     label: 'utoolsAI',

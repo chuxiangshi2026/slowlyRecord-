@@ -9,11 +9,12 @@ import {useWordsStore} from "@/stores/words.ts";
 import {getCurrentUsageCount, hasCustomApiKey, incrementUsageCounter, isOverDailyLimit} from './usage-counter';
 import {batchTranslateAndAddWords} from "@/utils/str-util.ts";
 import {log} from "@/utils/logger.ts";
+import {getTranslationApiKey} from "@/utils/get-api-key.ts";
 
 /**
  * 获取当前使用的API密钥 - 优先使用用户设置的，否则使用默认配置
  */
-function getApiKey(provider: TranslationPlatform) {
+/*function getApiKey(provider: TranslationPlatform) {
     const wordsStore = useWordsStore();
     const userKeys = wordsStore.getApiKey(provider);
     // 如果用户设置了密钥（非空且非纯空格），则使用用户设置的；否则使用默认配置
@@ -23,13 +24,13 @@ function getApiKey(provider: TranslationPlatform) {
         appkey: (trimmedAppKey && trimmedAppKey.length > 0) ? trimmedAppKey : AppInfo[provider].appkey,
         key: (trimmedKey && trimmedKey.length > 0) ? trimmedKey : AppInfo[provider].key
     };
-}
+}*/
 
 /**
  * 生成有道翻译签名参数
  */
 function generateYoudaoParams(query: string): YdParams {
-    const { appkey, key } = getApiKey('youdao');
+    const { appkey, key } = getTranslationApiKey('youdao');
     const salt = (new Date).getTime();
     const curtime = Math.round(new Date().getTime() / 1000);
     const str1 = appkey + truncate(query) + salt + curtime + key;
@@ -52,7 +53,7 @@ function generateYoudaoParams(query: string): YdParams {
  * 生成百度翻译签名参数
  */
 function generateBaiduParams(query: string): any {
-    const { appkey, key: secretKey } = getApiKey('baidu');
+    const { appkey, key: secretKey } = getTranslationApiKey('baidu');
     const appId = appkey;
     const salt = '' + (new Date).getTime();
     const signStr = appId + query + salt + secretKey;
@@ -71,7 +72,7 @@ function generateBaiduParams(query: string): any {
  * 生成阿里翻译参数
  */
 function generateAliParamsSync(query: string): any {
-    const { appkey, key: accessKeySecret } = getApiKey('ali');
+    const { appkey, key: accessKeySecret } = getTranslationApiKey('ali');
     const timestamp = new Date().toISOString().replace(/\.\d+Z/, 'Z');
 
     const params: Record<string, string> = {
@@ -380,7 +381,7 @@ async function callUtoolsAi(query: string): Promise<TranslationResult> {
  */
 async function callOllama(query: string): Promise<TranslationResult> {
     try {
-        const { appkey: baseUrl, key: modelName } = getApiKey('ollama');
+        const { appkey: baseUrl, key: modelName } = getTranslationApiKey('ollama');
 
         // 默认Ollama地址
         const ollamaUrl = baseUrl || 'http://localhost:11434';
@@ -421,7 +422,7 @@ async function callOllama(query: string): Promise<TranslationResult> {
  */
 async function callDeepSeek(query: string): Promise<TranslationResult> {
     try {
-        const { appkey: apiKey, key: modelName } = getApiKey('deepseek');
+        const { appkey: apiKey, key: modelName } = getTranslationApiKey('deepseek');
 
         console.log('apikey',apiKey, modelName)
         if (!apiKey) {
@@ -485,7 +486,7 @@ async function callDeepSeek(query: string): Promise<TranslationResult> {
  */
 async function callQwen(query: string): Promise<TranslationResult> {
     try {
-        const { appkey: apiKey, key: modelName } = getApiKey('qwen');
+        const { appkey: apiKey, key: modelName } = getTranslationApiKey('qwen');
 
         if (!apiKey) {
             return {
@@ -547,7 +548,7 @@ async function callQwen(query: string): Promise<TranslationResult> {
  */
 async function callKimi(query: string): Promise<TranslationResult> {
     try {
-        const { appkey: apiKey, key: modelName } = getApiKey('kimi');
+        const { appkey: apiKey, key: modelName } = getTranslationApiKey('kimi');
 
         if (!apiKey) {
             return {
@@ -617,5 +618,4 @@ export async function translation(payload: YdParams): Promise<AxiosResponse> {
 export default {
     translateWithPlatform,
     translation,
-    getApiKey
 };

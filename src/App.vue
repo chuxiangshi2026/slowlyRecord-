@@ -37,6 +37,8 @@ import picaliData from '../picalidata.json';
 import OCRSelector from '@/views/Word/components/OCRSelector.vue';
 import TextSelector from '@/views/Word/components/TextSelector.vue';
 import {AppInfo} from "@/config.ts";
+import {getSetDb} from "@/utils/user-set-db-util.ts";
+import type {OcrPlatform, TranslationPlatform} from "@/types/words";
 
 const wordsStore = useWordsStore();
 
@@ -53,6 +55,53 @@ const showTextPanel = ref<boolean>(false);
 const textContent = ref<string>('');
 
 utools.onPluginEnter(async (action) => {
+  // 先同步 设置
+  let setDb = getSetDb();
+
+  // 同步插件状态和快捷键设置
+  if (setDb) {
+    wordsStore.pluginStatus = setDb.pluginStatus;
+    wordsStore.shortcutEnabled = setDb.shortcutEnabled;
+
+    // 安全地同步API密钥，提供默认值以防undefined
+    if (setDb.keys) {
+      // 为每个翻译平台提供默认空值
+      const defaultKeys = {
+        ali: { appkey: '', key: '' },
+        youdao: { appkey: '', key: '' },
+        baidu: { appkey: '', key: '' },
+        utoolsai: { appkey: '', key: '' },
+        ollama: { appkey: '', key: '' },
+        deepseek: { appkey: '', key: '' },
+        qwen: { appkey: '', key: '' },
+        kimi: { appkey: '', key: '' }
+      };
+
+      // 合并用户设置的密钥和默认值
+      wordsStore.userApiKeys = {
+        ...defaultKeys,
+        ...setDb.keys
+      } as Record<TranslationPlatform, { appkey: string; key: string }>;
+    }
+
+    if (setDb.ocrKeys) {
+      // 为OCR平台提供默认空值
+      const defaultOcrKeys = {
+        ali: { appkey: '', key: '' },
+        youdao: { appkey: '', key: '' },
+        baidu: { appkey: '', key: '' }
+      };
+
+      // 合并用户设置的OCR密钥和默认值
+      wordsStore.userOcrApiKeys = {
+        ...defaultOcrKeys,
+        ...setDb.ocrKeys
+      } as Record<OcrPlatform, { appkey: string; key: string }>;
+    }
+  }
+
+
+
   // { code, type, payload, option, from }
 
   /*  // app版本
@@ -157,7 +206,7 @@ utools.onPluginEnter(async (action) => {
         }
       }
 
-      const result = await ocrTranslateMultiPlatform(file, currentPlatform);
+      const result = await ocrTranslateMultiPlatform(file);
       // const result = {
       //   youdao: picData,
       //   baidu: baidupicData,

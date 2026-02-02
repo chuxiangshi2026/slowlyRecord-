@@ -55,7 +55,7 @@ export default defineConfig({
     },
     assetsInclude: ['**/*.woff2', '**/*.woff', '**/*.ttf'],
     define: {
-        __LOG_LEVEL__: 2,              // 2=WARN， 0=DEBUG， 4=SILENT
+        __LOG_LEVEL__: 1,              // 2=WARN， 0=DEBUG， 4=SILENT
     },
     esbuild: {
         pure: ['log.d', 'log.i'],      // 生产环境把 debug/info 整行抹掉
