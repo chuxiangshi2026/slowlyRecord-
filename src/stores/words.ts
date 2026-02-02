@@ -1,5 +1,5 @@
-import {computed, ref} from "vue";
-import type {TranslationPlatform, TranslationResult, Word, YdParams} from "@/types/words";
+import {computed, type Ref, ref} from "vue";
+import type {OcrPlatform, TranslationPlatform, TranslationResult, Word} from "@/types/words";
 import {defineStore} from "pinia";
 // import {parse, stringify} from 'zipson'
 // import { serializer } from '@/utils/jsonSerializeUtil';
@@ -8,54 +8,57 @@ import {log} from "@/utils/logger.ts"
 import type {AxiosResponse} from 'axios'
 import CryptoJS from "crypto-js";
 import {addAndUpdateDbWord, cleanDbWord, listDbWords, removeDbWordById, updateDbWordList} from "@/utils/db-util.ts";
-import {APP_KEY, DEFAULT_INTERVALS, FROM, KEY, TO} from "@/constants";
+import {APP_KEY, DB_KEY, DB_KEY_USER_SET, DEFAULT_INTERVALS, FROM, KEY, TO} from "@/constants";
 import {truncate} from "lodash";
 import {AppInfo} from "@/config.ts";
 // import {downloadAndStoreAudio} from "@/utils/audio-util.ts";
 // 导入翻译服务
-import { translateWithPlatform as externalTranslateWithPlatform } from "@/utils/translation-api";
+import {translateWithPlatform as externalTranslateWithPlatform} from "@/utils/translation-api";
+import {addAndUpdateSetDb, getSetDb} from "@/utils/user-set-db-util.ts";
+import {v4 as uuidv4} from "uuid";
+import type {UserSetType} from "@/types/user-set";
 
 // 添加 API 密钥相关的响应式变量
-const userApiKeys = ref({
-    ali: {
-        // || AppInfo.ali.appkey
-        appkey: (localStorage.getItem('api_key_ali_appkey') || '').trim() ,
-        // || AppInfo.ali.key
-        key: (localStorage.getItem('api_key_ali_key') || '').trim()
-    },
-    youdao: {
-        // || AppInfo.youdao.appkey
-        appkey: (localStorage.getItem('api_key_youdao_appkey') || '').trim() ,
-        // || AppInfo.youdao.key
-        key: (localStorage.getItem('api_key_youdao_key') || '').trim()
-    },
-    baidu: {
-        // || AppInfo.baidu.appkey
-        appkey: (localStorage.getItem('api_key_baidu_appkey') || '').trim() ,
-        // || AppInfo.baidu.key
-        key: (localStorage.getItem('api_key_baidu_key') || '').trim()
-    },
-    utoolsai: {
-        appkey: (localStorage.getItem('api_key_utoolsai_appkey') || '').trim(),
-        key: (localStorage.getItem('api_key_utoolsai_key') || '').trim()
-    },
-    ollama: {
-        appkey: (localStorage.getItem('api_key_ollama_appkey') || '').trim(),
-        key: (localStorage.getItem('api_key_ollama_key') || '').trim()
-    },
-    deepseek: {
-        appkey: (localStorage.getItem('api_key_deepseek_appkey') || '').trim(),
-        key: (localStorage.getItem('api_key_deepseek_key') || '').trim()
-    },
-    qwen: {
-        appkey: (localStorage.getItem('api_key_qwen_appkey') || '').trim(),
-        key: (localStorage.getItem('api_key_qwen_key') || '').trim()
-    },
-    kimi: {
-        appkey: (localStorage.getItem('api_key_kimi_appkey') || '').trim(),
-        key: (localStorage.getItem('api_key_kimi_key') || '').trim()
-    }
-})
+// const userApiKeys = ref({
+//     ali: {
+//         // || AppInfo.ali.appkey
+//         appkey: (localStorage.getItem('api_key_ali_appkey') || '').trim() ,
+//         // || AppInfo.ali.key
+//         key: (localStorage.getItem('api_key_ali_key') || '').trim()
+//     },
+//     youdao: {
+//         // || AppInfo.youdao.appkey
+//         appkey: (localStorage.getItem('api_key_youdao_appkey') || '').trim() ,
+//         // || AppInfo.youdao.key
+//         key: (localStorage.getItem('api_key_youdao_key') || '').trim()
+//     },
+//     baidu: {
+//         // || AppInfo.baidu.appkey
+//         appkey: (localStorage.getItem('api_key_baidu_appkey') || '').trim() ,
+//         // || AppInfo.baidu.key
+//         key: (localStorage.getItem('api_key_baidu_key') || '').trim()
+//     },
+//     utoolsai: {
+//         appkey: (localStorage.getItem('api_key_utoolsai_appkey') || '').trim(),
+//         key: (localStorage.getItem('api_key_utoolsai_key') || '').trim()
+//     },
+//     ollama: {
+//         appkey: (localStorage.getItem('api_key_ollama_appkey') || '').trim(),
+//         key: (localStorage.getItem('api_key_ollama_key') || '').trim()
+//     },
+//     deepseek: {
+//         appkey: (localStorage.getItem('api_key_deepseek_appkey') || '').trim(),
+//         key: (localStorage.getItem('api_key_deepseek_key') || '').trim()
+//     },
+//     qwen: {
+//         appkey: (localStorage.getItem('api_key_qwen_appkey') || '').trim(),
+//         key: (localStorage.getItem('api_key_qwen_key') || '').trim()
+//     },
+//     kimi: {
+//         appkey: (localStorage.getItem('api_key_kimi_appkey') || '').trim(),
+//         key: (localStorage.getItem('api_key_kimi_key') || '').trim()
+//     }
+// })
 
 export const useWordsStore =
     defineStore('words',
@@ -63,17 +66,33 @@ export const useWordsStore =
             const words = ref<Word[]>([])
 
             const lastAddedWordText = ref('')    //记录最新添加的单词
-            const lastFocusWordText = ref('')    //记录最新添加的单词
+            const lastFocusWordText = ref('')    //需光标定位单词
 
             const currentTranslationPlatform = ref<TranslationPlatform>('youdao'); // 默认使用有道翻译
-
+            const currentOcrPlatform = ref<OcrPlatform>('baidu'); // 默认使用百度识图
+            // 用户翻译api密钥
+            const userApiKeys: Ref<Record<TranslationPlatform, { appkey: string, key: string }>> = ref({
+                ali: {appkey: '', key: ''},
+                youdao: {appkey: '', key: ''},
+                baidu: {appkey: '', key: ''},
+                utoolsai: {appkey: '', key: ''},
+                ollama: {appkey: '', key: ''},
+                deepseek: {appkey: '', key: ''},
+                qwen: {appkey: '', key: ''},
+                kimi: {appkey: '', key: ''},
+            })
+            const userOcrApiKeys: Ref<Record<OcrPlatform, { appkey: string, key: string }>> = ref({
+                ali: {appkey: '', key: ''},
+                youdao: {appkey: '', key: ''},
+                baidu: {appkey: '', key: ''},
+            })
             // 添加单词后自动退出插件
             const pluginStatus = ref(false);
             // 默认关闭快捷键
             const shortcutEnabled = ref(false);
 
-            const hiddenExplain = ref('');
             // 当前操作释义的单词
+            const hiddenExplain = ref('');
             // const hiddenExplain = ref('');
 
             // 总单词数
@@ -122,10 +141,38 @@ export const useWordsStore =
                 currentTranslationPlatform.value = platform;
             }
 
+            function setOcrPlatform(platform: OcrPlatform) {
+                currentOcrPlatform.value = platform;
+            }
+
+            function setUserApiKeys(userKeys: Record<TranslationPlatform, { appkey: string, key: string }>) {
+                userApiKeys.value = userKeys;
+            }
+
+
+            function initUserSet() {
+                let userSet: UserSetType = {
+                    "_id": DB_KEY_USER_SET + uuidv4(), // 假设_id为必填项
+                    "pluginStatus": false,
+                    "shortcutEnabled": false,
+                    "keys": {},
+                    "ocrKeys": {},
+                };
+                return userSet;
+            }
 
 
             function setShortcutEnabled(enabled: boolean) {
                 shortcutEnabled.value = enabled;
+
+                let userSet = getSetDb()
+                if (userSet) {
+                    userSet.shortcutEnabled = enabled
+                } else {
+                    userSet = initUserSet();
+                    userSet.shortcutEnabled = enabled;
+                }
+                addAndUpdateSetDb(userSet);
             }
 
             /**
@@ -134,9 +181,47 @@ export const useWordsStore =
             function setApiKey(provider: TranslationPlatform, appkey: string, key: string) {
                 userApiKeys.value[provider].appkey = appkey;
                 userApiKeys.value[provider].key = key;
+
+                let userSet = getSetDb()
+                if (userSet) {
+                    if (!userSet.keys) {
+                        userSet.keys = {};
+                    }
+                    userSet.keys[provider] ??= {appkey: '', key: ''};
+                    userSet.keys[provider].appkey = userApiKeys.value[provider].appkey;
+                    userSet.keys[provider].key = userApiKeys.value[provider].key;
+                } else {
+                    userSet = initUserSet();
+                    userSet.keys = userApiKeys.value;
+                }
+                addAndUpdateSetDb(userSet);
                 // 保存到本地存储
-                localStorage.setItem(`api_key_${provider}_appkey`, appkey);
-                localStorage.setItem(`api_key_${provider}_key`, key);
+            }
+
+            function setOcrApiKey(provider: OcrPlatform, appkey: string, key: string) {
+                log.i('设置OCR密钥', provider, appkey, key)
+                userOcrApiKeys.value[provider].appkey = appkey;
+                userOcrApiKeys.value[provider].key = key;
+
+                let userSet = getSetDb()
+                if (userSet) {
+                    log.i('数据库不为空', userSet)
+                    if (!userSet.ocrKeys) {
+                        userSet.ocrKeys = {};
+                    }
+                    userSet.ocrKeys[provider] ??= {appkey: '', key: ''};
+                    userSet.ocrKeys[provider].appkey = userOcrApiKeys.value[provider].appkey;
+                    userSet.ocrKeys[provider].key = userOcrApiKeys.value[provider].key;
+                    log.i('赋值后', userSet)
+                } else {
+                    log.i('数据库为空', userSet)
+                    userSet = initUserSet();
+                    userSet.ocrKeys = userOcrApiKeys.value;
+                    log.i('初次赋值后', userSet)
+                }
+                log.i('保存用户设置', userSet)
+                addAndUpdateSetDb(userSet);
+                // 保存到本地存储
             }
 
             /**
@@ -145,6 +230,11 @@ export const useWordsStore =
             function getApiKey(provider: TranslationPlatform) {
                 return userApiKeys.value[provider];
             }
+
+            function getOcrApiKey(provider: OcrPlatform) {
+                return userOcrApiKeys.value[provider];
+            }
+
 
             /**
              * 更新状态
@@ -247,8 +337,6 @@ export const useWordsStore =
             }
 
 
-
-
             /**
              * 更新 单个单词
              * @param word
@@ -282,6 +370,7 @@ export const useWordsStore =
                 words,
                 lastAddedWordText,
                 currentTranslationPlatform,
+                currentOcrPlatform,
                 lastFocusWordText,
                 hiddenExplain,
                 count,
@@ -291,12 +380,17 @@ export const useWordsStore =
                 forgetCount,
                 shortcutEnabled,
                 userApiKeys, // 导出用户API密钥
+                userOcrApiKeys,
                 setLastAddedWordText,
                 setClosePlugin,
                 setTranslationPlatform,
+                setOcrPlatform,
+                setUserApiKeys,
                 setShortcutEnabled,
                 setApiKey, // 导出设置API密钥方法
+                setOcrApiKey,
                 getApiKey, // 导出获取API密钥方法
+                getOcrApiKey, // 导出获取API密钥方法
                 findWord,
                 addAndUpdateWord,
                 addAndUpdateWords,

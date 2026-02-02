@@ -1,12 +1,11 @@
-import axios, {type AxiosError} from 'axios'
+import axios from 'axios'
 import CryptoJS from 'crypto-js'
-import {translateWithPlatform} from './translation-api';
 import {getCurrentUsageCount, hasCustomApiKey, incrementUsageCounter, isOverDailyLimit} from './usage-counter';
 import {useWordsStore} from "@/stores/words.ts";
 import {USAGE_LIMITS} from "@/constants";
-import type {TranslationPlatform} from "@/types/words";
+import type {OcrPlatform, TranslationPlatform} from "@/types/words";
 import {AppInfo} from "@/config.ts";
-import picaliData from '../../picalidata.json';
+import {getOcrApiKey, getTranslationApiKey} from "@/utils/get-api-key.ts";
 
 const API = 'https://openapi.youdao.com/ocrtransapi'
 
@@ -86,10 +85,14 @@ export async function ocrTranslate(
 // 新增：多平台OCR翻译函数
 export async function ocrTranslateMultiPlatform(
     file: File,
-    platform: TranslationPlatform
 ): Promise<OcrResult> {
+
+    const wordsStore = useWordsStore();
+    const platform = wordsStore.currentTranslationPlatform || 'youdao';
+    const ocrPlatform = wordsStore.currentOcrPlatform || 'youdao';
+
     // 检查是否超出了每日使用限制
-    if (!hasCustomApiKey(platform)) {
+    if (!hasCustomApiKey(ocrPlatform)) {
         // 如果没有自定义API密钥，检查是否超过每日限制
         // OCR翻译使用独立的计数
         if (isOverDailyLimit('ocr')) {
@@ -102,8 +105,9 @@ export async function ocrTranslateMultiPlatform(
         console.log(`OCR使用次数: ${newCount}/${USAGE_LIMITS.OCR_DAILY_LIMIT}`);
     }
 
-    const {appkey, key} = getApiKey(platform);
-    console.log('appkey+key', appkey, key)
+    // const {appkey, key} = getTranslationApiKey(platform);
+    const {appkey, key} = getOcrApiKey(ocrPlatform);
+    // console.log('appkey+key', appkey, key)
 
     // 如果是使用有道平台，继续使用原有的OCR翻译
     if (platform === 'youdao') {
@@ -115,25 +119,76 @@ export async function ocrTranslateMultiPlatform(
         // 阿里OCR API的调用逻辑
         return await ocrTranslateAli(file, appkey, key);
     }
+    // 如果是支持图像识别的平台，则先OCR识别文本，然后通过模型翻译
+    /*else if (['qwen', 'gemini', 'kimi'].includes(platform)) {
+        // 先使用通用OCR识别图片中的文本，优先使用支持视觉的模型
+        const extractedText = await extractTextFromImage(file, platform);
+
+        if (!extractedText.trim()) {
+            return {
+                errorCode: '500',
+                resRegions: []
+            };
+        }
+
+        // 使用指定的平台进行翻译
+        // const translatedText = await translateWithPlatformForOCR(extractedText, platform);
+
+        // if (!translatedText.success || !translatedText.explains) {
+        //     return {
+        //         errorCode: '500',
+        //         resRegions: []
+        //     };
+        // }
+
+        // 返回模拟的OCR结果，包含原文和翻译
+        return {
+            errorCode: '0',
+            resRegions: [{
+                boundingBox: "0,0,100,20", // 模拟边界框
+                context: extractedText,      // 原文
+                tranContent: translatedText.explains // 翻译结果
+            }]
+        };
+    }*/
+    // 如果是仅支持文本翻译的大模型平台（如deepseek、ollama），则使用传统OCR服务提取文本，然后用这些模型翻译
+    //     如果 不是bat 不支持直接ocr翻译，需要把文本 识别后再翻译
+
+    // else if (['ollama', 'deepseek'].includes(platform)) {
+    //     // 使用传统OCR服务提取文本
+    //     const extractedText = await extractTextFromImage(file, platform);
+    //
+    //     if (!extractedText.trim()) {
+    //         return {
+    //             errorCode: '500',
+    //             resRegions: []
+    //         };
+    //     }
+    //
+    //     // 使用指定的大模型平台进行翻译
+    //     const translatedText = await translateWithLargeModel(extractedText, platform);
+    //
+    //     if (!translatedText.success || !translatedText.explains) {
+    //         return {
+    //             errorCode: '500',
+    //             resRegions: []
+    //         };
+    //     }
+    //
+    //     // 返回模拟的OCR结果，包含原文和翻译
+    //     return {
+    //         errorCode: '0',
+    //         resRegions: [{
+    //             boundingBox: "0,0,100,20", // 模拟边界框
+    //             context: extractedText,      // 原文
+    //             tranContent: translatedText.explains // 翻译结果
+    //         }]
+    //     };
+    // }
 
     return {
         errorCode: '500',
         resRegions: []
-    };
-}
-
-/**
- * 获取当前使用的API密钥 - 优先使用用户设置的，否则使用默认配置
- */
-function getApiKey(provider: TranslationPlatform) {
-    const wordsStore = useWordsStore();
-    const userKeys = wordsStore.getApiKey(provider);
-    // 如果用户设置了密钥（非空且非纯空格），则使用用户设置的；否则使用默认配置
-    const trimmedAppKey = userKeys.appkey?.trim();
-    const trimmedKey = userKeys.key?.trim();
-    return {
-        appkey: (trimmedAppKey && trimmedAppKey.length > 0) ? trimmedAppKey : AppInfo[provider].appkey,
-        key: (trimmedKey && trimmedKey.length > 0) ? trimmedKey : AppInfo[provider].key
     };
 }
 
@@ -342,3 +397,244 @@ async function checkImageRatio(file: File): Promise<void> {
 }
 
 
+/**
+ * 从图片中提取文本 - 优先使用多模态大模型，备选传统OCR服务
+ */
+async function extractTextFromImage(file: File, platform?: TranslationPlatform): Promise<string> {
+    // 如果指定了支持视觉识别的大模型，优先使用
+    if (platform && ['qwen', 'kimi'].includes(platform)) {
+        try {
+            return await extractTextUsingVisionModel(file, platform);
+        } catch (error) {
+            console.warn(`${platform} 视觉模型提取失败，回退到传统OCR:`, error);
+        }
+    }
+
+    // 如果有道OCR失败，尝试百度OCR
+    try {
+        const baiduResult = await ocrTranslateBaidu(file, AppInfo.baidu.appkey, AppInfo.baidu.key);
+        if (baiduResult.errorCode === '0' && baiduResult.resRegions && baiduResult.resRegions.length > 0) {
+            return baiduResult.resRegions.map(region => region.context).join(' ');
+        }
+    } catch (error) {
+        console.warn('百度OCR提取失败:', error);
+    }
+
+    // 尝试使用有道OCR提取文本
+    try {
+        const youdaoResult = await ocrTranslate(file, AppInfo.youdao.appkey, AppInfo.youdao.key, 'auto', 'zh-CHS');
+        if (youdaoResult.errorCode === '0' && youdaoResult.resRegions && youdaoResult.resRegions.length > 0) {
+            // 提取所有识别到的文本
+            return youdaoResult.resRegions.map(region => region.context).join(' ');
+        }
+    } catch (error) {
+        console.warn('有道OCR提取失败:', error);
+    }
+
+
+
+    // 如果百度OCR也失败，尝试阿里OCR
+    try {
+        const aliResult = await ocrTranslateAli(file, AppInfo.ali.appkey, AppInfo.ali.key);
+        if (aliResult.errorCode === '0' && aliResult.resRegions && aliResult.resRegions.length > 0) {
+            return aliResult.resRegions.map(region => region.context).join(' ');
+        }
+    } catch (error) {
+        console.warn('阿里OCR提取失败:', error);
+    }
+
+    // 如果所有OCR服务都失败，返回空字符串
+    return "";
+}
+
+/**
+ * 使用支持视觉的AI模型提取文本
+ */
+async function extractTextUsingVisionModel(file: File, platform: TranslationPlatform): Promise<string> {
+    // 将文件转换为base64
+    const base64 = await fileToBase64(file);
+
+    // 根据不同的平台调用相应的视觉模型
+    if (platform === 'qwen') {
+        return await extractTextUsingQwenVision(base64);
+    } else if (platform === 'kimi') {
+        return await extractTextUsingKimiVision(base64);
+    }
+    // 注意：gpt4v 需要额外的实现
+
+    throw new Error(`不支持的视觉模型平台: ${platform}`);
+}
+
+/**
+ * 使用通义千问视觉模型提取文本
+ */
+async function extractTextUsingQwenVision(base64Image: string): Promise<string> {
+    try {
+        const { appkey: apiKey, key: model } = getTranslationApiKey('qwen');
+
+        if (!apiKey) {
+            throw new Error('Qwen API key is required');
+        }
+
+        const modelType = model || 'qwen-vl-max'; // 视觉模型
+
+        const response = await fetch('https://dashscope.aliyun.com/api/v1/services/aigc/multimodal-generation/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: modelType,
+                input: {
+                    messages: [
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "image": `data:image/jpeg;base64,${base64Image}`
+                                },
+                                {
+                                    "text": "请识别并提取图片中的所有文本内容，只输出识别到的文本，不要有其他解释。"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                parameters: {
+                    temperature: 0.1
+                }
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Qwen vision request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // 解析返回的数据以提取文本
+        const text = data.output.choices?.[0]?.message?.content?.[0]?.text || "";
+        return text;
+    } catch (error) {
+        console.error('Qwen vision error:', error);
+        throw error;
+    }
+}
+
+/**
+ * 使用Google Gemini视觉模型提取文本
+ */
+/*async function extractTextUsingGeminiVision(base64Image: string): Promise<string> {
+    try {
+        const { appkey: apiKey, key: model } = getTranslationApiKey('gemini');
+
+        if (!apiKey) {
+            throw new Error('Gemini API key is required');
+        }
+
+        const modelType = model || 'gemini-pro-vision';
+
+        // Gemini Vision API 调用
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelType}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [
+                        { text: "请识别并提取图片中的所有文本内容，只输出识别到的文本，不要有其他解释。" },
+                        {
+                            inline_data: {
+                                mime_type: "image/jpeg",
+                                data: base64Image
+                            }
+                        }
+                    ]
+                }]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Gemini vision request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        return text;
+    } catch (error) {
+        console.error('Gemini vision error:', error);
+        throw error;
+    }
+}*/
+
+/**
+ * 使用Kimi视觉模型提取文本（使用Moonshot API作为示例）
+ */
+async function extractTextUsingKimiVision(base64Image: string): Promise<string> {
+    try {
+        const { appkey: apiKey, key: model } = getTranslationApiKey('kimi');
+
+        if (!apiKey) {
+            throw new Error('Kimi API key is required');
+        }
+
+        const modelType = model || 'moonshot-v1-8k';
+
+        // 使用Moonshot API，因为Kimi目前没有公开的视觉API
+        // 实际使用时需要替换为正确的Kimi视觉API
+        const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: modelType,
+                messages: [
+                    {
+                        role: 'system',
+                        content: '你是一个图像内容识别助手，请识别并提取图像中的所有文本内容。'
+                    },
+                    {
+                        role: 'user',
+                        content: [
+                            {
+                                type: 'text',
+                                text: '请识别并提取图片中的所有文本内容，只输出识别到的文本，不要有其他解释。'
+                            },
+                            {
+                                type: 'image_url',
+                                image_url: {
+                                    url: `data:image/jpeg;base64,${base64Image}`
+                                }
+                            }
+                        ]
+                    }
+                ]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Kimi/Moonshot vision request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const text = data.choices?.[0]?.message?.content || "";
+        return text;
+    } catch (error) {
+        console.error('Kimi vision error:', error);
+        throw error;
+    }
+}
+
+/**
+ * 使用大模型翻译文本
+ */
+async function translateWithLargeModel(text: string, platform: TranslationPlatform) {
+    // 直接导入翻译API
+    const {translateWithPlatform} = await import('./translation-api');
+
+    // 使用大模型平台进行翻译
+    return await translateWithPlatform(text, platform);
+}

@@ -1,11 +1,11 @@
 /**
  * 单词结构
  */
-export interface Word extends DbDoc{
+export interface Word extends DbDoc {
     _id: string,
-    _rev?:string,
+    _rev?: string,
     // 是否显示，是否需要复习
-    isReview:boolean,
+    isReview: boolean,
     // 单词|文本
     text: string,
     // 是否是单词   isWord : boolean
@@ -20,7 +20,7 @@ export interface Word extends DbDoc{
     // 是否隐藏中文   true不显示
     explainedHidden: boolean
     // 等级
-    level: 0|1|2|3|4|5|6|7|8|9|10|11|12
+    level: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
     // 图片
     image?: string
     // 发音
@@ -61,35 +61,12 @@ interface YdParams {
 
 
 /**
- * 百度翻译请求参数结构
- */
-interface BdParams {
-    q: string,
-    from: string,
-    to: string,
-    appid: string,
-    salt: number,
-    sign: string,
-}
-
-
-
-/**
- * 谷歌翻译请求参数结构
- */
-interface GgParams {
-    q: string,
-    source: string,
-    target: string,
-    format: string,
-}
-
-/**
  * 翻译平台枚举 | 'google'
  */
-export type TranslationPlatform = 'youdao' | 'baidu' | 'ali' | 'utoolsai' | 'ollama' | 'deepseek' | 'qwen' | 'kimi';
+export type OcrPlatform = 'youdao' | 'baidu' | 'ali';
 
 
+export type TranslationPlatform = OcrPlatform | 'utoolsai' | 'ollama' | 'deepseek' | 'qwen' | 'kimi';
 
 /**
  * 翻译结果结构
