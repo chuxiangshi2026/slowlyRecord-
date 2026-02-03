@@ -63,6 +63,8 @@ utools.onPluginEnter(async (action) => {
   if (setDb) {
     wordsStore.pluginStatus = setDb.pluginStatus;
     wordsStore.shortcutEnabled = setDb.shortcutEnabled;
+    wordsStore.currentTranslationPlatform = setDb.translationPlatform;
+    wordsStore.currentOcrPlatform = setDb.ocrPlatform;
 
     // 安全地同步API密钥，提供默认值以防undefined
     if (setDb.keys) {

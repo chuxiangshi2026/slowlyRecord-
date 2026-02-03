@@ -27,7 +27,7 @@
       <div class="setting-item">
         <div class="content">加入单词后退出插件</div>
         <el-switch class="shorcut-desc"
-                   v-model="exitThePlugin"
+                   v-model="wordsStore.pluginStatus"
                    inline-prompt
                    size="large"
                    active-text="开"
@@ -40,7 +40,7 @@
       <div class="setting-item">
         <div class="content">翻译引擎</div>
         <!--        ;justify-content: space-between;  size="large"-->
-        <el-select class="shorcut-desc" v-model="tranApi" @change="updateTranApi" placeholder="选择"
+        <el-select class="shorcut-desc" v-model="wordsStore.currentTranslationPlatform" @change="wordsStore.setTranslationPlatform" placeholder="选择"
                    style="width:100px">
           <el-option
               v-for="item in options"
@@ -56,7 +56,7 @@
       <div class="setting-item">
         <div class="content">ocr图片识别引擎</div>
         <!--        ;justify-content: space-between;  size="large"-->
-        <el-select class="shorcut-desc" v-model="ocrApi" @change="updateOrcTranApi" placeholder="选择"
+        <el-select class="shorcut-desc" v-model="wordsStore.currentOcrPlatform" @change="wordsStore.setOcrPlatform" placeholder="选择"
                    style="width:100px">
           <el-option
               v-for="item in ocrOptions"
@@ -73,7 +73,7 @@
       <div class="setting-item">
         <div class="content">启用快捷键</div>
         <el-switch class="shorcut-desc"
-                   v-model="shortcutEnabled"
+                   v-model="wordsStore.shortcutEnabled"
                    inline-prompt
                    size="large"
                    active-text="开"
@@ -363,7 +363,7 @@ const updateOcrKey = (index: OcrPlatform, field: 'appkey' | 'key', val: string) 
 // }
 
 // 退出插件
-const exitThePlugin = ref(false)
+// const exitThePlugin = ref(false)
 
 
 const openUrl = (url: string) => {
@@ -371,28 +371,28 @@ const openUrl = (url: string) => {
 }
 
 
-const shortcutEnabled = ref(false) // 快捷键开关状态
+// const shortcutEnabled = ref(false) // 快捷键开关状态
 // const autoFocusFirstItem = ref(true) // 自动聚焦第一个单词状态
 
 // 实现快捷键开关功能
 const openTheShortcut = () => {
   // 可以在这里添加持久化保存快捷键状态的逻辑
-  wordsStore.setShortcutEnabled(shortcutEnabled.value)
+  wordsStore.setShortcutEnabled(wordsStore.shortcutEnabled)
 }
 // 在组件挂载时读取快捷键状态
-onMounted(() => {
-  // const savedStatus = localStorage.getItem('shortcutEnabled')
-  shortcutEnabled.value = wordsStore.shortcutEnabled
-
-  // const savedStatus = localStorage.getItem('shortcutEnabled')
-  exitThePlugin.value = wordsStore.pluginStatus
-
-  // const savedStatus = localStorage.getItem('shortcutEnabled')
-  tranApi.value = wordsStore.currentTranslationPlatform
-})
+// onMounted(() => {
+//   // const savedStatus = localStorage.getItem('shortcutEnabled')
+//   shortcutEnabled.value = wordsStore.shortcutEnabled
+//
+//   // const savedStatus = localStorage.getItem('shortcutEnabled')
+//   exitThePlugin.value = wordsStore.pluginStatus
+//
+//   // const savedStatus = localStorage.getItem('shortcutEnabled')
+//   tranApi.value = wordsStore.currentTranslationPlatform
+// })
 
 const onCloseAfterAddSwitchChange = () => {
-  wordsStore.setClosePlugin(exitThePlugin.value)
+  wordsStore.setClosePlugin(wordsStore.pluginStatus)
 }
 
 const kuaijiejian = (type: number) => {
@@ -410,8 +410,6 @@ const kuaijiejian = (type: number) => {
 
 let wordsStore = useWordsStore();
 
-
-const ocrApi = ref<OcrPlatform>('tencent')
 const ocrOptions = [
   {
     value: 'tencent',
@@ -427,7 +425,6 @@ const ocrOptions = [
     value: 'ali',
     label: '阿里',
   }]
-const tranApi = ref<TranslationPlatform>('tencent')
 const options = [...ocrOptions,
   {
     value: 'utoolsai',
@@ -454,15 +451,6 @@ const options = [...ocrOptions,
   value: 'Option5',
       label: 'Option5',
 },*/
-const updateTranApi = () => {
-  wordsStore.setTranslationPlatform(tranApi.value)
-}
-
-const updateOrcTranApi = () => {
-  wordsStore.setOcrPlatform(ocrApi.value)
-}
-
-
 const visible = computed({
   get: () => props.modelValue,
   set: (val) => emit('update:modelValue', val)
