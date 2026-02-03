@@ -411,7 +411,7 @@ const kuaijiejian = (type: number) => {
 let wordsStore = useWordsStore();
 
 
-const ocrApi = ref<OcrPlatform>('youdao')
+const ocrApi = ref<OcrPlatform>('tencent')
 const ocrOptions = [
   {
     value: 'tencent',
@@ -427,7 +427,7 @@ const ocrOptions = [
     value: 'ali',
     label: '阿里',
   }]
-const tranApi = ref<TranslationPlatform>('youdao')
+const tranApi = ref<TranslationPlatform>('tencent')
 const options = [...ocrOptions,
   {
     value: 'utoolsai',

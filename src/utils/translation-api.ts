@@ -141,7 +141,7 @@ function percentEncode(str: string): string {
 /**
  * 调用不同平台的翻译接口
  */
-export async function translateWithPlatform(query: string, platform: TranslationPlatform = 'youdao'): Promise<TranslationResult> {
+export async function translateWithPlatform(query: string, platform: TranslationPlatform = 'tencent'): Promise<TranslationResult> {
     log.i('待翻译参数', query)
     try {
         // 检查是否超出了每日使用限制

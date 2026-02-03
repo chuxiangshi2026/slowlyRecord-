@@ -68,8 +68,8 @@ export const useWordsStore =
             const lastAddedWordText = ref('')    //记录最新添加的单词
             const lastFocusWordText = ref('')    //需光标定位单词
 
-            const currentTranslationPlatform = ref<TranslationPlatform>('youdao'); // 默认使用有道翻译
-            const currentOcrPlatform = ref<OcrPlatform>('baidu'); // 默认使用百度识图
+            const currentTranslationPlatform = ref<TranslationPlatform>('tencent'); // 默认使用有道翻译
+            const currentOcrPlatform = ref<OcrPlatform>('tencent'); // 默认使用百度识图
             // 用户翻译api密钥
             const userApiKeys: Ref<Record<TranslationPlatform, { appkey: string, key: string }>> = ref({
                 tencent: {appkey: '', key: ''},
