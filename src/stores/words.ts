@@ -129,10 +129,19 @@ export const useWordsStore =
                 lastAddedWordText.value = text
             }
 
-
+            // 设置添加单词后插件状态
             function setClosePlugin(status: boolean) {
-                console.log('更新定位单词', status)
+                console.log('更新插件状态', status)
                 pluginStatus.value = status
+
+                let userSet = getSetDb()
+                if (userSet) {
+                    userSet.pluginStatus = status
+                } else {
+                    userSet = initUserSet();
+                    userSet.pluginStatus = status;
+                }
+                addAndUpdateSetDb(userSet);
             }
 
 
@@ -141,10 +150,32 @@ export const useWordsStore =
              */
             function setTranslationPlatform(platform: TranslationPlatform) {
                 currentTranslationPlatform.value = platform;
+
+                let userSet = getSetDb()
+                if (userSet) {
+                    userSet.translationPlatform = platform
+                } else {
+                    userSet = initUserSet();
+                    userSet.translationPlatform = platform;
+                }
+                addAndUpdateSetDb(userSet);
             }
 
+            /**
+             * 获取当前orc识别平台
+             */
             function setOcrPlatform(platform: OcrPlatform) {
+                log.i('更新当前orc识别平台', platform)
                 currentOcrPlatform.value = platform;
+
+                let userSet = getSetDb()
+                if (userSet) {
+                    userSet.ocrPlatform = platform
+                } else {
+                    userSet = initUserSet();
+                    userSet.ocrPlatform = platform;
+                }
+                addAndUpdateSetDb(userSet);
             }
 
             function setUserApiKeys(userKeys: Record<TranslationPlatform, { appkey: string, key: string }>) {
@@ -152,11 +183,16 @@ export const useWordsStore =
             }
 
 
+            /*
+            * 初始化设置
+            * */
             function initUserSet() {
                 let userSet: UserSetType = {
                     "_id": DB_KEY_USER_SET + uuidv4(), // 假设_id为必填项
                     "pluginStatus": false,
                     "shortcutEnabled": false,
+                    "translationPlatform": 'tencent',
+                    "ocrPlatform": 'tencent',
                     "keys": {},
                     "ocrKeys": {},
                 };
@@ -164,6 +200,7 @@ export const useWordsStore =
             }
 
 
+            // 设置快捷键开关
             function setShortcutEnabled(enabled: boolean) {
                 shortcutEnabled.value = enabled;
 

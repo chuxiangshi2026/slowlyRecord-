@@ -28,6 +28,8 @@ export type OcrKeyType = Record<OcrPlatform, {
 export type UserSetType = DbDoc<{
     pluginStatus: boolean;
     shortcutEnabled: boolean;
+    translationPlatform: TranslationPlatform;
+    ocrPlatform: OcrPlatform;
     keys: KeyType;
     ocrKeys: OcrKeyType;
 }>;
