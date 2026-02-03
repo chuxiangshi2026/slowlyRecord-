@@ -87,8 +87,7 @@ export async function ocrTranslateMultiPlatform(): Promise<OcrResult> {
 
 
     const wordsStore = useWordsStore();
-    const platform = wordsStore.currentTranslationPlatform || 'youdao';
-    const ocrPlatform = wordsStore.currentOcrPlatform || 'youdao';
+    const ocrPlatform = wordsStore.currentOcrPlatform || 'tencent';
 
     // 检查是否超出了每日使用限制
     if (!hasCustomApiKey(ocrPlatform)) {
