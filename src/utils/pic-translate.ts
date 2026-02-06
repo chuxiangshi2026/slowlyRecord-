@@ -6,6 +6,7 @@ import {USAGE_LIMITS} from "@/constants";
 import type {OcrPlatform, TranslationPlatform} from "@/types/words";
 import {AppInfo} from "@/config.ts";
 import {getOcrApiKey, getTranslationApiKey} from "@/utils/get-api-key.ts";
+import {log} from "@/utils/logger.ts";
 
 const API = 'https://openapi.youdao.com/ocrtransapi'
 
@@ -79,6 +80,16 @@ export async function ocrTranslate(
     const {data} = await axios.post(API, params, {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     })
+
+    // 处理有道 API 错误码
+    if (data.errorCode !== '0') {
+        console.error('有道OCR错误:', data.errorCode, data);
+        return {
+            errorCode: data.errorCode,
+            resRegions: []
+        };
+    }
+
     return data as OcrResult
 }
 
@@ -88,6 +99,10 @@ export async function ocrTranslateMultiPlatform(): Promise<OcrResult> {
 
     const wordsStore = useWordsStore();
     const ocrPlatform = wordsStore.currentOcrPlatform || 'tencent';
+
+    // 添加调试日志
+    console.log('当前OCR平台:', ocrPlatform);
+    console.log('Store中的currentOcrPlatform:', wordsStore.currentOcrPlatform);
 
     // 检查是否超出了每日使用限制
     if (!hasCustomApiKey(ocrPlatform)) {
@@ -142,6 +157,7 @@ async function ocrTranslateBaidu(
     apiKey: string,
     secretKey: string
 ): Promise<OcrResult> {
+    log.i('百度OCR翻译')
     const url = 'https://fanyi-api.baidu.com/api/trans/sdk/picture';
 
     /* 1. base64 转 Uint8Array 并计算 md5 */
@@ -179,6 +195,21 @@ async function ocrTranslateBaidu(
     const data = resp.data;
     // console.log(JSON.stringify(data, null, 2));
     // if (data.error_code) return { errorCode: data.error_code };
+
+    // 检查数据结构，防止 undefined 错误
+    if (!data.data || !Array.isArray(data.data.content)) {
+        console.error('百度OCR返回错误:', data);
+        // 处理百度错误码，提供更友好的提示
+        let errorCode = data.error_code ? String(data.error_code) : '500';
+        if (data.error_code === '52003' || data.error_msg?.includes('UNAUTHORIZED')) {
+            errorCode = 'BAIDU_AUTH_FAILED';
+            console.error('百度OCR鉴权失败，请检查：1) API密钥是否正确 2) 是否已开通图片翻译服务 3) 密钥是否过期');
+        }
+        return {
+            errorCode: errorCode,
+            resRegions: []
+        };
+    }
 
     return {
         errorCode: '0',
