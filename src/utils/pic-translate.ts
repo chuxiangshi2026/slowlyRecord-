@@ -776,6 +776,8 @@ async function translateWithLargeModel(text: string, platform: TranslationPlatfo
 /**
  * 本地OCR识别 - 使用 Tesseract.js
  * 轻量级离线OCR，在浏览器端运行
+ *
+ * 注意：默认从 CDN 下载语言模型，如需完全离线，请配置 langPath 指向本地文件
  */
 async function ocrTranslateLocal(base64: string): Promise<OcrResult> {
     try {
@@ -787,10 +789,19 @@ async function ocrTranslateLocal(base64: string): Promise<OcrResult> {
 
         // 使用 Tesseract 进行识别
         // 使用轻量级的英语训练数据（eng），如果需要中文可以改为 'chi_sim'
+        //
+        // 离线配置说明：
+        // 1. 下载语言模型：https://github.com/naptha/tessdata/tree/gh-pages/4.0.0_best
+        // 2. 将 .traineddata 文件放入 public/tessdata/ 目录
+        // 3. 添加配置：{ langPath: '/tessdata', cacheMethod: 'none' }
+        //
         const result = await Tesseract.recognize(
             imageUrl,
             'eng',
             {
+                // 如需离线，取消下面注释并配置本地路径：
+                langPath: '/tessdata',  // 指向 public/tessdata/ 目录
+                // cacheMethod: 'none',    // 不使用浏览器缓存，直接读取本地文件
                 logger: (m: any) => {
                     // 可以在这里显示进度
                     if (m.status === 'recognizing text') {

@@ -11,6 +11,12 @@ export function getTranslationApiKey(provider: TranslationPlatform) {
     // 如果用户设置了密钥（非空且非纯空格），则使用用户设置的；否则使用默认配置
     const trimmedAppKey = userKeys.appkey?.trim();
     const trimmedKey = userKeys.key?.trim();
+    
+    // 本地翻译不需要API密钥
+    if (provider === 'local') {
+        return { appkey: '', key: '' };
+    }
+    
     return {
         appkey: (trimmedAppKey && trimmedAppKey.length > 0) ? trimmedAppKey : AppInfo[provider].appkey,
         key: (trimmedKey && trimmedKey.length > 0) ? trimmedKey : AppInfo[provider].key

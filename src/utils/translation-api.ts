@@ -10,7 +10,7 @@ import {getCurrentUsageCount, hasCustomApiKey, incrementUsageCounter, isOverDail
 import {batchTranslateAndAddWords} from "@/utils/str-util.ts";
 import {log} from "@/utils/logger.ts";
 import {getTranslationApiKey} from "@/utils/get-api-key.ts";
-import {translateWithLocalDictionary} from "./local-dictionary";
+import {translateWithLocalDictionaryAsync} from "./local-dictionary";
 
 /**
  * 获取当前使用的API密钥 - 优先使用用户设置的，否则使用默认配置
@@ -233,8 +233,18 @@ export async function translateWithPlatform(query: string, platform: Translation
                 return callTencent(query);
             case 'local':
                 console.log('调用本地词典翻译, 查询词:', query)
-                const localResult = translateWithLocalDictionary(query);
+                const localResult = await translateWithLocalDictionaryAsync(query);
                 console.log('本地翻译结果:', localResult)
+                // 如果本地词典未收录，直接返回原文（不回退到网络翻译）
+                if (!localResult.success) {
+                    console.log('本地词典未收录，直接显示原文:', query)
+                    return {
+                        success: true,
+                        explains: query,
+                        phonetic: '',
+                        pronunciation: ''
+                    };
+                }
                 return localResult;
             /*           case 'google':
                            // Google翻译API通常需要服务端实现，这里提供基本结构

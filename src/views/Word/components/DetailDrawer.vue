@@ -40,7 +40,7 @@
       <div class="setting-item">
         <div class="content">翻译引擎</div>
         <!--        ;justify-content: space-between;  size="large"-->
-        <el-select class="shorcut-desc" :model-value="wordsStore.currentTranslationPlatform" @update:model-value="(val) => wordsStore.setTranslationPlatform(val as TranslationPlatform)" placeholder="选择"
+        <el-select class="shorcut-desc" :model-value="wordsStore.currentTranslationPlatform" @update:model-value="(val: TranslationPlatform) => wordsStore.setTranslationPlatform(val)" placeholder="选择"
                    style="width:150px">
           <el-option
               v-for="item in options"
