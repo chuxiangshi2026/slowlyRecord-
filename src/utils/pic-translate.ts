@@ -823,12 +823,14 @@ async function ocrTranslateLocal(base64: string): Promise<OcrResult> {
         const text = result.data.text?.trim();
 
         if (text) {
-            // 调用本地翻译
-            const {translateWithLocalDictionary} = await import('./local-dictionary');
-            const translationResult = translateWithLocalDictionary(text);
+            // 调用本地翻译（使用异步版本确保词典已加载）
+            const {translateWithLocalDictionaryAsync} = await import('./local-dictionary');
+            console.log('[本地OCR] 识别文本:', text);
+            const translationResult = await translateWithLocalDictionaryAsync(text);
+            console.log('[本地OCR] 翻译结果:', translationResult);
             const translatedText = translationResult.success
                 ? (translationResult.explains || '')
-                : `[翻译失败: ${translationResult.errorMsg || '未知错误'}]`;
+                : text; // 翻译失败时显示原文
 
             // 将识别结果作为一个整体返回
             // 注意：Tesseract.js 的段落检测不够精确，我们返回整体文本

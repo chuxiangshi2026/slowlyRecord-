@@ -316,7 +316,6 @@ async function translateSentenceByWordsAsync(
 
   // 逐个单词翻译
   const translations: string[] = [];
-  const unknownWords: string[] = [];
 
   for (const word of words) {
     const entry = queryDictionaryWithData(word, dictionary);
@@ -332,8 +331,8 @@ async function translateSentenceByWordsAsync(
         const meaning = baseEntry.explains[0].replace(/^(n\.|v\.|adj\.|adv\.|prep\.|conj\.|pron\.|art\.|num\.|int\.)\s*/, '');
         translations.push(meaning);
       } else {
-        translations.push(`[${word}]`);  // 标记未知单词
-        unknownWords.push(word);
+        // 词库中没有，显示原单词
+        translations.push(word);
       }
     }
   }
@@ -341,26 +340,11 @@ async function translateSentenceByWordsAsync(
   // 拼接翻译结果
   const translatedText = translations.join('；');
 
-  if (unknownWords.length === words.length) {
-    // 所有单词都不认识
-    return {
-      success: false,
-      errorMsg: `本地词库暂未收录这些单词，建议切换至网络翻译`,
-      isLocal: true
-    };
-  }
-
-  const result: LocalTranslationResult = {
+  return {
     success: true,
     explains: translatedText,
     isLocal: true
   };
-
-  if (unknownWords.length > 0) {
-    result.errorMsg = `部分单词未收录: ${unknownWords.join(', ')}`;
-  }
-
-  return result;
 }
 
 /**
@@ -395,7 +379,6 @@ function translateSentenceByWordsSync(
   }
 
   const translations: string[] = [];
-  const unknownWords: string[] = [];
 
   for (const word of words) {
     const entry = queryDictionaryWithData(word, dictionary);
@@ -409,33 +392,19 @@ function translateSentenceByWordsSync(
         const meaning = baseEntry.explains[0].replace(/^(n\.|v\.|adj\.|adv\.|prep\.|conj\.|pron\.|art\.|num\.|int\.)\s*/, '');
         translations.push(meaning);
       } else {
-        translations.push(`[${word}]`);
-        unknownWords.push(word);
+        // 词库中没有，显示原单词
+        translations.push(word);
       }
     }
   }
 
   const translatedText = translations.join('；');
 
-  if (unknownWords.length === words.length) {
-    return {
-      success: false,
-      errorMsg: `本地词库暂未收录这些单词，建议切换至网络翻译`,
-      isLocal: true
-    };
-  }
-
-  const result: LocalTranslationResult = {
+  return {
     success: true,
     explains: translatedText,
     isLocal: true
   };
-
-  if (unknownWords.length > 0) {
-    result.errorMsg = `部分单词未收录: ${unknownWords.join(', ')}`;
-  }
-
-  return result;
 }
 
 /**
