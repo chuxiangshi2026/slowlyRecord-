@@ -615,7 +615,7 @@ async function extractTextUsingQwenVision(base64Image: string): Promise<string> 
         const {appkey: apiKey, key: model} = getTranslationApiKey('qwen');
 
         if (!apiKey) {
-            throw new Error('Qwen API key is required');
+            throw new Error('请先配置Qwen模型密钥');
         }
 
         const modelType = model || 'qwen-vl-max'; // 视觉模型
@@ -719,7 +719,7 @@ async function extractTextUsingKimiVision(base64Image: string): Promise<string> 
         const {appkey: apiKey, key: model} = getTranslationApiKey('kimi');
 
         if (!apiKey) {
-            throw new Error('Kimi API key is required');
+            throw new Error('请先配置Kimi模型密钥');
         }
 
         const modelType = model || 'moonshot-v1-8k';

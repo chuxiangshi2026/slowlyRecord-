@@ -469,7 +469,7 @@ async function callDeepSeek(query: string): Promise<TranslationResult> {
         if (!apiKey) {
             return {
                 success: false,
-                errorMsg: 'DeepSeek API key is required'
+                errorMsg: '请先配置DeepSeek模型密钥'
             };
         }
 
@@ -532,7 +532,7 @@ async function callQwen(query: string): Promise<TranslationResult> {
         if (!apiKey) {
             return {
                 success: false,
-                errorMsg: 'Qwen API key is required'
+                errorMsg: '请先配置Qwen模型密钥'
             };
         }
 
@@ -594,7 +594,7 @@ async function callKimi(query: string): Promise<TranslationResult> {
         if (!apiKey) {
             return {
                 success: false,
-                errorMsg: 'Kimi API key is required'
+                errorMsg: '请先配置kimi模型密钥'
             };
         }
 
