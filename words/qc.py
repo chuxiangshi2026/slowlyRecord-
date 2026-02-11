@@ -11,10 +11,10 @@ def clean_json_content(content):
     """
     # 1. 移除单行注释
     content = re.sub(r'//.*$', '', content, flags=re.MULTILINE)
-    
+
     # 2. 移除多行注释
     content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
-    
+
     # 3. 处理每行：移除空行，修复尾随逗号
     lines = content.split('\n')
     cleaned_lines = []
@@ -24,11 +24,11 @@ def clean_json_content(content):
         if stripped == '':
             continue
         cleaned_lines.append(line)
-    
+
     # 4. 修复对象和数组中的尾随逗号（逗号后跟 } 或 ]）
     result = '\n'.join(cleaned_lines)
     result = re.sub(r',(\s*[}\]])', r'\1', result)
-    
+
     return result
 
 def parse_json_with_duplicate_keys(content):
@@ -38,7 +38,7 @@ def parse_json_with_duplicate_keys(content):
     """
     # 使用自定义 hook 来检测重复 key
     duplicate_keys = []
-    
+
     def dict_hook(pairs):
         result = {}
         for key, value in pairs:
@@ -49,7 +49,7 @@ def parse_json_with_duplicate_keys(content):
                 continue
             result[key] = value
         return result
-    
+
     data = json.loads(content, object_pairs_hook=dict_hook)
     return data, duplicate_keys
 
@@ -75,8 +75,8 @@ def remove_duplicates_by_word(data):
 
 # ========== 主程序 ==========
 
-input_file = os.path.join(script_dir, 'a.json')      # ← 你的输入文件名
-output_file = os.path.join(script_dir, 'a.json')     # ← 输出去重后的文件名
+input_file = os.path.join(script_dir, 'e.json')      # ← 你的输入文件名
+output_file = os.path.join(script_dir, 'e.json')     # ← 输出去重后的文件名
 
 try:
     # 1. 读取原始内容
@@ -88,7 +88,7 @@ try:
 
     # 3. 解析 JSON（检测重复 key）
     data, duplicate_keys = parse_json_with_duplicate_keys(cleaned_content)
-    
+
     if duplicate_keys:
         print(f"警告: 发现 {len(duplicate_keys)} 个重复 key: {set(duplicate_keys)}")
         print("        已自动跳过重复 key 的条目（保留第一个）")
