@@ -1,0 +1,86 @@
+{
+  "jacket": {
+    "word": "jacket",
+    "phonetic": "/ˈdʒækɪt/",
+    "explains": [
+      "n. 夹克衫；短上衣"
+    ]
+  },
+  "january": {
+    "word": "January",
+    "phonetic": "/ˈdʒænjuəri/",
+    "explains": [
+      "n. 一月"
+    ]
+  },
+  "japan": {
+    "word": "Japan",
+    "phonetic": "/dʒəˈpæn/",
+    "explains": [
+      "n. 日本"
+    ]
+  },
+  "japanese": {
+    "word": "Japanese",
+    "phonetic": "/ˌdʒæpəˈniːz/",
+    "explains": [
+      "adj. 日本的；日本人的 n. 日本人；日语"
+    ]
+  },
+  "job": {
+    "word": "job",
+    "phonetic": "/dʒɒb/",
+    "explains": [
+      "n. 工作；职业；职位"
+    ]
+  },
+  "join": {
+    "word": "join",
+    "phonetic": "/dʒɔɪn/",
+    "explains": [
+      "v. 参加；加入；连接；联合"
+    ]
+  },
+  "joke": {
+    "word": "joke",
+    "phonetic": "/dʒəʊk/",
+    "explains": [
+      "n. 笑话；玩笑 v. 开玩笑"
+    ]
+  },
+  "journey": {
+    "word": "journey",
+    "phonetic": "/ˈdʒɜːni/",
+    "explains": [
+      "n. 旅行；行程 v. 旅行"
+    ]
+  },
+  "joy": {
+    "word": "joy",
+    "phonetic": "/dʒɔɪ/",
+    "explains": [
+      "n. 欢乐；喜悦；乐趣"
+    ]
+  },
+  "judge": {
+    "word": "judge",
+    "phonetic": "/dʒʌdʒ/",
+    "explains": [
+      "n. 法官；裁判员 v. 判断；审判"
+    ]
+  },
+  "jump": {
+    "word": "jump",
+    "phonetic": "/dʒʌmp/",
+    "explains": [
+      "v./n. 跳跃；跳动；暴涨"
+    ]
+  },
+  "just": {
+    "word": "just",
+    "phonetic": "/dʒʌst/",
+    "explains": [
+      "adv. 只是；正好；恰好 adj. 公正的；合理的"
+    ]
+  }
+}

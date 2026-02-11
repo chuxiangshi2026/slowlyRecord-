@@ -1,0 +1,905 @@
+{
+  "fable": {
+    "word": "fable",
+    "phonetic": "/ˈfeɪbl/",
+    "explains": [
+      "n. 寓言；虚构故事"
+    ]
+  },
+  "fabric": {
+    "word": "fabric",
+    "phonetic": "/ˈfæbrɪk/",
+    "explains": [
+      "n. 织物；布料；结构"
+    ]
+  },
+  "face": {
+    "word": "face",
+    "phonetic": "/feɪs/",
+    "explains": [
+      "n. 脸；面部 v. 面对；面向"
+    ]
+  },
+  "fact": {
+    "word": "fact",
+    "phonetic": "/fækt/",
+    "explains": [
+      "n. 事实；真相"
+    ]
+  },
+  "factor": {
+    "word": "factor",
+    "phonetic": "/ˈfæktə(r)/",
+    "explains": [
+      "n. 因素；因子；系数"
+    ]
+  },
+  "factory": {
+    "word": "factory",
+    "phonetic": "/ˈfæktəri/",
+    "explains": [
+      "n. 工厂；制造厂"
+    ]
+  },
+  "fail": {
+    "word": "fail",
+    "phonetic": "/feɪl/",
+    "explains": [
+      "v. 失败；未能；不及格"
+    ]
+  },
+  "failure": {
+    "word": "failure",
+    "phonetic": "/ˈfeɪljə(r)/",
+    "explains": [
+      "n. 失败；故障；失灵"
+    ]
+  },
+  "fair": {
+    "word": "fair",
+    "phonetic": "/feə(r)/",
+    "explains": [
+      "adj. 公平的；晴朗的 n. 集市；博览会"
+    ]
+  },
+  "faith": {
+    "word": "faith",
+    "phonetic": "/feɪθ/",
+    "explains": [
+      "n. 信仰；信念；信任"
+    ]
+  },
+  "fall": {
+    "word": "fall",
+    "phonetic": "/fɔːl/",
+    "explains": [
+      "v. 落下；跌倒；下降 n. 秋天；跌落"
+    ]
+  },
+  "false": {
+    "word": "false",
+    "phonetic": "/fɔːls/",
+    "explains": [
+      "adj. 错误的；假的；虚伪的"
+    ]
+  },
+  "fame": {
+    "word": "fame",
+    "phonetic": "/feɪm/",
+    "explains": [
+      "n. 名声；名誉"
+    ]
+  },
+  "family": {
+    "word": "family",
+    "phonetic": "/ˈfæməli/",
+    "explains": [
+      "n. 家庭；家族；家属"
+    ]
+  },
+  "fan": {
+    "word": "fan",
+    "phonetic": "/fæn/",
+    "explains": [
+      "n. 风扇；扇子；粉丝 v. 扇风"
+    ]
+  },
+  "fancy": {
+    "word": "fancy",
+    "phonetic": "/ˈfænsi/",
+    "explains": [
+      "adj. 精致的；花哨的 v. 想象；喜欢"
+    ]
+  },
+  "far": {
+    "word": "far",
+    "phonetic": "/fɑː(r)/",
+    "explains": [
+      "adv. 远；遥远地 adj. 远的"
+    ]
+  },
+  "farm": {
+    "word": "farm",
+    "phonetic": "/fɑːm/",
+    "explains": [
+      "n. 农场；农庄 v. 种田；务农"
+    ]
+  },
+  "farmer": {
+    "word": "farmer",
+    "phonetic": "/ˈfɑːmə(r)/",
+    "explains": [
+      "n. 农民；农场主"
+    ]
+  },
+  "fashion": {
+    "word": "fashion",
+    "phonetic": "/ˈfæʃn/",
+    "explains": [
+      "n. 时尚；流行；方式"
+    ]
+  },
+  "fast": {
+    "word": "fast",
+    "phonetic": "/fɑːst/",
+    "explains": [
+      "adj. 快的；迅速的 adv. 快速地"
+    ]
+  },
+  "fat": {
+    "word": "fat",
+    "phonetic": "/fæt/",
+    "explains": [
+      "adj. 胖的；肥的 n. 脂肪；肥肉"
+    ]
+  },
+  "father": {
+    "word": "father",
+    "phonetic": "/ˈfɑːðə(r)/",
+    "explains": [
+      "n. 父亲；爸爸；神父"
+    ]
+  },
+  "fault": {
+    "word": "fault",
+    "phonetic": "/fɔːlt/",
+    "explains": [
+      "n. 过错；缺点；故障"
+    ]
+  },
+  "favour": {
+    "word": "favour",
+    "phonetic": "/ˈfeɪvə(r)/",
+    "explains": [
+      "n. 恩惠；赞同；帮助 v. 赞成；偏爱"
+    ]
+  },
+  "fear": {
+    "word": "fear",
+    "phonetic": "/fɪə(r)/",
+    "explains": [
+      "n. 害怕；恐惧 v. 害怕；畏惧"
+    ]
+  },
+  "feast": {
+    "word": "feast",
+    "phonetic": "/fiːst/",
+    "explains": [
+      "n. 盛宴；节日 v. 尽情享用"
+    ]
+  },
+  "feather": {
+    "word": "feather",
+    "phonetic": "/ˈfeðə(r)/",
+    "explains": [
+      "n. 羽毛"
+    ]
+  },
+  "feature": {
+    "word": "feature",
+    "phonetic": "/ˈfiːtʃə(r)/",
+    "explains": [
+      "n. 特征；特色；特写 v. 以… 为特色"
+    ]
+  },
+  "february": {
+    "word": "February",
+    "phonetic": "/ˈfebruəri/",
+    "explains": [
+      "n. 二月"
+    ]
+  },
+  "feed": {
+    "word": "feed",
+    "phonetic": "/fiːd/",
+    "explains": [
+      "v. 喂养；饲养；进食 n. 饲料"
+    ]
+  },
+  "feel": {
+    "word": "feel",
+    "phonetic": "/fiːl/",
+    "explains": [
+      "v. 感觉；觉得；触摸 n. 感觉；触觉"
+    ]
+  },
+  "female": {
+    "word": "female",
+    "phonetic": "/ˈfiːmeɪl/",
+    "explains": [
+      "adj. 女性的；雌性的 n. 女性；雌性动物"
+    ]
+  },
+  "fence": {
+    "word": "fence",
+    "phonetic": "/fens/",
+    "explains": [
+      "n. 栅栏；篱笆 v. 用栅栏围起"
+    ]
+  },
+  "ferry": {
+    "word": "ferry",
+    "phonetic": "/ˈferi/",
+    "explains": [
+      "n. 渡船；渡口 v. 渡运；运送"
+    ]
+  },
+  "festival": {
+    "word": "festival",
+    "phonetic": "/ˈfestɪvl/",
+    "explains": [
+      "n. 节日；庆典；音乐节"
+    ]
+  },
+  "fetch": {
+    "word": "fetch",
+    "phonetic": "/fetʃ/",
+    "explains": [
+      "v. 取来；拿来；售得"
+    ]
+  },
+  "fever": {
+    "word": "fever",
+    "phonetic": "/ˈfiːvə(r)/",
+    "explains": [
+      "n. 发烧；发热；狂热"
+    ]
+  },
+  "few": {
+    "word": "few",
+    "phonetic": "/fjuː/",
+    "explains": [
+      "adj. 很少的；几乎没有的 pron. 很少"
+    ]
+  },
+  "field": {
+    "word": "field",
+    "phonetic": "/fiːld/",
+    "explains": [
+      "n. 田地；田野；领域；场地"
+    ]
+  },
+  "fierce": {
+    "word": "fierce",
+    "phonetic": "/fɪəs/",
+    "explains": [
+      "adj. 凶猛的；猛烈的；激烈的"
+    ]
+  },
+  "fifteen": {
+    "word": "fifteen",
+    "phonetic": "/ˌfɪfˈtiːn/",
+    "explains": [
+      "num. 十五"
+    ]
+  },
+  "fifth": {
+    "word": "fifth",
+    "phonetic": "/fɪfθ/",
+    "explains": [
+      "num. 第五 n. 五分之一"
+    ]
+  },
+  "fifty": {
+    "word": "fifty",
+    "phonetic": "/ˈfɪfti/",
+    "explains": [
+      "num. 五十"
+    ]
+  },
+  "fight": {
+    "word": "fight",
+    "phonetic": "/faɪt/",
+    "explains": [
+      "v. 打架；战斗；斗争 n. 战斗；打架"
+    ]
+  },
+  "figure": {
+    "word": "figure",
+    "phonetic": "/ˈfɪɡə(r)/",
+    "explains": [
+      "n. 数字；人物；图形 v. 计算；认为"
+    ]
+  },
+  "file": {
+    "word": "file",
+    "phonetic": "/faɪl/",
+    "explains": [
+      "n. 文件；档案；文件夹 v. 归档；提交"
+    ]
+  },
+  "fill": {
+    "word": "fill",
+    "phonetic": "/fɪl/",
+    "explains": [
+      "v. 装满；充满；填充 n. 满足；填满"
+    ]
+  },
+  "film": {
+    "word": "film",
+    "phonetic": "/fɪlm/",
+    "explains": [
+      "n. 电影；影片；胶卷 v. 拍摄电影"
+    ]
+  },
+  "final": {
+    "word": "final",
+    "phonetic": "/ˈfaɪnl/",
+    "explains": [
+      "adj. 最终的；最后的 n. 决赛；期末考试"
+    ]
+  },
+  "find": {
+    "word": "find",
+    "phonetic": "/faɪnd/",
+    "explains": [
+      "v. 找到；发现；认为 n. 发现物"
+    ]
+  },
+  "fine": {
+    "word": "fine",
+    "phonetic": "/faɪn/",
+    "explains": [
+      "adj. 好的；优良的；精美的 adv. 很好 n. 罚款"
+    ]
+  },
+  "finger": {
+    "word": "finger",
+    "phonetic": "/ˈfɪŋɡə(r)/",
+    "explains": [
+      "n. 手指"
+    ]
+  },
+  "finish": {
+    "word": "finish",
+    "phonetic": "/ˈfɪnɪʃ/",
+    "explains": [
+      "v. 完成；结束；终止 n. 结束；完成"
+    ]
+  },
+  "fire": {
+    "word": "fire",
+    "phonetic": "/ˈfaɪə(r)/",
+    "explains": [
+      "n. 火；火焰；火灾 v. 开火；点燃；解雇"
+    ]
+  },
+  "firm": {
+    "word": "firm",
+    "phonetic": "/fɜːm/",
+    "explains": [
+      "adj. 坚定的；牢固的 n. 公司；商行"
+    ]
+  },
+  "first": {
+    "word": "first",
+    "phonetic": "/fɜːst/",
+    "explains": [
+      "num. 第一 adv. 首先；最初"
+    ]
+  },
+  "fish": {
+    "word": "fish",
+    "phonetic": "/fɪʃ/",
+    "explains": [
+      "n. 鱼；鱼肉 v. 钓鱼；捕鱼"
+    ]
+  },
+  "fit": {
+    "word": "fit",
+    "phonetic": "/fɪt/",
+    "explains": [
+      "adj. 健康的；合适的 v. 适合；合身"
+    ]
+  },
+  "five": {
+    "word": "five",
+    "phonetic": "/faɪv/",
+    "explains": [
+      "num. 五"
+    ]
+  },
+  "fix": {
+    "word": "fix",
+    "phonetic": "/fɪks/",
+    "explains": [
+      "v. 修理；固定；安装；解决"
+    ]
+  },
+  "flag": {
+    "word": "flag",
+    "phonetic": "/flæɡ/",
+    "explains": [
+      "n. 旗帜；国旗"
+    ]
+  },
+  "flame": {
+    "word": "flame",
+    "phonetic": "/fleɪm/",
+    "explains": [
+      "n. 火焰；热情 v. 燃烧；泛红"
+    ]
+  },
+  "flash": {
+    "word": "flash",
+    "phonetic": "/flæʃ/",
+    "explains": [
+      "n. 闪光；闪现 v. 闪光；掠过"
+    ]
+  },
+  "flat": {
+    "word": "flat",
+    "phonetic": "/flæt/",
+    "explains": [
+      "adj. 平的；平坦的；单调的 n. 公寓；平地"
+    ]
+  },
+  "flavour": {
+    "word": "flavour",
+    "phonetic": "/ˈfleɪvə(r)/",
+    "explains": [
+      "n. 味道；风味；情趣 v. 给… 调味"
+    ]
+  },
+  "fleet": {
+    "word": "fleet",
+    "phonetic": "/fliːt/",
+    "explains": [
+      "n. 舰队；船队；车队 adj. 快速的"
+    ]
+  },
+  "flesh": {
+    "word": "flesh",
+    "phonetic": "/fleʃ/",
+    "explains": [
+      "n. 肉；肉体；果肉"
+    ]
+  },
+  "flexible": {
+    "word": "flexible",
+    "phonetic": "/ˈfleksəbl/",
+    "explains": [
+      "adj. 灵活的；柔韧的；易弯曲的"
+    ]
+  },
+  "flight": {
+    "word": "flight",
+    "phonetic": "/flaɪt/",
+    "explains": [
+      "n. 飞行；航班；航程"
+    ]
+  },
+  "float": {
+    "word": "float",
+    "phonetic": "/fləʊt/",
+    "explains": [
+      "v. 漂浮；浮动；飘动 n. 漂浮；浮标"
+    ]
+  },
+  "floor": {
+    "word": "floor",
+    "phonetic": "/flɔː(r)/",
+    "explains": [
+      "n. 地板；地面；楼层"
+    ]
+  },
+  "flower": {
+    "word": "flower",
+    "phonetic": "/ˈflaʊə(r)/",
+    "explains": [
+      "n. 花；花卉 v. 开花；繁荣"
+    ]
+  },
+  "flu": {
+    "word": "flu",
+    "phonetic": "/fluː/",
+    "explains": [
+      "n. 流感"
+    ]
+  },
+  "fluid": {
+    "word": "fluid",
+    "phonetic": "/ˈfluːɪd/",
+    "explains": [
+      "n. 流体；液体 adj. 流动的；流畅的"
+    ]
+  },
+  "fly": {
+    "word": "fly",
+    "phonetic": "/flaɪ/",
+    "explains": [
+      "v. 飞；飞行；乘飞机 n. 苍蝇；飞行"
+    ]
+  },
+  "foam": {
+    "word": "foam",
+    "phonetic": "/fəʊm/",
+    "explains": [
+      "n. 泡沫；泡沫材料 v. 起泡沫"
+    ]
+  },
+  "focus": {
+    "word": "focus",
+    "phonetic": "/ˈfəʊkəs/",
+    "explains": [
+      "n. 焦点；中心 v. 集中；聚焦"
+    ]
+  },
+  "fog": {
+    "word": "fog",
+    "phonetic": "/fɒɡ/",
+    "explains": [
+      "n. 雾；烟雾 v. 被雾笼罩；使模糊"
+    ]
+  },
+  "fold": {
+    "word": "fold",
+    "phonetic": "/fəʊld/",
+    "explains": [
+      "v. 折叠；合拢；抱住 n. 折痕；折叠"
+    ]
+  },
+  "folk": {
+    "word": "folk",
+    "phonetic": "/fəʊk/",
+    "explains": [
+      "n. 人们；民间 adj. 民间的"
+    ]
+  },
+  "follow": {
+    "word": "follow",
+    "phonetic": "/ˈfɒləʊ/",
+    "explains": [
+      "v. 跟随；遵循；接着；听从"
+    ]
+  },
+  "food": {
+    "word": "food",
+    "phonetic": "/fuːd/",
+    "explains": [
+      "n. 食物；食品"
+    ]
+  },
+  "fool": {
+    "word": "fool",
+    "phonetic": "/fuːl/",
+    "explains": [
+      "n. 傻瓜；笨蛋 v. 愚弄；欺骗"
+    ]
+  },
+  "foot": {
+    "word": "foot",
+    "phonetic": "/fʊt/",
+    "explains": [
+      "n. 脚；足；英尺；底部"
+    ]
+  },
+  "for": {
+    "word": "for",
+    "phonetic": "/fɔː(r)/",
+    "explains": [
+      "prep. 为了；给；对；供；关于 conj. 因为"
+    ]
+  },
+  "force": {
+    "word": "force",
+    "phonetic": "/fɔːs/",
+    "explains": [
+      "n. 力量；武力；军队 v. 强迫；迫使"
+    ]
+  },
+  "foreign": {
+    "word": "foreign",
+    "phonetic": "/ˈfɒrən/",
+    "explains": [
+      "adj. 外国的；对外的；陌生的"
+    ]
+  },
+  "forest": {
+    "word": "forest",
+    "phonetic": "/ˈfɒrɪst/",
+    "explains": [
+      "n. 森林；林区"
+    ]
+  },
+  "forget": {
+    "word": "forget",
+    "phonetic": "/fəˈɡet/",
+    "explains": [
+      "v. 忘记；遗忘；忽略"
+    ]
+  },
+  "forgive": {
+    "word": "forgive",
+    "phonetic": "/fəˈɡɪv/",
+    "explains": [
+      "v. 原谅；宽恕；免除"
+    ]
+  },
+  "fork": {
+    "word": "fork",
+    "phonetic": "/fɔːk/",
+    "explains": [
+      "n. 叉；叉子；岔路口 v. 分叉"
+    ]
+  },
+  "form": {
+    "word": "form",
+    "phonetic": "/fɔːm/",
+    "explains": [
+      "n. 形式；形状；表格 v. 形成；构成"
+    ]
+  },
+  "formal": {
+    "word": "formal",
+    "phonetic": "/ˈfɔːml/",
+    "explains": [
+      "adj. 正式的；正规的；拘谨的"
+    ]
+  },
+  "forward": {
+    "word": "forward",
+    "phonetic": "/ˈfɔːwəd/",
+    "explains": [
+      "adv. 向前；提前 adj. 向前的；前部的 v. 转寄；发送"
+    ]
+  },
+  "found": {
+    "word": "found",
+    "phonetic": "/faʊnd/",
+    "explains": [
+      "v. 创立；建立；创办；find 过去式 / 分词"
+    ]
+  },
+  "four": {
+    "word": "four",
+    "phonetic": "/fɔː(r)/",
+    "explains": [
+      "num. 四"
+    ]
+  },
+  "fourteen": {
+    "word": "fourteen",
+    "phonetic": "/ˌfɔːˈtiːn/",
+    "explains": [
+      "num. 十四"
+    ]
+  },
+  "fourth": {
+    "word": "fourth",
+    "phonetic": "/fɔːθ/",
+    "explains": [
+      "num. 第四 n. 四分之一"
+    ]
+  },
+  "fox": {
+    "word": "fox",
+    "phonetic": "/fɒks/",
+    "explains": [
+      "n. 狐狸；狡猾的人"
+    ]
+  },
+  "frame": {
+    "word": "frame",
+    "phonetic": "/freɪm/",
+    "explains": [
+      "n. 框架；结构；边框 v. 给… 装框；设计"
+    ]
+  },
+  "free": {
+    "word": "free",
+    "phonetic": "/friː/",
+    "explains": [
+      "adj. 自由的；免费的；空闲的 v. 释放；使自由"
+    ]
+  },
+  "freedom": {
+    "word": "freedom",
+    "phonetic": "/ˈfriːdəm/",
+    "explains": [
+      "n. 自由；自主"
+    ]
+  },
+  "freeze": {
+    "word": "freeze",
+    "phonetic": "/friːz/",
+    "explains": [
+      "v. 结冰；冻结；冻僵 n. 冰冻；严寒期"
+    ]
+  },
+  "fresh": {
+    "word": "fresh",
+    "phonetic": "/freʃ/",
+    "explains": [
+      "adj. 新鲜的；清新的；淡水的"
+    ]
+  },
+  "friday": {
+    "word": "Friday",
+    "phonetic": "/ˈfraɪdeɪ/",
+    "explains": [
+      "n. 星期五"
+    ]
+  },
+  "friend": {
+    "word": "friend",
+    "phonetic": "/frend/",
+    "explains": [
+      "n. 朋友；友人；赞助者"
+    ]
+  },
+  "friendly": {
+    "word": "friendly",
+    "phonetic": "/ˈfrendli/",
+    "explains": [
+      "adj. 友好的；亲切的；支持的"
+    ]
+  },
+  "friendship": {
+    "word": "friendship",
+    "phonetic": "/ˈfrendʃɪp/",
+    "explains": [
+      "n. 友谊；友情；友好关系"
+    ]
+  },
+  "fright": {
+    "word": "fright",
+    "phonetic": "/fraɪt/",
+    "explains": [
+      "n. 惊吓；恐怖；惊骇"
+    ]
+  },
+  "frog": {
+    "word": "frog",
+    "phonetic": "/frɒɡ/",
+    "explains": [
+      "n. 青蛙"
+    ]
+  },
+  "from": {
+    "word": "from",
+    "phonetic": "/frəm/",
+    "explains": [
+      "prep. 从… 起；来自；由于"
+    ]
+  },
+  "front": {
+    "word": "front",
+    "phonetic": "/frʌnt/",
+    "explains": [
+      "n. 前面；正面；前线 adj. 前面的；前部的"
+    ]
+  },
+  "frost": {
+    "word": "frost",
+    "phonetic": "/frɒst/",
+    "explains": [
+      "n. 霜；霜冻；严寒 v. 结霜；冻坏"
+    ]
+  },
+  "fruit": {
+    "word": "fruit",
+    "phonetic": "/fruːt/",
+    "explains": [
+      "n. 水果；果实；成果"
+    ]
+  },
+  "fuel": {
+    "word": "fuel",
+    "phonetic": "/ˈfjuːəl/",
+    "explains": [
+      "n. 燃料；刺激因素 v. 给… 加燃料；刺激"
+    ]
+  },
+  "full": {
+    "word": "full",
+    "phonetic": "/fʊl/",
+    "explains": [
+      "adj. 满的；充满的；完全的 adv. 十分；非常"
+    ]
+  },
+  "fun": {
+    "word": "fun",
+    "phonetic": "/fʌn/",
+    "explains": [
+      "n. 乐趣；玩笑；有趣的人或事 adj. 有趣的"
+    ]
+  },
+  "funny": {
+    "word": "funny",
+    "phonetic": "/ˈfʌni/",
+    "explains": [
+      "adj. 有趣的；好笑的；滑稽的"
+    ]
+  },
+  "fur": {
+    "word": "fur",
+    "phonetic": "/fɜː(r)/",
+    "explains": [
+      "n. 毛皮；软毛；皮衣"
+    ]
+  },
+  "furnish": {
+    "word": "furnish",
+    "phonetic": "/ˈfɜːnɪʃ/",
+    "explains": [
+      "v. 供应；提供；装备；布置"
+    ]
+  },
+  "furniture": {
+    "word": "furniture",
+    "phonetic": "/ˈfɜːnɪtʃə(r)/",
+    "explains": [
+      "n. 家具；设备；装置"
+    ]
+  },
+  "future": {
+    "word": "future",
+    "phonetic": "/ˈfjuːtʃə(r)/",
+    "explains": [
+      "n. 未来；将来；前途 adj. 将来的；未来的"
+    ]
+  },
+  "fabulous": {
+    "word": "fabulous",
+    "phonetic": "/ˈfæbjələs/",
+    "explains": [
+      "adj. 极好的；难以置信的"
+    ]
+  },
+  "facilitate": {
+    "word": "facilitate",
+    "phonetic": "/fəˈsɪlɪteɪt/",
+    "explains": [
+      "v. 促进；使便利"
+    ]
+  },
+  "fade": {
+    "word": "fade",
+    "phonetic": "/feɪd/",
+    "explains": [
+      "v. 褪色；逐渐消失；变暗"
+    ]
+  },
+  "faithful": {
+    "word": "faithful",
+    "phonetic": "/ˈfeɪθfl/",
+    "explains": [
+      "adj. 忠实的；忠诚的"
+    ]
+  },
+  "familiar": {
+    "word": "familiar",
+    "phonetic": "/fəˈmɪliə(r)/",
+    "explains": [
+      "adj. 熟悉的；常见的"
+    ]
+  },
+  "farming": {
+    "word": "farming",
+    "phonetic": "/ˈfɑːmɪŋ/",
+    "explains": [
+      "n. 农业；务农"
+    ]
+  }
+}

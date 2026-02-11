@@ -1,0 +1,1708 @@
+{
+  "a": {
+    "word": "a",
+    "phonetic": "/eɪ/",
+    "explains": [
+      "art. 一；任一；每一"
+    ]
+  },
+  "ability": {
+    "word": "ability",
+    "phonetic": "/əˈbɪləti/",
+    "explains": [
+      "n. 能力；才能"
+    ]
+  },
+  "able": {
+    "word": "able",
+    "phonetic": "/ˈeɪbl/",
+    "explains": [
+      "adj. 能够的；有能力的"
+    ]
+  },
+  "about": {
+    "word": "about",
+    "phonetic": "/əˈbaʊt/",
+    "explains": [
+      "prep. 关于；大约 adv. 大约"
+    ]
+  },
+  "above": {
+    "word": "above",
+    "phonetic": "/əˈbʌv/",
+    "explains": [
+      "prep. 在… 上方；超过"
+    ]
+  },
+  "abroad": {
+    "word": "abroad",
+    "phonetic": "/əˈbrɔːd/",
+    "explains": [
+      "adv. 在国外；到国外"
+    ]
+  },
+  "absence": {
+    "word": "absence",
+    "phonetic": "/ˈæbsəns/",
+    "explains": [
+      "n. 缺席；缺乏"
+    ]
+  },
+  "absent": {
+    "word": "absent",
+    "phonetic": "/ˈæbsənt/",
+    "explains": [
+      "adj. 缺席的；心不在焉的"
+    ]
+  },
+  "absolute": {
+    "word": "absolute",
+    "phonetic": "/ˈæbsəluːt/",
+    "explains": [
+      "adj. 绝对的；完全的"
+    ]
+  },
+  "absolutely": {
+    "word": "absolutely",
+    "phonetic": "/ˌæbsəˈluːtli/",
+    "explains": [
+      "adv. 绝对地；完全地"
+    ]
+  },
+  "accept": {
+    "word": "accept",
+    "phonetic": "/əkˈsept/",
+    "explains": [
+      "v. 接受；同意"
+    ]
+  },
+  "access": {
+    "word": "access",
+    "phonetic": "/ˈækses/",
+    "explains": [
+      "n. 进入；使用权",
+      "v. 访问；使用"
+    ]
+  },
+  "accident": {
+    "word": "accident",
+    "phonetic": "/ˈæksɪdənt/",
+    "explains": [
+      "n. 事故；意外"
+    ]
+  },
+  "according": {
+    "word": "according",
+    "phonetic": "/əˈkɔːdɪŋ/",
+    "explains": [
+      "prep. 根据；按照"
+    ]
+  },
+  "account": {
+    "word": "account",
+    "phonetic": "/əˈkaʊnt/",
+    "explains": [
+      "n. 账户；描述",
+      "v. 解释；占"
+    ]
+  },
+  "accurate": {
+    "word": "accurate",
+    "phonetic": "/ˈækjərət/",
+    "explains": [
+      "adj. 准确的；精确的"
+    ]
+  },
+  "achieve": {
+    "word": "achieve",
+    "phonetic": "/əˈtʃiːv/",
+    "explains": [
+      "v. 实现；达到；取得"
+    ]
+  },
+  "achievement": {
+    "word": "achievement",
+    "phonetic": "/əˈtʃiːvmənt/",
+    "explains": [
+      "n. 成就；完成"
+    ]
+  },
+  "acid": {
+    "word": "acid",
+    "phonetic": "/ˈæsɪd/",
+    "explains": [
+      "n. 酸",
+      "adj. 酸的"
+    ]
+  },
+  "acquire": {
+    "word": "acquire",
+    "phonetic": "/əˈkwaɪər/",
+    "explains": [
+      "v. 获得；学到"
+    ]
+  },
+  "across": {
+    "word": "across",
+    "phonetic": "/əˈkrɒs/",
+    "explains": [
+      "prep. 穿过；横过"
+    ]
+  },
+  "act": {
+    "word": "act",
+    "phonetic": "/ækt/",
+    "explains": [
+      "v. 行动；扮演 n. 行为；法令"
+    ]
+  },
+  "action": {
+    "word": "action",
+    "phonetic": "/ˈækʃn/",
+    "explains": [
+      "n. 行动；动作"
+    ]
+  },
+  "active": {
+    "word": "active",
+    "phonetic": "/ˈæktɪv/",
+    "explains": [
+      "adj. 积极的；活跃的"
+    ]
+  },
+  "activity": {
+    "word": "activity",
+    "phonetic": "/ækˈtɪvəti/",
+    "explains": [
+      "n. 活动；行动"
+    ]
+  },
+  "actor": {
+    "word": "actor",
+    "phonetic": "/ˈæktə(r)/",
+    "explains": [
+      "n. 男演员"
+    ]
+  },
+  "actress": {
+    "word": "actress",
+    "phonetic": "/ˈæktrəs/",
+    "explains": [
+      "n. 女演员"
+    ]
+  },
+  "actual": {
+    "word": "actual",
+    "phonetic": "/ˈæktʃuəl/",
+    "explains": [
+      "adj. 实际的；真实的"
+    ]
+  },
+  "actually": {
+    "word": "actually",
+    "phonetic": "/ˈæktʃuəli/",
+    "explains": [
+      "adv. 实际上；事实上"
+    ]
+  },
+  "add": {
+    "word": "add",
+    "phonetic": "/æd/",
+    "explains": [
+      "v. 添加；增加；补充"
+    ]
+  },
+  "addition": {
+    "word": "addition",
+    "phonetic": "/əˈdɪʃn/",
+    "explains": [
+      "n. 增加；加法"
+    ]
+  },
+  "additional": {
+    "word": "additional",
+    "phonetic": "/əˈdɪʃənl/",
+    "explains": [
+      "adj. 额外的；附加的"
+    ]
+  },
+  "address": {
+    "word": "address",
+    "phonetic": "/əˈdres/",
+    "explains": [
+      "n. 地址；演说 v. 写地址；演说"
+    ]
+  },
+  "adequate": {
+    "word": "adequate",
+    "phonetic": "/ˈædɪkwət/",
+    "explains": [
+      "adj. 足够的；适当的"
+    ]
+  },
+  "adjust": {
+    "word": "adjust",
+    "phonetic": "/əˈdʒʌst/",
+    "explains": [
+      "v. 调整；适应"
+    ]
+  },
+  "administration": {
+    "word": "administration",
+    "phonetic": "/ədˌmɪnɪˈstreɪʃn/",
+    "explains": [
+      "n. 管理；行政部门"
+    ]
+  },
+  "admit": {
+    "word": "admit",
+    "phonetic": "/ədˈmɪt/",
+    "explains": [
+      "v. 承认；准许进入"
+    ]
+  },
+  "adopt": {
+    "word": "adopt",
+    "phonetic": "/əˈdɒpt/",
+    "explains": [
+      "v. 采用；收养"
+    ]
+  },
+  "advance": {
+    "word": "advance",
+    "phonetic": "/ədˈvɑːns/",
+    "explains": [
+      "v. 前进；推进 n. 进展；提前"
+    ]
+  },
+  "advanced": {
+    "word": "advanced",
+    "phonetic": "/ədˈvɑːnst/",
+    "explains": [
+      "adj. 高级的；先进的"
+    ]
+  },
+  "advantage": {
+    "word": "advantage",
+    "phonetic": "/ədˈvɑːntɪdʒ/",
+    "explains": [
+      "n. 优势；有利条件"
+    ]
+  },
+  "adventure": {
+    "word": "adventure",
+    "phonetic": "/ədˈventʃər/",
+    "explains": [
+      "n. 冒险；奇遇"
+    ]
+  },
+  "advertising": {
+    "word": "advertising",
+    "phonetic": "/ˈædvərtaɪzɪŋ/",
+    "explains": [
+      "n. 广告；广告活动"
+    ]
+  },
+  "advice": {
+    "word": "advice",
+    "phonetic": "/ədˈvaɪs/",
+    "explains": [
+      "n. 建议；忠告"
+    ]
+  },
+  "advise": {
+    "word": "advise",
+    "phonetic": "/ədˈvaɪz/",
+    "explains": [
+      "v. 建议；劝告；通知"
+    ]
+  },
+  "affect": {
+    "word": "affect",
+    "phonetic": "/əˈfekt/",
+    "explains": [
+      "v. 影响；感动"
+    ]
+  },
+  "afford": {
+    "word": "afford",
+    "phonetic": "/əˈfɔːd/",
+    "explains": [
+      "v. 买得起；承担得起；提供"
+    ]
+  },
+  "afraid": {
+    "word": "afraid",
+    "phonetic": "/əˈfreɪd/",
+    "explains": [
+      "adj. 害怕的；担心的"
+    ]
+  },
+  "after": {
+    "word": "after",
+    "phonetic": "/ˈɑːftə(r)/",
+    "explains": [
+      "prep. 在… 之后 conj. 在… 后"
+    ]
+  },
+  "afternoon": {
+    "word": "afternoon",
+    "phonetic": "/ˌɑːftəˈnuːn/",
+    "explains": [
+      "n. 下午"
+    ]
+  },
+  "again": {
+    "word": "again",
+    "phonetic": "/əˈɡen/",
+    "explains": [
+      "adv. 再次；又"
+    ]
+  },
+  "against": {
+    "word": "against",
+    "phonetic": "/əˈɡenst/",
+    "explains": [
+      "prep. 反对；倚靠；以防"
+    ]
+  },
+  "age": {
+    "word": "age",
+    "phonetic": "/eɪdʒ/",
+    "explains": [
+      "n. 年龄；时代",
+      "v. 变老"
+    ]
+  },
+  "agency": {
+    "word": "agency",
+    "phonetic": "/ˈeɪdʒənsi/",
+    "explains": [
+      "n. 机构；代理"
+    ]
+  },
+  "agent": {
+    "word": "agent",
+    "phonetic": "/ˈeɪdʒənt/",
+    "explains": [
+      "n. 代理人；特工"
+    ]
+  },
+  "aggressive": {
+    "word": "aggressive",
+    "phonetic": "/əˈɡresɪv/",
+    "explains": [
+      "adj. 侵略性的；咄咄逼人的"
+    ]
+  },
+  "ago": {
+    "word": "ago",
+    "phonetic": "/əˈɡəʊ/",
+    "explains": [
+      "adv. 以前"
+    ]
+  },
+  "agree": {
+    "word": "agree",
+    "phonetic": "/əˈɡriː/",
+    "explains": [
+      "v. 同意；达成一致"
+    ]
+  },
+  "agreement": {
+    "word": "agreement",
+    "phonetic": "/əˈɡriːmənt/",
+    "explains": [
+      "n. 协议；同意"
+    ]
+  },
+  "agriculture": {
+    "word": "agriculture",
+    "phonetic": "/ˈæɡrɪkʌltʃər/",
+    "explains": [
+      "n. 农业；农学"
+    ]
+  },
+  "ahead": {
+    "word": "ahead",
+    "phonetic": "/əˈhed/",
+    "explains": [
+      "adv. 在前面；向前"
+    ]
+  },
+  "aid": {
+    "word": "aid",
+    "phonetic": "/eɪd/",
+    "explains": [
+      "n. 援助；帮助",
+      "v. 帮助；援助"
+    ]
+  },
+  "aim": {
+    "word": "aim",
+    "phonetic": "/eɪm/",
+    "explains": [
+      "n. 目标；目的",
+      "v. 力求；瞄准"
+    ]
+  },
+  "air": {
+    "word": "air",
+    "phonetic": "/eər/",
+    "explains": [
+      "n. 空气；天空；气氛"
+    ]
+  },
+  "airline": {
+    "word": "airline",
+    "phonetic": "/ˈeəlaɪn/",
+    "explains": [
+      "n. 航空公司；航线"
+    ]
+  },
+  "airport": {
+    "word": "airport",
+    "phonetic": "/ˈeəpɔːt/",
+    "explains": [
+      "n. 机场"
+    ]
+  },
+  "album": {
+    "word": "album",
+    "phonetic": "/ˈælbəm/",
+    "explains": [
+      "n. 相册；专辑"
+    ]
+  },
+  "alcohol": {
+    "word": "alcohol",
+    "phonetic": "/ˈælkəhɒl/",
+    "explains": [
+      "n. 酒精；含酒精饮料"
+    ]
+  },
+  "alike": {
+    "word": "alike",
+    "phonetic": "/əˈlaɪk/",
+    "explains": [
+      "adj. 相似的",
+      "adv. 同样地"
+    ]
+  },
+  "alive": {
+    "word": "alive",
+    "phonetic": "/əˈlaɪv/",
+    "explains": [
+      "adj. 活着的；有生气的"
+    ]
+  },
+  "all": {
+    "word": "all",
+    "phonetic": "/ɔːl/",
+    "explains": [
+      "det. 所有的",
+      "pron. 全部",
+      "adv. 完全地"
+    ]
+  },
+  "allow": {
+    "word": "allow",
+    "phonetic": "/əˈlaʊ/",
+    "explains": [
+      "v. 允许；给予"
+    ]
+  },
+  "almost": {
+    "word": "almost",
+    "phonetic": "/ˈɔːlməʊst/",
+    "explains": [
+      "adv. 几乎；差不多"
+    ]
+  },
+  "alone": {
+    "word": "alone",
+    "phonetic": "/əˈləʊn/",
+    "explains": [
+      "adj. 单独的",
+      "adv. 独自地"
+    ]
+  },
+  "along": {
+    "word": "along",
+    "phonetic": "/əˈlɒŋ/",
+    "explains": [
+      "prep. 沿着",
+      "adv. 一起；向前"
+    ]
+  },
+  "already": {
+    "word": "already",
+    "phonetic": "/ɔːlˈredi/",
+    "explains": [
+      "adv. 已经"
+    ]
+  },
+  "also": {
+    "word": "also",
+    "phonetic": "/ˈɔːlsəʊ/",
+    "explains": [
+      "adv. 也；而且"
+    ]
+  },
+  "alter": {
+    "word": "alter",
+    "phonetic": "/ˈɔːltər/",
+    "explains": [
+      "v. 改变；修改"
+    ]
+  },
+  "alternative": {
+    "word": "alternative",
+    "phonetic": "/ɔːlˈtɜːnətɪv/",
+    "explains": [
+      "n. 替代物",
+      "adj. 可替代的"
+    ]
+  },
+  "although": {
+    "word": "although",
+    "phonetic": "/ɔːlˈðəʊ/",
+    "explains": [
+      "conj. 尽管；虽然"
+    ]
+  },
+  "always": {
+    "word": "always",
+    "phonetic": "/ˈɔːlweɪz/",
+    "explains": [
+      "adv. 总是；永远"
+    ]
+  },
+  "amaze": {
+    "word": "amaze",
+    "phonetic": "/əˈmeɪz/",
+    "explains": [
+      "v. 使大为惊奇"
+    ]
+  },
+  "amazing": {
+    "word": "amazing",
+    "phonetic": "/əˈmeɪzɪŋ/",
+    "explains": [
+      "adj. 令人惊异的"
+    ]
+  },
+  "ambition": {
+    "word": "ambition",
+    "phonetic": "/æmˈbɪʃn/",
+    "explains": [
+      "n. 雄心；抱负"
+    ]
+  },
+  "ambitious": {
+    "word": "ambitious",
+    "phonetic": "/æmˈbɪʃəs/",
+    "explains": [
+      "adj. 有雄心的；野心勃勃的"
+    ]
+  },
+  "among": {
+    "word": "among",
+    "phonetic": "/əˈmʌŋ/",
+    "explains": [
+      "prep. 在…之中"
+    ]
+  },
+  "amount": {
+    "word": "amount",
+    "phonetic": "/əˈmaʊnt/",
+    "explains": [
+      "n. 数量；总额",
+      "v. 合计；等于"
+    ]
+  },
+  "analyze": {
+    "word": "analyze",
+    "phonetic": "/ˈænəlaɪz/",
+    "explains": [
+      "v. 分析"
+    ]
+  },
+  "ancient": {
+    "word": "ancient",
+    "phonetic": "/ˈeɪnʃənt/",
+    "explains": [
+      "adj. 古代的；古老的"
+    ]
+  },
+  "and": {
+    "word": "and",
+    "phonetic": "/ænd/",
+    "explains": [
+      "conj. 和；与"
+    ]
+  },
+  "anger": {
+    "word": "anger",
+    "phonetic": "/ˈæŋɡər/",
+    "explains": [
+      "n. 愤怒",
+      "v. 使生气"
+    ]
+  },
+  "angle": {
+    "word": "angle",
+    "phonetic": "/ˈæŋɡl/",
+    "explains": [
+      "n. 角；角度；观点"
+    ]
+  },
+  "angry": {
+    "word": "angry",
+    "phonetic": "/ˈæŋɡri/",
+    "explains": [
+      "adj. 生气的；愤怒的"
+    ]
+  },
+  "animal": {
+    "word": "animal",
+    "phonetic": "/ˈænɪml/",
+    "explains": [
+      "n. 动物"
+    ]
+  },
+  "ankle": {
+    "word": "ankle",
+    "phonetic": "/ˈæŋkl/",
+    "explains": [
+      "n. 脚踝"
+    ]
+  },
+  "announce": {
+    "word": "announce",
+    "phonetic": "/əˈnaʊns/",
+    "explains": [
+      "v. 宣布；宣告"
+    ]
+  },
+  "annual": {
+    "word": "annual",
+    "phonetic": "/ˈænjuəl/",
+    "explains": [
+      "adj. 每年的",
+      "n. 年刊"
+    ]
+  },
+  "another": {
+    "word": "another",
+    "phonetic": "/əˈnʌðər/",
+    "explains": [
+      "det./pron. 另一个；再一个"
+    ]
+  },
+  "answer": {
+    "word": "answer",
+    "phonetic": "/ˈɑːnsər/",
+    "explains": [
+      "n. 回答；答案",
+      "v. 回答；响应"
+    ]
+  },
+  "anxiety": {
+    "word": "anxiety",
+    "phonetic": "/æŋˈzaɪəti/",
+    "explains": [
+      "n. 焦虑；担忧"
+    ]
+  },
+  "anxious": {
+    "word": "anxious",
+    "phonetic": "/ˈæŋkʃəs/",
+    "explains": [
+      "adj. 焦虑的；渴望的"
+    ]
+  },
+  "any": {
+    "word": "any",
+    "phonetic": "/ˈeni/",
+    "explains": [
+      "det./pron. 任何；一些（用于疑问/否定）"
+    ]
+  },
+  "anybody": {
+    "word": "anybody",
+    "phonetic": "/ˈenibɒdi/",
+    "explains": [
+      "pron. 任何人"
+    ]
+  },
+  "anyone": {
+    "word": "anyone",
+    "phonetic": "/ˈeniwʌn/",
+    "explains": [
+      "pron. 任何人"
+    ]
+  },
+  "anything": {
+    "word": "anything",
+    "phonetic": "/ˈeniθɪŋ/",
+    "explains": [
+      "pron. 任何事"
+    ]
+  },
+  "anyway": {
+    "word": "anyway",
+    "phonetic": "/ˈeniweɪ/",
+    "explains": [
+      "adv. 无论如何；反正"
+    ]
+  },
+  "anywhere": {
+    "word": "anywhere",
+    "phonetic": "/ˈeniweər/",
+    "explains": [
+      "adv. 任何地方"
+    ]
+  },
+  "apart": {
+    "word": "apart",
+    "phonetic": "/əˈpɑːt/",
+    "explains": [
+      "adv. 分离地；除了"
+    ]
+  },
+  "apartment": {
+    "word": "apartment",
+    "phonetic": "/əˈpɑːtmənt/",
+    "explains": [
+      "n. 公寓（美式）"
+    ]
+  },
+  "appear": {
+    "word": "appear",
+    "phonetic": "/əˈpɪər/",
+    "explains": [
+      "v. 出现；似乎"
+    ]
+  },
+  "appearance": {
+    "word": "appearance",
+    "phonetic": "/əˈpɪərəns/",
+    "explains": [
+      "n. 出现；外貌"
+    ]
+  },
+  "apple": {
+    "word": "apple",
+    "phonetic": "/ˈæpl/",
+    "explains": [
+      "n. 苹果"
+    ]
+  },
+  "apply": {
+    "word": "apply",
+    "phonetic": "/əˈplaɪ/",
+    "explains": [
+      "v. 申请；应用；涂"
+    ]
+  },
+  "approach": {
+    "word": "approach",
+    "phonetic": "/əˈprəʊtʃ/",
+    "explains": [
+      "v. 靠近；处理",
+      "n. 方法；途径"
+    ]
+  },
+  "appropriate": {
+    "word": "appropriate",
+    "phonetic": "/əˈprəʊpriət/",
+    "explains": [
+      "adj. 适当的；合适的"
+    ]
+  },
+  "approve": {
+    "word": "approve",
+    "phonetic": "/əˈpruːv/",
+    "explains": [
+      "v. 批准；赞成"
+    ]
+  },
+  "arch": {
+    "word": "arch",
+    "phonetic": "/ɑːrtʃ/",
+    "explains": [
+      "n. 拱门",
+      "v. 成弓形"
+    ]
+  },
+  "area": {
+    "word": "area",
+    "phonetic": "/ˈeəriə/",
+    "explains": [
+      "n. 面积；区域；领域"
+    ]
+  },
+  "argue": {
+    "word": "argue",
+    "phonetic": "/ˈɑːɡjuː/",
+    "explains": [
+      "v. 争论；辩论；主张"
+    ]
+  },
+  "argument": {
+    "word": "argument",
+    "phonetic": "/ˈɑːɡjumənt/",
+    "explains": [
+      "n. 争论；论据"
+    ]
+  },
+  "arise": {
+    "word": "arise",
+    "phonetic": "/əˈraɪz/",
+    "explains": [
+      "v. 出现；产生（过去式 arose）"
+    ]
+  },
+  "arm": {
+    "word": "arm",
+    "phonetic": "/ɑːm/",
+    "explains": [
+      "n. 手臂；武器",
+      "v. 武装"
+    ]
+  },
+  "army": {
+    "word": "army",
+    "phonetic": "/ˈɑːmi/",
+    "explains": [
+      "n. 军队"
+    ]
+  },
+  "around": {
+    "word": "around",
+    "phonetic": "/əˈraʊnd/",
+    "explains": [
+      "prep. 围绕；大约",
+      "adv. 在周围"
+    ]
+  },
+  "arrange": {
+    "word": "arrange",
+    "phonetic": "/əˈreɪndʒ/",
+    "explains": [
+      "v. 安排；整理"
+    ]
+  },
+  "arrangement": {
+    "word": "arrangement",
+    "phonetic": "/əˈreɪndʒmənt/",
+    "explains": [
+      "n. 安排；布置"
+    ]
+  },
+  "arrive": {
+    "word": "arrive",
+    "phonetic": "/əˈraɪv/",
+    "explains": [
+      "v. 到达；到来"
+    ]
+  },
+  "art": {
+    "word": "art",
+    "phonetic": "/ɑːt/",
+    "explains": [
+      "n. 艺术；美术；技艺"
+    ]
+  },
+  "article": {
+    "word": "article",
+    "phonetic": "/ˈɑːtɪkl/",
+    "explains": [
+      "n. 文章；物品；冠词"
+    ]
+  },
+  "artist": {
+    "word": "artist",
+    "phonetic": "/ˈɑːtɪst/",
+    "explains": [
+      "n. 艺术家；画家"
+    ]
+  },
+  "as": {
+    "word": "as",
+    "phonetic": "/æz/",
+    "explains": [
+      "conj. 当…时；因为；尽管",
+      "prep. 作为"
+    ]
+  },
+  "ash": {
+    "word": "ash",
+    "phonetic": "/æʃ/",
+    "explains": [
+      "n. 灰烬；骨灰"
+    ]
+  },
+  "ashamed": {
+    "word": "ashamed",
+    "phonetic": "/əˈʃeɪmd/",
+    "explains": [
+      "adj. 羞愧的；惭愧的"
+    ]
+  },
+  "ask": {
+    "word": "ask",
+    "phonetic": "/ɑːsk/",
+    "explains": [
+      "v. 问；要求；邀请"
+    ]
+  },
+  "aspect": {
+    "word": "aspect",
+    "phonetic": "/ˈæspekt/",
+    "explains": [
+      "n. 方面；外观"
+    ]
+  },
+  "assess": {
+    "word": "assess",
+    "phonetic": "/əˈses/",
+    "explains": [
+      "v. 评估；评定"
+    ]
+  },
+  "assignment": {
+    "word": "assignment",
+    "phonetic": "/əˈsaɪnmənt/",
+    "explains": [
+      "n. 任务；作业；分配"
+    ]
+  },
+  "assist": {
+    "word": "assist",
+    "phonetic": "/əˈsɪst/",
+    "explains": [
+      "v. 帮助；协助"
+    ]
+  },
+  "assistant": {
+    "word": "assistant",
+    "phonetic": "/əˈsɪstənt/",
+    "explains": [
+      "n. 助手",
+      "adj. 助理的"
+    ]
+  },
+  "assume": {
+    "word": "assume",
+    "phonetic": "/əˈsjuːm/",
+    "explains": [
+      "v. 假设；承担；假装"
+    ]
+  },
+  "atmosphere": {
+    "word": "atmosphere",
+    "phonetic": "/ˈætməsfɪər/",
+    "explains": [
+      "n. 大气；气氛"
+    ]
+  },
+  "attach": {
+    "word": "attach",
+    "phonetic": "/əˈtætʃ/",
+    "explains": [
+      "v. 附上；连接；使依恋"
+    ]
+  },
+  "attack": {
+    "word": "attack",
+    "phonetic": "/əˈtæk/",
+    "explains": [
+      "v./n. 攻击；袭击"
+    ]
+  },
+  "attempt": {
+    "word": "attempt",
+    "phonetic": "/əˈtempt/",
+    "explains": [
+      "v./n. 尝试；企图"
+    ]
+  },
+  "attend": {
+    "word": "attend",
+    "phonetic": "/əˈtend/",
+    "explains": [
+      "v. 出席；参加；照料"
+    ]
+  },
+  "attention": {
+    "word": "attention",
+    "phonetic": "/əˈtenʃn/",
+    "explains": [
+      "n. 注意；注意力；关心"
+    ]
+  },
+  "attitude": {
+    "word": "attitude",
+    "phonetic": "/ˈætɪtjuːd/",
+    "explains": [
+      "n. 态度；看法"
+    ]
+  },
+  "attract": {
+    "word": "attract",
+    "phonetic": "/əˈtrækt/",
+    "explains": [
+      "v. 吸引；引起"
+    ]
+  },
+  "audience": {
+    "word": "audience",
+    "phonetic": "/ˈɔːdiəns/",
+    "explains": [
+      "n. 观众；听众"
+    ]
+  },
+  "author": {
+    "word": "author",
+    "phonetic": "/ˈɔːθər/",
+    "explains": [
+      "n. 作者；作家"
+    ]
+  },
+  "authority": {
+    "word": "authority",
+    "phonetic": "/ɔːˈθɒrəti/",
+    "explains": [
+      "n. 权威；权力；当局"
+    ]
+  },
+  "automatic": {
+    "word": "automatic",
+    "phonetic": "/ˌɔːtəˈmætɪk/",
+    "explains": [
+      "adj. 自动的；无意识的"
+    ]
+  },
+  "autumn": {
+    "word": "autumn",
+    "phonetic": "/ˈɔːtəm/",
+    "explains": [
+      "n. 秋天"
+    ]
+  },
+  "available": {
+    "word": "available",
+    "phonetic": "/əˈveɪləbl/",
+    "explains": [
+      "adj. 可获得的；有空的"
+    ]
+  },
+  "average": {
+    "word": "average",
+    "phonetic": "/ˈævərɪdʒ/",
+    "explains": [
+      "n. 平均数",
+      "adj. 平均的",
+      "v. 平均为"
+    ]
+  },
+  "avoid": {
+    "word": "avoid",
+    "phonetic": "/əˈvɔɪd/",
+    "explains": [
+      "v. 避免；避开"
+    ]
+  },
+  "aware": {
+    "word": "aware",
+    "phonetic": "/əˈweər/",
+    "explains": [
+      "adj. 意识到的；知道的"
+    ]
+  },
+  "away": {
+    "word": "away",
+    "phonetic": "/əˈweɪ/",
+    "explains": [
+      "adv. 离开；远离"
+    ]
+  },
+  "awful": {
+    "word": "awful",
+    "phonetic": "/ˈɔːfl/",
+    "explains": [
+      "adj. 可怕的；糟糕的"
+    ]
+  },
+  "awkward": {
+    "word": "awkward",
+    "phonetic": "/ˈɔːkwəd/",
+    "explains": [
+      "adj. 笨拙的；尴尬的"
+    ]
+  },
+  "abandon": {
+    "word": "abandon",
+    "phonetic": "/əˈbændən/",
+    "explains": [
+      "v. 放弃；抛弃"
+    ]
+  },
+  "absorb": {
+    "word": "absorb",
+    "phonetic": "/əbˈzɔːb/",
+    "explains": [
+      "v. 吸收；吸引注意力"
+    ]
+  },
+  "abstract": {
+    "word": "abstract",
+    "phonetic": "/ˈæbstrækt/",
+    "explains": [
+      "adj. 抽象的",
+      "n. 摘要"
+    ]
+  },
+  "abuse": {
+    "word": "abuse",
+    "phonetic": "/əˈbjuːs/",
+    "explains": [
+      "v. 滥用；虐待",
+      "n. 虐待；辱骂"
+    ]
+  },
+  "academic": {
+    "word": "academic",
+    "phonetic": "/ˌækəˈdemɪk/",
+    "explains": [
+      "adj. 学术的；学院的",
+      "n. 学者"
+    ]
+  },
+  "acceptable": {
+    "word": "acceptable",
+    "phonetic": "/əkˈseptəbl/",
+    "explains": [
+      "adj. 可接受的"
+    ]
+  },
+  "accessible": {
+    "word": "accessible",
+    "phonetic": "/əkˈsesəbl/",
+    "explains": [
+      "adj. 可进入的；易理解的"
+    ]
+  },
+  "accidental": {
+    "word": "accidental",
+    "phonetic": "/ˌæksɪˈdentl/",
+    "explains": [
+      "adj. 意外的；偶然的"
+    ]
+  },
+  "accompany": {
+    "word": "accompany",
+    "phonetic": "/əˈkʌmpəni/",
+    "explains": [
+      "v. 陪伴；伴随"
+    ]
+  },
+  "accomplish": {
+    "word": "accomplish",
+    "phonetic": "/əˈkʌmplɪʃ/",
+    "explains": [
+      "v. 完成；实现"
+    ]
+  },
+  "accuse": {
+    "word": "accuse",
+    "phonetic": "/əˈkjuːz/",
+    "explains": [
+      "v. 指控；指责"
+    ]
+  },
+  "acknowledge": {
+    "word": "acknowledge",
+    "phonetic": "/əkˈnɒlɪdʒ/",
+    "explains": [
+      "v. 承认；致谢"
+    ]
+  },
+  "adapt": {
+    "word": "adapt",
+    "phonetic": "/əˈdæpt/",
+    "explains": [
+      "v. 适应；改编"
+    ]
+  },
+  "admire": {
+    "word": "admire",
+    "phonetic": "/ədˈmaɪə(r)/",
+    "explains": [
+      "v. 钦佩；羡慕；欣赏"
+    ]
+  },
+  "admission": {
+    "word": "admission",
+    "phonetic": "/ədˈmɪʃn/",
+    "explains": [
+      "n. 准许进入；入场费"
+    ]
+  },
+  "adult": {
+    "word": "adult",
+    "phonetic": "/ˈædʌlt/",
+    "explains": [
+      "n. 成年人 adj. 成年的"
+    ]
+  },
+  "advertise": {
+    "word": "advertise",
+    "phonetic": "/ˈædvətaɪz/",
+    "explains": [
+      "v. 做广告；宣传"
+    ]
+  },
+  "advertisement": {
+    "word": "advertisement",
+    "phonetic": "/ədˈvɜːtɪsmənt/",
+    "explains": [
+      "n. 广告"
+    ]
+  },
+  "affair": {
+    "word": "affair",
+    "phonetic": "/əˈfeər/",
+    "explains": [
+      "n. 事务；事件；风流韵事"
+    ]
+  },
+  "afterwards": {
+    "word": "afterwards",
+    "phonetic": "/ˈɑːftəwədz/",
+    "explains": [
+      "adv. 后来；以后"
+    ]
+  },
+  "agenda": {
+    "word": "agenda",
+    "phonetic": "/əˈdʒendə/",
+    "explains": [
+      "n. 议程；议题"
+    ]
+  },
+  "agricultural": {
+    "word": "agricultural",
+    "phonetic": "/ˌæɡrɪˈkʌltʃərəl/",
+    "explains": [
+      "adj. 农业的"
+    ]
+  },
+  "aircraft": {
+    "word": "aircraft",
+    "phonetic": "/ˈeəkrɑːft/",
+    "explains": [
+      "n. 飞机；航空器（单复数同形）"
+    ]
+  },
+  "alarm": {
+    "word": "alarm",
+    "phonetic": "/əˈlɑːm/",
+    "explains": [
+      "n. 警报；惊慌",
+      "v. 使惊慌"
+    ]
+  },
+  "ally": {
+    "word": "ally",
+    "phonetic": "/ˈælaɪ/",
+    "explains": [
+      "n. 盟友；支持者"
+    ]
+  },
+  "altitude": {
+    "word": "altitude",
+    "phonetic": "/ˈæltɪtjuːd/",
+    "explains": [
+      "n. 海拔；高度"
+    ]
+  },
+  "altogether": {
+    "word": "altogether",
+    "phonetic": "/ˌɔːltəˈɡeðər/",
+    "explains": [
+      "adv. 总共；完全"
+    ]
+  },
+  "analysis": {
+    "word": "analysis",
+    "phonetic": "/əˈnæləsɪs/",
+    "explains": [
+      "n. 分析（复数：analyses）"
+    ]
+  },
+  "anniversary": {
+    "word": "anniversary",
+    "phonetic": "/ˌænɪˈvɜːsəri/",
+    "explains": [
+      "n. 周年纪念日"
+    ]
+  },
+  "announcement": {
+    "word": "announcement",
+    "phonetic": "/əˈnaʊnsmənt/",
+    "explains": [
+      "n. 公告；宣布"
+    ]
+  },
+  "annoy": {
+    "word": "annoy",
+    "phonetic": "/əˈnɔɪ/",
+    "explains": [
+      "v. 使恼怒；打扰"
+    ]
+  },
+  "anticipate": {
+    "word": "anticipate",
+    "phonetic": "/ænˈtɪsɪpeɪt/",
+    "explains": [
+      "v. 预期；预料；期待"
+    ]
+  },
+  "apparent": {
+    "word": "apparent",
+    "phonetic": "/əˈpærənt/",
+    "explains": [
+      "adj. 显而易见的；表面上的"
+    ]
+  },
+  "appeal": {
+    "word": "appeal",
+    "phonetic": "/əˈpiːl/",
+    "explains": [
+      "v. 呼吁；上诉；吸引",
+      "n. 吸引力；上诉"
+    ]
+  },
+  "application": {
+    "word": "application",
+    "phonetic": "/ˌæplɪˈkeɪʃn/",
+    "explains": [
+      "n. 申请；应用；应用程序"
+    ]
+  },
+  "appoint": {
+    "word": "appoint",
+    "phonetic": "/əˈpɔɪnt/",
+    "explains": [
+      "v. 任命；约定"
+    ]
+  },
+  "appointment": {
+    "word": "appointment",
+    "phonetic": "/əˈpɔɪntmənt/",
+    "explains": [
+      "n. 约会；任命"
+    ]
+  },
+  "appreciate": {
+    "word": "appreciate",
+    "phonetic": "/əˈpriːʃieɪt/",
+    "explains": [
+      "v. 欣赏；感激；理解"
+    ]
+  },
+  "approval": {
+    "word": "approval",
+    "phonetic": "/əˈpruːvl/",
+    "explains": [
+      "n. 批准；赞成"
+    ]
+  },
+  "approximately": {
+    "word": "approximately",
+    "phonetic": "/əˈprɒksɪmətli/",
+    "explains": [
+      "adv. 大约；近似地"
+    ]
+  },
+  "architect": {
+    "word": "architect",
+    "phonetic": "/ˈɑːkɪtekt/",
+    "explains": [
+      "n. 建筑师"
+    ]
+  },
+  "armed": {
+    "word": "armed",
+    "phonetic": "/ɑːmd/",
+    "explains": [
+      "adj. 武装的"
+    ]
+  },
+  "arms": {
+    "word": "arms",
+    "phonetic": "/ɑːmz/",
+    "explains": [
+      "n. 武器（复数）"
+    ]
+  },
+  "arrest": {
+    "word": "arrest",
+    "phonetic": "/əˈrest/",
+    "explains": [
+      "v. 逮捕",
+      "n. 逮捕"
+    ]
+  },
+  "arrival": {
+    "word": "arrival",
+    "phonetic": "/əˈraɪvl/",
+    "explains": [
+      "n. 到达；抵达者"
+    ]
+  },
+  "artificial": {
+    "word": "artificial",
+    "phonetic": "/ˌɑːtɪˈfɪʃl/",
+    "explains": [
+      "adj. 人工的；人造的"
+    ]
+  },
+  "aside": {
+    "word": "aside",
+    "phonetic": "/əˈsaɪd/",
+    "explains": [
+      "adv. 在旁边；撇开"
+    ]
+  },
+  "asleep": {
+    "word": "asleep",
+    "phonetic": "/əˈsliːp/",
+    "explains": [
+      "adj. 睡着的"
+    ]
+  },
+  "assessment": {
+    "word": "assessment",
+    "phonetic": "/əˈsesmənt/",
+    "explains": [
+      "n. 评估；评定"
+    ]
+  },
+  "assign": {
+    "word": "assign",
+    "phonetic": "/əˈsaɪn/",
+    "explains": [
+      "v. 分配；指定"
+    ]
+  },
+  "assistance": {
+    "word": "assistance",
+    "phonetic": "/əˈsɪstəns/",
+    "explains": [
+      "n. 帮助；援助"
+    ]
+  },
+  "associate": {
+    "word": "associate",
+    "phonetic": "/əˈsəʊsieɪt/",
+    "explains": [
+      "v. 联系；交往",
+      "n. 同事"
+    ]
+  },
+  "associated": {
+    "word": "associated",
+    "phonetic": "/əˈsəʊsieɪtɪd/",
+    "explains": [
+      "adj. 相关的；联合的"
+    ]
+  },
+  "association": {
+    "word": "association",
+    "phonetic": "/əˌsəʊsiˈeɪʃn/",
+    "explains": [
+      "n. 协会；关联"
+    ]
+  },
+  "assumption": {
+    "word": "assumption",
+    "phonetic": "/əˈsʌmpʃn/",
+    "explains": [
+      "n. 假设；承担"
+    ]
+  },
+  "assure": {
+    "word": "assure",
+    "phonetic": "/əˈʃʊər/",
+    "explains": [
+      "v. 保证；使确信"
+    ]
+  },
+  "astonish": {
+    "word": "astonish",
+    "phonetic": "/əˈstɒnɪʃ/",
+    "explains": [
+      "v. 使惊讶"
+    ]
+  },
+  "at": {
+    "word": "at",
+    "phonetic": "/æt/",
+    "explains": [
+      "prep. 在（某时间/地点）"
+    ]
+  },
+  "athlete": {
+    "word": "athlete",
+    "phonetic": "/ˈæθliːt/",
+    "explains": [
+      "n. 运动员"
+    ]
+  },
+  "attraction": {
+    "word": "attraction",
+    "phonetic": "/əˈtrækʃn/",
+    "explains": [
+      "n. 吸引力；名胜"
+    ]
+  },
+  "attractive": {
+    "word": "attractive",
+    "phonetic": "/əˈtræktɪv/",
+    "explains": [
+      "adj. 有吸引力的；迷人的"
+    ]
+  },
+  "attribute": {
+    "word": "attribute",
+    "phonetic": "/ˈætrɪbjuːt/",
+    "explains": [
+      "v. 把…归因于",
+      "n. 属性"
+    ]
+  },
+  "automatically": {
+    "word": "automatically",
+    "phonetic": "/ˌɔːtəˈmætɪkli/",
+    "explains": [
+      "adv. 自动地"
+    ]
+  },
+  "award": {
+    "word": "award",
+    "phonetic": "/əˈwɔːd/",
+    "explains": [
+      "n. 奖；奖品",
+      "v. 授予；判给"
+    ]
+  },
+  "aloud": {
+    "word": "aloud",
+    "phonetic": "/əˈlaʊd/",
+    "explains": [
+      "adv. 大声地；出声地"
+    ]
+  },
+  "am": {
+    "word": "am",
+    "phonetic": "/æm/",
+    "explains": [
+      "v. 是（be 动词）"
+    ]
+  },
+  "ambulance": {
+    "word": "ambulance",
+    "phonetic": "/ˈæmbjələns/",
+    "explains": [
+      "n. 救护车"
+    ]
+  },
+  "an": {
+    "word": "an",
+    "phonetic": "/æn/",
+    "explains": [
+      "art. 一（在元音前）"
+    ]
+  },
+  "anyhow": {
+    "word": "anyhow",
+    "phonetic": "/ˈenihaʊ/",
+    "explains": [
+      "adv. 无论如何；不管怎样"
+    ]
+  },
+  "apologize": {
+    "word": "apologize",
+    "phonetic": "/əˈpɒlədʒaɪz/",
+    "explains": [
+      "v. 道歉；谢罪"
+    ]
+  },
+  "apology": {
+    "word": "apology",
+    "phonetic": "/əˈpɒlədʒi/",
+    "explains": [
+      "n. 道歉；歉意"
+    ]
+  },
+  "appreciation": {
+    "word": "appreciation",
+    "phonetic": "/əˌpriːʃiˈeɪʃn/",
+    "explains": [
+      "n. 欣赏；感激；理解"
+    ]
+  },
+  "april": {
+    "word": "april",
+    "phonetic": "/ˈeɪprəl/",
+    "explains": [
+      "n. 四月"
+    ]
+  },
+  "arrow": {
+    "word": "arrow",
+    "phonetic": "/ˈærəʊ/",
+    "explains": [
+      "n. 箭；箭头符号"
+    ]
+  },
+  "atom": {
+    "word": "atom",
+    "phonetic": "/ˈætəm/",
+    "explains": [
+      "n. 原子"
+    ]
+  },
+  "august": {
+    "word": "august",
+    "phonetic": "/ˈɔːɡəst/",
+    "explains": [
+      "n. 八月"
+    ]
+  },
+  "aunt": {
+    "word": "aunt",
+    "phonetic": "/ɑːnt/",
+    "explains": [
+      "n. 姑母；姨母；伯母；婶母"
+    ]
+  },
+  "avenue": {
+    "word": "avenue",
+    "phonetic": "/ˈævənjuː/",
+    "explains": [
+      "n. 大街；林荫道"
+    ]
+  },
+  "awake": {
+    "word": "awake",
+    "phonetic": "/əˈweɪk/",
+    "explains": [
+      "v. 醒来；唤醒 adj. 醒着的"
+    ]
+  }
+}

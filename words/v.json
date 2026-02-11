@@ -1,0 +1,44 @@
+{
+  "value": {
+    "word": "value",
+    "phonetic": "/ˈvæljuː/",
+    "explains": [
+      "n. 价值；价格；重要性；益处 v. 重视；珍视；给… 估价"
+    ]
+  },
+  "vegetable": {
+    "word": "vegetable",
+    "phonetic": "/ˈvedʒtəbl/",
+    "explains": [
+      "n. 蔬菜；植物；植物人 adj. 蔬菜的；植物的"
+    ]
+  },
+  "very": {
+    "word": "very",
+    "phonetic": "/ˈveri/",
+    "explains": [
+      "adv. 非常；很；十分；极 adj. 恰好的；正是的；十足的"
+    ]
+  },
+  "village": {
+    "word": "village",
+    "phonetic": "/ˈvɪlɪdʒ/",
+    "explains": [
+      "n. 村庄；村镇；乡村；村民"
+    ]
+  },
+  "visit": {
+    "word": "visit",
+    "phonetic": "/ˈvɪzɪt/",
+    "explains": [
+      "v./n. 访问；参观；拜访；看望；游览"
+    ]
+  },
+  "voice": {
+    "word": "voice",
+    "phonetic": "/vɔɪs/",
+    "explains": [
+      "n. 嗓音；声音；发言权；意见 v. 表达；吐露"
+    ]
+  }
+}

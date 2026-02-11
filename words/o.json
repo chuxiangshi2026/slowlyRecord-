@@ -1,0 +1,233 @@
+{
+  "ocean": {
+    "word": "ocean",
+    "phonetic": "/ˈəʊʃn/",
+    "explains": [
+      "n. 海洋；大海"
+    ]
+  },
+  "o'clock": {
+    "word": "o'clock",
+    "phonetic": "/əˈklɒk/",
+    "explains": [
+      "adv. …… 点钟"
+    ]
+  },
+  "october": {
+    "word": "October",
+    "phonetic": "/ɒkˈtəʊbə(r)/",
+    "explains": [
+      "n. 十月"
+    ]
+  },
+  "of": {
+    "word": "of",
+    "phonetic": "/ɒv/",
+    "explains": [
+      "prep. 属于；关于；由… 组成"
+    ]
+  },
+  "off": {
+    "word": "off",
+    "phonetic": "/ɒf/",
+    "explains": [
+      "adv. 离开；脱落 prep. 离开；偏离"
+    ]
+  },
+  "offer": {
+    "word": "offer",
+    "phonetic": "/ˈɒfə(r)/",
+    "explains": [
+      "v./n. 提供；出价；提议"
+    ]
+  },
+  "office": {
+    "word": "office",
+    "phonetic": "/ˈɒfɪs/",
+    "explains": [
+      "n. 办公室；办公楼；公职"
+    ]
+  },
+  "officer": {
+    "word": "officer",
+    "phonetic": "/ˈɒfɪsə(r)/",
+    "explains": [
+      "n. 军官；警官；官员"
+    ]
+  },
+  "often": {
+    "word": "often",
+    "phonetic": "/ˈɒfn/",
+    "explains": [
+      "adv. 经常；常常；时常"
+    ]
+  },
+  "oil": {
+    "word": "oil",
+    "phonetic": "/ɔɪl/",
+    "explains": [
+      "n. 油；石油；油画颜料"
+    ]
+  },
+  "old": {
+    "word": "old",
+    "phonetic": "/əʊld/",
+    "explains": [
+      "adj. 年老的；陈旧的；古老的"
+    ]
+  },
+  "on": {
+    "word": "on",
+    "phonetic": "/ɒn/",
+    "explains": [
+      "prep. 在… 上；关于；在… 时候"
+    ]
+  },
+  "once": {
+    "word": "once",
+    "phonetic": "/wʌns/",
+    "explains": [
+      "adv. 一次；曾经 conj. 一旦"
+    ]
+  },
+  "one": {
+    "word": "one",
+    "phonetic": "/wʌn/",
+    "explains": [
+      "num. 一；一个 pron. 一个人；任何人"
+    ]
+  },
+  "only": {
+    "word": "only",
+    "phonetic": "/ˈəʊnli/",
+    "explains": [
+      "adv. 只；仅仅；不料"
+    ]
+  },
+  "open": {
+    "word": "open",
+    "phonetic": "/ˈəʊpən/",
+    "explains": [
+      "adj. 公开的；敞开的 v. 打开；公开"
+    ]
+  },
+  "operate": {
+    "word": "operate",
+    "phonetic": "/ˈɒpəreɪt/",
+    "explains": [
+      "v. 操作；经营；动手术"
+    ]
+  },
+  "opinion": {
+    "word": "opinion",
+    "phonetic": "/əˈpɪnjən/",
+    "explains": [
+      "n. 意见；主张；看法"
+    ]
+  },
+  "or": {
+    "word": "or",
+    "phonetic": "/ɔː(r)/",
+    "explains": [
+      "conj. 或者；还是；否则"
+    ]
+  },
+  "orange": {
+    "word": "orange",
+    "phonetic": "/ˈɒrɪndʒ/",
+    "explains": [
+      "n. 橙子；橙色 adj. 橙色的"
+    ]
+  },
+  "order": {
+    "word": "order",
+    "phonetic": "/ˈɔːdə(r)/",
+    "explains": [
+      "n. 命令；顺序；规则 v. 命令；订货"
+    ]
+  },
+  "ordinary": {
+    "word": "ordinary",
+    "phonetic": "/ˈɔːdnri/",
+    "explains": [
+      "adj. 普通的；平凡的；平常的"
+    ]
+  },
+  "organize": {
+    "word": "organize",
+    "phonetic": "/ˈɔːɡənaɪz/",
+    "explains": [
+      "v. 组织；安排；筹备"
+    ]
+  },
+  "origin": {
+    "word": "origin",
+    "phonetic": "/ˈɒrɪdʒɪn/",
+    "explains": [
+      "n. 起源；源头；出身"
+    ]
+  },
+  "other": {
+    "word": "other",
+    "phonetic": "/ˈʌðə(r)/",
+    "explains": [
+      "adj. 其他的；另外的 pron. 另外一个"
+    ]
+  },
+  "our": {
+    "word": "our",
+    "phonetic": "/ˈaʊə(r)/",
+    "explains": [
+      "pron. 我们的"
+    ]
+  },
+  "ours": {
+    "word": "ours",
+    "phonetic": "/ˈaʊəz/",
+    "explains": [
+      "pron. 我们的（东西）"
+    ]
+  },
+  "ourselves": {
+    "word": "ourselves",
+    "phonetic": "/ɑːˈselvz/",
+    "explains": [
+      "pron. 我们自己；我们亲自"
+    ]
+  },
+  "out": {
+    "word": "out",
+    "phonetic": "/aʊt/",
+    "explains": [
+      "adv. 出现；在外；出局"
+    ]
+  },
+  "outer": {
+    "word": "outer",
+    "phonetic": "/ˈaʊtə(r)/",
+    "explains": [
+      "adj. 外面的；外部的；外围的"
+    ]
+  },
+  "over": {
+    "word": "over",
+    "phonetic": "/ˈəʊvə(r)/",
+    "explains": [
+      "prep. 在… 上方；越过；关于"
+    ]
+  },
+  "own": {
+    "word": "own",
+    "phonetic": "/əʊn/",
+    "explains": [
+      "adj. 自己的；特有的 v. 拥有；承认"
+    ]
+  },
+  "owner": {
+    "word": "owner",
+    "phonetic": "/ˈəʊnə(r)/",
+    "explains": [
+      "n. 所有者；物主；老板"
+    ]
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "ugly": {
+    "word": "ugly",
+    "phonetic": "/ˈʌɡli/",
+    "explains": [
+      "adj. 丑陋的；难看的；令人不愉快的"
+    ]
+  },
+  "uncle": {
+    "word": "uncle",
+    "phonetic": "/ˈʌŋkl/",
+    "explains": [
+      "n. 叔叔；伯父；伯伯；舅父；姨丈；姑父"
+    ]
+  },
+  "under": {
+    "word": "under",
+    "phonetic": "/ˈʌndə(r)/",
+    "explains": [
+      "prep. 在… 下面；低于；少于；在… 指导下"
+    ]
+  },
+  "underline": {
+    "word": "underline",
+    "phonetic": "/ˌʌndəˈlaɪn/",
+    "explains": [
+      "v. 在… 下面划线；强调；突出"
+    ]
+  },
+  "unit": {
+    "word": "unit",
+    "phonetic": "/ˈjuːnɪt/",
+    "explains": [
+      "n. 单位；单元；部件；组件；部队"
+    ]
+  },
+  "university": {
+    "word": "university",
+    "phonetic": "/ˌjuːnɪˈvɜːsəti/",
+    "explains": [
+      "n. 大学；综合性大学；大学校舍"
+    ]
+  },
+  "until": {
+    "word": "until",
+    "phonetic": "/ənˈtɪl/",
+    "explains": [
+      "prep./conj. 直到… 为止；在… 以前"
+    ]
+  },
+  "up": {
+    "word": "up",
+    "phonetic": "/ʌp/",
+    "explains": [
+      "adv. 向上；朝上；向较高水平 prep. 向（较高位置）；沿着；顺着"
+    ]
+  },
+  "upon": {
+    "word": "upon",
+    "phonetic": "/əˈpɒn/",
+    "explains": [
+      "prep. 在… 之上；即将来临；接近"
+    ]
+  },
+  "us": {
+    "word": "us",
+    "phonetic": "/əs/",
+    "explains": [
+      "pron. 我们（宾格）"
+    ]
+  },
+  "use": {
+    "word": "use",
+    "phonetic": "/juːz/",
+    "explains": [
+      "v. 使用；运用；利用；耗费 n. 使用；用途；发挥"
+    ]
+  },
+  "useful": {
+    "word": "useful",
+    "phonetic": "/ˈjuːsfl/",
+    "explains": [
+      "adj. 有用的；有益的；有帮助的"
+    ]
+  },
+  "usual": {
+    "word": "usual",
+    "phonetic": "/ˈjuːʒuəl/",
+    "explains": [
+      "adj. 通常的；寻常的；惯常的"
+    ]
+  },
+  "usually": {
+    "word": "usually",
+    "phonetic": "/ˈjuːʒuəli/",
+    "explains": [
+      "adv. 通常；经常；平常"
+    ]
+  }
+}

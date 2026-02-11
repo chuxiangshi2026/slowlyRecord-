@@ -1,0 +1,471 @@
+{
+  "wait": {
+    "word": "wait",
+    "phonetic": "/weɪt/",
+    "explains": [
+      "v./n. 等待；等候；期待；推迟"
+    ]
+  },
+  "wake": {
+    "word": "wake",
+    "phonetic": "/weɪk/",
+    "explains": [
+      "v. 醒来；唤醒；唤起；激发 n. 尾迹；痕迹"
+    ]
+  },
+  "walk": {
+    "word": "walk",
+    "phonetic": "/wɔːk/",
+    "explains": [
+      "v./n. 走；步行；散步；行走"
+    ]
+  },
+  "wall": {
+    "word": "wall",
+    "phonetic": "/wɔːl/",
+    "explains": [
+      "n. 墙；墙壁；围墙；城墙"
+    ]
+  },
+  "want": {
+    "word": "want",
+    "phonetic": "/wɒnt/",
+    "explains": [
+      "v. 需要；想要；希望；缺少 n. 需要；缺乏；贫困；必需品"
+    ]
+  },
+  "war": {
+    "word": "war",
+    "phonetic": "/wɔː(r)/",
+    "explains": [
+      "n. 战争；斗争；军事；竞争 v. 打仗；作战；对抗"
+    ]
+  },
+  "warm": {
+    "word": "warm",
+    "phonetic": "/wɔːm/",
+    "explains": [
+      "adj. 温暖的；暖和的；热情的 v. 变暖；被暖和起来"
+    ]
+  },
+  "wash": {
+    "word": "wash",
+    "phonetic": "/wɒʃ/",
+    "explains": [
+      "v./n. 洗；洗涤；洗澡；冲洗；冲刷"
+    ]
+  },
+  "waste": {
+    "word": "waste",
+    "phonetic": "/weɪst/",
+    "explains": [
+      "v. 浪费；滥用；消耗 n. 浪费；废物；荒地；损耗"
+    ]
+  },
+  "watch": {
+    "word": "watch",
+    "phonetic": "/wɒtʃ/",
+    "explains": [
+      "v. 观看；注视；看守；监视 n. 手表；监视；守护；值班人"
+    ]
+  },
+  "water": {
+    "word": "water",
+    "phonetic": "/ˈwɔːtə(r)/",
+    "explains": [
+      "n. 水；海水；雨水；海域 v. 浇水；灌溉；流口水"
+    ]
+  },
+  "wave": {
+    "word": "wave",
+    "phonetic": "/weɪv/",
+    "explains": [
+      "n. 波浪；海浪；波动；波纹 v. 挥手；招手；摆动；起伏"
+    ]
+  },
+  "way": {
+    "word": "way",
+    "phonetic": "/weɪ/",
+    "explains": [
+      "n. 道路；方法；方向；方面；习惯 adv. 大大地；非常"
+    ]
+  },
+  "we": {
+    "word": "we",
+    "phonetic": "/wiː/",
+    "explains": [
+      "pron. 我们；咱们；人们"
+    ]
+  },
+  "weak": {
+    "word": "weak",
+    "phonetic": "/wiːk/",
+    "explains": [
+      "adj. 虚弱的；无力的；软弱的；差的"
+    ]
+  },
+  "wealth": {
+    "word": "wealth",
+    "phonetic": "/welθ/",
+    "explains": [
+      "n. 财富；大量；富有；资源"
+    ]
+  },
+  "wear": {
+    "word": "wear",
+    "phonetic": "/weə(r)/",
+    "explains": [
+      "v. 穿；戴；佩戴；穿着；磨损"
+    ]
+  },
+  "weather": {
+    "word": "weather",
+    "phonetic": "/ˈweðə(r)/",
+    "explains": [
+      "n. 天气；气象；气候；处境 v. 经受住；使风化"
+    ]
+  },
+  "wednesday": {
+    "word": "Wednesday",
+    "phonetic": "/ˈwenzdeɪ/",
+    "explains": [
+      "n. 星期三"
+    ]
+  },
+  "week": {
+    "word": "week",
+    "phonetic": "/wiːk/",
+    "explains": [
+      "n. 周；星期；礼拜；工作周"
+    ]
+  },
+  "weekend": {
+    "word": "weekend",
+    "phonetic": "/ˌwiːkˈend/",
+    "explains": [
+      "n. 周末；星期六和星期日；周末休假"
+    ]
+  },
+  "weigh": {
+    "word": "weigh",
+    "phonetic": "/weɪ/",
+    "explains": [
+      "v. 称… 重量；权衡；考虑；重达"
+    ]
+  },
+  "welcome": {
+    "word": "welcome",
+    "phonetic": "/ˈwelkəm/",
+    "explains": [
+      "v./n./adj. 欢迎；乐意接受；受欢迎的"
+    ]
+  },
+  "well": {
+    "word": "well",
+    "phonetic": "/wel/",
+    "explains": [
+      "adv. 很好地；充分地；满意地；适当地 adj. 健康的；良好的；适宜的"
+    ]
+  },
+  "west": {
+    "word": "west",
+    "phonetic": "/west/",
+    "explains": [
+      "n. 西；西方；西部；西方国家 adj. 西方的；西部的；朝西的"
+    ]
+  },
+  "western": {
+    "word": "western",
+    "phonetic": "/ˈwestən/",
+    "explains": [
+      "adj. 西方的；西部的；欧美的"
+    ]
+  },
+  "wet": {
+    "word": "wet",
+    "phonetic": "/wet/",
+    "explains": [
+      "adj. 潮湿的；有雨的；未干的；湿的"
+    ]
+  },
+  "whale": {
+    "word": "whale",
+    "phonetic": "/weɪl/",
+    "explains": [
+      "n. 鲸；鲸鱼；巨大的事物"
+    ]
+  },
+  "what": {
+    "word": "what",
+    "phonetic": "/wɒt/",
+    "explains": [
+      "pron. 什么；多么；多少 adj. 什么；多么；何等"
+    ]
+  },
+  "wheat": {
+    "word": "wheat",
+    "phonetic": "/wiːt/",
+    "explains": [
+      "n. 小麦；小麦色；麦子"
+    ]
+  },
+  "wheel": {
+    "word": "wheel",
+    "phonetic": "/wiːl/",
+    "explains": [
+      "n. 轮子；车轮；旋转；机轮 v. 转动；推动；盘旋"
+    ]
+  },
+  "when": {
+    "word": "when",
+    "phonetic": "/wen/",
+    "explains": [
+      "adv. 什么时候；何时 conj. 在… 时候；既然；如果"
+    ]
+  },
+  "where": {
+    "word": "where",
+    "phonetic": "/weə(r)/",
+    "explains": [
+      "adv. 在哪里；在… 地方 conj. 在… 的地方；到… 的地方"
+    ]
+  },
+  "whether": {
+    "word": "whether",
+    "phonetic": "/ˈweðə(r)/",
+    "explains": [
+      "conj. 是否；不论；不管"
+    ]
+  },
+  "which": {
+    "word": "which",
+    "phonetic": "/wɪtʃ/",
+    "explains": [
+      "pron./adj. 哪一个；哪一些；那一个；那一些"
+    ]
+  },
+  "while": {
+    "word": "while",
+    "phonetic": "/waɪl/",
+    "explains": [
+      "conj. 当… 的时候；虽然；尽管 n. 一会儿；一段时间"
+    ]
+  },
+  "white": {
+    "word": "white",
+    "phonetic": "/waɪt/",
+    "explains": [
+      "adj. 白色的；白种的；纯洁的 n. 白色；洁白；白种人"
+    ]
+  },
+  "who": {
+    "word": "who",
+    "phonetic": "/huː/",
+    "explains": [
+      "pron. 谁；什么人；… 的人"
+    ]
+  },
+  "whole": {
+    "word": "whole",
+    "phonetic": "/həʊl/",
+    "explains": [
+      "adj. 完整的；全部的；整个的 n. 整体；全部；完整"
+    ]
+  },
+  "whom": {
+    "word": "whom",
+    "phonetic": "/huːm/",
+    "explains": [
+      "pron. 谁（who 的宾格）"
+    ]
+  },
+  "whose": {
+    "word": "whose",
+    "phonetic": "/huːz/",
+    "explains": [
+      "pron. 谁的；那个人的；那些人的"
+    ]
+  },
+  "why": {
+    "word": "why",
+    "phonetic": "/waɪ/",
+    "explains": [
+      "adv. 为什么；为何 conj. 为什么；… 的理由"
+    ]
+  },
+  "wide": {
+    "word": "wide",
+    "phonetic": "/waɪd/",
+    "explains": [
+      "adj. 宽的；宽阔的；广泛的；广阔的 adv. 广泛地；充分地；广阔地"
+    ]
+  },
+  "wife": {
+    "word": "wife",
+    "phonetic": "/waɪf/",
+    "explains": [
+      "n. 妻子；太太；夫人；老婆"
+    ]
+  },
+  "wild": {
+    "word": "wild",
+    "phonetic": "/waɪld/",
+    "explains": [
+      "adj. 野生的；野蛮的；狂热的；荒凉的"
+    ]
+  },
+  "will": {
+    "word": "will",
+    "phonetic": "/wɪl/",
+    "explains": [
+      "modal v. 将；会；愿意；要 n. 意志；决心；愿望；遗嘱"
+    ]
+  },
+  "win": {
+    "word": "win",
+    "phonetic": "/wɪn/",
+    "explains": [
+      "v. 赢；获胜；赢得；获得 n. 胜利；赢；收益"
+    ]
+  },
+  "wind": {
+    "word": "wind",
+    "phonetic": "/wɪnd/",
+    "explains": [
+      "n. 风；气流；呼吸；气味 v. 缠绕；蜿蜒；吹号角"
+    ]
+  },
+  "window": {
+    "word": "window",
+    "phonetic": "/ˈwɪndəʊ/",
+    "explains": [
+      "n. 窗户；窗口；窗；窗户玻璃"
+    ]
+  },
+  "wine": {
+    "word": "wine",
+    "phonetic": "/waɪn/",
+    "explains": [
+      "n. 葡萄酒；酒；果酒；紫红色"
+    ]
+  },
+  "winter": {
+    "word": "winter",
+    "phonetic": "/ˈwɪntə(r)/",
+    "explains": [
+      "n. 冬季；冬天；年岁；萧条期"
+    ]
+  },
+  "wire": {
+    "word": "wire",
+    "phonetic": "/ˈwaɪə(r)/",
+    "explains": [
+      "n. 电线；金属丝；电报；铁丝网 v. 给… 装电线；打电报"
+    ]
+  },
+  "wise": {
+    "word": "wise",
+    "phonetic": "/waɪz/",
+    "explains": [
+      "adj. 明智的；聪明的；博学的"
+    ]
+  },
+  "wish": {
+    "word": "wish",
+    "phonetic": "/wɪʃ/",
+    "explains": [
+      "v./n. 希望；愿望；祝愿；想要；渴望"
+    ]
+  },
+  "with": {
+    "word": "with",
+    "phonetic": "/wɪð/",
+    "explains": [
+      "prep. 和… 在一起；具有；用；反对；关于；包括；随着；由于"
+    ]
+  },
+  "within": {
+    "word": "within",
+    "phonetic": "/wɪˈðɪn/",
+    "explains": [
+      "prep./adv. 在… 之内；在内部；在里面"
+    ]
+  },
+  "without": {
+    "word": "without",
+    "phonetic": "/wɪˈðaʊt/",
+    "explains": [
+      "prep. 没有；缺乏；不和… 在一起；不（做某事）"
+    ]
+  },
+  "woman": {
+    "word": "woman",
+    "phonetic": "/ˈwʊmən/",
+    "explains": [
+      "n. 妇女；女性；成年女子"
+    ]
+  },
+  "wood": {
+    "word": "wood",
+    "phonetic": "/wʊd/",
+    "explains": [
+      "n. 木材；木头；树林；木料"
+    ]
+  },
+  "word": {
+    "word": "word",
+    "phonetic": "/wɜːd/",
+    "explains": [
+      "n. 单词；话语；消息；诺言；命令 v. 用言辞表达"
+    ]
+  },
+  "work": {
+    "word": "work",
+    "phonetic": "/wɜːk/",
+    "explains": [
+      "v./n. 工作；劳动；干活；使工作；运转；职业"
+    ]
+  },
+  "world": {
+    "word": "world",
+    "phonetic": "/wɜːld/",
+    "explains": [
+      "n. 世界；地球；领域；尘世；全人类"
+    ]
+  },
+  "worry": {
+    "word": "worry",
+    "phonetic": "/ˈwʌri/",
+    "explains": [
+      "v./n. 担心；担忧；发愁；烦恼；困扰"
+    ]
+  },
+  "worth": {
+    "word": "worth",
+    "phonetic": "/wɜːθ/",
+    "explains": [
+      "adj. 值… 的；有… 价值的；值得的 n. 价值；财富；财产"
+    ]
+  },
+  "would": {
+    "word": "would",
+    "phonetic": "/wʊd/",
+    "explains": [
+      "modal v. 将；将会；愿意；总是；就；大概"
+    ]
+  },
+  "write": {
+    "word": "write",
+    "phonetic": "/raɪt/",
+    "explains": [
+      "v. 写；书写；写作；写信；编写；记录"
+    ]
+  },
+  "wrong": {
+    "word": "wrong",
+    "phonetic": "/rɒŋ/",
+    "explains": [
+      "adj. 错误的；不对的；不正确的；失常的 adv. 错误地；不正当地"
+    ]
+  }
+}

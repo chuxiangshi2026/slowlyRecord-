@@ -1,0 +1,567 @@
+{
+  "each": {
+    "word": "each",
+    "phonetic": "/iːtʃ/",
+    "explains": [
+      "adj. 每个的",
+      "pron. 每个"
+    ]
+  },
+  "eager": {
+    "word": "eager",
+    "phonetic": "/ˈiːɡər/",
+    "explains": [
+      "adj. 渴望的；热切的"
+    ]
+  },
+  "eagle": {
+    "word": "eagle",
+    "phonetic": "/ˈiːɡl/",
+    "explains": [
+      "n. 鹰"
+    ]
+  },
+  "ear": {
+    "word": "ear",
+    "phonetic": "/ɪr/",
+    "explains": [
+      "n. 耳朵；听力"
+    ]
+  },
+  "early": {
+    "word": "early",
+    "phonetic": "/ˈɜːrli/",
+    "explains": [
+      "adj. 早的",
+      "adv. 早地"
+    ]
+  },
+  "earn": {
+    "word": "earn",
+    "phonetic": "/ɜːrn/",
+    "explains": [
+      "v. 赚取；获得"
+    ]
+  },
+  "earth": {
+    "word": "earth",
+    "phonetic": "/ɜːrθ/",
+    "explains": [
+      "n. 地球；土地"
+    ]
+  },
+  "ease": {
+    "word": "ease",
+    "phonetic": "/iːz/",
+    "explains": [
+      "n. 容易；轻松",
+      "v. 减轻；缓解"
+    ]
+  },
+  "easily": {
+    "word": "easily",
+    "phonetic": "/ˈiːzəli/",
+    "explains": [
+      "adv. 容易地；轻松地"
+    ]
+  },
+  "east": {
+    "word": "east",
+    "phonetic": "/iːst/",
+    "explains": [
+      "n. 东方",
+      "adj. 东方的",
+      "adv. 向东方"
+    ]
+  },
+  "eastern": {
+    "word": "eastern",
+    "phonetic": "/ˈiːstərn/",
+    "explains": [
+      "adj. 东部的；东方的"
+    ]
+  },
+  "easy": {
+    "word": "easy",
+    "phonetic": "/ˈiːzi/",
+    "explains": [
+      "adj. 容易的；舒适的"
+    ]
+  },
+  "eat": {
+    "word": "eat",
+    "phonetic": "/iːt/",
+    "explains": [
+      "v. 吃"
+    ]
+  },
+  "edge": {
+    "word": "edge",
+    "phonetic": "/edʒ/",
+    "explains": [
+      "n. 边缘；优势",
+      "v. 缓慢移动"
+    ]
+  },
+  "edit": {
+    "word": "edit",
+    "phonetic": "/ˈedɪt/",
+    "explains": [
+      "v. 编辑；修改"
+    ]
+  },
+  "edition": {
+    "word": "edition",
+    "phonetic": "/ɪˈdɪʃn/",
+    "explains": [
+      "n. 版本；版次"
+    ]
+  },
+  "editor": {
+    "word": "editor",
+    "phonetic": "/ˈedɪtər/",
+    "explains": [
+      "n. 编辑；编者"
+    ]
+  },
+  "educate": {
+    "word": "educate",
+    "phonetic": "/ˈedjuːkeɪt/",
+    "explains": [
+      "v. 教育；培养"
+    ]
+  },
+  "education": {
+    "word": "education",
+    "phonetic": "/ˌedjuːˈkeɪʃn/",
+    "explains": [
+      "n. 教育；培养"
+    ]
+  },
+  "educational": {
+    "word": "educational",
+    "phonetic": "/ˌedjuːˈkeɪʃənl/",
+    "explains": [
+      "adj. 教育的；有教育意义的"
+    ]
+  },
+  "effect": {
+    "word": "effect",
+    "phonetic": "/ɪˈfekt/",
+    "explains": [
+      "n. 效果；影响",
+      "v. 实现；引起"
+    ]
+  },
+  "effective": {
+    "word": "effective",
+    "phonetic": "/ɪˈfektɪv/",
+    "explains": [
+      "adj. 有效的；起作用的"
+    ]
+  },
+  "efficient": {
+    "word": "efficient",
+    "phonetic": "/ɪˈfɪʃnt/",
+    "explains": [
+      "adj. 高效的；有效的"
+    ]
+  },
+  "effort": {
+    "word": "effort",
+    "phonetic": "/ˈefərt/",
+    "explains": [
+      "n. 努力；成就"
+    ]
+  },
+  "egg": {
+    "word": "egg",
+    "phonetic": "/eɡ/",
+    "explains": [
+      "n. 蛋；卵"
+    ]
+  },
+  "eight": {
+    "word": "eight",
+    "phonetic": "/eɪt/",
+    "explains": [
+      "num. 八"
+    ]
+  },
+  "either": {
+    "word": "either",
+    "phonetic": "/ˈiːðər/",
+    "explains": [
+      "pron. 两者之一",
+      "adj. 任一的",
+      "adv. 也（用于否定句）"
+    ]
+  },
+  "elbow": {
+    "word": "elbow",
+    "phonetic": "/ˈelboʊ/",
+    "explains": [
+      "n. 肘部",
+      "v. 用肘推"
+    ]
+  },
+  "elder": {
+    "word": "elder",
+    "phonetic": "/ˈeldər/",
+    "explains": [
+      "adj. 年长的",
+      "n. 长辈"
+    ]
+  },
+  "elect": {
+    "word": "elect",
+    "phonetic": "/ɪˈlekt/",
+    "explains": [
+      "v. 选举；选择"
+    ]
+  },
+  "election": {
+    "word": "election",
+    "phonetic": "/ɪˈlekʃn/",
+    "explains": [
+      "n. 选举；当选"
+    ]
+  },
+  "electric": {
+    "word": "electric",
+    "phonetic": "/ɪˈlektrɪk/",
+    "explains": [
+      "adj. 电的；电动的"
+    ]
+  },
+  "electronic": {
+    "word": "electronic",
+    "phonetic": "/ɪˌlekˈtrɑːnɪk/",
+    "explains": [
+      "adj. 电子的"
+    ]
+  },
+  "element": {
+    "word": "element",
+    "phonetic": "/ˈelɪmənt/",
+    "explains": [
+      "n. 元素；要素；自然环境"
+    ]
+  },
+  "elementary": {
+    "word": "elementary",
+    "phonetic": "/ˌelɪˈmentri/",
+    "explains": [
+      "adj. 基础的；初级的"
+    ]
+  },
+  "elephant": {
+    "word": "elephant",
+    "phonetic": "/ˈelɪfənt/",
+    "explains": [
+      "n. 象"
+    ]
+  },
+  "else": {
+    "word": "else",
+    "phonetic": "/els/",
+    "explains": [
+      "adv. 其他；否则"
+    ]
+  },
+  "email": {
+    "word": "email",
+    "phonetic": "/ˈiːmeɪl/",
+    "explains": [
+      "n. 电子邮件",
+      "v. 发邮件"
+    ]
+  },
+  "embarrass": {
+    "word": "embarrass",
+    "phonetic": "/ɪmˈbærəs/",
+    "explains": [
+      "v. 使尴尬；使难堪"
+    ]
+  },
+  "emerge": {
+    "word": "emerge",
+    "phonetic": "/ɪˈmɜːrdʒ/",
+    "explains": [
+      "v. 出现；浮现"
+    ]
+  },
+  "emergency": {
+    "word": "emergency",
+    "phonetic": "/ɪˈmɜːrdʒənsi/",
+    "explains": [
+      "n. 紧急情况；突发事件"
+    ]
+  },
+  "emphasize": {
+    "word": "emphasize",
+    "phonetic": "/ˈemfəsaɪz/",
+    "explains": [
+      "v. 强调；重视"
+    ]
+  },
+  "employ": {
+    "word": "employ",
+    "phonetic": "/ɪmˈplɔɪ/",
+    "explains": [
+      "v. 雇佣；使用"
+    ]
+  },
+  "employee": {
+    "word": "employee",
+    "phonetic": "/ɪmˈplɔɪiː/",
+    "explains": [
+      "n. 雇员；职工"
+    ]
+  },
+  "employer": {
+    "word": "employer",
+    "phonetic": "/ɪmˈplɔɪər/",
+    "explains": [
+      "n. 雇主；用人单位"
+    ]
+  },
+  "employment": {
+    "word": "employment",
+    "phonetic": "/ɪmˈplɔɪmənt/",
+    "explains": [
+      "n. 就业；雇佣"
+    ]
+  },
+  "enable": {
+    "word": "enable",
+    "phonetic": "/ɪˈneɪbl/",
+    "explains": [
+      "v. 使能够；启用"
+    ]
+  },
+  "encourage": {
+    "word": "encourage",
+    "phonetic": "/ɪnˈkɜːrɪdʒ/",
+    "explains": [
+      "v. 鼓励；激励"
+    ]
+  },
+  "end": {
+    "word": "end",
+    "phonetic": "/end/",
+    "explains": [
+      "n. 结尾；末端",
+      "v. 结束；终止"
+    ]
+  },
+  "ending": {
+    "word": "ending",
+    "phonetic": "/ˈendɪŋ/",
+    "explains": [
+      "n. 结尾；结局"
+    ]
+  },
+  "endless": {
+    "word": "endless",
+    "phonetic": "/ˈendləs/",
+    "explains": [
+      "adj. 无止境的；连续的"
+    ]
+  },
+  "energy": {
+    "word": "energy",
+    "phonetic": "/ˈenərdʒi/",
+    "explains": [
+      "n. 能量；精力"
+    ]
+  },
+  "enforce": {
+    "word": "enforce",
+    "phonetic": "/ɪnˈfɔːrs/",
+    "explains": [
+      "v. 实施；强制执行"
+    ]
+  },
+  "engage": {
+    "word": "engage",
+    "phonetic": "/ɪnˈɡeɪdʒ/",
+    "explains": [
+      "v. 参与；吸引；订婚"
+    ]
+  },
+  "engine": {
+    "word": "engine",
+    "phonetic": "/ˈendʒɪn/",
+    "explains": [
+      "n. 发动机；引擎"
+    ]
+  },
+  "engineer": {
+    "word": "engineer",
+    "phonetic": "/ˌendʒɪˈnɪr/",
+    "explains": [
+      "n. 工程师",
+      "v. 设计；策划"
+    ]
+  },
+  "engineering": {
+    "word": "engineering",
+    "phonetic": "/ˌendʒɪˈnɪrɪŋ/",
+    "explains": [
+      "n. 工程；工程技术"
+    ]
+  },
+  "enjoy": {
+    "word": "enjoy",
+    "phonetic": "/ɪnˈdʒɔɪ/",
+    "explains": [
+      "v. 享受；喜爱"
+    ]
+  },
+  "enjoyable": {
+    "word": "enjoyable",
+    "phonetic": "/ɪnˈdʒɔɪəbl/",
+    "explains": [
+      "adj. 令人愉快的"
+    ]
+  },
+  "enough": {
+    "word": "enough",
+    "phonetic": "/ɪˈnʌf/",
+    "explains": [
+      "adj. 足够的",
+      "adv. 足够地",
+      "pron. 足够"
+    ]
+  },
+  "ensure": {
+    "word": "ensure",
+    "phonetic": "/ɪnˈʃʊr/",
+    "explains": [
+      "v. 确保；保证"
+    ]
+  },
+  "enter": {
+    "word": "enter",
+    "phonetic": "/ˈentər/",
+    "explains": [
+      "v. 进入；参加"
+    ]
+  },
+  "entertain": {
+    "word": "entertain",
+    "phonetic": "/ˌentərˈteɪn/",
+    "explains": [
+      "v. 娱乐；招待"
+    ]
+  },
+  "entire": {
+    "word": "entire",
+    "phonetic": "/ɪnˈtaɪər/",
+    "explains": [
+      "adj. 整个的；全部的"
+    ]
+  },
+  "entitle": {
+    "word": "entitle",
+    "phonetic": "/ɪnˈtaɪtl/",
+    "explains": [
+      "v. 给…权利；给…命名"
+    ]
+  },
+  "entrance": {
+    "word": "entrance",
+    "phonetic": "/ˈentrəns/",
+    "explains": [
+      "n. 入口；进入"
+    ]
+  },
+  "entry": {
+    "word": "entry",
+    "phonetic": "/ˈentri/",
+    "explains": [
+      "n. 进入；条目；参赛作品"
+    ]
+  },
+  "environment": {
+    "word": "environment",
+    "phonetic": "/ɪnˈvaɪrənmənt/",
+    "explains": [
+      "n. 环境；周围状况"
+    ]
+  },
+  "equal": {
+    "word": "equal",
+    "phonetic": "/ˈiːkwəl/",
+    "explains": [
+      "adj. 相等的；平等的",
+      "n. 同等的人",
+      "v. 等于"
+    ]
+  },
+  "equality": {
+    "word": "equality",
+    "phonetic": "/ɪˈkwɑːləti/",
+    "explains": [
+      "n. 平等；相等"
+    ]
+  },
+  "equation": {
+    "word": "equation",
+    "phonetic": "/ɪˈkweɪʒn/",
+    "explains": [
+      "n. 方程；等式"
+    ]
+  },
+  "equip": {
+    "word": "equip",
+    "phonetic": "/ɪˈkwɪp/",
+    "explains": [
+      "v. 装备；配备"
+    ]
+  },
+  "equipment": {
+    "word": "equipment",
+    "phonetic": "/ɪˈkwɪpmənt/",
+    "explains": [
+      "n. 装备；设备"
+    ]
+  },
+  "era": {
+    "word": "era",
+    "phonetic": "/ˈɪrə/",
+    "explains": [
+      "n. 时代；纪元"
+    ]
+  },
+  "error": {
+    "word": "error",
+    "phonetic": "/ˈerər/",
+    "explains": [
+      "n. 错误；失误"
+    ]
+  },
+  "escape": {
+    "word": "escape",
+    "phonetic": "/ɪˈskeɪp/",
+    "explains": [
+      "v. 逃跑；逃避",
+      "n. 逃脱；逃路"
+    ]
+  },
+  "especially": {
+    "word": "especially",
+    "phonetic": "/ɪˈspeʃəli/",
+    "explains": [
+      "adv. 尤其；特别"
+    ]
+  },
+  "essay": {
+    "word": "essay",
+    "phonetic": "/ˈeseɪ/",
+    "explains": [
+      "n. 论文；散文"
+    ]
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "yard": {
+    "word": "yard",
+    "phonetic": "/jɑːd/",
+    "explains": [
+      "n. 院子；庭院；码（长度单位）；场地"
+    ]
+  },
+  "year": {
+    "word": "year",
+    "phonetic": "/jɪə(r)/",
+    "explains": [
+      "n. 年；年度；历年；年纪；一年的期间"
+    ]
+  },
+  "yellow": {
+    "word": "yellow",
+    "phonetic": "/ˈjeləʊ/",
+    "explains": [
+      "adj. 黄色的；黄皮肤的；黄种人的 n. 黄色；黄颜色"
+    ]
+  },
+  "yes": {
+    "word": "yes",
+    "phonetic": "/jes/",
+    "explains": [
+      "adv. 是；是的；好；对 n. 是；同意；赞成"
+    ]
+  },
+  "yesterday": {
+    "word": "yesterday",
+    "phonetic": "/ˈjestədeɪ/",
+    "explains": [
+      "n./adv. 昨天；昨日；近来；往昔"
+    ]
+  },
+  "yet": {
+    "word": "yet",
+    "phonetic": "/jet/",
+    "explains": [
+      "adv. 还；仍然；已经；但是 conj. 然而；但是"
+    ]
+  },
+  "you": {
+    "word": "you",
+    "phonetic": "/juː/",
+    "explains": [
+      "pron. 你；你们；您；任何人"
+    ]
+  },
+  "young": {
+    "word": "young",
+    "phonetic": "/jʌŋ/",
+    "explains": [
+      "adj. 年轻的；初期的；没有经验的 n. 年轻人；青年"
+    ]
+  },
+  "your": {
+    "word": "your",
+    "phonetic": "/jɔː(r)/",
+    "explains": [
+      "pron. 你的；你们的；您的；（泛指）一个人的"
+    ]
+  },
+  "yours": {
+    "word": "yours",
+    "phonetic": "/jɔːz/",
+    "explains": [
+      "pron. 你（们）的东西；你的责任；你的家属"
+    ]
+  },
+  "yourself": {
+    "word": "yourself",
+    "phonetic": "/jɔːˈself/",
+    "explains": [
+      "pron. 你自己；你亲自；你本人"
+    ]
+  },
+  "yourselves": {
+    "word": "yourselves",
+    "phonetic": "/jɔːˈselvz/",
+    "explains": [
+      "pron. 你们自己；你们亲自；你们本人"
+    ]
+  }
+}

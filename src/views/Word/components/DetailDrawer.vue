@@ -411,6 +411,10 @@ let wordsStore = useWordsStore();
 
 const ocrOptions = [
   {
+    value: 'local',
+    label: '本地词典(离线)',
+  },
+  {
     value: 'tencent',
     label: '腾讯',
   }, {
@@ -423,9 +427,6 @@ const ocrOptions = [
   }, {
     value: 'ali',
     label: '阿里',
-  }, {
-    value: 'local',
-    label: '本地(离线)',
   }]
 const options = [...ocrOptions,
   {
@@ -443,9 +444,6 @@ const options = [...ocrOptions,
   }, {
     value: 'kimi',
     label: 'kimi',
-  }, {
-    value: 'local',
-    label: '本地词典(离线)',
   }
 ]
 /*{

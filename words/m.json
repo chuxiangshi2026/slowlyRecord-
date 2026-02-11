@@ -1,0 +1,471 @@
+{
+  "machine": {
+    "word": "machine",
+    "phonetic": "/məˈʃiːn/",
+    "explains": [
+      "n. 机械；机器；机械装置"
+    ]
+  },
+  "mad": {
+    "word": "mad",
+    "phonetic": "/mæd/",
+    "explains": [
+      "adj. 疯狂的；发疯的；愚蠢的；着迷的"
+    ]
+  },
+  "magazine": {
+    "word": "magazine",
+    "phonetic": "/ˌmæɡəˈziːn/",
+    "explains": [
+      "n. 杂志；期刊；弹药库"
+    ]
+  },
+  "magic": {
+    "word": "magic",
+    "phonetic": "/ˈmædʒɪk/",
+    "explains": [
+      "n. 巫术；魔法；戏法 adj. 不可思议的；有魔力的"
+    ]
+  },
+  "mail": {
+    "word": "mail",
+    "phonetic": "/meɪl/",
+    "explains": [
+      "n. 邮件；邮政；盔甲 v. 邮寄；给…… 穿盔甲"
+    ]
+  },
+  "main": {
+    "word": "main",
+    "phonetic": "/meɪn/",
+    "explains": [
+      "adj. 主要的；最重要的 n. 主要部分；要点"
+    ]
+  },
+  "make": {
+    "word": "make",
+    "phonetic": "/meɪk/",
+    "explains": [
+      "v. 使得；进行；布置；制造；获得"
+    ]
+  },
+  "man": {
+    "word": "man",
+    "phonetic": "/mæn/",
+    "explains": [
+      "n. 男人；人；人类"
+    ]
+  },
+  "manage": {
+    "word": "manage",
+    "phonetic": "/ˈmænɪdʒ/",
+    "explains": [
+      "v. 管理；经营；控制；设法"
+    ]
+  },
+  "manager": {
+    "word": "manager",
+    "phonetic": "/ˈmænɪdʒə(r)/",
+    "explains": [
+      "n. 经理；管理人员"
+    ]
+  },
+  "many": {
+    "word": "many",
+    "phonetic": "/ˈmeni/",
+    "explains": [
+      "adj. 许多的 pron. 许多；许多人"
+    ]
+  },
+  "map": {
+    "word": "map",
+    "phonetic": "/mæp/",
+    "explains": [
+      "n. 地图；示意图；染色体图"
+    ]
+  },
+  "march": {
+    "word": "March",
+    "phonetic": "/mɑːtʃ/",
+    "explains": [
+      "n. 三月"
+    ]
+  },
+  "mark": {
+    "word": "mark",
+    "phonetic": "/mɑːk/",
+    "explains": [
+      "n. 标志；符号；痕迹；分数 v. 做标记；打分"
+    ]
+  },
+  "market": {
+    "word": "market",
+    "phonetic": "/ˈmɑːkɪt/",
+    "explains": [
+      "n. 市场；行情；市场面 v. 做买卖"
+    ]
+  },
+  "marry": {
+    "word": "marry",
+    "phonetic": "/ˈmæri/",
+    "explains": [
+      "v. 嫁；娶；与…… 结婚"
+    ]
+  },
+  "match": {
+    "word": "match",
+    "phonetic": "/mætʃ/",
+    "explains": [
+      "n. 比赛；竞赛；匹配；火柴 v. 使比赛；匹配"
+    ]
+  },
+  "math": {
+    "word": "math",
+    "phonetic": "/mæθ/",
+    "explains": [
+      "n. 数学"
+    ]
+  },
+  "matter": {
+    "word": "matter",
+    "phonetic": "/ˈmætə(r)/",
+    "explains": [
+      "n. 物质；事件；问题；重要性 v. 要紧；有重大影响"
+    ]
+  },
+  "may": {
+    "word": "may",
+    "phonetic": "/meɪ/",
+    "explains": [
+      "aux. 可以；能够；可能；也许"
+    ]
+  },
+  "maybe": {
+    "word": "maybe",
+    "phonetic": "/ˈmeɪbi/",
+    "explains": [
+      "adv. 也许；可能；大概"
+    ]
+  },
+  "me": {
+    "word": "me",
+    "phonetic": "/miː/",
+    "explains": [
+      "pron. 我（宾格）"
+    ]
+  },
+  "meal": {
+    "word": "meal",
+    "phonetic": "/miːl/",
+    "explains": [
+      "n. 一餐；膳食；一顿饭"
+    ]
+  },
+  "mean": {
+    "word": "mean",
+    "phonetic": "/miːn/",
+    "explains": [
+      "v. 意味；想要；意欲 adj. 吝啬的；刻薄的"
+    ]
+  },
+  "meaning": {
+    "word": "meaning",
+    "phonetic": "/ˈmiːnɪŋ/",
+    "explains": [
+      "n. 意义；含义；意图 adj. 意味深长的"
+    ]
+  },
+  "meet": {
+    "word": "meet",
+    "phonetic": "/miːt/",
+    "explains": [
+      "v. 满足；遇见；对付；相遇 n. 集会"
+    ]
+  },
+  "meeting": {
+    "word": "meeting",
+    "phonetic": "/ˈmiːtɪŋ/",
+    "explains": [
+      "n. 会议；会见；集会；汇合点"
+    ]
+  },
+  "melon": {
+    "word": "melon",
+    "phonetic": "/ˈmelən/",
+    "explains": [
+      "n. 瓜；甜瓜；西瓜"
+    ]
+  },
+  "member": {
+    "word": "member",
+    "phonetic": "/ˈmembə(r)/",
+    "explains": [
+      "n. 成员；会员；议员"
+    ]
+  },
+  "memory": {
+    "word": "memory",
+    "phonetic": "/ˈmeməri/",
+    "explains": [
+      "n. 记忆；记忆力；内存；回忆"
+    ]
+  },
+  "mention": {
+    "word": "mention",
+    "phonetic": "/ˈmenʃn/",
+    "explains": [
+      "v./n. 提到；谈到；提及；说起"
+    ]
+  },
+  "menu": {
+    "word": "menu",
+    "phonetic": "/ˈmenjuː/",
+    "explains": [
+      "n. 菜单；饭菜；菜肴"
+    ]
+  },
+  "mercy": {
+    "word": "mercy",
+    "phonetic": "/ˈmɜːsi/",
+    "explains": [
+      "n. 仁慈；宽容；怜悯；恩惠"
+    ]
+  },
+  "message": {
+    "word": "message",
+    "phonetic": "/ˈmesɪdʒ/",
+    "explains": [
+      "n. 消息；信息；启示；预言 v. 报信；通知"
+    ]
+  },
+  "metal": {
+    "word": "metal",
+    "phonetic": "/ˈmetl/",
+    "explains": [
+      "n. 金属；合金"
+    ]
+  },
+  "method": {
+    "word": "method",
+    "phonetic": "/ˈmeθəd/",
+    "explains": [
+      "n. 方法；办法；条理"
+    ]
+  },
+  "middle": {
+    "word": "middle",
+    "phonetic": "/ˈmɪdl/",
+    "explains": [
+      "adj. 中间的；中部的；中级的 n. 中间；中央；中部"
+    ]
+  },
+  "might": {
+    "word": "might",
+    "phonetic": "/maɪt/",
+    "explains": [
+      "aux. 可能；也许；会 n. 力量；威力；势力"
+    ]
+  },
+  "mile": {
+    "word": "mile",
+    "phonetic": "/maɪl/",
+    "explains": [
+      "n. 英里；一英里赛跑；较大的距离"
+    ]
+  },
+  "milk": {
+    "word": "milk",
+    "phonetic": "/mɪlk/",
+    "explains": [
+      "n. 牛奶；乳状物 v. 挤奶；榨取"
+    ]
+  },
+  "mind": {
+    "word": "mind",
+    "phonetic": "/maɪnd/",
+    "explains": [
+      "n. 理智；精神；意见；智力 v. 介意；专心于；照料"
+    ]
+  },
+  "mine": {
+    "word": "mine",
+    "phonetic": "/maɪn/",
+    "explains": [
+      "pron. 我的 n. 矿；矿藏；矿山 v. 开采；采矿"
+    ]
+  },
+  "minute": {
+    "word": "minute",
+    "phonetic": "/ˈmɪnɪt/",
+    "explains": [
+      "n. 分；分钟；片刻；笔记 adj. 微小的；详细的"
+    ]
+  },
+  "miss": {
+    "word": "miss",
+    "phonetic": "/mɪs/",
+    "explains": [
+      "v. 错过；想念；漏掉 n. 小姐；女士"
+    ]
+  },
+  "mistake": {
+    "word": "mistake",
+    "phonetic": "/mɪˈsteɪk/",
+    "explains": [
+      "n. 错误；误会；过失 v. 弄错；误解"
+    ]
+  },
+  "mix": {
+    "word": "mix",
+    "phonetic": "/mɪks/",
+    "explains": [
+      "v. 混合；调配；混淆 n. 混合；混合物；混乱"
+    ]
+  },
+  "model": {
+    "word": "model",
+    "phonetic": "/ˈmɒdl/",
+    "explains": [
+      "n. 模型；模范；模特儿；样式 adj. 模范的；作模型用的"
+    ]
+  },
+  "modern": {
+    "word": "modern",
+    "phonetic": "/ˈmɒdn/",
+    "explains": [
+      "adj. 现代的；近代的；时髦的"
+    ]
+  },
+  "moment": {
+    "word": "moment",
+    "phonetic": "/ˈməʊmənt/",
+    "explains": [
+      "n. 片刻；瞬间；重要时刻；指定时刻"
+    ]
+  },
+  "money": {
+    "word": "money",
+    "phonetic": "/ˈmʌni/",
+    "explains": [
+      "n. 钱；货币；财富"
+    ]
+  },
+  "month": {
+    "word": "month",
+    "phonetic": "/mʌnθ/",
+    "explains": [
+      "n. 月；月份；一个月的时间"
+    ]
+  },
+  "moon": {
+    "word": "moon",
+    "phonetic": "/muːn/",
+    "explains": [
+      "n. 月亮；月球；月光；卫星"
+    ]
+  },
+  "more": {
+    "word": "more",
+    "phonetic": "/mɔː(r)/",
+    "explains": [
+      "adv. 更多；此外；更大程度地 adj. 更多的；附加的"
+    ]
+  },
+  "morning": {
+    "word": "morning",
+    "phonetic": "/ˈmɔːnɪŋ/",
+    "explains": [
+      "n. 早晨；黎明；上午"
+    ]
+  },
+  "mother": {
+    "word": "mother",
+    "phonetic": "/ˈmʌðə(r)/",
+    "explains": [
+      "n. 母亲；妈妈；大娘；女修道院院长"
+    ]
+  },
+  "motor": {
+    "word": "motor",
+    "phonetic": "/ˈməʊtə(r)/",
+    "explains": [
+      "n. 发动机；马达；汽车 adj. 汽车的；机动的"
+    ]
+  },
+  "mountain": {
+    "word": "mountain",
+    "phonetic": "/ˈmaʊntən/",
+    "explains": [
+      "n. 山；山脉；大量；一大堆"
+    ]
+  },
+  "mouse": {
+    "word": "mouse",
+    "phonetic": "/maʊs/",
+    "explains": [
+      "n. 鼠标；老鼠；胆小羞怯的人"
+    ]
+  },
+  "mouth": {
+    "word": "mouth",
+    "phonetic": "/maʊθ/",
+    "explains": [
+      "n. 口；嘴；开口；河口 v. 装腔作势说话"
+    ]
+  },
+  "move": {
+    "word": "move",
+    "phonetic": "/muːv/",
+    "explains": [
+      "v. 移动；改变；迁移；动摇 n. 移动；步骤；迁居"
+    ]
+  },
+  "movie": {
+    "word": "movie",
+    "phonetic": "/ˈmuːvi/",
+    "explains": [
+      "n. 电影；影片；电影院"
+    ]
+  },
+  "much": {
+    "word": "much",
+    "phonetic": "/mʌtʃ/",
+    "explains": [
+      "adv. 非常；很 adj. 大量的 pron. 许多；大量"
+    ]
+  },
+  "museum": {
+    "word": "museum",
+    "phonetic": "/mjuˈziːəm/",
+    "explains": [
+      "n. 博物馆"
+    ]
+  },
+  "music": {
+    "word": "music",
+    "phonetic": "/ˈmjuːzɪk/",
+    "explains": [
+      "n. 音乐；乐曲"
+    ]
+  },
+  "must": {
+    "word": "must",
+    "phonetic": "/mʌst/",
+    "explains": [
+      "aux. 必须；一定；可以；应当"
+    ]
+  },
+  "my": {
+    "word": "my",
+    "phonetic": "/maɪ/",
+    "explains": [
+      "pron. 我的"
+    ]
+  },
+  "myself": {
+    "word": "myself",
+    "phonetic": "/maɪˈself/",
+    "explains": [
+      "pron. 我自己；我亲自；我的正常的健康状况和正常情绪"
+    ]
+  }
+}

@@ -1,0 +1,394 @@
+{
+  "lab": {
+    "word": "lab",
+    "phonetic": "/læb/",
+    "explains": [
+      "n. 实验室；研究室"
+    ]
+  },
+  "laboratory": {
+    "word": "laboratory",
+    "phonetic": "/ləˈbɒrətri/",
+    "explains": [
+      "n. 实验室；实验课"
+    ]
+  },
+  "lack": {
+    "word": "lack",
+    "phonetic": "/læk/",
+    "explains": [
+      "v./n. 缺乏；不足；没有"
+    ]
+  },
+  "lady": {
+    "word": "lady",
+    "phonetic": "/ˈleɪdi/",
+    "explains": [
+      "n. 女士；夫人；小姐"
+    ]
+  },
+  "lake": {
+    "word": "lake",
+    "phonetic": "/leɪk/",
+    "explains": [
+      "n. 湖；湖泊"
+    ]
+  },
+  "lamp": {
+    "word": "lamp",
+    "phonetic": "/læmp/",
+    "explains": [
+      "n. 灯；照射器"
+    ]
+  },
+  "land": {
+    "word": "land",
+    "phonetic": "/lænd/",
+    "explains": [
+      "n. 陆地；国土；土地 v. 登陆；到达"
+    ]
+  },
+  "language": {
+    "word": "language",
+    "phonetic": "/ˈlæŋɡwɪdʒ/",
+    "explains": [
+      "n. 语言；语言文字；表达能力"
+    ]
+  },
+  "large": {
+    "word": "large",
+    "phonetic": "/lɑːdʒ/",
+    "explains": [
+      "adj. 大的；大规模的；大量的"
+    ]
+  },
+  "last": {
+    "word": "last",
+    "phonetic": "/lɑːst/",
+    "explains": [
+      "adj. 最后的；末尾的 v. 持续；维持"
+    ]
+  },
+  "late": {
+    "word": "late",
+    "phonetic": "/leɪt/",
+    "explains": [
+      "adj. 晚的；迟的；已故的 adv. 晚；迟"
+    ]
+  },
+  "later": {
+    "word": "later",
+    "phonetic": "/ˈleɪtə(r)/",
+    "explains": [
+      "adv. 后来；稍后；随后 adj. 更迟的；更后的"
+    ]
+  },
+  "laugh": {
+    "word": "laugh",
+    "phonetic": "/lɑːf/",
+    "explains": [
+      "v./n. 笑；发笑；嘲笑"
+    ]
+  },
+  "law": {
+    "word": "law",
+    "phonetic": "/lɔː/",
+    "explains": [
+      "n. 法律；法规；法学；规律"
+    ]
+  },
+  "lay": {
+    "word": "lay",
+    "phonetic": "/leɪ/",
+    "explains": [
+      "v. 放置；铺设；下蛋"
+    ]
+  },
+  "lead": {
+    "word": "lead",
+    "phonetic": "/liːd/",
+    "explains": [
+      "v. 领导；引导；指挥 n. 领导；铅；导线"
+    ]
+  },
+  "leaf": {
+    "word": "leaf",
+    "phonetic": "/liːf/",
+    "explains": [
+      "n. 叶子；叶片；花瓣"
+    ]
+  },
+  "learn": {
+    "word": "learn",
+    "phonetic": "/lɜːn/",
+    "explains": [
+      "v. 学习；学会；得知；认识到"
+    ]
+  },
+  "least": {
+    "word": "least",
+    "phonetic": "/liːst/",
+    "explains": [
+      "adj. 最小的；最少的 adv. 最小；最少"
+    ]
+  },
+  "leave": {
+    "word": "leave",
+    "phonetic": "/liːv/",
+    "explains": [
+      "v. 离开；留下；遗忘；委托 n. 许可；同意；休假"
+    ]
+  },
+  "left": {
+    "word": "left",
+    "phonetic": "/left/",
+    "explains": [
+      "adj. 左边的；左派的 adv. 在左面 n. 左边；左派"
+    ]
+  },
+  "leg": {
+    "word": "leg",
+    "phonetic": "/leɡ/",
+    "explains": [
+      "n. 腿；支柱"
+    ]
+  },
+  "lend": {
+    "word": "lend",
+    "phonetic": "/lend/",
+    "explains": [
+      "v. 借给；借出；贷与"
+    ]
+  },
+  "lesson": {
+    "word": "lesson",
+    "phonetic": "/ˈlesn/",
+    "explains": [
+      "n. 教训；课；课程"
+    ]
+  },
+  "let": {
+    "word": "let",
+    "phonetic": "/let/",
+    "explains": [
+      "v. 允许；让；出租；假设"
+    ]
+  },
+  "letter": {
+    "word": "letter",
+    "phonetic": "/ˈletə(r)/",
+    "explains": [
+      "n. 信；字母；文字；证书"
+    ]
+  },
+  "level": {
+    "word": "level",
+    "phonetic": "/ˈlevl/",
+    "explains": [
+      "n. 水平；标准；水平面 adj. 水平的；平坦的"
+    ]
+  },
+  "library": {
+    "word": "library",
+    "phonetic": "/ˈlaɪbrəri/",
+    "explains": [
+      "n. 图书馆；藏书楼；藏书"
+    ]
+  },
+  "lie": {
+    "word": "lie",
+    "phonetic": "/laɪ/",
+    "explains": [
+      "v. 躺；平躺；位于；说谎 n. 谎言；位置"
+    ]
+  },
+  "life": {
+    "word": "life",
+    "phonetic": "/laɪf/",
+    "explains": [
+      "n. 生活；生存；寿命；一生"
+    ]
+  },
+  "lift": {
+    "word": "lift",
+    "phonetic": "/lɪft/",
+    "explains": [
+      "v. 举起；抬起；提升 n. 电梯；举起；搭车"
+    ]
+  },
+  "light": {
+    "word": "light",
+    "phonetic": "/laɪt/",
+    "explains": [
+      "n. 光；光线；灯 adj. 轻的；浅色的 v. 点燃；照亮"
+    ]
+  },
+  "like": {
+    "word": "like",
+    "phonetic": "/laɪk/",
+    "explains": [
+      "v. 喜欢；想；愿意 prep. 像；如同"
+    ]
+  },
+  "limit": {
+    "word": "limit",
+    "phonetic": "/ˈlɪmɪt/",
+    "explains": [
+      "n. 限制；限度；界线 v. 限制；限定"
+    ]
+  },
+  "line": {
+    "word": "line",
+    "phonetic": "/laɪn/",
+    "explains": [
+      "n. 路线；线；排；绳 v. 排队；画线"
+    ]
+  },
+  "lion": {
+    "word": "lion",
+    "phonetic": "/ˈlaɪən/",
+    "explains": [
+      "n. 狮子；名人；勇猛的人"
+    ]
+  },
+  "list": {
+    "word": "list",
+    "phonetic": "/lɪst/",
+    "explains": [
+      "n. 列表；清单；目录 v. 列清单；列举"
+    ]
+  },
+  "listen": {
+    "word": "listen",
+    "phonetic": "/ˈlɪsn/",
+    "explains": [
+      "v. 听；倾听；听从"
+    ]
+  },
+  "little": {
+    "word": "little",
+    "phonetic": "/ˈlɪtl/",
+    "explains": [
+      "adj. 小的；很少的；短暂的 adv. 完全不"
+    ]
+  },
+  "live": {
+    "word": "live",
+    "phonetic": "/lɪv/",
+    "explains": [
+      "v. 居住；生存；生活 adj. 活的；直播的"
+    ]
+  },
+  "living": {
+    "word": "living",
+    "phonetic": "/ˈlɪvɪŋ/",
+    "explains": [
+      "adj. 活的；现存的；活跃的 n. 生计；生活"
+    ]
+  },
+  "lock": {
+    "word": "lock",
+    "phonetic": "/lɒk/",
+    "explains": [
+      "n. 锁；水闸；刹车 v. 锁；锁上；卡住"
+    ]
+  },
+  "lonely": {
+    "word": "lonely",
+    "phonetic": "/ˈləʊnli/",
+    "explains": [
+      "adj. 寂寞的；偏僻的；孤单的"
+    ]
+  },
+  "long": {
+    "word": "long",
+    "phonetic": "/lɒŋ/",
+    "explains": [
+      "adj. 长的；长时间的 adv. 长期地；长久地"
+    ]
+  },
+  "look": {
+    "word": "look",
+    "phonetic": "/lʊk/",
+    "explains": [
+      "v. 看；看起来；注意；面向 n. 看；样子；面容"
+    ]
+  },
+  "lose": {
+    "word": "lose",
+    "phonetic": "/luːz/",
+    "explains": [
+      "v. 丢失；失去；错过；输掉"
+    ]
+  },
+  "loss": {
+    "word": "loss",
+    "phonetic": "/lɒs/",
+    "explains": [
+      "n. 减少；亏损；失败；遗失"
+    ]
+  },
+  "lot": {
+    "word": "lot",
+    "phonetic": "/lɒt/",
+    "explains": [
+      "n. 份额；许多；命运；阄 adv. 很；非常"
+    ]
+  },
+  "loud": {
+    "word": "loud",
+    "phonetic": "/laʊd/",
+    "explains": [
+      "adj. 大声的；响亮的；吵闹的 adv. 大声地；响亮地"
+    ]
+  },
+  "love": {
+    "word": "love",
+    "phonetic": "/lʌv/",
+    "explains": [
+      "v./n. 爱；热爱；喜欢；喜爱"
+    ]
+  },
+  "lovely": {
+    "word": "lovely",
+    "phonetic": "/ˈlʌvli/",
+    "explains": [
+      "adj. 可爱的；令人愉快的；好看的"
+    ]
+  },
+  "low": {
+    "word": "low",
+    "phonetic": "/ləʊ/",
+    "explains": [
+      "adj. 低的；浅的；消沉的 adv. 低；低声地"
+    ]
+  },
+  "luck": {
+    "word": "luck",
+    "phonetic": "/lʌk/",
+    "explains": [
+      "n. 运气；幸运；带来好运的东西"
+    ]
+  },
+  "lucky": {
+    "word": "lucky",
+    "phonetic": "/ˈlʌki/",
+    "explains": [
+      "adj. 幸运的；侥幸的"
+    ]
+  },
+  "lunch": {
+    "word": "lunch",
+    "phonetic": "/lʌntʃ/",
+    "explains": [
+      "n. 午餐；午饭 v. 吃午餐；供给午餐"
+    ]
+  },
+  "lung": {
+    "word": "lung",
+    "phonetic": "/lʌŋ/",
+    "explains": [
+      "n. 肺；呼吸器"
+    ]
+  }
+}

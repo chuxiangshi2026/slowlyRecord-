@@ -1,0 +1,114 @@
+{
+  "keep": {
+    "word": "keep",
+    "phonetic": "/kiːp/",
+    "explains": [
+      "v. 保持；保留；遵守；饲养"
+    ]
+  },
+  "key": {
+    "word": "key",
+    "phonetic": "/kiː/",
+    "explains": [
+      "n. 钥匙；关键；键 adj. 关键的；主要的"
+    ]
+  },
+  "keyboard": {
+    "word": "keyboard",
+    "phonetic": "/ˈkiːbɔːd/",
+    "explains": [
+      "n. 键盘"
+    ]
+  },
+  "kick": {
+    "word": "kick",
+    "phonetic": "/kɪk/",
+    "explains": [
+      "v./n. 踢；踹；踢腿"
+    ]
+  },
+  "kid": {
+    "word": "kid",
+    "phonetic": "/kɪd/",
+    "explains": [
+      "n. 小孩；年轻人 v. 开玩笑；欺骗"
+    ]
+  },
+  "kill": {
+    "word": "kill",
+    "phonetic": "/kɪl/",
+    "explains": [
+      "v. 杀死；弄死；使停止；破坏"
+    ]
+  },
+  "kilo": {
+    "word": "kilo",
+    "phonetic": "/ˈkiːləʊ/",
+    "explains": [
+      "n. 千克；公斤"
+    ]
+  },
+  "kilometre": {
+    "word": "kilometre",
+    "phonetic": "/ˈkɪləmiːtə(r)/",
+    "explains": [
+      "n. 千米；公里"
+    ]
+  },
+  "kind": {
+    "word": "kind",
+    "phonetic": "/kaɪnd/",
+    "explains": [
+      "adj. 和蔼的；宽容的；令人感激的 n. 种类；性质"
+    ]
+  },
+  "king": {
+    "word": "king",
+    "phonetic": "/kɪŋ/",
+    "explains": [
+      "n. 国王；君主；最有势力者"
+    ]
+  },
+  "kitchen": {
+    "word": "kitchen",
+    "phonetic": "/ˈkɪtʃɪn/",
+    "explains": [
+      "n. 厨房；炊具；炊事人员"
+    ]
+  },
+  "kite": {
+    "word": "kite",
+    "phonetic": "/kaɪt/",
+    "explains": [
+      "n. 风筝"
+    ]
+  },
+  "knife": {
+    "word": "knife",
+    "phonetic": "/naɪf/",
+    "explains": [
+      "n. 刀；匕首 v. 用刀切割"
+    ]
+  },
+  "knock": {
+    "word": "knock",
+    "phonetic": "/nɒk/",
+    "explains": [
+      "v./n. 敲；击；打；碰撞"
+    ]
+  },
+  "know": {
+    "word": "know",
+    "phonetic": "/nəʊ/",
+    "explains": [
+      "v. 知道；了解；认识；懂得"
+    ]
+  },
+  "knowledge": {
+    "word": "knowledge",
+    "phonetic": "/ˈnɒlɪdʒ/",
+    "explains": [
+      "n. 知识；学问；知道；认识"
+    ]
+  }
+}

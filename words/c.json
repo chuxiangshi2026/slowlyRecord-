@@ -1,0 +1,849 @@
+{
+  "cabbage": {
+    "word": "cabbage",
+    "phonetic": "/ˈkæbɪdʒ/",
+    "explains": [
+      "n. 卷心菜；洋白菜"
+    ]
+  },
+  "cake": {
+    "word": "cake",
+    "phonetic": "/keɪk/",
+    "explains": [
+      "n. 蛋糕；糕点；饼 v. 结块；凝结"
+    ]
+  },
+  "call": {
+    "word": "call",
+    "phonetic": "/kɔːl/",
+    "explains": [
+      "v. 打电话；叫；称呼；呼叫 n. 电话；呼叫；称呼"
+    ]
+  },
+  "camel": {
+    "word": "camel",
+    "phonetic": "/ˈkæml/",
+    "explains": [
+      "n. 骆驼"
+    ]
+  },
+  "camera": {
+    "word": "camera",
+    "phonetic": "/ˈkæmərə/",
+    "explains": [
+      "n. 照相机；相机；摄像机"
+    ]
+  },
+  "camp": {
+    "word": "camp",
+    "phonetic": "/kæmp/",
+    "explains": [
+      "n. 营地；帐篷；阵营 v. 露营；宿营"
+    ]
+  },
+  "can": {
+    "word": "can",
+    "phonetic": "/kæn/",
+    "explains": [
+      "modal v. 能；会；可以 n. 罐头；容器 v. 装罐"
+    ]
+  },
+  "cap": {
+    "word": "cap",
+    "phonetic": "/kæp/",
+    "explains": [
+      "n. 帽子；盖子；上限 v. 覆盖；给…戴帽"
+    ]
+  },
+  "capital": {
+    "word": "capital",
+    "phonetic": "/ˈkæpɪtl/",
+    "explains": [
+      "n. 首都；资本；大写字母 adj. 首都的；大写的"
+    ]
+  },
+  "captain": {
+    "word": "captain",
+    "phonetic": "/ˈkæptɪn/",
+    "explains": [
+      "n. 队长；船长；上尉 v. 担任队长；指挥"
+    ]
+  },
+  "car": {
+    "word": "car",
+    "phonetic": "/kɑː(r)/",
+    "explains": [
+      "n. 汽车；轿车；车厢"
+    ]
+  },
+  "card": {
+    "word": "card",
+    "phonetic": "/kɑːd/",
+    "explains": [
+      "n. 卡片；纸牌；名片 v. 记于卡片上"
+    ]
+  },
+  "care": {
+    "word": "care",
+    "phonetic": "/keə(r)/",
+    "explains": [
+      "v. 关心；照顾；在意 n. 关心；照顾；小心"
+    ]
+  },
+  "careful": {
+    "word": "careful",
+    "phonetic": "/ˈkeəfl/",
+    "explains": [
+      "adj. 小心的；仔细的；谨慎的"
+    ]
+  },
+  "carry": {
+    "word": "carry",
+    "phonetic": "/ˈkæri/",
+    "explains": [
+      "v. 搬运；携带；承载；传播 n. 运载；进位"
+    ]
+  },
+  "case": {
+    "word": "case",
+    "phonetic": "/keɪs/",
+    "explains": [
+      "n. 情况；案例；箱子；案件 v. 包围；装入箱中"
+    ]
+  },
+  "cat": {
+    "word": "cat",
+    "phonetic": "/kæt/",
+    "explains": [
+      "n. 猫；猫科动物 v. 呕吐"
+    ]
+  },
+  "catch": {
+    "word": "catch",
+    "phonetic": "/kætʃ/",
+    "explains": [
+      "v. 抓住；接住；赶上；感染 n. 捕捉；捕获物"
+    ]
+  },
+  "cause": {
+    "word": "cause",
+    "phonetic": "/kɔːz/",
+    "explains": [
+      "v. 导致；引起；促使 n. 原因；理由；事业"
+    ]
+  },
+  "ceiling": {
+    "word": "ceiling",
+    "phonetic": "/ˈsiːlɪŋ/",
+    "explains": [
+      "n. 天花板；上限；最高限度"
+    ]
+  },
+  "cent": {
+    "word": "cent",
+    "phonetic": "/sent/",
+    "explains": [
+      "n. 分；分币；百分之一"
+    ]
+  },
+  "central": {
+    "word": "central",
+    "phonetic": "/ˈsentrəl/",
+    "explains": [
+      "adj. 中心的；中央的；主要的 n. 电话总机"
+    ]
+  },
+  "centre": {
+    "word": "centre",
+    "phonetic": "/ˈsentə(r)/",
+    "explains": [
+      "n. 中心；中央；核心 v. 集中；以…为中心"
+    ]
+  },
+  "century": {
+    "word": "century",
+    "phonetic": "/ˈsentʃəri/",
+    "explains": [
+      "n. 世纪；百年"
+    ]
+  },
+  "certain": {
+    "word": "certain",
+    "phonetic": "/ˈsɜːtn/",
+    "explains": [
+      "adj. 确定的；肯定的；某种；一定的"
+    ]
+  },
+  "certainly": {
+    "word": "certainly",
+    "phonetic": "/ˈsɜːtnli/",
+    "explains": [
+      "adv. 当然；肯定；无疑"
+    ]
+  },
+  "chair": {
+    "word": "chair",
+    "phonetic": "/tʃeə(r)/",
+    "explains": [
+      "n. 椅子；主席；讲座 v. 担任主席；主持"
+    ]
+  },
+  "chairman": {
+    "word": "chairman",
+    "phonetic": "/ˈtʃeəmən/",
+    "explains": [
+      "n. 主席；董事长；委员长"
+    ]
+  },
+  "chalk": {
+    "word": "chalk",
+    "phonetic": "/tʃɔːk/",
+    "explains": [
+      "n. 粉笔；白垩 v. 用粉笔写；用白垩标记"
+    ]
+  },
+  "chance": {
+    "word": "chance",
+    "phonetic": "/tʃɑːns/",
+    "explains": [
+      "n. 机会；可能性；运气 v. 偶然发生；碰巧"
+    ]
+  },
+  "change": {
+    "word": "change",
+    "phonetic": "/tʃeɪndʒ/",
+    "explains": [
+      "v. 改变；变化；更换；兑换 n. 变化；零钱；更换"
+    ]
+  },
+  "channel": {
+    "word": "channel",
+    "phonetic": "/ˈtʃænl/",
+    "explains": [
+      "n. 频道；渠道；海峡 v. 引导；输送"
+    ]
+  },
+  "character": {
+    "word": "character",
+    "phonetic": "/ˈkærəktə(r)/",
+    "explains": [
+      "n. 性格；品质；字符；角色 v. 描绘；刻画"
+    ]
+  },
+  "charge": {
+    "word": "charge",
+    "phonetic": "/tʃɑːdʒ/",
+    "explains": [
+      "v. 充电；收费；指控；冲锋 n. 电荷；费用；指控"
+    ]
+  },
+  "chart": {
+    "word": "chart",
+    "phonetic": "/tʃɑːt/",
+    "explains": [
+      "n. 图表；图表纸；海图 v. 绘制图表；记录"
+    ]
+  },
+  "cheap": {
+    "word": "cheap",
+    "phonetic": "/tʃiːp/",
+    "explains": [
+      "adj. 便宜的；廉价的；劣质的 adv. 便宜地"
+    ]
+  },
+  "cheat": {
+    "word": "cheat",
+    "phonetic": "/tʃiːt/",
+    "explains": [
+      "v. 欺骗；作弊；骗取 n. 骗子；欺骗；作弊"
+    ]
+  },
+  "check": {
+    "word": "check",
+    "phonetic": "/tʃek/",
+    "explains": [
+      "v. 检查；核对；制止 n. 检查；支票；账单"
+    ]
+  },
+  "cheese": {
+    "word": "cheese",
+    "phonetic": "/tʃiːz/",
+    "explains": [
+      "n. 奶酪；干酪"
+    ]
+  },
+  "chemistry": {
+    "word": "chemistry",
+    "phonetic": "/ˈkemɪstri/",
+    "explains": [
+      "n. 化学；化学性质；化学反应"
+    ]
+  },
+  "cheque": {
+    "word": "cheque",
+    "phonetic": "/tʃek/",
+    "explains": [
+      "n. 支票"
+    ]
+  },
+  "chicken": {
+    "word": "chicken",
+    "phonetic": "/ˈtʃɪkɪn/",
+    "explains": [
+      "n. 鸡；鸡肉；胆小鬼 adj. 胆小的"
+    ]
+  },
+  "child": {
+    "word": "child",
+    "phonetic": "/tʃaɪld/",
+    "explains": [
+      "n. 孩子；儿童；子女"
+    ]
+  },
+  "children": {
+    "word": "children",
+    "phonetic": "/ˈtʃɪldrən/",
+    "explains": [
+      "n. 孩子们；儿童（child的复数）"
+    ]
+  },
+  "chocolate": {
+    "word": "chocolate",
+    "phonetic": "/ˈtʃɒklət/",
+    "explains": [
+      "n. 巧克力；巧克力糖 adj. 巧克力色的"
+    ]
+  },
+  "choice": {
+    "word": "choice",
+    "phonetic": "/tʃɔɪs/",
+    "explains": [
+      "n. 选择；抉择；选择权 adj. 精选的；优质的"
+    ]
+  },
+  "choose": {
+    "word": "choose",
+    "phonetic": "/tʃuːz/",
+    "explains": [
+      "v. 选择；挑选；决定"
+    ]
+  },
+  "church": {
+    "word": "church",
+    "phonetic": "/tʃɜːtʃ/",
+    "explains": [
+      "n. 教堂；教会；礼拜 v. 去教堂做礼拜"
+    ]
+  },
+  "cinema": {
+    "word": "cinema",
+    "phonetic": "/ˈsɪnəmə/",
+    "explains": [
+      "n. 电影院；电影；电影业"
+    ]
+  },
+  "circle": {
+    "word": "circle",
+    "phonetic": "/ˈsɜːkl/",
+    "explains": [
+      "n. 圆；圆圈；圈子 v. 环绕；盘旋；圈出"
+    ]
+  },
+  "citizen": {
+    "word": "citizen",
+    "phonetic": "/ˈsɪtɪzn/",
+    "explains": [
+      "n. 公民；市民；居民"
+    ]
+  },
+  "city": {
+    "word": "city",
+    "phonetic": "/ˈsɪti/",
+    "explains": [
+      "n. 城市；都市；全市居民"
+    ]
+  },
+  "class": {
+    "word": "class",
+    "phonetic": "/klɑːs/",
+    "explains": [
+      "n. 班级；阶级；课程；等级 v. 分类；归类"
+    ]
+  },
+  "classic": {
+    "word": "classic",
+    "phonetic": "/ˈklæsɪk/",
+    "explains": [
+      "adj. 经典的；古典的；优秀的 n. 经典作品；名著"
+    ]
+  },
+  "classical": {
+    "word": "classical",
+    "phonetic": "/ˈklæsɪkl/",
+    "explains": [
+      "adj. 古典的；经典的；传统的"
+    ]
+  },
+  "classmate": {
+    "word": "classmate",
+    "phonetic": "/ˈklɑːsmeɪt/",
+    "explains": [
+      "n. 同班同学"
+    ]
+  },
+  "classroom": {
+    "word": "classroom",
+    "phonetic": "/ˈklɑːsruːm/",
+    "explains": [
+      "n. 教室；课堂"
+    ]
+  },
+  "clean": {
+    "word": "clean",
+    "phonetic": "/kliːn/",
+    "explains": [
+      "adj. 干净的；清洁的 v. 打扫；清洁 adv. 干净地"
+    ]
+  },
+  "clear": {
+    "word": "clear",
+    "phonetic": "/klɪə(r)/",
+    "explains": [
+      "adj. 清楚的；清晰的；晴朗的 v. 清除；清理 adv. 清楚地"
+    ]
+  },
+  "clerk": {
+    "word": "clerk",
+    "phonetic": "/klɑːk/",
+    "explains": [
+      "n. 职员；店员；文书 v. 当职员；当店员"
+    ]
+  },
+  "clever": {
+    "word": "clever",
+    "phonetic": "/ˈklevə(r)/",
+    "explains": [
+      "adj. 聪明的；机灵的；灵巧的"
+    ]
+  },
+  "climb": {
+    "word": "climb",
+    "phonetic": "/klaɪm/",
+    "explains": [
+      "v. 爬；攀登；上升 n. 攀登；爬升"
+    ]
+  },
+  "clock": {
+    "word": "clock",
+    "phonetic": "/klɒk/",
+    "explains": [
+      "n. 时钟；钟 v. 计时；打卡"
+    ]
+  },
+  "close": {
+    "word": "close",
+    "phonetic": "/kləʊz/",
+    "explains": [
+      "v. 关闭；结束；靠近 adj. 近的；亲密的 adv. 靠近地"
+    ]
+  },
+  "cloth": {
+    "word": "cloth",
+    "phonetic": "/klɒθ/",
+    "explains": [
+      "n. 布；布料；织物；桌布"
+    ]
+  },
+  "clothes": {
+    "word": "clothes",
+    "phonetic": "/kləʊðz/",
+    "explains": [
+      "n. 衣服；服装"
+    ]
+  },
+  "clothing": {
+    "word": "clothing",
+    "phonetic": "/ˈkləʊðɪŋ/",
+    "explains": [
+      "n. 服装；衣着（总称）"
+    ]
+  },
+  "cloud": {
+    "word": "cloud",
+    "phonetic": "/klaʊd/",
+    "explains": [
+      "n. 云；云朵；阴影 v. 多云；笼罩；使模糊"
+    ]
+  },
+  "cloudy": {
+    "word": "cloudy",
+    "phonetic": "/ˈklaʊdi/",
+    "explains": [
+      "adj. 多云的；阴天的；模糊的"
+    ]
+  },
+  "club": {
+    "word": "club",
+    "phonetic": "/klʌb/",
+    "explains": [
+      "n. 俱乐部；社团；棍棒 v. 用棍棒打；联合"
+    ]
+  },
+  "coal": {
+    "word": "coal",
+    "phonetic": "/kəʊl/",
+    "explains": [
+      "n. 煤；煤炭 v. 采煤；给…加煤"
+    ]
+  },
+  "coast": {
+    "word": "coast",
+    "phonetic": "/kəʊst/",
+    "explains": [
+      "n. 海岸；海滨 v. 沿海岸航行；滑行"
+    ]
+  },
+  "coat": {
+    "word": "coat",
+    "phonetic": "/kəʊt/",
+    "explains": [
+      "n. 外套；大衣；涂层 v. 给…穿外套；涂上"
+    ]
+  },
+  "coffee": {
+    "word": "coffee",
+    "phonetic": "/ˈkɒfi/",
+    "explains": [
+      "n. 咖啡；咖啡豆；咖啡色"
+    ]
+  },
+  "cold": {
+    "word": "cold",
+    "phonetic": "/kəʊld/",
+    "explains": [
+      "adj. 冷的；寒冷的；冷淡的 n. 寒冷；感冒"
+    ]
+  },
+  "collect": {
+    "word": "collect",
+    "phonetic": "/kəˈlekt/",
+    "explains": [
+      "v. 收集；采集；收集；领取 adj. 集体的；共同的"
+    ]
+  },
+  "college": {
+    "word": "college",
+    "phonetic": "/ˈkɒlɪdʒ/",
+    "explains": [
+      "n. 大学；学院；专科学校"
+    ]
+  },
+  "colour": {
+    "word": "colour",
+    "phonetic": "/ˈkʌlə(r)/",
+    "explains": [
+      "n. 颜色；色彩；肤色 v. 给…着色；染色"
+    ]
+  },
+  "come": {
+    "word": "come",
+    "phonetic": "/kʌm/",
+    "explains": [
+      "v. 来；来到；出现；变得"
+    ]
+  },
+  "comfortable": {
+    "word": "comfortable",
+    "phonetic": "/ˈkʌmfətəbl/",
+    "explains": [
+      "adj. 舒适的；舒服的；安逸的"
+    ]
+  },
+  "common": {
+    "word": "common",
+    "phonetic": "/ˈkɒmən/",
+    "explains": [
+      "adj. 常见的；普通的；共同的 n. 公共地；平民"
+    ]
+  },
+  "communicate": {
+    "word": "communicate",
+    "phonetic": "/kəˈmjuːnɪkeɪt/",
+    "explains": [
+      "v. 交流；沟通；传达；传播"
+    ]
+  },
+  "communication": {
+    "word": "communication",
+    "phonetic": "/kəˌmjuːnɪˈkeɪʃn/",
+    "explains": [
+      "n. 交流；沟通；通讯；通信"
+    ]
+  },
+  "company": {
+    "word": "company",
+    "phonetic": "/ˈkʌmpəni/",
+    "explains": [
+      "n. 公司；陪伴；同伴 v. 陪伴"
+    ]
+  },
+  "compare": {
+    "word": "compare",
+    "phonetic": "/kəmˈpeə(r)/",
+    "explains": [
+      "v. 比较；对比；比作 n. 比较；对比"
+    ]
+  },
+  "compete": {
+    "word": "compete",
+    "phonetic": "/kəmˈpiːt/",
+    "explains": [
+      "v. 竞争；竞赛；角逐"
+    ]
+  },
+  "complete": {
+    "word": "complete",
+    "phonetic": "/kəmˈpliːt/",
+    "explains": [
+      "adj. 完整的；完全的；彻底的 v. 完成；结束；使完整"
+    ]
+  },
+  "computer": {
+    "word": "computer",
+    "phonetic": "/kəmˈpjuːtə(r)/",
+    "explains": [
+      "n. 计算机；电脑"
+    ]
+  },
+  "condition": {
+    "word": "condition",
+    "phonetic": "/kənˈdɪʃn/",
+    "explains": [
+      "n. 条件；状况；环境 v. 使适应；改善…的条件"
+    ]
+  },
+  "connect": {
+    "word": "connect",
+    "phonetic": "/kəˈnekt/",
+    "explains": [
+      "v. 连接；联结；联系；关联"
+    ]
+  },
+  "consider": {
+    "word": "consider",
+    "phonetic": "/kənˈsɪdə(r)/",
+    "explains": [
+      "v. 考虑；认为；考虑到；看重"
+    ]
+  },
+  "continue": {
+    "word": "continue",
+    "phonetic": "/kənˈtɪnjuː/",
+    "explains": [
+      "v. 继续；持续；延伸"
+    ]
+  },
+  "control": {
+    "word": "control",
+    "phonetic": "/kənˈtrəʊl/",
+    "explains": [
+      "v. 控制；支配；管理；克制 n. 控制；支配；管理"
+    ]
+  },
+  "cook": {
+    "word": "cook",
+    "phonetic": "/kʊk/",
+    "explains": [
+      "v. 烹饪；做饭；煮 n. 厨师；炊事员"
+    ]
+  },
+  "cool": {
+    "word": "cool",
+    "phonetic": "/kuːl/",
+    "explains": [
+      "adj. 凉爽的；酷的；冷静的 v. 冷却；变凉；冷静下来"
+    ]
+  },
+  "copy": {
+    "word": "copy",
+    "phonetic": "/ˈkɒpi/",
+    "explains": [
+      "n. 副本；复印件；拷贝 v. 复制；抄写；模仿"
+    ]
+  },
+  "corner": {
+    "word": "corner",
+    "phonetic": "/ˈkɔːnə(r)/",
+    "explains": [
+      "n. 角落；拐角；街角 v. 使陷入困境；在拐角处转弯"
+    ]
+  },
+  "correct": {
+    "word": "correct",
+    "phonetic": "/kəˈrekt/",
+    "explains": [
+      "adj. 正确的；恰当的；改正的 v. 改正；纠正；批改"
+    ]
+  },
+  "cost": {
+    "word": "cost",
+    "phonetic": "/kɒst/",
+    "explains": [
+      "v. 花费；值；使付出 n. 成本；费用；代价"
+    ]
+  },
+  "cotton": {
+    "word": "cotton",
+    "phonetic": "/ˈkɒtn/",
+    "explains": [
+      "n. 棉花；棉织物；棉线 adj. 棉制的"
+    ]
+  },
+  "could": {
+    "word": "could",
+    "phonetic": "/kʊd/",
+    "explains": [
+      "modal v. 能；可以；可能（can的过去式）"
+    ]
+  },
+  "count": {
+    "word": "count",
+    "phonetic": "/kaʊnt/",
+    "explains": [
+      "v. 数；计数；认为；看作 n. 计数；总数；伯爵"
+    ]
+  },
+  "country": {
+    "word": "country",
+    "phonetic": "/ˈkʌntri/",
+    "explains": [
+      "n. 国家；乡村；乡下 adj. 乡村的；乡下的"
+    ]
+  },
+  "countryside": {
+    "word": "countryside",
+    "phonetic": "/ˈkʌntrisaɪd/",
+    "explains": [
+      "n. 乡村；农村；乡下"
+    ]
+  },
+  "couple": {
+    "word": "couple",
+    "phonetic": "/ˈkʌpl/",
+    "explains": [
+      "n. 一对；一双；夫妻；几个 v. 连接；结合"
+    ]
+  },
+  "courage": {
+    "word": "courage",
+    "phonetic": "/ˈkʌrɪdʒ/",
+    "explains": [
+      "n. 勇气；胆量；魄力"
+    ]
+  },
+  "course": {
+    "word": "course",
+    "phonetic": "/kɔːs/",
+    "explains": [
+      "n. 课程；过程；路线；一道菜 v. 奔流；快速移动"
+    ]
+  },
+  "court": {
+    "word": "court",
+    "phonetic": "/kɔːt/",
+    "explains": [
+      "n. 法院；法庭；球场；宫廷 v. 追求；讨好；招致"
+    ]
+  },
+  "cover": {
+    "word": "cover",
+    "phonetic": "/ˈkʌvə(r)/",
+    "explains": [
+      "v. 覆盖；遮盖；包含；涉及 n. 封面；盖子；掩护"
+    ]
+  },
+  "cow": {
+    "word": "cow",
+    "phonetic": "/kaʊ/",
+    "explains": [
+      "n. 奶牛；母牛；雌象（等大型动物）"
+    ]
+  },
+  "crazy": {
+    "word": "crazy",
+    "phonetic": "/ˈkreɪzi/",
+    "explains": [
+      "adj. 疯狂的；狂热的；着迷的"
+    ]
+  },
+  "create": {
+    "word": "create",
+    "phonetic": "/kriˈeɪt/",
+    "explains": [
+      "v. 创造；创建；创作；引起"
+    ]
+  },
+  "cross": {
+    "word": "cross",
+    "phonetic": "/krɒs/",
+    "explains": [
+      "v. 穿过；越过；交叉；杂交 n. 十字架；十字形 adj. 交叉的；生气的"
+    ]
+  },
+  "crowd": {
+    "word": "crowd",
+    "phonetic": "/kraʊd/",
+    "explains": [
+      "n. 人群；群众；一伙人 v. 拥挤；挤满；聚集"
+    ]
+  },
+  "cry": {
+    "word": "cry",
+    "phonetic": "/kraɪ/",
+    "explains": [
+      "v. 哭；哭泣；叫喊；哭喊 n. 哭声；叫喊；口号"
+    ]
+  },
+  "culture": {
+    "word": "culture",
+    "phonetic": "/ˈkʌltʃə(r)/",
+    "explains": [
+      "n. 文化；文明；教养；培养物 v. 培养；教养"
+    ]
+  },
+  "cup": {
+    "word": "cup",
+    "phonetic": "/kʌp/",
+    "explains": [
+      "n. 杯子；奖杯；一杯的量 v. 使成杯状；为…拔火罐"
+    ]
+  },
+  "cupboard": {
+    "word": "cupboard",
+    "phonetic": "/ˈkʌbəd/",
+    "explains": [
+      "n. 橱柜；壁橱；食橱"
+    ]
+  },
+  "cure": {
+    "word": "cure",
+    "phonetic": "/kjʊə(r)/",
+    "explains": [
+      "v. 治愈；治疗；矫正 n. 治愈；疗法；对策"
+    ]
+  },
+  "curious": {
+    "word": "curious",
+    "phonetic": "/ˈkjʊəriəs/",
+    "explains": [
+      "adj. 好奇的；奇特的；古怪的"
+    ]
+  },
+  "current": {
+    "word": "current",
+    "phonetic": "/ˈkʌrənt/",
+    "explains": [
+      "adj. 当前的；现在的；流通的 n. 电流；水流；趋势"
+    ]
+  }
+}

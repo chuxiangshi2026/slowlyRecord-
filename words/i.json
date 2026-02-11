@@ -1,0 +1,240 @@
+{
+  "i": {
+    "word": "I",
+    "phonetic": "/aɪ/",
+    "explains": [
+      "pron. 我"
+    ]
+  },
+  "ice": {
+    "word": "ice",
+    "phonetic": "/aɪs/",
+    "explains": [
+      "n. 冰；冰块 v. 结冰；冰镇"
+    ]
+  },
+  "idea": {
+    "word": "idea",
+    "phonetic": "/aɪˈdɪə/",
+    "explains": [
+      "n. 想法；主意；概念"
+    ]
+  },
+  "if": {
+    "word": "if",
+    "phonetic": "/ɪf/",
+    "explains": [
+      "conj. 如果；假如；是否"
+    ]
+  },
+  "ill": {
+    "word": "ill",
+    "phonetic": "/ɪl/",
+    "explains": [
+      "adj. 生病的；坏的；邪恶的"
+    ]
+  },
+  "image": {
+    "word": "image",
+    "phonetic": "/ˈɪmɪdʒ/",
+    "explains": [
+      "n. 影像；形象；图像"
+    ]
+  },
+  "imagine": {
+    "word": "imagine",
+    "phonetic": "/ɪˈmædʒɪn/",
+    "explains": [
+      "v. 想象；设想；猜想"
+    ]
+  },
+  "immediately": {
+    "word": "immediately",
+    "phonetic": "/ɪˈmiːdiətli/",
+    "explains": [
+      "adv. 立即；立刻；马上"
+    ]
+  },
+  "important": {
+    "word": "important",
+    "phonetic": "/ɪmˈpɔːtnt/",
+    "explains": [
+      "adj. 重要的；重大的；地位高的"
+    ]
+  },
+  "impossible": {
+    "word": "impossible",
+    "phonetic": "/ɪmˈpɒsəbl/",
+    "explains": [
+      "adj. 不可能的；做不到的"
+    ]
+  },
+  "improve": {
+    "word": "improve",
+    "phonetic": "/ɪmˈpruːv/",
+    "explains": [
+      "v. 改善；增进；提高；改进"
+    ]
+  },
+  "in": {
+    "word": "in",
+    "phonetic": "/ɪn/",
+    "explains": [
+      "prep. 在…… 内；进；在…… 期间"
+    ]
+  },
+  "include": {
+    "word": "include",
+    "phonetic": "/ɪnˈkluːd/",
+    "explains": [
+      "v. 包含；包括；计入"
+    ]
+  },
+  "increase": {
+    "word": "increase",
+    "phonetic": "/ˈɪŋkriːs/",
+    "explains": [
+      "v./n. 增加；增大；增多"
+    ]
+  },
+  "independent": {
+    "word": "independent",
+    "phonetic": "/ˌɪndɪˈpendənt/",
+    "explains": [
+      "adj. 独立的；自主的；单独的"
+    ]
+  },
+  "information": {
+    "word": "information",
+    "phonetic": "/ˌɪnfəˈmeɪʃn/",
+    "explains": [
+      "n. 信息；资料；情报；通知"
+    ]
+  },
+  "ink": {
+    "word": "ink",
+    "phonetic": "/ɪŋk/",
+    "explains": [
+      "n. 墨水；油墨"
+    ]
+  },
+  "inside": {
+    "word": "inside",
+    "phonetic": "/ˌɪnˈsaɪd/",
+    "explains": [
+      "prep. 在…… 里面 adv. 在里面"
+    ]
+  },
+  "instead": {
+    "word": "instead",
+    "phonetic": "/ɪnˈsted/",
+    "explains": [
+      "adv. 代替；顶替；反而"
+    ]
+  },
+  "instruction": {
+    "word": "instruction",
+    "phonetic": "/ɪnˈstrʌkʃn/",
+    "explains": [
+      "n. 指令；命令；指示；教导"
+    ]
+  },
+  "interest": {
+    "word": "interest",
+    "phonetic": "/ˈɪntrəst/",
+    "explains": [
+      "n. 兴趣；爱好；利息 v. 使感兴趣"
+    ]
+  },
+  "interested": {
+    "word": "interested",
+    "phonetic": "/ˈɪntrəstɪd/",
+    "explains": [
+      "adj. 感兴趣的；关心的"
+    ]
+  },
+  "interesting": {
+    "word": "interesting",
+    "phonetic": "/ˈɪntrəstɪŋ/",
+    "explains": [
+      "adj. 有趣的；引起兴趣的"
+    ]
+  },
+  "international": {
+    "word": "international",
+    "phonetic": "/ˌɪntəˈnæʃnəl/",
+    "explains": [
+      "adj. 国际的；两国或以上的"
+    ]
+  },
+  "internet": {
+    "word": "internet",
+    "phonetic": "/ˈɪntənet/",
+    "explains": [
+      "n. 互联网；因特网"
+    ]
+  },
+  "interview": {
+    "word": "interview",
+    "phonetic": "/ˈɪntəvjuː/",
+    "explains": [
+      "n./v. 采访；面试；接见"
+    ]
+  },
+  "into": {
+    "word": "into",
+    "phonetic": "/ˈɪntu/",
+    "explains": [
+      "prep. 到…… 里面；进入；朝"
+    ]
+  },
+  "introduce": {
+    "word": "introduce",
+    "phonetic": "/ˌɪntrəˈdjuːs/",
+    "explains": [
+      "v. 介绍；引进；提出；采用"
+    ]
+  },
+  "invent": {
+    "word": "invent",
+    "phonetic": "/ɪnˈvent/",
+    "explains": [
+      "v. 发明；创造；虚构"
+    ]
+  },
+  "invite": {
+    "word": "invite",
+    "phonetic": "/ɪnˈvaɪt/",
+    "explains": [
+      "v. 邀请；招待；请求"
+    ]
+  },
+  "is": {
+    "word": "is",
+    "phonetic": "/ɪz/",
+    "explains": [
+      "v. 是（be 动词）"
+    ]
+  },
+  "it": {
+    "word": "it",
+    "phonetic": "/ɪt/",
+    "explains": [
+      "pron. 它；这；那"
+    ]
+  },
+  "its": {
+    "word": "its",
+    "phonetic": "/ɪts/",
+    "explains": [
+      "pron. 它的"
+    ]
+  },
+  "itself": {
+    "word": "itself",
+    "phonetic": "/ɪtˈself/",
+    "explains": [
+      "pron. 它自己；它本身"
+    ]
+  }
+}

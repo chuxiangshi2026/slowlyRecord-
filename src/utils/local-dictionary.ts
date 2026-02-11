@@ -13,6 +13,10 @@ export interface DictionaryEntry {
   explains: string[];
 }
 
+// 支持两种格式的词典数据
+// 格式1: 完整对象 { word: "xxx", phonetic: "xxx", explains: ["xxx"] }
+// 格式2: 精简数组 ["音标", "释义1", "释义2", ...]
+
 // 延迟加载缓存
 let dictionaryCache: Record<string, DictionaryEntry> | null = null;
 let phrasesCache: Record<string, string> | null = null;
@@ -30,9 +34,19 @@ async function loadDictionaryLazy(): Promise<Record<string, DictionaryEntry>> {
   if (dictionaryLoading) {
     return dictionaryLoading;
   }
-  dictionaryLoading = import('./dictionary-data.json')
-    .then(module => {
-      dictionaryCache = module.default || module;
+  // 从 words 目录加载所有字母分片文件
+  dictionaryLoading = Promise.all(
+    'abcdefghijklmnopqrstuvwxyz'.split('').map(char =>
+      import(`../../words/${char}.json`).catch(() => ({}))
+    )
+  )
+    .then(modules => {
+      // 合并所有分片文件的数据
+      const rawData = modules.reduce((acc, mod) => ({
+        ...acc, ...(mod.default || mod)
+      }), {});
+      // 转换精简格式为完整格式
+      dictionaryCache = convertDictionaryFormat(rawData);
       console.log('[词典] 加载完成，词条数:', Object.keys(dictionaryCache!).length);
       return dictionaryCache!;
     })
@@ -42,6 +56,37 @@ async function loadDictionaryLazy(): Promise<Record<string, DictionaryEntry>> {
       return {};
     });
   return dictionaryLoading;
+}
+
+/**
+ * 转换词典格式
+ * 支持从精简数组格式 [音标, 释义1, 释义2] 转换为完整对象格式
+ */
+function convertDictionaryFormat(rawData: Record<string, any>): Record<string, DictionaryEntry> {
+  const result: Record<string, DictionaryEntry> = {};
+
+  for (const [key, value] of Object.entries(rawData)) {
+    const word = key.toLowerCase().trim();
+
+    if (Array.isArray(value)) {
+      // 精简格式: [音标, 释义1, 释义2, ...]
+      const [phonetic, ...explains] = value;
+      result[word] = {
+        word,
+        phonetic: phonetic || '',
+        explains: explains.filter(e => e && typeof e === 'string')
+      };
+    } else if (typeof value === 'object' && value !== null) {
+      // 完整对象格式
+      result[word] = {
+        word: value.word || word,
+        phonetic: value.phonetic || '',
+        explains: Array.isArray(value.explains) ? value.explains : [String(value.explains || '')]
+      };
+    }
+  }
+
+  return result;
 }
 
 /**

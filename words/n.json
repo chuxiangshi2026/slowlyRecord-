@@ -1,0 +1,331 @@
+{
+  "name": {
+    "word": "name",
+    "phonetic": "/neɪm/",
+    "explains": [
+      "n. 名字；名称 v. 命名；名叫"
+    ]
+  },
+  "narrow": {
+    "word": "narrow",
+    "phonetic": "/ˈnærəʊ/",
+    "explains": [
+      "adj. 狭窄的；有限的"
+    ]
+  },
+  "nation": {
+    "word": "nation",
+    "phonetic": "/ˈneɪʃn/",
+    "explains": [
+      "n. 国家；民族"
+    ]
+  },
+  "national": {
+    "word": "national",
+    "phonetic": "/ˈnæʃnəl/",
+    "explains": [
+      "adj. 国家的；民族的"
+    ]
+  },
+  "natural": {
+    "word": "natural",
+    "phonetic": "/ˈnætʃrəl/",
+    "explains": [
+      "adj. 自然的；天生的"
+    ]
+  },
+  "nature": {
+    "word": "nature",
+    "phonetic": "/ˈneɪtʃə(r)/",
+    "explains": [
+      "n. 自然；天性；性质"
+    ]
+  },
+  "near": {
+    "word": "near",
+    "phonetic": "/nɪə(r)/",
+    "explains": [
+      "adj. 近的；接近的 prep. 在… 附近"
+    ]
+  },
+  "nearby": {
+    "word": "nearby",
+    "phonetic": "/ˌnɪəˈbaɪ/",
+    "explains": [
+      "adj. 附近的；邻近的"
+    ]
+  },
+  "nearly": {
+    "word": "nearly",
+    "phonetic": "/ˈnɪəli/",
+    "explains": [
+      "adv. 几乎；差不多"
+    ]
+  },
+  "necessary": {
+    "word": "necessary",
+    "phonetic": "/ˈnesəsəri/",
+    "explains": [
+      "adj. 必要的；必须的"
+    ]
+  },
+  "neck": {
+    "word": "neck",
+    "phonetic": "/nek/",
+    "explains": [
+      "n. 脖子；颈部"
+    ]
+  },
+  "need": {
+    "word": "need",
+    "phonetic": "/niːd/",
+    "explains": [
+      "v./n. 需要；必须"
+    ]
+  },
+  "needle": {
+    "word": "needle",
+    "phonetic": "/ˈniːdl/",
+    "explains": [
+      "n. 针；指针；针状物"
+    ]
+  },
+  "neighbour": {
+    "word": "neighbour",
+    "phonetic": "/ˈneɪbə(r)/",
+    "explains": [
+      "n. 邻居；邻近的"
+    ]
+  },
+  "neither": {
+    "word": "neither",
+    "phonetic": "/ˈnaɪðə(r)/",
+    "explains": [
+      "conj. 也不；既不"
+    ]
+  },
+  "nervous": {
+    "word": "nervous",
+    "phonetic": "/ˈnɜːvəs/",
+    "explains": [
+      "adj. 紧张的；神经的"
+    ]
+  },
+  "nest": {
+    "word": "nest",
+    "phonetic": "/nest/",
+    "explains": [
+      "n. 巢；窝 v. 筑巢"
+    ]
+  },
+  "net": {
+    "word": "net",
+    "phonetic": "/net/",
+    "explains": [
+      "n. 网；网状物；网络"
+    ]
+  },
+  "never": {
+    "word": "never",
+    "phonetic": "/ˈnevə(r)/",
+    "explains": [
+      "adv. 从未；绝不"
+    ]
+  },
+  "new": {
+    "word": "new",
+    "phonetic": "/njuː/",
+    "explains": [
+      "adj. 新的；新鲜的"
+    ]
+  },
+  "news": {
+    "word": "news",
+    "phonetic": "/njuːz/",
+    "explains": [
+      "n. 新闻；消息"
+    ]
+  },
+  "newspaper": {
+    "word": "newspaper",
+    "phonetic": "/ˈnjuːzpeɪpə(r)/",
+    "explains": [
+      "n. 报纸"
+    ]
+  },
+  "next": {
+    "word": "next",
+    "phonetic": "/nekst/",
+    "explains": [
+      "adj. 下一个；其次的"
+    ]
+  },
+  "nice": {
+    "word": "nice",
+    "phonetic": "/naɪs/",
+    "explains": [
+      "adj. 美好的；愉快的"
+    ]
+  },
+  "night": {
+    "word": "night",
+    "phonetic": "/naɪt/",
+    "explains": [
+      "n. 夜晚；晚上"
+    ]
+  },
+  "nine": {
+    "word": "nine",
+    "phonetic": "/naɪn/",
+    "explains": [
+      "num. 九"
+    ]
+  },
+  "nineteen": {
+    "word": "nineteen",
+    "phonetic": "/ˌnaɪnˈtiːn/",
+    "explains": [
+      "num. 十九"
+    ]
+  },
+  "ninety": {
+    "word": "ninety",
+    "phonetic": "/ˈnaɪnti/",
+    "explains": [
+      "num. 九十"
+    ]
+  },
+  "no": {
+    "word": "no",
+    "phonetic": "/nəʊ/",
+    "explains": [
+      "adv. 不；否 adj. 没有；不是"
+    ]
+  },
+  "nobody": {
+    "word": "nobody",
+    "phonetic": "/ˈnəʊbədi/",
+    "explains": [
+      "pron. 没有人；无人"
+    ]
+  },
+  "nod": {
+    "word": "nod",
+    "phonetic": "/nɒd/",
+    "explains": [
+      "v./n. 点头；点头示意"
+    ]
+  },
+  "noise": {
+    "word": "noise",
+    "phonetic": "/nɔɪz/",
+    "explains": [
+      "n. 噪音；声响；杂音"
+    ]
+  },
+  "noisy": {
+    "word": "noisy",
+    "phonetic": "/ˈnɔɪzi/",
+    "explains": [
+      "adj. 嘈杂的；喧闹的"
+    ]
+  },
+  "none": {
+    "word": "none",
+    "phonetic": "/nʌn/",
+    "explains": [
+      "pron. 没有一个；毫无"
+    ]
+  },
+  "noon": {
+    "word": "noon",
+    "phonetic": "/nuːn/",
+    "explains": [
+      "n. 中午；正午"
+    ]
+  },
+  "nor": {
+    "word": "nor",
+    "phonetic": "/nɔː(r)/",
+    "explains": [
+      "conj. 也不；也没有"
+    ]
+  },
+  "north": {
+    "word": "north",
+    "phonetic": "/nɔːθ/",
+    "explains": [
+      "n. 北方；北部 adj. 北方的"
+    ]
+  },
+  "northern": {
+    "word": "northern",
+    "phonetic": "/ˈnɔːðən/",
+    "explains": [
+      "adj. 北方的；北部的"
+    ]
+  },
+  "nose": {
+    "word": "nose",
+    "phonetic": "/nəʊz/",
+    "explains": [
+      "n. 鼻子；嗅觉"
+    ]
+  },
+  "not": {
+    "word": "not",
+    "phonetic": "/nɒt/",
+    "explains": [
+      "adv. 不；没有；不是"
+    ]
+  },
+  "note": {
+    "word": "note",
+    "phonetic": "/nəʊt/",
+    "explains": [
+      "n. 笔记；便条；注释 v. 注意；记录"
+    ]
+  },
+  "notebook": {
+    "word": "notebook",
+    "phonetic": "/ˈnəʊtbʊk/",
+    "explains": [
+      "n. 笔记本；笔记簿"
+    ]
+  },
+  "nothing": {
+    "word": "nothing",
+    "phonetic": "/ˈnʌθɪŋ/",
+    "explains": [
+      "pron. 没有什么；无关紧要的事"
+    ]
+  },
+  "notice": {
+    "word": "notice",
+    "phonetic": "/ˈnəʊtɪs/",
+    "explains": [
+      "v./n. 注意；通知；布告"
+    ]
+  },
+  "now": {
+    "word": "now",
+    "phonetic": "/naʊ/",
+    "explains": [
+      "adv. 现在；如今；立刻"
+    ]
+  },
+  "number": {
+    "word": "number",
+    "phonetic": "/ˈnʌmbə(r)/",
+    "explains": [
+      "n. 数字；号码；数量"
+    ]
+  },
+  "nurse": {
+    "word": "nurse",
+    "phonetic": "/nɜːs/",
+    "explains": [
+      "n. 护士；保姆 v. 护理；照料"
+    ]
+  }
+}

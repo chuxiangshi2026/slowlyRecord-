@@ -1,0 +1,436 @@
+{
+  "habit": {
+    "word": "habit",
+    "phonetic": "/ˈhæbɪt/",
+    "explains": [
+      "n. 习惯；习性"
+    ]
+  },
+  "hair": {
+    "word": "hair",
+    "phonetic": "/heə(r)/",
+    "explains": [
+      "n. 头发；毛发"
+    ]
+  },
+  "half": {
+    "word": "half",
+    "phonetic": "/hɑːf/",
+    "explains": [
+      "n. 一半；半场 adj. 一半的"
+    ]
+  },
+  "hall": {
+    "word": "hall",
+    "phonetic": "/hɔːl/",
+    "explains": [
+      "n. 大厅；礼堂；走廊"
+    ]
+  },
+  "hand": {
+    "word": "hand",
+    "phonetic": "/hænd/",
+    "explains": [
+      "n. 手；指针 v. 传递；交给"
+    ]
+  },
+  "handsome": {
+    "word": "handsome",
+    "phonetic": "/ˈhænsəm/",
+    "explains": [
+      "adj. 英俊的；可观的"
+    ]
+  },
+  "hang": {
+    "word": "hang",
+    "phonetic": "/hæŋ/",
+    "explains": [
+      "v. 悬挂；吊；垂下"
+    ]
+  },
+  "happy": {
+    "word": "happy",
+    "phonetic": "/ˈhæpi/",
+    "explains": [
+      "adj. 幸福的；高兴的"
+    ]
+  },
+  "hard": {
+    "word": "hard",
+    "phonetic": "/hɑːd/",
+    "explains": [
+      "adj. 硬的；困难的 adv. 努力地"
+    ]
+  },
+  "hardly": {
+    "word": "hardly",
+    "phonetic": "/ˈhɑːdli/",
+    "explains": [
+      "adv. 几乎不；简直不"
+    ]
+  },
+  "hat": {
+    "word": "hat",
+    "phonetic": "/hæt/",
+    "explains": [
+      "n. 帽子"
+    ]
+  },
+  "hate": {
+    "word": "hate",
+    "phonetic": "/heɪt/",
+    "explains": [
+      "v. 憎恨；厌恶 n. 憎恨；反感"
+    ]
+  },
+  "have": {
+    "word": "have",
+    "phonetic": "/hæv/",
+    "explains": [
+      "v. 有；持有；经历；吃"
+    ]
+  },
+  "he": {
+    "word": "he",
+    "phonetic": "/hiː/",
+    "explains": [
+      "pron. 他"
+    ]
+  },
+  "head": {
+    "word": "head",
+    "phonetic": "/hed/",
+    "explains": [
+      "n. 头；头部；首领 v. 前进；为首"
+    ]
+  },
+  "headache": {
+    "word": "headache",
+    "phonetic": "/ˈhedeɪk/",
+    "explains": [
+      "n. 头痛"
+    ]
+  },
+  "health": {
+    "word": "health",
+    "phonetic": "/helθ/",
+    "explains": [
+      "n. 健康；卫生；保健"
+    ]
+  },
+  "healthy": {
+    "word": "healthy",
+    "phonetic": "/ˈhelθi/",
+    "explains": [
+      "adj. 健康的；健全的"
+    ]
+  },
+  "hear": {
+    "word": "hear",
+    "phonetic": "/hɪə(r)/",
+    "explains": [
+      "v. 听见；听到；听说"
+    ]
+  },
+  "heart": {
+    "word": "heart",
+    "phonetic": "/hɑːt/",
+    "explains": [
+      "n. 心脏；内心；中心"
+    ]
+  },
+  "heat": {
+    "word": "heat",
+    "phonetic": "/hiːt/",
+    "explains": [
+      "n. 热度；高温 v. 加热；使变暖"
+    ]
+  },
+  "heaven": {
+    "word": "heaven",
+    "phonetic": "/ˈhevn/",
+    "explains": [
+      "n. 天堂；天空；极乐"
+    ]
+  },
+  "heavy": {
+    "word": "heavy",
+    "phonetic": "/ˈhevi/",
+    "explains": [
+      "adj. 重的；沉重的；大量的"
+    ]
+  },
+  "height": {
+    "word": "height",
+    "phonetic": "/haɪt/",
+    "explains": [
+      "n. 高度；身高；高地"
+    ]
+  },
+  "hello": {
+    "word": "hello",
+    "phonetic": "/həˈləʊ/",
+    "explains": [
+      "int. 喂；你好"
+    ]
+  },
+  "help": {
+    "word": "help",
+    "phonetic": "/help/",
+    "explains": [
+      "v./n. 帮助；援助；帮忙"
+    ]
+  },
+  "helpful": {
+    "word": "helpful",
+    "phonetic": "/ˈhelpfl/",
+    "explains": [
+      "adj. 有帮助的；有益的"
+    ]
+  },
+  "hen": {
+    "word": "hen",
+    "phonetic": "/hen/",
+    "explains": [
+      "n. 母鸡；雌禽"
+    ]
+  },
+  "her": {
+    "word": "her",
+    "phonetic": "/hɜː(r)/",
+    "explains": [
+      "pron. 她；她的"
+    ]
+  },
+  "here": {
+    "word": "here",
+    "phonetic": "/hɪə(r)/",
+    "explains": [
+      "adv. 这里；在这里；这时"
+    ]
+  },
+  "hero": {
+    "word": "hero",
+    "phonetic": "/ˈhɪərəʊ/",
+    "explains": [
+      "n. 英雄；男主角"
+    ]
+  },
+  "hers": {
+    "word": "hers",
+    "phonetic": "/hɜːz/",
+    "explains": [
+      "pron. 她的（东西）"
+    ]
+  },
+  "herself": {
+    "word": "herself",
+    "phonetic": "/hɜːˈself/",
+    "explains": [
+      "pron. 她自己；她亲自"
+    ]
+  },
+  "hide": {
+    "word": "hide",
+    "phonetic": "/haɪd/",
+    "explains": [
+      "v. 隐藏；隐瞒；躲藏"
+    ]
+  },
+  "high": {
+    "word": "high",
+    "phonetic": "/haɪ/",
+    "explains": [
+      "adj. 高的；高级的 adv. 高；高高地"
+    ]
+  },
+  "hill": {
+    "word": "hill",
+    "phonetic": "/hɪl/",
+    "explains": [
+      "n. 小山；丘陵；斜坡"
+    ]
+  },
+  "him": {
+    "word": "him",
+    "phonetic": "/hɪm/",
+    "explains": [
+      "pron. 他（宾格）"
+    ]
+  },
+  "himself": {
+    "word": "himself",
+    "phonetic": "/hɪmˈself/",
+    "explains": [
+      "pron. 他自己；他亲自"
+    ]
+  },
+  "his": {
+    "word": "his",
+    "phonetic": "/hɪz/",
+    "explains": [
+      "pron. 他的"
+    ]
+  },
+  "history": {
+    "word": "history",
+    "phonetic": "/ˈhɪstri/",
+    "explains": [
+      "n. 历史；历史学；经历"
+    ]
+  },
+  "hit": {
+    "word": "hit",
+    "phonetic": "/hɪt/",
+    "explains": [
+      "v. 打；打击；碰撞 n. 打击；碰撞"
+    ]
+  },
+  "hold": {
+    "word": "hold",
+    "phonetic": "/həʊld/",
+    "explains": [
+      "v. 持有；保存；举行；握住"
+    ]
+  },
+  "hole": {
+    "word": "hole",
+    "phonetic": "/həʊl/",
+    "explains": [
+      "n. 洞；孔；洞穴；漏洞"
+    ]
+  },
+  "holiday": {
+    "word": "holiday",
+    "phonetic": "/ˈhɒlədeɪ/",
+    "explains": [
+      "n. 假日；节日；休息日"
+    ]
+  },
+  "home": {
+    "word": "home",
+    "phonetic": "/həʊm/",
+    "explains": [
+      "n. 家；家庭；家乡 adj. 家庭的；国内的"
+    ]
+  },
+  "honest": {
+    "word": "honest",
+    "phonetic": "/ˈɒnɪst/",
+    "explains": [
+      "adj. 诚实的；老实的"
+    ]
+  },
+  "hope": {
+    "word": "hope",
+    "phonetic": "/həʊp/",
+    "explains": [
+      "v./n. 希望；期望；盼望"
+    ]
+  },
+  "horse": {
+    "word": "horse",
+    "phonetic": "/hɔːs/",
+    "explains": [
+      "n. 马；骑兵"
+    ]
+  },
+  "hospital": {
+    "word": "hospital",
+    "phonetic": "/ˈhɒspɪtl/",
+    "explains": [
+      "n. 医院"
+    ]
+  },
+  "hot": {
+    "word": "hot",
+    "phonetic": "/hɒt/",
+    "explains": [
+      "adj. 热的；辣的；热情的"
+    ]
+  },
+  "hotel": {
+    "word": "hotel",
+    "phonetic": "/həʊˈtel/",
+    "explains": [
+      "n. 旅馆；饭店；宾馆"
+    ]
+  },
+  "hour": {
+    "word": "hour",
+    "phonetic": "/ˈaʊə(r)/",
+    "explains": [
+      "n. 小时；钟头；课时"
+    ]
+  },
+  "house": {
+    "word": "house",
+    "phonetic": "/haʊs/",
+    "explains": [
+      "n. 房屋；房子；住宅；家庭"
+    ]
+  },
+  "how": {
+    "word": "how",
+    "phonetic": "/haʊ/",
+    "explains": [
+      "adv. 怎样；如何；多么"
+    ]
+  },
+  "however": {
+    "word": "however",
+    "phonetic": "/haʊˈevə(r)/",
+    "explains": [
+      "adv. 然而；可是 conj. 无论如何"
+    ]
+  },
+  "huge": {
+    "word": "huge",
+    "phonetic": "/hjuːdʒ/",
+    "explains": [
+      "adj. 巨大的；庞大的；极大的"
+    ]
+  },
+  "human": {
+    "word": "human",
+    "phonetic": "/ˈhjuːmən/",
+    "explains": [
+      "adj. 人的；人类的 n. 人；人类"
+    ]
+  },
+  "hundred": {
+    "word": "hundred",
+    "phonetic": "/ˈhʌndrəd/",
+    "explains": [
+      "num. 一百；许多"
+    ]
+  },
+  "hungry": {
+    "word": "hungry",
+    "phonetic": "/ˈhʌŋɡri/",
+    "explains": [
+      "adj. 饥饿的；渴望的"
+    ]
+  },
+  "hurry": {
+    "word": "hurry",
+    "phonetic": "/ˈhʌri/",
+    "explains": [
+      "v. 匆忙；赶快 n. 匆忙；急忙"
+    ]
+  },
+  "hurt": {
+    "word": "hurt",
+    "phonetic": "/hɜːt/",
+    "explains": [
+      "v. 使受伤；使疼痛；伤害"
+    ]
+  },
+  "husband": {
+    "word": "husband",
+    "phonetic": "/ˈhʌzbənd/",
+    "explains": [
+      "n. 丈夫"
+    ]
+  }
+}

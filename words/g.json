@@ -1,0 +1,279 @@
+{
+  "game": {
+    "word": "game",
+    "phonetic": "/ɡeɪm/",
+    "explains": [
+      "n. 游戏；比赛",
+      "adj. 勇敢的"
+    ]
+  },
+  "garage": {
+    "word": "garage",
+    "phonetic": "/ɡəˈrɑːʒ/",
+    "explains": [
+      "n. 车库；修车厂"
+    ]
+  },
+  "garden": {
+    "word": "garden",
+    "phonetic": "/ˈɡɑːrdn/",
+    "explains": [
+      "n. 花园；菜园",
+      "v. 种花；园艺"
+    ]
+  },
+  "gas": {
+    "word": "gas",
+    "phonetic": "/ɡæs/",
+    "explains": [
+      "n. 气体；汽油",
+      "v. 加油；毒气"
+    ]
+  },
+  "gate": {
+    "word": "gate",
+    "phonetic": "/ɡeɪt/",
+    "explains": [
+      "n. 大门；入口"
+    ]
+  },
+  "gather": {
+    "word": "gather",
+    "phonetic": "/ˈɡæðər/",
+    "explains": [
+      "v. 聚集；收集；推测"
+    ]
+  },
+  "general": {
+    "word": "general",
+    "phonetic": "/ˈdʒenrəl/",
+    "explains": [
+      "adj. 一般的；总体的",
+      "n. 将军"
+    ]
+  },
+  "generation": {
+    "word": "generation",
+    "phonetic": "/ˌdʒenəˈreɪʃn/",
+    "explains": [
+      "n. 一代；产生"
+    ]
+  },
+  "generator": {
+    "word": "generator",
+    "phonetic": "/ˈdʒenəreɪtər/",
+    "explains": [
+      "n. 发电机；创造者"
+    ]
+  },
+  "gentle": {
+    "word": "gentle",
+    "phonetic": "/ˈdʒentl/",
+    "explains": [
+      "adj. 温柔的；文雅的"
+    ]
+  },
+  "gentleman": {
+    "word": "gentleman",
+    "phonetic": "/ˈdʒentlmən/",
+    "explains": [
+      "n. 绅士；有教养的人"
+    ]
+  },
+  "get": {
+    "word": "get",
+    "phonetic": "/ɡet/",
+    "explains": [
+      "v. 获得；变得；理解"
+    ]
+  },
+  "ghost": {
+    "word": "ghost",
+    "phonetic": "/ɡoʊst/",
+    "explains": [
+      "n. 鬼魂；幽灵"
+    ]
+  },
+  "giant": {
+    "word": "giant",
+    "phonetic": "/ˈdʒaɪənt/",
+    "explains": [
+      "adj. 巨大的",
+      "n. 巨人"
+    ]
+  },
+  "gift": {
+    "word": "gift",
+    "phonetic": "/ɡɪft/",
+    "explains": [
+      "n. 礼物；天赋"
+    ]
+  },
+  "girl": {
+    "word": "girl",
+    "phonetic": "/ɡɜːrl/",
+    "explains": [
+      "n. 女孩；姑娘"
+    ]
+  },
+  "give": {
+    "word": "give",
+    "phonetic": "/ɡɪv/",
+    "explains": [
+      "v. 给；提供；捐赠"
+    ]
+  },
+  "glad": {
+    "word": "glad",
+    "phonetic": "/ɡlæd/",
+    "explains": [
+      "adj. 高兴的；乐意的"
+    ]
+  },
+  "glass": {
+    "word": "glass",
+    "phonetic": "/ɡlæs/",
+    "explains": [
+      "n. 玻璃；杯子",
+      "v. 给…装玻璃"
+    ]
+  },
+  "global": {
+    "word": "global",
+    "phonetic": "/ˈɡloʊbl/",
+    "explains": [
+      "adj. 全球的；整体的"
+    ]
+  },
+  "glove": {
+    "word": "glove",
+    "phonetic": "/ɡlʌv/",
+    "explains": [
+      "n. 手套"
+    ]
+  },
+  "go": {
+    "word": "go",
+    "phonetic": "/ɡoʊ/",
+    "explains": [
+      "v. 去；走；进行"
+    ]
+  },
+  "goal": {
+    "word": "goal",
+    "phonetic": "/ɡoʊl/",
+    "explains": [
+      "n. 目标；进球"
+    ]
+  },
+  "god": {
+    "word": "god",
+    "phonetic": "/ɡɑːd/",
+    "explains": [
+      "n. 神；上帝"
+    ]
+  },
+  "gold": {
+    "word": "gold",
+    "phonetic": "/ɡoʊld/",
+    "explains": [
+      "n. 金子；金牌",
+      "adj. 金色的"
+    ]
+  },
+  "golden": {
+    "word": "golden",
+    "phonetic": "/ˈɡoʊldən/",
+    "explains": [
+      "adj. 金色的；极好的"
+    ]
+  },
+  "good": {
+    "word": "good",
+    "phonetic": "/ɡʊd/",
+    "explains": [
+      "adj. 好的；优秀的"
+    ]
+  },
+  "graduate": {
+    "word": "graduate",
+    "phonetic": "/ˈɡrædʒueɪt/",
+    "explains": [
+      "v. 毕业",
+      "n. 毕业生"
+    ]
+  },
+  "graduation": {
+    "word": "graduation",
+    "phonetic": "/ˌɡrædʒuˈeɪʃn/",
+    "explains": [
+      "n. 毕业；毕业典礼"
+    ]
+  },
+  "grand": {
+    "word": "grand",
+    "phonetic": "/ɡrænd/",
+    "explains": [
+      "adj. 宏伟的；重大的"
+    ]
+  },
+  "grant": {
+    "word": "grant",
+    "phonetic": "/ɡrænt/",
+    "explains": [
+      "v. 授予；同意",
+      "n. 津贴；拨款"
+    ]
+  },
+  "grass": {
+    "word": "grass",
+    "phonetic": "/ɡræs/",
+    "explains": [
+      "n. 草；草地"
+    ]
+  },
+  "great": {
+    "word": "great",
+    "phonetic": "/ɡreɪt/",
+    "explains": [
+      "adj. 伟大的；极好的"
+    ]
+  },
+  "green": {
+    "word": "green",
+    "phonetic": "/ɡriːn/",
+    "explains": [
+      "adj. 绿色的",
+      "n. 绿色"
+    ]
+  },
+  "ground": {
+    "word": "ground",
+    "phonetic": "/ɡraʊnd/",
+    "explains": [
+      "n. 地面；土地；理由"
+    ]
+  },
+  "group": {
+    "word": "group",
+    "phonetic": "/ɡruːp/",
+    "explains": [
+      "n. 群体；组",
+      "v. 分组"
+    ]
+  },
+  "grow": {
+    "word": "grow",
+    "phonetic": "/ɡroʊ/",
+    "explains": [
+      "v. 生长；增长；种植"
+    ]
+  },
+  "growth": {
+    "word": "growth",
+    "phonetic": "/ɡroʊθ/",
+    "explains": [
+      "n. 生长；发展；增长"
+    ]
+  }
+}

@@ -1,0 +1,653 @@
+{
+  "table": {
+    "word": "table",
+    "phonetic": "/ˈteɪbl/",
+    "explains": [
+      "n. 桌子；表格；平地层 v. 制表；搁置；嵌合"
+    ]
+  },
+  "tail": {
+    "word": "tail",
+    "phonetic": "/teɪl/",
+    "explains": [
+      "n. 尾巴；踪迹；辫子；燕尾服 v. 尾随；跟踪；装上尾巴"
+    ]
+  },
+  "take": {
+    "word": "take",
+    "phonetic": "/teɪk/",
+    "explains": [
+      "v. 拿；取；采取；接受；耗费；获得"
+    ]
+  },
+  "talk": {
+    "word": "talk",
+    "phonetic": "/tɔːk/",
+    "explains": [
+      "v./n. 说话；谈话；交谈；演讲"
+    ]
+  },
+  "tall": {
+    "word": "tall",
+    "phonetic": "/tɔːl/",
+    "explains": [
+      "adj. 高的；长的；过分的；夸大的"
+    ]
+  },
+  "tape": {
+    "word": "tape",
+    "phonetic": "/teɪp/",
+    "explains": [
+      "n. 胶带；磁带；带子；卷尺 v. 录音；用带子捆扎；用胶布把… 封住"
+    ]
+  },
+  "task": {
+    "word": "task",
+    "phonetic": "/tɑːsk/",
+    "explains": [
+      "n. 任务；工作；作业；苦差事"
+    ]
+  },
+  "taste": {
+    "word": "taste",
+    "phonetic": "/teɪst/",
+    "explains": [
+      "n. 味道；品味；审美 v. 尝；体验；品尝；味道"
+    ]
+  },
+  "taxi": {
+    "word": "taxi",
+    "phonetic": "/ˈtæksi/",
+    "explains": [
+      "n. 出租汽车 v. 乘出租车；滑行"
+    ]
+  },
+  "tea": {
+    "word": "tea",
+    "phonetic": "/tiː/",
+    "explains": [
+      "n. 茶叶；茶树；茶点；下午茶"
+    ]
+  },
+  "teach": {
+    "word": "teach",
+    "phonetic": "/tiːtʃ/",
+    "explains": [
+      "v. 教；教授；教导；讲授；教书"
+    ]
+  },
+  "teacher": {
+    "word": "teacher",
+    "phonetic": "/ˈtiːtʃə(r)/",
+    "explains": [
+      "n. 教师；导师；老师"
+    ]
+  },
+  "team": {
+    "word": "team",
+    "phonetic": "/tiːm/",
+    "explains": [
+      "n. 团队；队；组 v. 合作；协作；结成一队"
+    ]
+  },
+  "telephone": {
+    "word": "telephone",
+    "phonetic": "/ˈtelɪfəʊn/",
+    "explains": [
+      "n. 电话；电话机；电话耳机 v. 打电话"
+    ]
+  },
+  "television": {
+    "word": "television",
+    "phonetic": "/ˈtelɪvɪʒn/",
+    "explains": [
+      "n. 电视；电视机；电视节目"
+    ]
+  },
+  "tell": {
+    "word": "tell",
+    "phonetic": "/tel/",
+    "explains": [
+      "v. 告诉；说；分辨；辨别；吩咐；断定"
+    ]
+  },
+  "temperature": {
+    "word": "temperature",
+    "phonetic": "/ˈtemprətʃə(r)/",
+    "explains": [
+      "n. 温度；体温；气温；发烧"
+    ]
+  },
+  "ten": {
+    "word": "ten",
+    "phonetic": "/ten/",
+    "explains": [
+      "num. 十；十个"
+    ]
+  },
+  "tennis": {
+    "word": "tennis",
+    "phonetic": "/ˈtenɪs/",
+    "explains": [
+      "n. 网球；网球运动"
+    ]
+  },
+  "tent": {
+    "word": "tent",
+    "phonetic": "/tent/",
+    "explains": [
+      "n. 帐篷；天幕 v. 住帐篷；宿营"
+    ]
+  },
+  "term": {
+    "word": "term",
+    "phonetic": "/tɜːm/",
+    "explains": [
+      "n. 术语；学期；期限；条款；名字 v. 把… 叫做"
+    ]
+  },
+  "terrible": {
+    "word": "terrible",
+    "phonetic": "/ˈterəbl/",
+    "explains": [
+      "adj. 可怕的；很糟的；令人讨厌的；极度的"
+    ]
+  },
+  "test": {
+    "word": "test",
+    "phonetic": "/test/",
+    "explains": [
+      "n./v. 测试；检验；测验；试验"
+    ]
+  },
+  "than": {
+    "word": "than",
+    "phonetic": "/ðæn/",
+    "explains": [
+      "conj. 比；超过；与其说；而不是"
+    ]
+  },
+  "thank": {
+    "word": "thank",
+    "phonetic": "/θæŋk/",
+    "explains": [
+      "v./n. 感谢；谢谢；道谢"
+    ]
+  },
+  "that": {
+    "word": "that",
+    "phonetic": "/ðæt/",
+    "explains": [
+      "pron. 那；那个；那种 conj. 因为；以至于"
+    ]
+  },
+  "the": {
+    "word": "the",
+    "phonetic": "/ðə/",
+    "explains": [
+      "art. 这；那；这些；那些"
+    ]
+  },
+  "theatre": {
+    "word": "theatre",
+    "phonetic": "/ˈθɪətə(r)/",
+    "explains": [
+      "n. 电影院；戏院；剧场；戏剧；手术室"
+    ]
+  },
+  "their": {
+    "word": "their",
+    "phonetic": "/ðeə(r)/",
+    "explains": [
+      "pron. 他们的；她们的；它们的"
+    ]
+  },
+  "them": {
+    "word": "them",
+    "phonetic": "/ðəm/",
+    "explains": [
+      "pron. 他们；她们；它们"
+    ]
+  },
+  "themselves": {
+    "word": "themselves",
+    "phonetic": "/ðəmˈselvz/",
+    "explains": [
+      "pron. 他们自己；她们自己；它们自己"
+    ]
+  },
+  "then": {
+    "word": "then",
+    "phonetic": "/ðen/",
+    "explains": [
+      "adv. 然后；那么；于是；当时；此外"
+    ]
+  },
+  "there": {
+    "word": "there",
+    "phonetic": "/ðeə(r)/",
+    "explains": [
+      "adv. 在那里；在那边；在那点上 int. 你瞧；好啦"
+    ]
+  },
+  "these": {
+    "word": "these",
+    "phonetic": "/ðiːz/",
+    "explains": [
+      "pron. 这些 adj. 这些的"
+    ]
+  },
+  "they": {
+    "word": "they",
+    "phonetic": "/ðeɪ/",
+    "explains": [
+      "pron. 他们；她们；它们；人们"
+    ]
+  },
+  "thick": {
+    "word": "thick",
+    "phonetic": "/θɪk/",
+    "explains": [
+      "adj. 厚的；浓的；粗大的"
+    ]
+  },
+  "thin": {
+    "word": "thin",
+    "phonetic": "/θɪn/",
+    "explains": [
+      "adj. 薄的；瘦的；细的"
+    ]
+  },
+  "thing": {
+    "word": "thing",
+    "phonetic": "/θɪŋ/",
+    "explains": [
+      "n. 东西；事物；事情；情况"
+    ]
+  },
+  "think": {
+    "word": "think",
+    "phonetic": "/θɪŋk/",
+    "explains": [
+      "v. 想；认为；思考；想起"
+    ]
+  },
+  "third": {
+    "word": "third",
+    "phonetic": "/θɜːd/",
+    "explains": [
+      "num. 第三；三分之一"
+    ]
+  },
+  "thirty": {
+    "word": "thirty",
+    "phonetic": "/ˈθɜːti/",
+    "explains": [
+      "num. 三十"
+    ]
+  },
+  "this": {
+    "word": "this",
+    "phonetic": "/ðɪs/",
+    "explains": [
+      "pron. 这；这个 adj. 这；这个"
+    ]
+  },
+  "those": {
+    "word": "those",
+    "phonetic": "/ðəʊz/",
+    "explains": [
+      "pron. 那些 adj. 那些的"
+    ]
+  },
+  "though": {
+    "word": "though",
+    "phonetic": "/ðəʊ/",
+    "explains": [
+      "conj. 虽然；尽管 adv. 可是；然而"
+    ]
+  },
+  "thread": {
+    "word": "thread",
+    "phonetic": "/θred/",
+    "explains": [
+      "n. 线；线索；思路 v. 穿线；穿过"
+    ]
+  },
+  "three": {
+    "word": "three",
+    "phonetic": "/θriː/",
+    "explains": [
+      "num. 三；三个"
+    ]
+  },
+  "through": {
+    "word": "through",
+    "phonetic": "/θruː/",
+    "explains": [
+      "prep. 通过；穿过；凭借 adv. 从头到尾"
+    ]
+  },
+  "throw": {
+    "word": "throw",
+    "phonetic": "/θrəʊ/",
+    "explains": [
+      "v. 扔；投；抛；掷"
+    ]
+  },
+  "thursday": {
+    "word": "Thursday",
+    "phonetic": "/ˈθɜːzdeɪ/",
+    "explains": [
+      "n. 星期四"
+    ]
+  },
+  "thus": {
+    "word": "thus",
+    "phonetic": "/ðʌs/",
+    "explains": [
+      "adv. 因此；从而；这样；如此"
+    ]
+  },
+  "ticket": {
+    "word": "ticket",
+    "phonetic": "/ˈtɪkɪt/",
+    "explains": [
+      "n. 票；入场券；标签；罚单"
+    ]
+  },
+  "tidy": {
+    "word": "tidy",
+    "phonetic": "/ˈtaɪdi/",
+    "explains": [
+      "adj. 整洁的；整齐的 v. 整理；收拾"
+    ]
+  },
+  "tie": {
+    "word": "tie",
+    "phonetic": "/taɪ/",
+    "explains": [
+      "v. 系；捆；绑；拴 n. 领带；纽带；关系"
+    ]
+  },
+  "tiger": {
+    "word": "tiger",
+    "phonetic": "/ˈtaɪɡə(r)/",
+    "explains": [
+      "n. 老虎；凶暴的人"
+    ]
+  },
+  "time": {
+    "word": "time",
+    "phonetic": "/taɪm/",
+    "explains": [
+      "n. 时间；时刻；次数；时代 v. 计时；安排… 时间"
+    ]
+  },
+  "tiny": {
+    "word": "tiny",
+    "phonetic": "/ˈtaɪni/",
+    "explains": [
+      "adj. 极小的；微小的；微量的"
+    ]
+  },
+  "tip": {
+    "word": "tip",
+    "phonetic": "/tɪp/",
+    "explains": [
+      "n. 尖端；顶端；小费；建议 v. 倾斜；翻倒；给小费"
+    ]
+  },
+  "tired": {
+    "word": "tired",
+    "phonetic": "/ˈtaɪəd/",
+    "explains": [
+      "adj. 疲倦的；疲劳的；厌倦的"
+    ]
+  },
+  "title": {
+    "word": "title",
+    "phonetic": "/ˈtaɪtl/",
+    "explains": [
+      "n. 标题；头衔；称号；权利"
+    ]
+  },
+  "to": {
+    "word": "to",
+    "phonetic": "/tuː/",
+    "explains": [
+      "prep. 向；朝；往；到；对于"
+    ]
+  },
+  "today": {
+    "word": "today",
+    "phonetic": "/təˈdeɪ/",
+    "explains": [
+      "n./adv. 今天；现今；如今"
+    ]
+  },
+  "together": {
+    "word": "together",
+    "phonetic": "/təˈɡeðə(r)/",
+    "explains": [
+      "adv. 一起；共同；同时；总共"
+    ]
+  },
+  "tomato": {
+    "word": "tomato",
+    "phonetic": "/təˈmɑːtəʊ/",
+    "explains": [
+      "n. 番茄；西红柿"
+    ]
+  },
+  "tomorrow": {
+    "word": "tomorrow",
+    "phonetic": "/təˈmɒrəʊ/",
+    "explains": [
+      "n./adv. 明天；明日；未来"
+    ]
+  },
+  "tonight": {
+    "word": "tonight",
+    "phonetic": "/təˈnaɪt/",
+    "explains": [
+      "n./adv. 今晚；今夜"
+    ]
+  },
+  "too": {
+    "word": "too",
+    "phonetic": "/tuː/",
+    "explains": [
+      "adv. 也；太；非常；还；过度"
+    ]
+  },
+  "tool": {
+    "word": "tool",
+    "phonetic": "/tuːl/",
+    "explains": [
+      "n. 工具；用具；手段；器械"
+    ]
+  },
+  "tooth": {
+    "word": "tooth",
+    "phonetic": "/tuːθ/",
+    "explains": [
+      "n. 牙齿；齿；牙状物；爱好"
+    ]
+  },
+  "top": {
+    "word": "top",
+    "phonetic": "/tɒp/",
+    "explains": [
+      "n. 顶部；顶端；上部；首席 adj. 最高的；顶上的"
+    ]
+  },
+  "total": {
+    "word": "total",
+    "phonetic": "/ˈtəʊtl/",
+    "explains": [
+      "adj. 总的；全部的；整个的 n. 总数；合计"
+    ]
+  },
+  "touch": {
+    "word": "touch",
+    "phonetic": "/tʌtʃ/",
+    "explains": [
+      "v./n. 接触；触摸；碰到；涉及"
+    ]
+  },
+  "tour": {
+    "word": "tour",
+    "phonetic": "/tʊə(r)/",
+    "explains": [
+      "n./v. 旅行；旅游；观光；巡回"
+    ]
+  },
+  "toward": {
+    "word": "toward",
+    "phonetic": "/təˈwɔːd/",
+    "explains": [
+      "prep. 向；朝；对于；接近；将近"
+    ]
+  },
+  "town": {
+    "word": "town",
+    "phonetic": "/taʊn/",
+    "explains": [
+      "n. 城镇；市镇；城市；市区"
+    ]
+  },
+  "toy": {
+    "word": "toy",
+    "phonetic": "/tɔɪ/",
+    "explains": [
+      "n. 玩具；玩物；小装饰品"
+    ]
+  },
+  "track": {
+    "word": "track",
+    "phonetic": "/træk/",
+    "explains": [
+      "n. 轨道；足迹；踪迹；小道 v. 追踪；跟踪"
+    ]
+  },
+  "trade": {
+    "word": "trade",
+    "phonetic": "/treɪd/",
+    "explains": [
+      "n. 贸易；交易；行业；职业 v. 交易；买卖；交换"
+    ]
+  },
+  "train": {
+    "word": "train",
+    "phonetic": "/treɪn/",
+    "explains": [
+      "n. 火车；列车；行列；长队 v. 训练；培养；锻炼"
+    ]
+  },
+  "translation": {
+    "word": "translation",
+    "phonetic": "/trænsˈleɪʃn/",
+    "explains": [
+      "n. 翻译；译文；转化；调任"
+    ]
+  },
+  "travel": {
+    "word": "travel",
+    "phonetic": "/ˈtrævl/",
+    "explains": [
+      "v./n. 旅行；游历；行进；传播"
+    ]
+  },
+  "tree": {
+    "word": "tree",
+    "phonetic": "/triː/",
+    "explains": [
+      "n. 树；树木；树状物；木料"
+    ]
+  },
+  "trip": {
+    "word": "trip",
+    "phonetic": "/trɪp/",
+    "explains": [
+      "n. 旅行；旅游；出行；摔倒 v. 绊倒；跌倒"
+    ]
+  },
+  "trouble": {
+    "word": "trouble",
+    "phonetic": "/ˈtrʌbl/",
+    "explains": [
+      "n. 麻烦；烦恼；故障；动乱 v. 麻烦；使烦恼；折磨"
+    ]
+  },
+  "truck": {
+    "word": "truck",
+    "phonetic": "/trʌk/",
+    "explains": [
+      "n. 卡车；货车；手推车"
+    ]
+  },
+  "truly": {
+    "word": "truly",
+    "phonetic": "/ˈtruːli/",
+    "explains": [
+      "adv. 真实地；真诚地；正确地"
+    ]
+  },
+  "trust": {
+    "word": "trust",
+    "phonetic": "/trʌst/",
+    "explains": [
+      "v./n. 信任；信赖；相信；依靠"
+    ]
+  },
+  "truth": {
+    "word": "truth",
+    "phonetic": "/truːθ/",
+    "explains": [
+      "n. 真理；事实；真相；诚实"
+    ]
+  },
+  "try": {
+    "word": "try",
+    "phonetic": "/traɪ/",
+    "explains": [
+      "v. 试图；努力；尝试；试验 n. 尝试；努力；试验"
+    ]
+  },
+  "tuesday": {
+    "word": "Tuesday",
+    "phonetic": "/ˈtjuːzdeɪ/",
+    "explains": [
+      "n. 星期二"
+    ]
+  },
+  "turn": {
+    "word": "turn",
+    "phonetic": "/tɜːn/",
+    "explains": [
+      "v. 转动；旋转；转向；转变 n. 转弯；变化；(依次轮到的) 机会"
+    ]
+  },
+  "tv": {
+    "word": "TV",
+    "phonetic": "/ˌtiːˈviː/",
+    "explains": [
+      "n. 电视；电视机；电视节目"
+    ]
+  },
+  "twice": {
+    "word": "twice",
+    "phonetic": "/twaɪs/",
+    "explains": [
+      "adv. 两次；两倍"
+    ]
+  },
+  "two": {
+    "word": "two",
+    "phonetic": "/tuː/",
+    "explains": [
+      "num. 二；两个"
+    ]
+  }
+}

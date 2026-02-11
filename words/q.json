@@ -1,0 +1,37 @@
+{
+  "queen": {
+    "word": "queen",
+    "phonetic": "/kwiːn/",
+    "explains": [
+      "n. 女王；王后；女神"
+    ]
+  },
+  "question": {
+    "word": "question",
+    "phonetic": "/ˈkwestʃən/",
+    "explains": [
+      "n. 问题；疑问 v. 询问；怀疑"
+    ]
+  },
+  "quick": {
+    "word": "quick",
+    "phonetic": "/kwɪk/",
+    "explains": [
+      "adj. 快的；迅速的；灵敏的"
+    ]
+  },
+  "quiet": {
+    "word": "quiet",
+    "phonetic": "/ˈkwaɪət/",
+    "explains": [
+      "adj. 安静的；宁静的 v. 安静下来"
+    ]
+  },
+  "quite": {
+    "word": "quite",
+    "phonetic": "/kwaɪt/",
+    "explains": [
+      "adv. 很；相当；完全"
+    ]
+  }
+}

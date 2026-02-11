@@ -1,0 +1,947 @@
+{
+  "pack": {
+    "word": "pack",
+    "phonetic": "/pæk/",
+    "explains": [
+      "v. 包装；打包；捆扎 n. 包裹；一群"
+    ]
+  },
+  "page": {
+    "word": "page",
+    "phonetic": "/peɪdʒ/",
+    "explains": [
+      "n. 页；页面；版面"
+    ]
+  },
+  "pain": {
+    "word": "pain",
+    "phonetic": "/peɪn/",
+    "explains": [
+      "n. 疼痛；痛苦 v. 使痛苦；使苦恼"
+    ]
+  },
+  "paint": {
+    "word": "paint",
+    "phonetic": "/peɪnt/",
+    "explains": [
+      "n. 油漆；颜料 v. 油漆；绘画"
+    ]
+  },
+  "pair": {
+    "word": "pair",
+    "phonetic": "/peə(r)/",
+    "explains": [
+      "n. 一对；一双；一副"
+    ]
+  },
+  "palace": {
+    "word": "palace",
+    "phonetic": "/ˈpæləs/",
+    "explains": [
+      "n. 宫殿；宅邸；豪华住宅"
+    ]
+  },
+  "pale": {
+    "word": "pale",
+    "phonetic": "/peɪl/",
+    "explains": [
+      "adj. 苍白的；暗淡的；无力的"
+    ]
+  },
+  "pan": {
+    "word": "pan",
+    "phonetic": "/pæn/",
+    "explains": [
+      "n. 平底锅；盘子；盘状器皿"
+    ]
+  },
+  "paper": {
+    "word": "paper",
+    "phonetic": "/ˈpeɪpə(r)/",
+    "explains": [
+      "n. 纸；文件；论文；报纸"
+    ]
+  },
+  "parent": {
+    "word": "parent",
+    "phonetic": "/ˈpeərənt/",
+    "explains": [
+      "n. 父亲；母亲；亲本"
+    ]
+  },
+  "park": {
+    "word": "park",
+    "phonetic": "/pɑːk/",
+    "explains": [
+      "n. 公园；停车场 v. 停放；放置"
+    ]
+  },
+  "part": {
+    "word": "part",
+    "phonetic": "/pɑːt/",
+    "explains": [
+      "n. 部分；角色；零件 v. 分离；分开"
+    ]
+  },
+  "partner": {
+    "word": "partner",
+    "phonetic": "/ˈpɑːtnə(r)/",
+    "explains": [
+      "n. 伙伴；合伙人；配偶"
+    ]
+  },
+  "party": {
+    "word": "party",
+    "phonetic": "/ˈpɑːti/",
+    "explains": [
+      "n. 政党；党派；聚会；派对"
+    ]
+  },
+  "pass": {
+    "word": "pass",
+    "phonetic": "/pɑːs/",
+    "explains": [
+      "v. 通过；经过；传递；及格"
+    ]
+  },
+  "passage": {
+    "word": "passage",
+    "phonetic": "/ˈpæsɪdʒ/",
+    "explains": [
+      "n. 一段；通道；走廊；章节"
+    ]
+  },
+  "passenger": {
+    "word": "passenger",
+    "phonetic": "/ˈpæsɪndʒə(r)/",
+    "explains": [
+      "n. 乘客；旅客；过路人"
+    ]
+  },
+  "past": {
+    "word": "past",
+    "phonetic": "/pɑːst/",
+    "explains": [
+      "adj. 过去的；从前的 n. 过去；往事"
+    ]
+  },
+  "path": {
+    "word": "path",
+    "phonetic": "/pɑːθ/",
+    "explains": [
+      "n. 小路；路线；道路；轨道"
+    ]
+  },
+  "patient": {
+    "word": "patient",
+    "phonetic": "/ˈpeɪʃnt/",
+    "explains": [
+      "adj. 有耐心的；能忍耐的 n. 病人；患者"
+    ]
+  },
+  "pause": {
+    "word": "pause",
+    "phonetic": "/pɔːz/",
+    "explains": [
+      "v./n. 暂停；停顿；中止"
+    ]
+  },
+  "pay": {
+    "word": "pay",
+    "phonetic": "/peɪ/",
+    "explains": [
+      "v. 支付；付；偿还 n. 工资；薪水"
+    ]
+  },
+  "peace": {
+    "word": "peace",
+    "phonetic": "/piːs/",
+    "explains": [
+      "n. 和平；平静；和睦；安宁"
+    ]
+  },
+  "pen": {
+    "word": "pen",
+    "phonetic": "/pen/",
+    "explains": [
+      "n. 钢笔；笔；写作；围栏"
+    ]
+  },
+  "pencil": {
+    "word": "pencil",
+    "phonetic": "/ˈpensl/",
+    "explains": [
+      "n. 铅笔；笔状物"
+    ]
+  },
+  "people": {
+    "word": "people",
+    "phonetic": "/ˈpiːpl/",
+    "explains": [
+      "n. 人；人类；民族；公民"
+    ]
+  },
+  "pepper": {
+    "word": "pepper",
+    "phonetic": "/ˈpepə(r)/",
+    "explains": [
+      "n. 胡椒；辣椒；胡椒粉"
+    ]
+  },
+  "percent": {
+    "word": "percent",
+    "phonetic": "/pəˈsent/",
+    "explains": [
+      "n. 百分比；百分率"
+    ]
+  },
+  "perfect": {
+    "word": "perfect",
+    "phonetic": "/ˈpɜːfɪkt/",
+    "explains": [
+      "adj. 完美的；最好的；精通的"
+    ]
+  },
+  "perhaps": {
+    "word": "perhaps",
+    "phonetic": "/pəˈhæps/",
+    "explains": [
+      "adv. 或许；可能"
+    ]
+  },
+  "period": {
+    "word": "period",
+    "phonetic": "/ˈpɪəriəd/",
+    "explains": [
+      "n. 周期；期间；时期；学时"
+    ]
+  },
+  "person": {
+    "word": "person",
+    "phonetic": "/ˈpɜːsn/",
+    "explains": [
+      "n. 人；身体；容貌；外表"
+    ]
+  },
+  "personal": {
+    "word": "personal",
+    "phonetic": "/ˈpɜːsənl/",
+    "explains": [
+      "adj. 个人的；身体的；亲自的"
+    ]
+  },
+  "phone": {
+    "word": "phone",
+    "phonetic": "/fəʊn/",
+    "explains": [
+      "n. 电话；耳机 v. 打电话"
+    ]
+  },
+  "photo": {
+    "word": "photo",
+    "phonetic": "/ˈfəʊtəʊ/",
+    "explains": [
+      "n. 照片"
+    ]
+  },
+  "photograph": {
+    "word": "photograph",
+    "phonetic": "/ˈfəʊtəɡrɑːf/",
+    "explains": [
+      "n. 照片；相片 v. 拍照；摄影"
+    ]
+  },
+  "phrase": {
+    "word": "phrase",
+    "phonetic": "/freɪz/",
+    "explains": [
+      "n. 短语；词组；习语"
+    ]
+  },
+  "physical": {
+    "word": "physical",
+    "phonetic": "/ˈfɪzɪkl/",
+    "explains": [
+      "adj. 身体的；物理的；物质的"
+    ]
+  },
+  "piano": {
+    "word": "piano",
+    "phonetic": "/piˈænəʊ/",
+    "explains": [
+      "n. 钢琴"
+    ]
+  },
+  "pick": {
+    "word": "pick",
+    "phonetic": "/pɪk/",
+    "explains": [
+      "v. 挑选；采摘；挖；扒窃"
+    ]
+  },
+  "picnic": {
+    "word": "picnic",
+    "phonetic": "/ˈpɪknɪk/",
+    "explains": [
+      "n. 野餐；郊游 v. 去野餐"
+    ]
+  },
+  "picture": {
+    "word": "picture",
+    "phonetic": "/ˈpɪktʃə(r)/",
+    "explains": [
+      "n. 照片；图画；画像 v. 想象；描绘"
+    ]
+  },
+  "pie": {
+    "word": "pie",
+    "phonetic": "/paɪ/",
+    "explains": [
+      "n. 馅饼；饼图；爱说话的人"
+    ]
+  },
+  "piece": {
+    "word": "piece",
+    "phonetic": "/piːs/",
+    "explains": [
+      "n. 块；件；篇；硬币"
+    ]
+  },
+  "pig": {
+    "word": "pig",
+    "phonetic": "/pɪɡ/",
+    "explains": [
+      "n. 猪；猪肉；像猪一样的人"
+    ]
+  },
+  "pile": {
+    "word": "pile",
+    "phonetic": "/paɪl/",
+    "explains": [
+      "n. 堆；大量；建筑群 v. 堆积；累积"
+    ]
+  },
+  "pilot": {
+    "word": "pilot",
+    "phonetic": "/ˈpaɪlət/",
+    "explains": [
+      "n. 飞行员；领航员 v. 驾驶；领航"
+    ]
+  },
+  "pin": {
+    "word": "pin",
+    "phonetic": "/pɪn/",
+    "explains": [
+      "n. 大头针；别针；钉 v. 钉住；压住"
+    ]
+  },
+  "pink": {
+    "word": "pink",
+    "phonetic": "/pɪŋk/",
+    "explains": [
+      "adj. 粉红色的 n. 粉红色"
+    ]
+  },
+  "pioneer": {
+    "word": "pioneer",
+    "phonetic": "/ˌpaɪəˈnɪə(r)/",
+    "explains": [
+      "n. 先锋；开拓者；创始人"
+    ]
+  },
+  "pipe": {
+    "word": "pipe",
+    "phonetic": "/paɪp/",
+    "explains": [
+      "n. 管；烟斗；笛 v. 用管道输送；吹奏"
+    ]
+  },
+  "pity": {
+    "word": "pity",
+    "phonetic": "/ˈpɪti/",
+    "explains": [
+      "n. 怜悯；同情；遗憾 v. 同情；怜悯"
+    ]
+  },
+  "place": {
+    "word": "place",
+    "phonetic": "/pleɪs/",
+    "explains": [
+      "n. 地方；场所；位置 v. 放置；任命"
+    ]
+  },
+  "plain": {
+    "word": "plain",
+    "phonetic": "/pleɪn/",
+    "explains": [
+      "adj. 平的；简单的；朴素的"
+    ]
+  },
+  "plan": {
+    "word": "plan",
+    "phonetic": "/plæn/",
+    "explains": [
+      "n. 计划；规划；方案 v. 计划；打算；设计"
+    ]
+  },
+  "plane": {
+    "word": "plane",
+    "phonetic": "/pleɪn/",
+    "explains": [
+      "n. 飞机；平面；程度；水平"
+    ]
+  },
+  "plant": {
+    "word": "plant",
+    "phonetic": "/plɑːnt/",
+    "explains": [
+      "n. 植物；工厂；庄稼 v. 种植；培养；栽培"
+    ]
+  },
+  "plastic": {
+    "word": "plastic",
+    "phonetic": "/ˈplæstɪk/",
+    "explains": [
+      "n. 塑料；塑料制品 adj. 塑料的"
+    ]
+  },
+  "plate": {
+    "word": "plate",
+    "phonetic": "/pleɪt/",
+    "explains": [
+      "n. 碟；金属板；板块；盘子"
+    ]
+  },
+  "play": {
+    "word": "play",
+    "phonetic": "/pleɪ/",
+    "explains": [
+      "v. 玩；演奏；播放；扮演 n. 游戏；比赛；剧本"
+    ]
+  },
+  "playground": {
+    "word": "playground",
+    "phonetic": "/ˈpleɪɡraʊnd/",
+    "explains": [
+      "n. 运动场；操场；游乐场"
+    ]
+  },
+  "pleasant": {
+    "word": "pleasant",
+    "phonetic": "/ˈpleznt/",
+    "explains": [
+      "adj. 令人愉快的；舒适的；讨人喜欢的"
+    ]
+  },
+  "please": {
+    "word": "please",
+    "phonetic": "/pliːz/",
+    "explains": [
+      "int. 请 v. 使高兴；使满意；讨好"
+    ]
+  },
+  "pleasure": {
+    "word": "pleasure",
+    "phonetic": "/ˈpleʒə(r)/",
+    "explains": [
+      "n. 快乐；希望；娱乐；令人高兴的事"
+    ]
+  },
+  "plenty": {
+    "word": "plenty",
+    "phonetic": "/ˈplenti/",
+    "explains": [
+      "n. 丰富；大量；充足 adj. 足够的；很多的"
+    ]
+  },
+  "pocket": {
+    "word": "pocket",
+    "phonetic": "/ˈpɒkɪt/",
+    "explains": [
+      "n. 口袋；衣袋；钱袋 adj. 袖珍的；小型的"
+    ]
+  },
+  "poem": {
+    "word": "poem",
+    "phonetic": "/ˈpəʊɪm/",
+    "explains": [
+      "n. 诗；韵文；诗一般的事物"
+    ]
+  },
+  "poet": {
+    "word": "poet",
+    "phonetic": "/ˈpəʊət/",
+    "explains": [
+      "n. 诗人"
+    ]
+  },
+  "poetry": {
+    "word": "poetry",
+    "phonetic": "/ˈpəʊətri/",
+    "explains": [
+      "n. 诗；诗意；诗情；诗歌艺术"
+    ]
+  },
+  "point": {
+    "word": "point",
+    "phonetic": "/pɔɪnt/",
+    "explains": [
+      "n. 要点；得分；标点；尖端 v. 指向；表明"
+    ]
+  },
+  "police": {
+    "word": "police",
+    "phonetic": "/pəˈliːs/",
+    "explains": [
+      "n. 警察；警方；治安"
+    ]
+  },
+  "policeman": {
+    "word": "policeman",
+    "phonetic": "/pəˈliːsmən/",
+    "explains": [
+      "n. 警察；警员"
+    ]
+  },
+  "polite": {
+    "word": "polite",
+    "phonetic": "/pəˈlaɪt/",
+    "explains": [
+      "adj. 有礼貌的；客气的；文雅的"
+    ]
+  },
+  "political": {
+    "word": "political",
+    "phonetic": "/pəˈlɪtɪkl/",
+    "explains": [
+      "adj. 政治的；党派的"
+    ]
+  },
+  "pool": {
+    "word": "pool",
+    "phonetic": "/puːl/",
+    "explains": [
+      "n. 水池；游泳池；水塘 v. 联营；合伙经营"
+    ]
+  },
+  "poor": {
+    "word": "poor",
+    "phonetic": "/pɔː(r)/",
+    "explains": [
+      "adj. 贫穷的；可怜的；贫乏的；卑鄙的"
+    ]
+  },
+  "popular": {
+    "word": "popular",
+    "phonetic": "/ˈpɒpjələ(r)/",
+    "explains": [
+      "adj. 流行的；通俗的；受欢迎的；大众的"
+    ]
+  },
+  "population": {
+    "word": "population",
+    "phonetic": "/ˌpɒpjuˈleɪʃn/",
+    "explains": [
+      "n. 人口；种群；全体居民"
+    ]
+  },
+  "pork": {
+    "word": "pork",
+    "phonetic": "/pɔːk/",
+    "explains": [
+      "n. 猪肉"
+    ]
+  },
+  "port": {
+    "word": "port",
+    "phonetic": "/pɔːt/",
+    "explains": [
+      "n. 港口；口岸；码头；舱门"
+    ]
+  },
+  "position": {
+    "word": "position",
+    "phonetic": "/pəˈzɪʃn/",
+    "explains": [
+      "n. 位置；方位；职位；工作；姿态"
+    ]
+  },
+  "possible": {
+    "word": "possible",
+    "phonetic": "/ˈpɒsəbl/",
+    "explains": [
+      "adj. 可能的；合理的；合适的"
+    ]
+  },
+  "post": {
+    "word": "post",
+    "phonetic": "/pəʊst/",
+    "explains": [
+      "n. 岗位；邮件；标杆 v. 张贴；公布；邮寄"
+    ]
+  },
+  "postcard": {
+    "word": "postcard",
+    "phonetic": "/ˈpəʊstkɑːd/",
+    "explains": [
+      "n. 明信片"
+    ]
+  },
+  "postman": {
+    "word": "postman",
+    "phonetic": "/ˈpəʊstmən/",
+    "explains": [
+      "n. 邮递员；邮差"
+    ]
+  },
+  "pot": {
+    "word": "pot",
+    "phonetic": "/pɒt/",
+    "explains": [
+      "n. 壶；盆；罐；碗；锅"
+    ]
+  },
+  "potato": {
+    "word": "potato",
+    "phonetic": "/pəˈteɪtəʊ/",
+    "explains": [
+      "n. 土豆；马铃薯"
+    ]
+  },
+  "pound": {
+    "word": "pound",
+    "phonetic": "/paʊnd/",
+    "explains": [
+      "n. 英镑；磅；重击 v. 猛击；敲打；连续重击"
+    ]
+  },
+  "pour": {
+    "word": "pour",
+    "phonetic": "/pɔː(r)/",
+    "explains": [
+      "v. 倒；灌；注；涌；倾泻"
+    ]
+  },
+  "powder": {
+    "word": "powder",
+    "phonetic": "/ˈpaʊdə(r)/",
+    "explains": [
+      "n. 粉；粉末；火药；尘土"
+    ]
+  },
+  "power": {
+    "word": "power",
+    "phonetic": "/ˈpaʊə(r)/",
+    "explains": [
+      "n. 力量；能力；电力；功率；政权"
+    ]
+  },
+  "powerful": {
+    "word": "powerful",
+    "phonetic": "/ˈpaʊəfl/",
+    "explains": [
+      "adj. 强大的；强有力的；有权势的"
+    ]
+  },
+  "practical": {
+    "word": "practical",
+    "phonetic": "/ˈpræktɪkl/",
+    "explains": [
+      "adj. 实际的；实用性的"
+    ]
+  },
+  "practice": {
+    "word": "practice",
+    "phonetic": "/ˈpræktɪs/",
+    "explains": [
+      "n. 实践；练习；惯例；业务"
+    ]
+  },
+  "praise": {
+    "word": "praise",
+    "phonetic": "/preɪz/",
+    "explains": [
+      "v./n. 赞扬；称赞；赞美；歌颂"
+    ]
+  },
+  "predict": {
+    "word": "predict",
+    "phonetic": "/prɪˈdɪkt/",
+    "explains": [
+      "v. 预言；预测；预报；预知"
+    ]
+  },
+  "prefer": {
+    "word": "prefer",
+    "phonetic": "/prɪˈfɜː(r)/",
+    "explains": [
+      "v. 更喜欢；宁愿；提出；提升"
+    ]
+  },
+  "prepare": {
+    "word": "prepare",
+    "phonetic": "/prɪˈpeə(r)/",
+    "explains": [
+      "v. 准备；预备；筹备；配制"
+    ]
+  },
+  "present": {
+    "word": "present",
+    "phonetic": "/ˈpreznt/",
+    "explains": [
+      "adj. 现在的；出席的 n. 礼物；现在"
+    ]
+  },
+  "president": {
+    "word": "president",
+    "phonetic": "/ˈprezɪdənt/",
+    "explains": [
+      "n. 总统；董事长；校长；主席"
+    ]
+  },
+  "press": {
+    "word": "press",
+    "phonetic": "/pres/",
+    "explains": [
+      "v. 压；按；逼迫；紧抱 n. 出版社；新闻；压"
+    ]
+  },
+  "pretend": {
+    "word": "pretend",
+    "phonetic": "/prɪˈtend/",
+    "explains": [
+      "v. 假装；伪装；假扮；佯装"
+    ]
+  },
+  "pretty": {
+    "word": "pretty",
+    "phonetic": "/ˈprɪti/",
+    "explains": [
+      "adj. 漂亮的；可爱的；优美的 adv. 相当地；颇"
+    ]
+  },
+  "prevent": {
+    "word": "prevent",
+    "phonetic": "/prɪˈvent/",
+    "explains": [
+      "v. 预防；防止；阻止；妨碍"
+    ]
+  },
+  "price": {
+    "word": "price",
+    "phonetic": "/praɪs/",
+    "explains": [
+      "n. 价格；价值；代价 v. 给…… 定价；问…… 价格"
+    ]
+  },
+  "pride": {
+    "word": "pride",
+    "phonetic": "/praɪd/",
+    "explains": [
+      "n. 自豪；骄傲；自尊心；引以自豪的人 / 物"
+    ]
+  },
+  "primary": {
+    "word": "primary",
+    "phonetic": "/ˈpraɪməri/",
+    "explains": [
+      "adj. 主要的；初级的；基本的"
+    ]
+  },
+  "print": {
+    "word": "print",
+    "phonetic": "/prɪnt/",
+    "explains": [
+      "v. 印刷；打印；刊载；用印刷体写"
+    ]
+  },
+  "prison": {
+    "word": "prison",
+    "phonetic": "/ˈprɪzn/",
+    "explains": [
+      "n. 监狱；监禁；牢笼；禁闭"
+    ]
+  },
+  "private": {
+    "word": "private",
+    "phonetic": "/ˈpraɪvət/",
+    "explains": [
+      "adj. 私人的；私有的；私下的"
+    ]
+  },
+  "prize": {
+    "word": "prize",
+    "phonetic": "/praɪz/",
+    "explains": [
+      "n. 奖品；奖赏；战利品 adj. 获奖的"
+    ]
+  },
+  "problem": {
+    "word": "problem",
+    "phonetic": "/ˈprɒbləm/",
+    "explains": [
+      "n. 问题；难题；习题；困难"
+    ]
+  },
+  "produce": {
+    "word": "produce",
+    "phonetic": "/prəˈdjuːs/",
+    "explains": [
+      "v. 生产；引起；创作；生育；制造"
+    ]
+  },
+  "product": {
+    "word": "product",
+    "phonetic": "/ˈprɒdʌkt/",
+    "explains": [
+      "n. 产品；产物；结果；作品"
+    ]
+  },
+  "production": {
+    "word": "production",
+    "phonetic": "/prəˈdʌkʃn/",
+    "explains": [
+      "n. 成果；产品；生产；作品"
+    ]
+  },
+  "program": {
+    "word": "program",
+    "phonetic": "/ˈprəʊɡræm/",
+    "explains": [
+      "n. 程序；计划；大纲 v. 编写程序；安排"
+    ]
+  },
+  "project": {
+    "word": "project",
+    "phonetic": "/ˈprɒdʒekt/",
+    "explains": [
+      "n. 工程；计划；事业 v. 设计；计划；投射"
+    ]
+  },
+  "promise": {
+    "word": "promise",
+    "phonetic": "/ˈprɒmɪs/",
+    "explains": [
+      "v./n. 许诺；承诺；答应；保证"
+    ]
+  },
+  "pronounce": {
+    "word": "pronounce",
+    "phonetic": "/prəˈnaʊns/",
+    "explains": [
+      "v. 发音；宣判；断言；发表意见"
+    ]
+  },
+  "pronunciation": {
+    "word": "pronunciation",
+    "phonetic": "/prəˌnʌnsiˈeɪʃn/",
+    "explains": [
+      "n. 发音；读法"
+    ]
+  },
+  "proof": {
+    "word": "proof",
+    "phonetic": "/pruːf/",
+    "explains": [
+      "n. 证明；证据；校样；考验"
+    ]
+  },
+  "proper": {
+    "word": "proper",
+    "phonetic": "/ˈprɒpə(r)/",
+    "explains": [
+      "adj. 适当的；本身的；特有的；正派的"
+    ]
+  },
+  "protect": {
+    "word": "protect",
+    "phonetic": "/prəˈtekt/",
+    "explains": [
+      "v. 保护；防卫；警戒；投保"
+    ]
+  },
+  "proud": {
+    "word": "proud",
+    "phonetic": "/praʊd/",
+    "explains": [
+      "adj. 自豪的；得意的；骄傲的；傲慢的"
+    ]
+  },
+  "prove": {
+    "word": "prove",
+    "phonetic": "/pruːv/",
+    "explains": [
+      "v. 证明；检验；显示；结果是"
+    ]
+  },
+  "provide": {
+    "word": "provide",
+    "phonetic": "/prəˈvaɪd/",
+    "explains": [
+      "v. 提供；供应；供给；规定；准备"
+    ]
+  },
+  "public": {
+    "word": "public",
+    "phonetic": "/ˈpʌblɪk/",
+    "explains": [
+      "adj. 公众的；公共的；公开的 n. 公众；民众"
+    ]
+  },
+  "pull": {
+    "word": "pull",
+    "phonetic": "/pʊl/",
+    "explains": [
+      "v. 拉；拖；拔；拽 n. 拉；拉绳；拉力"
+    ]
+  },
+  "punish": {
+    "word": "punish",
+    "phonetic": "/ˈpʌnɪʃ/",
+    "explains": [
+      "v. 惩罚；严厉对待；粗暴对待"
+    ]
+  },
+  "pupil": {
+    "word": "pupil",
+    "phonetic": "/ˈpjuːpl/",
+    "explains": [
+      "n. 学生；瞳孔；未成年人"
+    ]
+  },
+  "pure": {
+    "word": "pure",
+    "phonetic": "/pjʊə(r)/",
+    "explains": [
+      "adj. 纯的；纯粹的；纯洁的；清白的"
+    ]
+  },
+  "purple": {
+    "word": "purple",
+    "phonetic": "/ˈpɜːpl/",
+    "explains": [
+      "adj. 紫色的；帝王的；华而不实的 n. 紫色"
+    ]
+  },
+  "purpose": {
+    "word": "purpose",
+    "phonetic": "/ˈpɜːpəs/",
+    "explains": [
+      "n. 目的；用途；意志 v. 决心；企图；打算"
+    ]
+  },
+  "push": {
+    "word": "push",
+    "phonetic": "/pʊʃ/",
+    "explains": [
+      "v. 推动；增加；推行；逼迫 n. 推；决心；奋力"
+    ]
+  },
+  "put": {
+    "word": "put",
+    "phonetic": "/pʊt/",
+    "explains": [
+      "v. 放；表达；移动；安置；赋予"
+    ]
+  }
+}

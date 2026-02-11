@@ -1,0 +1,48 @@
+{
+  "zeal": {
+    "word": "zeal",
+    "phonetic": "/ziːl/",
+    "explains": [
+      "n. 热情；热忱（常用于 positive context，如：She works with great zeal.）"
+    ]
+  },
+  "zealous": {
+    "word": "zealous",
+    "phonetic": "/ˈzeləs/",
+    "explains": [
+      "adj. 热情的；热心的（a zealous supporter / advocate）"
+    ]
+  },
+  "zero": {
+    "word": "zero",
+    "phonetic": "/ˈzɪroʊ/",
+    "explains": [
+      "n. 零；零度；无",
+      "adj. 零的；没有的（zero chance, zero tolerance）",
+      "v. （使）归零；对准目标（zero in on something）"
+    ]
+  },
+  "zone": {
+    "word": "zone",
+    "phonetic": "/zoʊn/",
+    "explains": [
+      "n. 区域；地带（time zone, danger zone, comfort zone）",
+      "v. 将…划分为区；集中注意力（zone in/out）"
+    ]
+  },
+  "zip": {
+    "word": "zip",
+    "phonetic": "/zɪp/",
+    "explains": [
+      "n. 拉链；邮政编码（ZIP code，美式）",
+      "v. 拉上/拉开拉链；快速移动（The car zipped past.）"
+    ]
+  },
+  "zoo": {
+    "word": "zoo",
+    "phonetic": "/zuː/",
+    "explains": [
+      "n. 动物园（= zoological garden 的缩写）"
+    ]
+  }
+}

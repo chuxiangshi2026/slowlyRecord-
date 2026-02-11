@@ -1,0 +1,1332 @@
+{
+  "sad": {
+    "word": "sad",
+    "phonetic": "/sæd/",
+    "explains": [
+      "adj. 难过的；悲哀的；令人悲痛的"
+    ]
+  },
+  "safe": {
+    "word": "safe",
+    "phonetic": "/seɪf/",
+    "explains": [
+      "adj. 安全的；平安的 n. 保险箱；冷藏室"
+    ]
+  },
+  "sail": {
+    "word": "sail",
+    "phonetic": "/seɪl/",
+    "explains": [
+      "v. 航行；起航；驾驶帆船 n. 帆；航行"
+    ]
+  },
+  "salad": {
+    "word": "salad",
+    "phonetic": "/ˈsæləd/",
+    "explains": [
+      "n. 沙拉；色拉；凉拌菜"
+    ]
+  },
+  "sale": {
+    "word": "sale",
+    "phonetic": "/seɪl/",
+    "explains": [
+      "n. 销售；出售；拍卖；销售额"
+    ]
+  },
+  "salt": {
+    "word": "salt",
+    "phonetic": "/sɔːlt/",
+    "explains": [
+      "n. 盐；食盐；风趣 adj. 咸的；含盐的"
+    ]
+  },
+  "same": {
+    "word": "same",
+    "phonetic": "/seɪm/",
+    "explains": [
+      "adj. 相同的；同一的；上述的 pron. 同样的人或物"
+    ]
+  },
+  "sand": {
+    "word": "sand",
+    "phonetic": "/sænd/",
+    "explains": [
+      "n. 沙；沙子；沙滩；沙地"
+    ]
+  },
+  "satisfy": {
+    "word": "satisfy",
+    "phonetic": "/ˈsætɪsfaɪ/",
+    "explains": [
+      "v. 满足；使满意；说服"
+    ]
+  },
+  "saturday": {
+    "word": "Saturday",
+    "phonetic": "/ˈsætədeɪ/",
+    "explains": [
+      "n. 星期六"
+    ]
+  },
+  "sausage": {
+    "word": "sausage",
+    "phonetic": "/ˈsɒsɪdʒ/",
+    "explains": [
+      "n. 香肠；腊肠；肠衣"
+    ]
+  },
+  "save": {
+    "word": "save",
+    "phonetic": "/seɪv/",
+    "explains": [
+      "v. 节省；保存；储蓄；解救"
+    ]
+  },
+  "say": {
+    "word": "say",
+    "phonetic": "/seɪ/",
+    "explains": [
+      "v. 说；讲；说明；例如 n. 发言权；意见"
+    ]
+  },
+  "scarf": {
+    "word": "scarf",
+    "phonetic": "/skɑːf/",
+    "explains": [
+      "n. 围巾；头巾；披肩"
+    ]
+  },
+  "school": {
+    "word": "school",
+    "phonetic": "/skuːl/",
+    "explains": [
+      "n. 学校；学院；学派；鱼群"
+    ]
+  },
+  "science": {
+    "word": "science",
+    "phonetic": "/ˈsaɪəns/",
+    "explains": [
+      "n. 科学；自然科学；理科"
+    ]
+  },
+  "scientist": {
+    "word": "scientist",
+    "phonetic": "/ˈsaɪəntɪst/",
+    "explains": [
+      "n. 科学家"
+    ]
+  },
+  "score": {
+    "word": "score",
+    "phonetic": "/skɔː(r)/",
+    "explains": [
+      "n. 分数；二十；配乐；刻痕 v. 得分；记分"
+    ]
+  },
+  "screen": {
+    "word": "screen",
+    "phonetic": "/skriːn/",
+    "explains": [
+      "n. 屏幕；屏风；银幕 v. 筛；拍摄；放映"
+    ]
+  },
+  "sea": {
+    "word": "sea",
+    "phonetic": "/siː/",
+    "explains": [
+      "n. 海；海洋；许多；大量"
+    ]
+  },
+  "search": {
+    "word": "search",
+    "phonetic": "/sɜːtʃ/",
+    "explains": [
+      "v./n. 搜索；搜寻；调查；探求"
+    ]
+  },
+  "season": {
+    "word": "season",
+    "phonetic": "/ˈsiːzn/",
+    "explains": [
+      "n. 时期；季节；赛季 v. 给… 调味；使适应"
+    ]
+  },
+  "second": {
+    "word": "second",
+    "phonetic": "/ˈsekənd/",
+    "explains": [
+      "num. 第二 adj. 第二的；次要的 n. 秒；瞬间"
+    ]
+  },
+  "secret": {
+    "word": "secret",
+    "phonetic": "/ˈsiːkrət/",
+    "explains": [
+      "adj. 秘密的；机密的 n. 秘密；秘诀；机密"
+    ]
+  },
+  "see": {
+    "word": "see",
+    "phonetic": "/siː/",
+    "explains": [
+      "v. 看见；理解；领会；觉察；拜访"
+    ]
+  },
+  "seed": {
+    "word": "seed",
+    "phonetic": "/siːd/",
+    "explains": [
+      "n. 种子；根据；精液；萌芽 v. 播种；结实；成熟"
+    ]
+  },
+  "seem": {
+    "word": "seem",
+    "phonetic": "/siːm/",
+    "explains": [
+      "v. 似乎；像是；装作"
+    ]
+  },
+  "sell": {
+    "word": "sell",
+    "phonetic": "/sel/",
+    "explains": [
+      "v. 销售；推销；出卖；欺骗"
+    ]
+  },
+  "send": {
+    "word": "send",
+    "phonetic": "/send/",
+    "explains": [
+      "v. 发送；寄；派遣；使进入；发射"
+    ]
+  },
+  "sentence": {
+    "word": "sentence",
+    "phonetic": "/ˈsentəns/",
+    "explains": [
+      "n. 句子；命题；宣判；判决 v. 判决；宣判"
+    ]
+  },
+  "separate": {
+    "word": "separate",
+    "phonetic": "/ˈseprət/",
+    "explains": [
+      "adj. 分开的；单独的；各自的 v. 分开；隔开；分离"
+    ]
+  },
+  "september": {
+    "word": "September",
+    "phonetic": "/sepˈtembə(r)/",
+    "explains": [
+      "n. 九月"
+    ]
+  },
+  "serious": {
+    "word": "serious",
+    "phonetic": "/ˈsɪəriəs/",
+    "explains": [
+      "adj. 严肃的；严重的；认真的；庄重的"
+    ]
+  },
+  "servant": {
+    "word": "servant",
+    "phonetic": "/ˈsɜːvənt/",
+    "explains": [
+      "n. 仆人；佣人；雇员"
+    ]
+  },
+  "serve": {
+    "word": "serve",
+    "phonetic": "/sɜːv/",
+    "explains": [
+      "v. 招待；供应；为… 服务；对… 有用"
+    ]
+  },
+  "service": {
+    "word": "service",
+    "phonetic": "/ˈsɜːvɪs/",
+    "explains": [
+      "n. 服务；服侍；服役；仪式 v. 维修；检修"
+    ]
+  },
+  "set": {
+    "word": "set",
+    "phonetic": "/set/",
+    "explains": [
+      "v. 放置；安置；使处于；设置 n. 一套；一组；集合"
+    ]
+  },
+  "seven": {
+    "word": "seven",
+    "phonetic": "/ˈsevn/",
+    "explains": [
+      "num. 七个；七"
+    ]
+  },
+  "seventeen": {
+    "word": "seventeen",
+    "phonetic": "/ˌsevnˈtiːn/",
+    "explains": [
+      "num. 十七；十七个"
+    ]
+  },
+  "seventh": {
+    "word": "seventh",
+    "phonetic": "/ˈsevnθ/",
+    "explains": [
+      "num. 第七；七分之一"
+    ]
+  },
+  "seventy": {
+    "word": "seventy",
+    "phonetic": "/ˈsevnti/",
+    "explains": [
+      "num. 七十；七十个"
+    ]
+  },
+  "several": {
+    "word": "several",
+    "phonetic": "/ˈsevrəl/",
+    "explains": [
+      "adj. 几个的；数个的；各自的 pron. 几个；数个"
+    ]
+  },
+  "share": {
+    "word": "share",
+    "phonetic": "/ʃeə(r)/",
+    "explains": [
+      "v. 分享；分担；分配；共有 n. 份额；股份"
+    ]
+  },
+  "she": {
+    "word": "she",
+    "phonetic": "/ʃiː/",
+    "explains": [
+      "pron. 她；它；她"
+    ]
+  },
+  "sheep": {
+    "word": "sheep",
+    "phonetic": "/ʃiːp/",
+    "explains": [
+      "n. 羊；绵羊；胆小鬼"
+    ]
+  },
+  "sheet": {
+    "word": "sheet",
+    "phonetic": "/ʃiːt/",
+    "explains": [
+      "n. 薄片；纸张；薄板；床单"
+    ]
+  },
+  "shelf": {
+    "word": "shelf",
+    "phonetic": "/ʃelf/",
+    "explains": [
+      "n. 架子；搁板；搁板状物；暗礁"
+    ]
+  },
+  "shine": {
+    "word": "shine",
+    "phonetic": "/ʃaɪn/",
+    "explains": [
+      "v. 照耀；发光；显露；出众 n. 光泽；光亮；晴天"
+    ]
+  },
+  "ship": {
+    "word": "ship",
+    "phonetic": "/ʃɪp/",
+    "explains": [
+      "n. 船；舰；太空船 v. 运送；乘船；以船运送"
+    ]
+  },
+  "shirt": {
+    "word": "shirt",
+    "phonetic": "/ʃɜːt/",
+    "explains": [
+      "n. 衬衫；汗衫；内衣；女式衬衫"
+    ]
+  },
+  "shoe": {
+    "word": "shoe",
+    "phonetic": "/ʃuː/",
+    "explains": [
+      "n. 鞋；鞋子"
+    ]
+  },
+  "shop": {
+    "word": "shop",
+    "phonetic": "/ʃɒp/",
+    "explains": [
+      "n. 商店；店铺 v. 购物；买东西"
+    ]
+  },
+  "shopping": {
+    "word": "shopping",
+    "phonetic": "/ˈʃɒpɪŋ/",
+    "explains": [
+      "n. 购物；买东西；商店"
+    ]
+  },
+  "shore": {
+    "word": "shore",
+    "phonetic": "/ʃɔː(r)/",
+    "explains": [
+      "n. 海滨；海岸；支柱 v. 支撑；稳住"
+    ]
+  },
+  "short": {
+    "word": "short",
+    "phonetic": "/ʃɔːt/",
+    "explains": [
+      "adj. 短的；不足的；矮的；低的"
+    ]
+  },
+  "should": {
+    "word": "should",
+    "phonetic": "/ʃʊd/",
+    "explains": [
+      "aux. 应该；就；可能；将要"
+    ]
+  },
+  "shoulder": {
+    "word": "shoulder",
+    "phonetic": "/ˈʃəʊldə(r)/",
+    "explains": [
+      "n. 肩膀；肩部 v. 肩负；承担；挑起"
+    ]
+  },
+  "shout": {
+    "word": "shout",
+    "phonetic": "/ʃaʊt/",
+    "explains": [
+      "v./n. 呼喊；喊叫；大声说"
+    ]
+  },
+  "show": {
+    "word": "show",
+    "phonetic": "/ʃəʊ/",
+    "explains": [
+      "v. 显示；说明；演出；展出 n. 显示；表演；炫耀"
+    ]
+  },
+  "shut": {
+    "word": "shut",
+    "phonetic": "/ʃʌt/",
+    "explains": [
+      "v. 关闭；停业；幽禁 adj. 关闭的；围绕的"
+    ]
+  },
+  "sick": {
+    "word": "sick",
+    "phonetic": "/sɪk/",
+    "explains": [
+      "adj. 厌恶的；病态的；不舒服；渴望的；恶心的"
+    ]
+  },
+  "side": {
+    "word": "side",
+    "phonetic": "/saɪd/",
+    "explains": [
+      "n. 方面；侧面；旁边 adj. 侧面的；旁边的；次要的"
+    ]
+  },
+  "sign": {
+    "word": "sign",
+    "phonetic": "/saɪn/",
+    "explains": [
+      "n. 迹象；符号；记号；手势；指示牌 v. 签署；签名"
+    ]
+  },
+  "silence": {
+    "word": "silence",
+    "phonetic": "/ˈsaɪləns/",
+    "explains": [
+      "n. 沉默；寂静；缄默；不谈 v. 沉默；使安静；压制"
+    ]
+  },
+  "silent": {
+    "word": "silent",
+    "phonetic": "/ˈsaɪlənt/",
+    "explains": [
+      "adj. 沉默的；寂静的；无记载的"
+    ]
+  },
+  "silk": {
+    "word": "silk",
+    "phonetic": "/sɪlk/",
+    "explains": [
+      "n. 丝绸；蚕丝；丝织物 adj. 丝的；丝绸的；丝制的"
+    ]
+  },
+  "silly": {
+    "word": "silly",
+    "phonetic": "/ˈsɪli/",
+    "explains": [
+      "adj. 愚蠢的；不明事理的；没头脑的"
+    ]
+  },
+  "silver": {
+    "word": "silver",
+    "phonetic": "/ˈsɪlvə(r)/",
+    "explains": [
+      "n. 银；银器；银币；银质奖章 adj. 银的；含银的；银制的"
+    ]
+  },
+  "similar": {
+    "word": "similar",
+    "phonetic": "/ˈsɪmələ(r)/",
+    "explains": [
+      "adj. 相似的；类似的；同类的"
+    ]
+  },
+  "simple": {
+    "word": "simple",
+    "phonetic": "/ˈsɪmpl/",
+    "explains": [
+      "adj. 简单的；单纯的；天真的"
+    ]
+  },
+  "since": {
+    "word": "since",
+    "phonetic": "/sɪns/",
+    "explains": [
+      "conj. 因为；由于；既然；自… 以来 prep. 自… 以来；自… 以后"
+    ]
+  },
+  "sing": {
+    "word": "sing",
+    "phonetic": "/sɪŋ/",
+    "explains": [
+      "v. 唱歌；歌颂；鸣叫；呼号"
+    ]
+  },
+  "single": {
+    "word": "single",
+    "phonetic": "/ˈsɪŋɡl/",
+    "explains": [
+      "adj. 单一的；单身的；单程的 n. 一个；单打；单程票"
+    ]
+  },
+  "sink": {
+    "word": "sink",
+    "phonetic": "/sɪŋk/",
+    "explains": [
+      "v. 下沉；沉没；下陷；低落 n. 水槽；洗涤槽；污水坑"
+    ]
+  },
+  "sir": {
+    "word": "sir",
+    "phonetic": "/sɜː(r)/",
+    "explains": [
+      "n. 先生；阁下；长官"
+    ]
+  },
+  "sister": {
+    "word": "sister",
+    "phonetic": "/ˈsɪstə(r)/",
+    "explains": [
+      "n. 姐妹；修女；护士"
+    ]
+  },
+  "sit": {
+    "word": "sit",
+    "phonetic": "/sɪt/",
+    "explains": [
+      "v. 坐；位于；使就座"
+    ]
+  },
+  "situation": {
+    "word": "situation",
+    "phonetic": "/ˌsɪtʃuˈeɪʃn/",
+    "explains": [
+      "n. 情况；形势；处境；位置"
+    ]
+  },
+  "six": {
+    "word": "six",
+    "phonetic": "/sɪks/",
+    "explains": [
+      "num. 六；六个"
+    ]
+  },
+  "sixteen": {
+    "word": "sixteen",
+    "phonetic": "/ˌsɪksˈtiːn/",
+    "explains": [
+      "num. 十六；十六个"
+    ]
+  },
+  "sixth": {
+    "word": "sixth",
+    "phonetic": "/sɪksθ/",
+    "explains": [
+      "num. 第六；六分之一"
+    ]
+  },
+  "sixty": {
+    "word": "sixty",
+    "phonetic": "/ˈsɪksti/",
+    "explains": [
+      "num. 六十；六十个"
+    ]
+  },
+  "size": {
+    "word": "size",
+    "phonetic": "/saɪz/",
+    "explains": [
+      "n. 大小；尺寸；规模；尺码"
+    ]
+  },
+  "skate": {
+    "word": "skate",
+    "phonetic": "/skeɪt/",
+    "explains": [
+      "v. 滑冰；滑过 n. 溜冰；冰鞋"
+    ]
+  },
+  "skill": {
+    "word": "skill",
+    "phonetic": "/skɪl/",
+    "explains": [
+      "n. 技能；技巧；本领；技术"
+    ]
+  },
+  "skin": {
+    "word": "skin",
+    "phonetic": "/skɪn/",
+    "explains": [
+      "n. 皮肤；外皮；皮囊 v. 剥皮；覆盖皮肤"
+    ]
+  },
+  "skirt": {
+    "word": "skirt",
+    "phonetic": "/skɜːt/",
+    "explains": [
+      "n. 裙子；边缘；下摆 v. 绕过；回避；位于… 边缘"
+    ]
+  },
+  "sky": {
+    "word": "sky",
+    "phonetic": "/skaɪ/",
+    "explains": [
+      "n. 天空；顶点"
+    ]
+  },
+  "slave": {
+    "word": "slave",
+    "phonetic": "/sleɪv/",
+    "explains": [
+      "n. 奴隶；从动装置 v. 苦干；拼命工作"
+    ]
+  },
+  "sleep": {
+    "word": "sleep",
+    "phonetic": "/sliːp/",
+    "explains": [
+      "v./n. 睡；睡觉；睡眠"
+    ]
+  },
+  "slow": {
+    "word": "slow",
+    "phonetic": "/sləʊ/",
+    "explains": [
+      "adj. 慢的；迟钝的；温和的 adv. 缓慢地；慢慢地"
+    ]
+  },
+  "small": {
+    "word": "small",
+    "phonetic": "/smɔːl/",
+    "explains": [
+      "adj. 少的；小的；微弱的；几乎没有的"
+    ]
+  },
+  "smell": {
+    "word": "smell",
+    "phonetic": "/smel/",
+    "explains": [
+      "v. 嗅；闻；散发气味；有臭味 n. 气味；嗅觉；臭味"
+    ]
+  },
+  "smile": {
+    "word": "smile",
+    "phonetic": "/smaɪl/",
+    "explains": [
+      "v./n. 微笑；微笑着表示；露出笑容"
+    ]
+  },
+  "smoke": {
+    "word": "smoke",
+    "phonetic": "/sməʊk/",
+    "explains": [
+      "n. 烟；抽烟；无常的事物 v. 冒烟；吸烟；抽烟"
+    ]
+  },
+  "snow": {
+    "word": "snow",
+    "phonetic": "/snəʊ/",
+    "explains": [
+      "n. 雪；积雪；下雪 v. 下雪；使纷纷落下"
+    ]
+  },
+  "so": {
+    "word": "so",
+    "phonetic": "/səʊ/",
+    "explains": [
+      "adv. 如此；这么；确是如此 conj. 所以；因此"
+    ]
+  },
+  "soap": {
+    "word": "soap",
+    "phonetic": "/səʊp/",
+    "explains": [
+      "n. 肥皂"
+    ]
+  },
+  "social": {
+    "word": "social",
+    "phonetic": "/ˈsəʊʃl/",
+    "explains": [
+      "adj. 社会的；社交的；群居的"
+    ]
+  },
+  "society": {
+    "word": "society",
+    "phonetic": "/səˈsaɪəti/",
+    "explains": [
+      "n. 社会；交往；社团；社交界"
+    ]
+  },
+  "sock": {
+    "word": "sock",
+    "phonetic": "/sɒk/",
+    "explains": [
+      "n. 短袜；一击 v. 重击；给…… 穿袜"
+    ]
+  },
+  "sofa": {
+    "word": "sofa",
+    "phonetic": "/ˈsəʊfə/",
+    "explains": [
+      "n. 沙发；长椅"
+    ]
+  },
+  "soft": {
+    "word": "soft",
+    "phonetic": "/sɒft/",
+    "explains": [
+      "adj. 软的；柔软的；温和的；温柔的"
+    ]
+  },
+  "soldier": {
+    "word": "soldier",
+    "phonetic": "/ˈsəʊldʒə(r)/",
+    "explains": [
+      "n. 军人；士兵；战士"
+    ]
+  },
+  "solid": {
+    "word": "solid",
+    "phonetic": "/ˈsɒlɪd/",
+    "explains": [
+      "adj. 固体的；结实的；可靠的；立体的 n. 固体；立方体"
+    ]
+  },
+  "some": {
+    "word": "some",
+    "phonetic": "/səm/",
+    "explains": [
+      "adj. 一些；某个；大约；相当多的 pron. 一些；若干；其中的一部分"
+    ]
+  },
+  "somebody": {
+    "word": "somebody",
+    "phonetic": "/ˈsʌmbədi/",
+    "explains": [
+      "pron. 有人；某人；重要人物"
+    ]
+  },
+  "someone": {
+    "word": "someone",
+    "phonetic": "/ˈsʌmwʌn/",
+    "explains": [
+      "pron. 有人；某人"
+    ]
+  },
+  "something": {
+    "word": "something",
+    "phonetic": "/ˈsʌmθɪŋ/",
+    "explains": [
+      "pron. 某事；某物；重要的人或物"
+    ]
+  },
+  "sometime": {
+    "word": "sometime",
+    "phonetic": "/ˈsʌmtaɪm/",
+    "explains": [
+      "adv. 在某一时候；改天；来日"
+    ]
+  },
+  "sometimes": {
+    "word": "sometimes",
+    "phonetic": "/ˈsʌmtaɪmz/",
+    "explains": [
+      "adv. 有时；间或"
+    ]
+  },
+  "somewhere": {
+    "word": "somewhere",
+    "phonetic": "/ˈsʌmweə(r)/",
+    "explains": [
+      "adv. 在某处；到某处"
+    ]
+  },
+  "son": {
+    "word": "son",
+    "phonetic": "/sʌn/",
+    "explains": [
+      "n. 儿子；孩子；男性后裔"
+    ]
+  },
+  "song": {
+    "word": "song",
+    "phonetic": "/sɒŋ/",
+    "explains": [
+      "n. 歌曲；歌唱；歌声；鸣声"
+    ]
+  },
+  "soon": {
+    "word": "soon",
+    "phonetic": "/suːn/",
+    "explains": [
+      "adv. 快；不久；一会儿；立刻；宁愿"
+    ]
+  },
+  "sore": {
+    "word": "sore",
+    "phonetic": "/sɔː(r)/",
+    "explains": [
+      "adj. 疼痛的；痛心的；剧烈的 n. 溃疡；痛处；疮口"
+    ]
+  },
+  "sorry": {
+    "word": "sorry",
+    "phonetic": "/ˈsɒri/",
+    "explains": [
+      "adj. 遗憾的；对不起的，抱歉的 int. 对不起，抱歉"
+    ]
+  },
+  "sort": {
+    "word": "sort",
+    "phonetic": "/sɔːt/",
+    "explains": [
+      "n. 种类；方式；品质 v. 分类；协调；交往"
+    ]
+  },
+  "soul": {
+    "word": "soul",
+    "phonetic": "/səʊl/",
+    "explains": [
+      "n. 灵魂；心灵；精神；鬼魂"
+    ]
+  },
+  "sound": {
+    "word": "sound",
+    "phonetic": "/saʊnd/",
+    "explains": [
+      "n. 声音；噪音；音响；海峡 v. 听起来；发出声音；回响"
+    ]
+  },
+  "soup": {
+    "word": "soup",
+    "phonetic": "/suːp/",
+    "explains": [
+      "n. 汤；羹；马力"
+    ]
+  },
+  "south": {
+    "word": "south",
+    "phonetic": "/saʊθ/",
+    "explains": [
+      "n. 南方；南部；朝南 adj. 南方的；向南的"
+    ]
+  },
+  "southern": {
+    "word": "southern",
+    "phonetic": "/ˈsʌðən/",
+    "explains": [
+      "adj. 南方的；南部的"
+    ]
+  },
+  "space": {
+    "word": "space",
+    "phonetic": "/speɪs/",
+    "explains": [
+      "n. 空间；太空；距离 v. 留间隔；隔开"
+    ]
+  },
+  "spare": {
+    "word": "spare",
+    "phonetic": "/speə(r)/",
+    "explains": [
+      "adj. 多余的；备用的；空闲的 v. 节约；吝惜；饶恕"
+    ]
+  },
+  "speak": {
+    "word": "speak",
+    "phonetic": "/spiːk/",
+    "explains": [
+      "v. 说话；讲话；演讲；发言"
+    ]
+  },
+  "special": {
+    "word": "special",
+    "phonetic": "/ˈspeʃl/",
+    "explains": [
+      "adj. 特别的；专门的；专用的"
+    ]
+  },
+  "speech": {
+    "word": "speech",
+    "phonetic": "/spiːtʃ/",
+    "explains": [
+      "n. 演讲；讲话；语音；言语"
+    ]
+  },
+  "speed": {
+    "word": "speed",
+    "phonetic": "/spiːd/",
+    "explains": [
+      "n. 速度；速率；快；迅速 v. 加速；超速；促进；快速前行"
+    ]
+  },
+  "spell": {
+    "word": "spell",
+    "phonetic": "/spel/",
+    "explains": [
+      "v. 拼写；拼缀；意味着；轮替 n. 符咒；魅力；一段时间"
+    ]
+  },
+  "spend": {
+    "word": "spend",
+    "phonetic": "/spend/",
+    "explains": [
+      "v. 花费；消耗；花；度过"
+    ]
+  },
+  "spirit": {
+    "word": "spirit",
+    "phonetic": "/ˈspɪrɪt/",
+    "explains": [
+      "n. 精神；心灵；情绪；志气；烈酒"
+    ]
+  },
+  "spite": {
+    "word": "spite",
+    "phonetic": "/spaɪt/",
+    "explains": [
+      "n. 不顾；恶意；怨恨 v. 刁难；使恼怒"
+    ]
+  },
+  "split": {
+    "word": "split",
+    "phonetic": "/splɪt/",
+    "explains": [
+      "v. 分裂；分离；劈开；离开 n. 劈开；裂缝"
+    ]
+  },
+  "spoon": {
+    "word": "spoon",
+    "phonetic": "/spuːn/",
+    "explains": [
+      "n. 匙；勺子；一勺的量 v. 用匙舀；使成匙状"
+    ]
+  },
+  "sport": {
+    "word": "sport",
+    "phonetic": "/spɔːt/",
+    "explains": [
+      "n. 运动；游戏；娱乐；运动会"
+    ]
+  },
+  "spread": {
+    "word": "spread",
+    "phonetic": "/spred/",
+    "explains": [
+      "v. 传播；伸展；散布；展开 n. 传播；伸展；蔓延"
+    ]
+  },
+  "spring": {
+    "word": "spring",
+    "phonetic": "/sprɪŋ/",
+    "explains": [
+      "n. 春天；弹簧；泉水；活力；跳跃 v. 生长；涌出；跃出；裂开"
+    ]
+  },
+  "square": {
+    "word": "square",
+    "phonetic": "/skweə(r)/",
+    "explains": [
+      "adj. 平方的；正方形的；直角的；正直的 n. 平方；正方形；广场"
+    ]
+  },
+  "stage": {
+    "word": "stage",
+    "phonetic": "/steɪdʒ/",
+    "explains": [
+      "n. 阶段；舞台；戏剧；驿站 v. 举行；上演；筹划"
+    ]
+  },
+  "stair": {
+    "word": "stair",
+    "phonetic": "/steə(r)/",
+    "explains": [
+      "n. 楼梯；阶梯；梯级"
+    ]
+  },
+  "stand": {
+    "word": "stand",
+    "phonetic": "/stænd/",
+    "explains": [
+      "v. 站立；位于；停滞 n. 站立；立场；看台；停止"
+    ]
+  },
+  "standard": {
+    "word": "standard",
+    "phonetic": "/ˈstændəd/",
+    "explains": [
+      "n. 标准；水准；旗；度量衡标准 adj. 标准的；合规格的；公认为优秀的"
+    ]
+  },
+  "star": {
+    "word": "star",
+    "phonetic": "/stɑː(r)/",
+    "explains": [
+      "n. 星；恒星；明星；星状物 v. 担任主角；主演"
+    ]
+  },
+  "start": {
+    "word": "start",
+    "phonetic": "/stɑːt/",
+    "explains": [
+      "v. 开始；启动；发动；着手 n. 开始；起点；惊动；抢先"
+    ]
+  },
+  "state": {
+    "word": "state",
+    "phonetic": "/steɪt/",
+    "explains": [
+      "n. 国家；州；情形；状态 v. 规定；声明；陈述；说明"
+    ]
+  },
+  "station": {
+    "word": "station",
+    "phonetic": "/ˈsteɪʃn/",
+    "explains": [
+      "n. 车站；站；驻地；身份；职位"
+    ]
+  },
+  "stay": {
+    "word": "stay",
+    "phonetic": "/steɪ/",
+    "explains": [
+      "v. 停留；坚持；暂住；停下 n. 逗留；停止；支柱"
+    ]
+  },
+  "steal": {
+    "word": "steal",
+    "phonetic": "/stiːl/",
+    "explains": [
+      "v. 偷窃；窃取；偷偷地做；偷窃"
+    ]
+  },
+  "steam": {
+    "word": "steam",
+    "phonetic": "/stiːm/",
+    "explains": [
+      "n. 蒸汽；水汽；蒸汽动力；轮船 v. 蒸；散发；冒热气"
+    ]
+  },
+  "steel": {
+    "word": "steel",
+    "phonetic": "/stiːl/",
+    "explains": [
+      "n. 钢铁；钢制品；坚固 adj. 钢制的；钢铁业的；坚强的"
+    ]
+  },
+  "step": {
+    "word": "step",
+    "phonetic": "/step/",
+    "explains": [
+      "n. 步；脚步；步骤；步伐；梯级 v. 走；迈步；踩；踏上"
+    ]
+  },
+  "stick": {
+    "word": "stick",
+    "phonetic": "/stɪk/",
+    "explains": [
+      "n. 棍；手杖；棒；刺；戳 v. 刺；戳；伸出；粘贴；坚持"
+    ]
+  },
+  "still": {
+    "word": "still",
+    "phonetic": "/stɪl/",
+    "explains": [
+      "adv. 仍然；更；静止地 adj. 静止的；不动的；寂静的"
+    ]
+  },
+  "stomach": {
+    "word": "stomach",
+    "phonetic": "/ˈstʌmək/",
+    "explains": [
+      "n. 胃；腹部；胃口；欲望"
+    ]
+  },
+  "stone": {
+    "word": "stone",
+    "phonetic": "/stəʊn/",
+    "explains": [
+      "n. 石头；石块；宝石；结石"
+    ]
+  },
+  "stop": {
+    "word": "stop",
+    "phonetic": "/stɒp/",
+    "explains": [
+      "v. 停止；堵塞；断绝；中止 n. 停止；车站；障碍；逗留"
+    ]
+  },
+  "store": {
+    "word": "store",
+    "phonetic": "/stɔː(r)/",
+    "explains": [
+      "n. 商店；储备；贮藏；仓库 v. 贮藏；储存；储备；保管"
+    ]
+  },
+  "storm": {
+    "word": "storm",
+    "phonetic": "/stɔːm/",
+    "explains": [
+      "n. 暴风雨；大动荡 v. 起风暴；横冲直撞；狂怒咆哮"
+    ]
+  },
+  "story": {
+    "word": "story",
+    "phonetic": "/ˈstɔːri/",
+    "explains": [
+      "n. 故事；小说；新闻报道；来历；假话"
+    ]
+  },
+  "strange": {
+    "word": "strange",
+    "phonetic": "/streɪndʒ/",
+    "explains": [
+      "adj. 奇怪的；陌生的；外行的"
+    ]
+  },
+  "street": {
+    "word": "street",
+    "phonetic": "/striːt/",
+    "explains": [
+      "n. 街道；大街；道路；adj. 街道的"
+    ]
+  },
+  "strict": {
+    "word": "strict",
+    "phonetic": "/strɪkt/",
+    "explains": [
+      "adj. 严格的；绝对的；精确的；详细的"
+    ]
+  },
+  "strong": {
+    "word": "strong",
+    "phonetic": "/strɒŋ/",
+    "explains": [
+      "adj. 坚强的；强壮的；牢固的；擅长的"
+    ]
+  },
+  "student": {
+    "word": "student",
+    "phonetic": "/ˈstjuːdnt/",
+    "explains": [
+      "n. 学生；学者；研究者"
+    ]
+  },
+  "study": {
+    "word": "study",
+    "phonetic": "/ˈstʌdi/",
+    "explains": [
+      "v./n. 学习；研究；考虑；攻读；细察"
+    ]
+  },
+  "stupid": {
+    "word": "stupid",
+    "phonetic": "/ˈstjuːpɪd/",
+    "explains": [
+      "adj. 愚蠢的；麻木的；乏味的"
+    ]
+  },
+  "subject": {
+    "word": "subject",
+    "phonetic": "/ˈsʌbdʒɪkt/",
+    "explains": [
+      "n. 主题；科目；主语；国民 adj. 服从的；易患… 的；受制于… 的"
+    ]
+  },
+  "succeed": {
+    "word": "succeed",
+    "phonetic": "/səkˈsiːd/",
+    "explains": [
+      "v. 成功；继承；继任；兴旺"
+    ]
+  },
+  "success": {
+    "word": "success",
+    "phonetic": "/səkˈses/",
+    "explains": [
+      "n. 成功；成就；胜利；大获成功的人或事物"
+    ]
+  },
+  "such": {
+    "word": "such",
+    "phonetic": "/sʌtʃ/",
+    "explains": [
+      "adj. 这样的；如此的；如此程度的 adv. 如此地 pron. 这样的人或物"
+    ]
+  },
+  "sugar": {
+    "word": "sugar",
+    "phonetic": "/ˈʃʊɡə(r)/",
+    "explains": [
+      "n. 糖；食糖；甜言蜜语 v. 加糖于；粉饰"
+    ]
+  },
+  "suggest": {
+    "word": "suggest",
+    "phonetic": "/səˈdʒest/",
+    "explains": [
+      "v. 提议；建议；暗示；使想起；推荐"
+    ]
+  },
+  "suit": {
+    "word": "suit",
+    "phonetic": "/suːt/",
+    "explains": [
+      "n. 套装；西装；诉讼；请求 v. 适合；适宜；相配；合身"
+    ]
+  },
+  "summer": {
+    "word": "summer",
+    "phonetic": "/ˈsʌmə(r)/",
+    "explains": [
+      "n. 夏季；全盛时期 v. 避暑；过夏天"
+    ]
+  },
+  "sun": {
+    "word": "sun",
+    "phonetic": "/sʌn/",
+    "explains": [
+      "n. 太阳；阳光；恒星 v. 晒太阳"
+    ]
+  },
+  "sunday": {
+    "word": "Sunday",
+    "phonetic": "/ˈsʌndeɪ/",
+    "explains": [
+      "n. 星期日；礼拜日"
+    ]
+  },
+  "sunny": {
+    "word": "sunny",
+    "phonetic": "/ˈsʌni/",
+    "explains": [
+      "adj. 阳光充足的；晴朗的；和煦的；快活的"
+    ]
+  },
+  "super": {
+    "word": "super",
+    "phonetic": "/ˈsuːpə(r)/",
+    "explains": [
+      "adj. 特级的；极好的；超级的"
+    ]
+  },
+  "supper": {
+    "word": "supper",
+    "phonetic": "/ˈsʌpə(r)/",
+    "explains": [
+      "n. 晚餐；晚饭；夜宵"
+    ]
+  },
+  "support": {
+    "word": "support",
+    "phonetic": "/səˈpɔːt/",
+    "explains": [
+      "v./n. 支持；支撑；支援；扶持；维持"
+    ]
+  },
+  "suppose": {
+    "word": "suppose",
+    "phonetic": "/səˈpəʊz/",
+    "explains": [
+      "v. 假设；认为；推想；猜想；意味着"
+    ]
+  },
+  "sure": {
+    "word": "sure",
+    "phonetic": "/ʃʊə(r)/",
+    "explains": [
+      "adj. 确信的；可靠的；必定的 adv. 当然；的确"
+    ]
+  },
+  "surface": {
+    "word": "surface",
+    "phonetic": "/ˈsɜːfɪs/",
+    "explains": [
+      "n. 表面；表层；外观 adj. 表面的；肤浅的"
+    ]
+  },
+  "surprise": {
+    "word": "surprise",
+    "phonetic": "/səˈpraɪz/",
+    "explains": [
+      "n. 惊奇；诧异；突然袭击 v. 使惊奇；使诧异；突然袭击"
+    ]
+  },
+  "sweater": {
+    "word": "sweater",
+    "phonetic": "/ˈswetə(r)/",
+    "explains": [
+      "n. 毛线衣；运动衫；大量出汗的人；发汗剂"
+    ]
+  },
+  "sweet": {
+    "word": "sweet",
+    "phonetic": "/swiːt/",
+    "explains": [
+      "adj. 甜的；悦耳的；芳香的；亲切的 n. 糖果；乐趣；芳香；宝贝"
+    ]
+  },
+  "swim": {
+    "word": "swim",
+    "phonetic": "/swɪm/",
+    "explains": [
+      "v. 游泳；漂浮；浸；眩晕 n. 游泳；漂浮；眩晕"
+    ]
+  },
+  "sword": {
+    "word": "sword",
+    "phonetic": "/sɔːd/",
+    "explains": [
+      "n. 刀；剑；武力；战争"
+    ]
+  },
+  "system": {
+    "word": "system",
+    "phonetic": "/ˈsɪstəm/",
+    "explains": [
+      "n. 制度；系统；体系；体制；方法"
+    ]
+  }
+}
