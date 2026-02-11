@@ -166,7 +166,7 @@
           {{ index }} SecretKey
           <!--          type="password"-->
           <el-input v-model="item.key"
-                    :disabled="['ollama','deepseek', 'qwen', 'kimi'].includes(index)"
+                    :disabled="['deepseek', 'qwen', 'kimi'].includes(index)"
                     @update:model-value="(val: string) => updateKey(index, 'key', val)"
                     style="width: 185px"
                     :placeholder="'ollama'===index?'模型名如（qwen2.5:0.5b）':['deepseek', 'qwen', 'kimi'].includes(index)?'无需填写':'没有请留空'"/>
@@ -181,7 +181,9 @@
       </div>
       <!--      apiKeys-->
       <div v-for="(item,index) in wordsStore.userOcrApiKeys"
-           :key="index" class="titles">
+           :key="index" class="titles"
+           v-show="index !== 'local'"
+      >
         <span class="shorcut-desc">
           {{ index }} AppKey
           <!--          type="password"-->
