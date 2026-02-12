@@ -30,10 +30,10 @@ import {addWord, batchAddWords} from "@/utils/str-util.ts";
 import {ElMessage} from "element-plus";
 import {ocrTranslate, ocrTranslateMultiPlatform} from "@/utils/pic-translate.ts";
 // import path from "node:path";
-import picData from '../../testdata/picdata.json';
-import baidupicData from '../../testdata/baidupicdata.json';
-import picaliData from '../../testdata/picalidata.json';
-import picTencentData from '../../testdata/picTencentdata.json';
+import picData from '../testdata/picdata.json';
+import baidupicData from '../testdata/baidupicdata.json';
+import picaliData from '../testdata/picalidata.json';
+import picTencentData from '../testdata/picTencentdata.json';
 import OCRSelector from '@/views/Word/components/OCRSelector.vue';
 import TextSelector from '@/views/Word/components/TextSelector.vue';
 import {AppInfo} from "@/config.ts";
@@ -195,33 +195,18 @@ utools.onPluginEnter(async (action) => {
 
   if (action.code === 'jietu') {
     console.log('[截图添加] 插件入口被触发');
-
+    utools.showNotification("截图");
+    ElMessage.success('截图')
     try {
       // 确保主窗口显示
       utools.showMainWindow();
-      // 获取当前选择的翻译平台
-      // const currentPlatform = wordsStore.currentTranslationPlatform || 'youdao';
-      // const currentPlatform = wordsStore.currentOcrPlatform || 'youdao';
-      //
-      // // 检查是否超出了每日使用限制（如果没有自定义API密钥）
-      // if (!hasCustomApiKey(currentPlatform)) {
-      //   // 截图翻译使用独立的计数
-      //   if (isOverDailyLimit('ocr')) {
-      //     const usedCount = getCurrentUsageCount('ocr');
-      //     ElMessage.error(`每日免费截图翻译次数已达上限 (${usedCount}/${USAGE_LIMITS.OCR_DAILY_LIMIT} 次)，请设置自定义API密钥以继续使用`);
-      //     return;
-      //   }
-      // }
-      // 这里只应该返回  文本  具体添加的时候，还会单独翻译，这两个不在一个模块，不相互影响
-      const result = await ocrTranslateMultiPlatform();
-      // const result = {
-      //   youdao: picData,
-      //   baidu: baidupicData,
-      //   ali: picaliData,
-      //   tencent: picTencentData,
-      // }[currentPlatform];
+      console.log('[截图添加] 主窗口已显示');
 
-      console.log('[截图添加] OCR结果:', result);
+      // 这里只应该返回  文本  具体添加的时候，还会单独翻译，这两个不在一个模块，不相互影响
+      console.log('[截图添加] 开始调用 ocrTranslateMultiPlatform...');
+      const result = await ocrTranslateMultiPlatform();
+
+      console.log('[截图添加] OCR结果:', JSON.stringify(result));
 
       // 处理错误情况
       if (result.errorCode !== '0') {
@@ -233,7 +218,8 @@ utools.onPluginEnter(async (action) => {
           return;
         }
         if (result.errorCode === 'LOCAL_OCR_FAILED') {
-          ElMessage.error('本地OCR识别失败，请尝试使用云端OCR');
+          console.error('[截图添加] 本地OCR失败详情:', result.errorMessage);
+          ElMessage.error(`本地OCR识别失败: ${result.errorMessage || '请尝试使用云端OCR'}`);
           return;
         }
 
@@ -254,14 +240,14 @@ utools.onPluginEnter(async (action) => {
         ElMessage.warning('OCR识别结果为空，请检查图片内容');
         return;
       }
-
-      // preview.value = URL.createObjectURL(blob)
     } catch (err: any) {
+      console.error('[截图添加] 捕获到错误:', err);
       // 检查是否是使用次数超限的错误
-      if (err.message && err.message.includes('每日免费使用次数已达上限')) {
+      if (err.message && err.message.includes('每日免费')) {
         ElMessage.error(err.message);
       } else {
-        alert(err.message || '翻译失败')
+        // 使用 ElMessage 替代 alert，在 uTools 环境中更可靠
+        ElMessage.error(err.message || '截图识别失败，请检查网络连接或OCR配置');
       }
     }
   }
@@ -315,11 +301,12 @@ function displayOCRResults(resRegions: any[]) {
   console.log('[截图添加] displayOCRResults 被调用，结果数:', resRegions?.length || 0);
 
   // 确保主窗口显示
-  utools.showMainWindow();
+  // utools.showMainWindow();
+  // console.log('[截图添加] 主窗口显示状态已确认');
 
   // 存储OCR结果
   ocrResults.value = resRegions;
-  console.log('[截图添加] ocrResults 已设置:', ocrResults.value);
+  // console.log('[截图添加] ocrResults 已设置:', JSON.stringify(ocrResults.value));
 
   // 显示选择面板
   showOCRPanel.value = true;
