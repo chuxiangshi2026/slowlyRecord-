@@ -781,7 +781,12 @@ const startScreenCapture = async () => {
     ocrLoading.value = false
 
     if (result.errorCode !== '0') {
-      ocrError.value = '识别失败，请检查OCR配置或重试'
+      // 显示具体的错误信息（如果有）
+      if (result.errorMessage) {
+        ocrError.value = result.errorMessage;
+      } else {
+        ocrError.value = '识别失败，请检查OCR配置或重试';
+      }
       return;
     }
 
