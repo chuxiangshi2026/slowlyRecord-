@@ -97,13 +97,12 @@ export async function ocrTranslate(
 
 // 新增：多平台OCR翻译函数
 export async function ocrTranslateMultiPlatform(): Promise<OcrResult> {
-    console.log('[OCR] 开始多平台OCR翻译流程');
 
     const wordsStore = useWordsStore();
     const ocrPlatform = wordsStore.currentOcrPlatform || 'tencent';
 
     // 添加调试日志
-    console.log('[OCR] 当前OCR平台:', ocrPlatform);
+    // console.log('[OCR] 当前OCR平台:', ocrPlatform);
     console.log('[OCR] Store中的currentOcrPlatform:', wordsStore.currentOcrPlatform);
 
     // 检查是否超出了每日使用限制（本地OCR不记次数）
@@ -125,23 +124,26 @@ export async function ocrTranslateMultiPlatform(): Promise<OcrResult> {
 
     // const {appkey, key} = getTranslationApiKey(platform);
     const {appkey, key} = getOcrApiKey(ocrPlatform);
-    console.log('[OCR] API密钥状态:', { appkey: appkey ? '已设置' : '未设置', key: key ? '已设置' : '未设置' });
+    // console.log('[OCR] API密钥状态:', { appkey: appkey ? '已设置' : '未设置', key: key ? '已设置' : '未设置' });
 
     // 将 utools.screenCapture 包装为 Promise
     return new Promise((resolve, reject) => {
-        console.log('[OCR] 调用utools.screenCapture...');
+        // console.log('[OCR] 调用utools.screenCapture...');
         utools.screenCapture(async (image) => {
             console.log('[OCR] 截图回调触发，图片数据长度:', image ? image.length : 0);
             if (!image) {
+                // 用户取消截图，显示窗口让用户可以继续操作
                 console.error('[OCR] 截图取消或失败');
+                utools.showMainWindow();
                 reject(new Error('截图取消或失败'));
                 return;
             }
+            // 截图成功，让App.vue控制窗口显示
 
             try {
                 // 去除 data:image/png;base64, 前缀
                 const base64 = image.includes(',') ? image.split(',')[1] : image;
-                console.log('[OCR] 开始调用平台:', ocrPlatform);
+                // console.log('[OCR] 开始调用平台:', ocrPlatform);
 
                 let result: OcrResult;
                 if (ocrPlatform === 'youdao') {
@@ -159,7 +161,7 @@ export async function ocrTranslateMultiPlatform(): Promise<OcrResult> {
                 } else {
                     result = { errorCode: '500', resRegions: [] };
                 }
-                console.log('[OCR] 平台返回结果:', { errorCode: result.errorCode, resRegionsCount: result.resRegions?.length || 0 });
+                // console.log('[OCR] 平台返回结果:', { errorCode: result.errorCode, resRegionsCount: result.resRegions?.length || 0 });
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -799,6 +801,238 @@ function isUTools(): boolean {
     return typeof utools !== 'undefined' && !!utools.getPath;
 }
 
+// Worker 缓存 - 避免重复创建
+let cachedWorker: any = null;
+let cachedWorkerPromise: Promise<any> | null = null;
+let lastUsedTime = 0;
+const WORKER_IDLE_TIMEOUT = 5 * 60 * 1000; // 5分钟无使用则释放
+
+// IndexedDB 缓存名称
+const CACHE_DB_NAME = 'SlowlyRecord_OCR_Cache';
+const CACHE_STORE_NAME = 'worker_scripts';
+const CACHE_KEY = 'worker_bundle';
+
+/**
+ * 打开 IndexedDB
+ */
+function openCacheDB(): Promise<IDBDatabase> {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(CACHE_DB_NAME, 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = (event) => {
+            const db = (event.target as IDBOpenDBRequest).result;
+            if (!db.objectStoreNames.contains(CACHE_STORE_NAME)) {
+                db.createObjectStore(CACHE_STORE_NAME);
+            }
+        };
+    });
+}
+
+/**
+ * 检查 uTools 缓存标记
+ */
+function hasUToolsCache(): boolean {
+    try {
+        const timestamp = utools.dbStorage.getItem('ocr_worker_cache_time');
+        if (timestamp && Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+            return true;
+        }
+    } catch (e) {
+        // 忽略错误
+    }
+    return false;
+}
+
+/**
+ * 设置 uTools 缓存标记
+ */
+function setUToolsCacheMarker(): void {
+    try {
+        utools.dbStorage.setItem('ocr_worker_cache_time', Date.now());
+    } catch (e) {
+        // 忽略错误
+    }
+}
+
+/**
+ * 从 IndexedDB 读取缓存
+ */
+async function getCachedScripts(): Promise<{ worker: string, core: string, lang: string, version: number } | null> {
+    // 先检查 uTools 标记（更快）
+    if (!hasUToolsCache()) {
+        debugLog('[本地OCR] uTools 缓存标记不存在');
+        return null;
+    }
+
+    try {
+        const db = await openCacheDB();
+        const transaction = db.transaction(CACHE_STORE_NAME, 'readonly');
+        const store = transaction.objectStore(CACHE_STORE_NAME);
+        const request = store.get(CACHE_KEY);
+
+        return new Promise((resolve, reject) => {
+            request.onsuccess = () => {
+                const result = request.result;
+                if (result) {
+                    debugLog('[本地OCR] 从 IndexedDB 读取缓存成功');
+                    resolve(result);
+                } else {
+                    resolve(null);
+                }
+            };
+            request.onerror = () => reject(request.error);
+        });
+    } catch (e) {
+        debugLog('[本地OCR] 读取 IndexedDB 缓存失败:', e);
+        return null;
+    }
+}
+
+/**
+ * 保存到 IndexedDB 缓存
+ */
+async function saveCachedScripts(workerCode: string, coreCode: string, langDataBase64: string): Promise<void> {
+    try {
+        const db = await openCacheDB();
+        const transaction = db.transaction(CACHE_STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(CACHE_STORE_NAME);
+        const data = {
+            worker: workerCode,
+            core: coreCode,
+            lang: langDataBase64,
+            version: 1,
+            timestamp: Date.now()
+        };
+        await new Promise((resolve, reject) => {
+            const request = store.put(data, CACHE_KEY);
+            request.onsuccess = () => resolve(undefined);
+            request.onerror = () => reject(request.error);
+        });
+        debugLog('[本地OCR] 保存到 IndexedDB 缓存成功');
+    } catch (e) {
+        debugLog('[本地OCR] 保存到 IndexedDB 缓存失败:', e);
+    }
+}
+
+/**
+ * 获取或创建 Worker（带缓存）
+ */
+async function getOrCreateWorker(): Promise<any> {
+    const now = Date.now();
+
+    // 检查缓存的 Worker 是否可用
+    if (cachedWorker) {
+        lastUsedTime = now;
+        debugLog('[本地OCR] ⚡ 使用缓存的 Worker（快速识别）');
+        return cachedWorker;
+    }
+
+    // 如果正在创建中，等待创建完成
+    if (cachedWorkerPromise) {
+        debugLog('[本地OCR] ⏳ 等待 Worker 创建完成...');
+        cachedWorker = await cachedWorkerPromise;
+        lastUsedTime = now;
+        cachedWorkerPromise = null;
+        return cachedWorker;
+    }
+
+    // 创建新的 Worker
+    debugLog('[本地OCR] 🐌 首次创建 Worker（需要加载资源，较慢）');
+    cachedWorkerPromise = createWorkerInternal();
+    cachedWorker = await cachedWorkerPromise;
+    lastUsedTime = now;
+    cachedWorkerPromise = null;
+
+    // 设置自动清理定时器
+    scheduleWorkerCleanup();
+
+    return cachedWorker;
+}
+
+/**
+ * 内部创建 Worker 的方法
+ */
+async function createWorkerInternal(): Promise<any> {
+    const { createWorker } = await import('tesseract.js');
+
+    debugLog('[本地OCR] 创建 Worker，尝试读取缓存...');
+
+    // 先尝试从 IndexedDB 读取缓存
+    const cached = await getCachedScripts();
+
+    let workerCode: string;
+    let coreCode: string;
+    let langDataBase64: string;
+
+    if (cached) {
+        // 使用缓存的脚本
+        debugLog('[本地OCR] 使用 IndexedDB 缓存的脚本');
+        workerCode = cached.worker;
+        coreCode = cached.core;
+        langDataBase64 = cached.lang;
+    } else {
+        // 从文件加载
+        debugLog('[本地OCR] 缓存不存在，从文件加载资源...');
+        const [workerData, coreData, langData] = await Promise.all([
+            readLocalFile('./worker.min.js'),
+            readLocalFile('./tesseract-core-simd-lstm.wasm.js'),
+            readLocalFile('./tessdata/eng.traineddata')
+        ]);
+
+        // 将文件内容转为字符串
+        workerCode = new TextDecoder().decode(workerData);
+        coreCode = new TextDecoder().decode(coreData);
+        langDataBase64 = arrayBufferToBase64(langData);
+
+        // 保存到 IndexedDB 缓存
+        await saveCachedScripts(workerCode, coreCode, langDataBase64);
+        // 设置 uTools 缓存标记
+        setUToolsCacheMarker();
+    }
+
+    // 创建内联 Worker 脚本
+    const workerUrl = createInlineWorkerScript(workerCode, coreCode, langDataBase64);
+
+    // 创建 worker 配置
+    const workerConfig: any = {
+        workerPath: workerUrl,
+        corePath: '',
+        logger: (m: any) => {
+            if (m.status === 'recognizing text') {
+                debugLog(`[本地OCR] 进度: ${(m.progress * 100).toFixed(1)}%`);
+            }
+        },
+        errorHandler: (err: any) => {
+            debugLog('[本地OCR] Worker 错误:', err);
+        }
+    };
+
+    // 创建 worker
+    // @ts-ignore
+    const worker = await createWorker(undefined, 1, workerConfig);
+
+    // 等待初始化完成
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await worker.reinitialize('eng');
+
+    debugLog('[本地OCR] Worker 创建并初始化完成');
+    return worker;
+}
+
+/**
+ * 定时清理 Worker
+ */
+function scheduleWorkerCleanup() {
+    setTimeout(() => {
+        if (cachedWorker && Date.now() - lastUsedTime > WORKER_IDLE_TIMEOUT) {
+            debugLog('[本地OCR] Worker 空闲超时，释放资源');
+            cachedWorker.terminate();
+            cachedWorker = null;
+        }
+    }, WORKER_IDLE_TIMEOUT);
+}
+
 /**
  * 写入日志到文件（用于打包后调试）
  */
@@ -939,105 +1173,26 @@ ${workerCode}
 
 async function ocrTranslateLocal(base64: string, translatePlatform: TranslationPlatform = 'local'): Promise<OcrResult> {
     let worker: any = null;
+    const startTime = Date.now();
 
     try {
-        // 动态导入 tesseract.js
-        const { createWorker } = await import('tesseract.js');
-
         // 将 base64 转换为 data URL
         const imageUrl = `data:image/png;base64,${base64}`;
 
-        debugLog('[本地OCR] 是否在 uTools 环境:', isUTools());
-        debugLog('[本地OCR] 当前路径:', window.location.href);
-
-        // 预加载所有资源文件
-        debugLog('[本地OCR] 开始预加载资源文件...');
-        let workerData: ArrayBuffer, coreData: ArrayBuffer, langData: ArrayBuffer;
-        try {
-            [workerData, coreData, langData] = await Promise.all([
-                readLocalFile('./worker.min.js'),
-                readLocalFile('./tesseract-core-simd-lstm.wasm.js'),
-                readLocalFile('./tessdata/eng.traineddata')
-            ]);
-            debugLog('[本地OCR] 文件大小 - worker:', workerData.byteLength, 'core:', coreData.byteLength, 'lang:', langData.byteLength);
-        } catch (fileError: any) {
-            debugLog('[本地OCR] 读取文件失败:', fileError);
-            return {
-                errorCode: 'LOCAL_OCR_FILE_READ_FAILED',
-                errorMessage: '读取 OCR 资源文件失败: ' + (fileError?.message || '未知错误'),
-                resRegions: []
-            };
-        }
-
-        // 将文件内容转为字符串
-        const workerCode = new TextDecoder().decode(workerData);
-        const coreCode = new TextDecoder().decode(coreData);
-
-        // 将语言数据转为 base64
-        const langDataBase64 = arrayBufferToBase64(langData);
-
-        // 创建内联 Worker 脚本（合并 worker、core 和语言数据）
-        const workerUrl = createInlineWorkerScript(workerCode, coreCode, langDataBase64);
-
-        debugLog('[本地OCR] 所有资源加载完成，内联 Worker（含语言数据）创建成功');
-
-        // 创建 worker 配置
-        // workerPath 指向内联脚本，corePath 留空（已内联）
-        const workerConfig: any = {
-            workerPath: workerUrl,
-            corePath: '',  // core 已内联在 worker 中
-            logger: (m: any) => {
-                debugLog('[本地OCR] Worker 日志:', m);
-            },
-            errorHandler: (err: any) => {
-                debugLog('[本地OCR] Worker 错误:', err);
-            }
-        };
-
-        debugLog('[本地OCR] 创建 Worker...');
-
-        // 创建 worker（不指定语言，稍后手动加载）
-        // @ts-ignore - Tesseract.js 允许不传语言
-        try {
-            worker = await createWorker(undefined, 1, workerConfig);
-        } catch (workerError: any) {
-            debugLog('[本地OCR] 创建 Worker 失败:', workerError);
-            debugLog('[本地OCR] 错误堆栈:', workerError?.stack);
-
-            return {
-                errorCode: 'LOCAL_OCR_INIT_FAILED',
-                errorMessage: '本地 OCR 引擎启动失败: ' + (workerError?.message || '未知错误'),
-                resRegions: []
-            };
-        }
-
-        debugLog('[本地OCR] Worker 创建成功（语言数据已内联）');
-
-        // 等待语言数据注入完成
-        debugLog('[本地OCR] 等待初始化...');
-        try {
-            // 等待一小段时间让语言数据注入完成
-            await new Promise(resolve => setTimeout(resolve, 100));
-            // 初始化语言（语言数据已经在 Worker FS 中）
-            await worker.initialize('eng');
-            debugLog('[本地OCR] 语言初始化成功');
-        } catch (initError: any) {
-            debugLog('[本地OCR] 初始化语言失败:', initError);
-            await worker.terminate();
-            return {
-                errorCode: 'LOCAL_OCR_INIT_LANG_FAILED',
-                errorMessage: '初始化语言失败: ' + (initError?.message || '未知错误'),
-                resRegions: []
-            };
-        }
+        // 获取缓存的 Worker（首次会创建）
+        worker = await getOrCreateWorker();
+        const workerReadyTime = Date.now();
+        debugLog(`[本地OCR] Worker 准备耗时: ${workerReadyTime - startTime}ms`);
 
         debugLog('[本地OCR] 开始识别...');
+        const recognizeStartTime = Date.now();
         let result: any;
         try {
             result = await worker.recognize(imageUrl);
         } catch (recognizeError: any) {
             debugLog('[本地OCR] 识别失败:', recognizeError);
-            await worker.terminate();
+            // 识别失败时重置 Worker，下次会重新创建
+            cachedWorker = null;
             return {
                 errorCode: 'LOCAL_OCR_RECOGNIZE_FAILED',
                 errorMessage: `识别失败: ${recognizeError?.message || '未知错误'}`,
@@ -1045,17 +1200,19 @@ async function ocrTranslateLocal(base64: string, translatePlatform: TranslationP
             };
         }
 
+        const recognizeEndTime = Date.now();
+        debugLog(`[本地OCR] 识别耗时: ${recognizeEndTime - recognizeStartTime}ms`);
+        debugLog(`[本地OCR] 总耗时: ${recognizeEndTime - startTime}ms`);
         debugLog('[本地OCR] 识别完成:', result.data.text);
 
-        // 清理资源
-        await worker.terminate();
+        // 不再 terminate，保留 Worker 供下次使用
 
         const text = result.data.text?.trim();
-        ElMessage.success({ message: '识别结果: ' + text, duration: 10000 })
+        // ElMessage.success({ message: '识别结果: ' + text, duration: 10000 })
 
         if (text) {
-            debugLog('[本地OCR] 识别文本:', text);
-            debugLog('[本地OCR] 翻译平台:', translatePlatform);
+            // debugLog('[本地OCR] 识别文本:', text);
+            // debugLog('[本地OCR] 翻译平台:', translatePlatform);
 
             let translatedText: string;
 
@@ -1063,7 +1220,7 @@ async function ocrTranslateLocal(base64: string, translatePlatform: TranslationP
                 // 使用本地词典翻译
                 const {translateWithLocalDictionaryAsync} = await import('./local-dictionary');
                 const translationResult = await translateWithLocalDictionaryAsync(text);
-                debugLog('[本地OCR] 本地翻译结果:', translationResult);
+                // debugLog('[本地OCR] 本地翻译结果:', translationResult);
                 translatedText = translationResult.success
                     ? (translationResult.explains || '')
                     : text; // 翻译失败时显示原文
@@ -1073,9 +1230,9 @@ async function ocrTranslateLocal(base64: string, translatePlatform: TranslationP
                     const {translateWithPlatform} = await import('./translation-api');
                     const translationResult = await translateWithPlatform(text, translatePlatform);
                     translatedText = translationResult.explains || text;
-                    console.log('[本地OCR] 平台翻译结果:', translatedText);
+                    // console.log('[本地OCR] 平台翻译结果:', translatedText);
                 } catch (error) {
-                    console.error('[本地OCR] 平台翻译失败，使用原文:', error);
+                    // console.error('[本地OCR] 平台翻译失败，使用原文:', error);
                     translatedText = text;
                 }
             }
@@ -1097,10 +1254,10 @@ async function ocrTranslateLocal(base64: string, translatePlatform: TranslationP
             };
         }
     } catch (error: any) {
-        console.error('[本地OCR] 识别失败:', error);
+        // console.error('[本地OCR] 识别失败:', error);
         const errorMessage = error?.message || String(error) || '未知错误';
 
-        ElMessage.error({ message: '[本地OCR] 识别失败: ' + errorMessage, duration: 20000 });
+        // ElMessage.error({ message: '[本地OCR] 识别失败: ' + errorMessage, duration: 20000 });
 
         return {
             errorCode: 'LOCAL_OCR_FAILED',
@@ -1108,4 +1265,17 @@ async function ocrTranslateLocal(base64: string, translatePlatform: TranslationP
             resRegions: []
         };
     }
+}
+
+/**
+ * 预加载 Worker（在页面加载时调用）
+ * 这样用户第一次截图时 Worker 已经准备好了
+ */
+export function preloadWorker() {
+    debugLog('[本地OCR] 页面加载，预创建 Worker...');
+    getOrCreateWorker().then(() => {
+        debugLog('[本地OCR] Worker 预创建完成，下次识别将秒开');
+    }).catch(err => {
+        debugLog('[本地OCR] Worker 预创建失败:', err);
+    });
 }

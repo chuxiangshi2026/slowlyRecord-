@@ -36,7 +36,7 @@ import {useWordsStore} from "@/stores/words.ts";
 import {DEFAULT_INTERVALS, USAGE_LIMITS} from "@/constants";
 import {addWord, batchAddWords} from "@/utils/str-util.ts";
 import {ElMessage} from "element-plus";
-import {ocrTranslate, ocrTranslateMultiPlatform} from "@/utils/pic-translate.ts";
+import {ocrTranslate, ocrTranslateMultiPlatform, preloadWorker} from "@/utils/pic-translate.ts";
 // import path from "node:path";
 import picData from '../testdata/picdata.json';
 import baidupicData from '../testdata/baidupicdata.json';
@@ -207,19 +207,15 @@ utools.onPluginEnter(async (action) => {
   }
 
   if (action.code === 'jietu') {
-    console.log('[截图添加] 插件入口被触发');
-    utools.showNotification("截图");
-    ElMessage.success('截图')
     try {
-      // 确保主窗口显示
-      utools.showMainWindow();
-      console.log('[截图添加] 主窗口已显示');
+      // 先隐藏主窗口，确保截图时看不到界面
+      utools.hideMainWindow();
+      // 等待一下确保窗口已隐藏
+      await new Promise(r => setTimeout(r, 100));
 
       // 这里只应该返回  文本  具体添加的时候，还会单独翻译，这两个不在一个模块，不相互影响
-      console.log('[截图添加] 开始调用 ocrTranslateMultiPlatform...');
       const result = await ocrTranslateMultiPlatform();
 
-      console.log('[截图添加] OCR结果:', JSON.stringify(result));
 
       // 处理错误情况
       if (result.errorCode !== '0') {
@@ -232,7 +228,7 @@ utools.onPluginEnter(async (action) => {
         }
         if (result.errorCode === 'LOCAL_OCR_FAILED') {
           console.error('[截图添加] 本地OCR失败详情:', result.errorMessage);
-          ElMessage.error(`本地OCR识别失败: ${result.errorMessage || '请尝试使用云端OCR'}`);
+          // ElMessage.error(`本地OCR识别失败: ${result.errorMessage || '请尝试使用云端OCR'}`);
           return;
         }
 
@@ -255,9 +251,13 @@ utools.onPluginEnter(async (action) => {
       }
     } catch (err: any) {
       console.error('[截图添加] 捕获到错误:', err);
+      // 发生错误或取消时，显示主窗口让用户可以继续操作
+      utools.showMainWindow();
       // 检查是否是使用次数超限的错误
       if (err.message && err.message.includes('每日免费')) {
         ElMessage.error(err.message);
+      } else if (err.message && err.message.includes('截图取消')) {
+        // 用户取消，静默处理
       } else {
         // 使用 ElMessage 替代 alert，在 uTools 环境中更可靠
         ElMessage.error(err.message || '截图识别失败，请检查网络连接或OCR配置');
@@ -313,9 +313,9 @@ utools.onPluginEnter(async (action) => {
 function displayOCRResults(resRegions: any[]) {
   console.log('[截图添加] displayOCRResults 被调用，结果数:', resRegions?.length || 0);
 
-  // 确保主窗口显示
-  // utools.showMainWindow();
-  // console.log('[截图添加] 主窗口显示状态已确认');
+  // 识别成功，显示主窗口让用户查看结果
+  utools.showMainWindow();
+  console.log('[截图添加] 主窗口已显示');
 
   // 存储OCR结果
   ocrResults.value = resRegions;
@@ -503,6 +503,27 @@ onMounted(() => {
   // 首页刷新时触发   自动更新需要复习的单词
   updateReview();
 
+  // 预加载本地 OCR Worker（如果用户选择了本地 OCR）
+  const wordsStore = useWordsStore();
+  if (wordsStore.currentOcrPlatform === 'local') {
+    setTimeout(() => {
+      preloadWorker();
+    }, 1000); // 延迟1秒，让页面先完成渲染
+  }
+
+  // 添加调试面板快捷键 Ctrl+Shift+D
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+      showDebugPanel.value = !showDebugPanel.value;
+      e.preventDefault();
+    }
+  };
+   window.addEventListener('keydown', handleKeyDown);
+
+  // 清理函数
+  onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+  });
 
   // window.addEventListener('selected-text', handleSelectedText as EventListener);
 

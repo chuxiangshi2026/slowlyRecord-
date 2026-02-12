@@ -15,7 +15,7 @@
       </div>
     </div>
   </div>
-  <button v-else class="debug-toggle" @click="$emit('open')">🐛</button>
+  <!-- 调试入口已隐藏，可通过快捷键 Ctrl+Shift+D 打开 -->
 </template>
 
 <script setup lang="ts">
