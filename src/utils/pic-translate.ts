@@ -122,7 +122,11 @@ export async function ocrTranslateMultiPlatform(): Promise<OcrResult> {
     // const {appkey, key} = getTranslationApiKey(platform);
     const {appkey, key} = getOcrApiKey(ocrPlatform);
     // console.log('[OCR] API密钥状态:', { appkey: appkey ? '已设置' : '未设置', key: key ? '已设置' : '未设置' });
-    utools.hideMainWindow();
+    let b = utools.hideMainWindow();
+    if (!b) {
+        // window.close()
+        utools.sendToParent('close')
+    }
     // 将 utools.screenCapture 包装为 Promise
     return new Promise((resolve, reject) => {
         // console.log('[OCR] 调用utools.screenCapture...');

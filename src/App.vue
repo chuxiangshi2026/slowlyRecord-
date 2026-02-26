@@ -82,16 +82,16 @@ utools.onPluginEnter(async (action) => {
     if (setDb.keys) {
       // 为每个翻译平台提供默认空值
       const defaultKeys = {
-        tencent: { appkey: '', key: '' },
-        ali: { appkey: '', key: '' },
-        youdao: { appkey: '', key: '' },
-        baidu: { appkey: '', key: '' },
-        utoolsai: { appkey: '', key: '' },
-        ollama: { appkey: '', key: '' },
-        deepseek: { appkey: '', key: '' },
-        qwen: { appkey: '', key: '' },
-        kimi: { appkey: '', key: '' },
-        local: { appkey: '', key: '' }
+        tencent: {appkey: '', key: ''},
+        ali: {appkey: '', key: ''},
+        youdao: {appkey: '', key: ''},
+        baidu: {appkey: '', key: ''},
+        utoolsai: {appkey: '', key: ''},
+        ollama: {appkey: '', key: ''},
+        deepseek: {appkey: '', key: ''},
+        qwen: {appkey: '', key: ''},
+        kimi: {appkey: '', key: ''},
+        local: {appkey: '', key: ''}
       };
 
       // 合并用户设置的密钥和默认值
@@ -104,11 +104,11 @@ utools.onPluginEnter(async (action) => {
     if (setDb.ocrKeys) {
       // 为OCR平台提供默认空值
       const defaultOcrKeys = {
-        ali: { appkey: '', key: '' },
-        youdao: { appkey: '', key: '' },
-        baidu: { appkey: '', key: '' },
-        tencent: { appkey: '', key: '' },
-        local: { appkey: '', key: '' }
+        ali: {appkey: '', key: ''},
+        youdao: {appkey: '', key: ''},
+        baidu: {appkey: '', key: ''},
+        tencent: {appkey: '', key: ''},
+        local: {appkey: '', key: ''}
       };
 
       // 合并用户设置的OCR密钥和默认值
@@ -118,7 +118,6 @@ utools.onPluginEnter(async (action) => {
       } as Record<OcrPlatform, { appkey: string; key: string }>;
     }
   }
-
 
 
   // { code, type, payload, option, from }
@@ -197,13 +196,17 @@ utools.onPluginEnter(async (action) => {
   if (action.code === 'huaduan' && action.from == 'main') {
     console.log('[划段添加] 通过主界面触发');
     getSelectedTextFromSystem().then(async (text) => {
-          console.log('[划段添加] 获取到文本:', text);
-          // 显示文本选择面板
-          await displayTextSelection(text);
-        }).catch(error => {
-          console.error('[划段添加] 获取文本失败:', error);
-          ElMessage.error('获取选中文本失败，请重试');
-        });
+      console.log('[划段添加] 获取到文本:', text);
+      if (text === '使用此功能，请先关闭自动分离') {
+        ElMessage.error('使用此功能，请先关闭自动分离');
+        return;
+      }
+      // 显示文本选择面板
+      await displayTextSelection(text);
+    }).catch(error => {
+      console.error('[划段添加] 获取文本失败:', error);
+      ElMessage.error('获取选中文本失败，请重试');
+    });
   }
 
   if (action.code === 'jietu') {
@@ -272,6 +275,7 @@ utools.onPluginEnter(async (action) => {
 
 
 })
+
 /**
  * 显示调试信息（控制台 + 日志文件 + DebugPanel）
  */
@@ -301,6 +305,7 @@ function logToFile(message: string) {
     // 忽略日志写入错误
   }
 }
+
 /**
  * 检测是否在 uTools 环境中
  */
@@ -448,8 +453,17 @@ async function getSelectedTextFromSystem(): Promise<string> {
   // 清空剪贴板，避免读到旧内容
   utools.copyText('')
 
-  utools.hideMainWindow();
-
+  let b = utools.hideMainWindow();
+  if (!b) {
+    if (utools.getWindowType() === "detach") {
+      // utools.showNotification("使用此功能，请先关闭自动分离");
+      // ElMessage.warning('使用此功能，请先关闭自动分离');
+      return '使用此功能，请先关闭自动分离';
+    }
+    // utools.sendToParent('close')
+    // debugLog('关闭窗口...')
+  }
+  debugLog('开始静默获取选中文本...')
   // 增加延迟，确保焦点恢复到原窗口
   await new Promise(r => setTimeout(r, 300));
 
@@ -459,19 +473,21 @@ async function getSelectedTextFromSystem(): Promise<string> {
   // 根据平台选择修饰键
   const modifier = isMac ? "command" : "ctrl";
   utools.simulateKeyboardTap("c", modifier);
+  debugLog('发送快捷键...')
 
   // 增加延迟，等待系统完成复制操作
   await new Promise(resolve => setTimeout(resolve, 300));
 
   utools.showMainWindow();
 
+  debugLog('显示主界面...')
   // 再次延迟，确保剪贴板数据已更新
   await new Promise(resolve => setTimeout(resolve, 200));
 
   // 读取剪贴板
   const selectedText = await navigator.clipboard.readText();
 
-  console.log('[划段添加] 获取到的文本:', selectedText);
+  debugLog('[划段添加] 获取到的文本:', selectedText);
 
   return selectedText;
 }
@@ -482,6 +498,10 @@ async function getSelectedTextFromSystem(): Promise<string> {
  * @param text
  */
 function checkShearBoardAddWork(text: string) {
+  if (text === '使用此功能，请先关闭自动分离') {
+    ElMessage.error('使用此功能，请先关闭自动分离');
+    return;
+  }
   // 去除首尾空格并替换多个连续空格为单个空格
   let processedText = text.trim().replace(/\s{2,}/g, ' ');
 
@@ -550,7 +570,7 @@ onMounted(() => {
       e.preventDefault();
     }
   };
-   window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keydown', handleKeyDown);
 
   // 清理函数
   onUnmounted(() => {
