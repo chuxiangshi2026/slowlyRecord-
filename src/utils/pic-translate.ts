@@ -977,7 +977,7 @@ async function createWorkerInternal(): Promise<any> {
         const [workerData, coreData, langData] = await Promise.all([
             readLocalFile('./worker.min.js'),
             readLocalFile('./tesseract-core-simd-lstm.wasm.js'),
-            readLocalFile('./tessdata/eng.traineddata')
+            readLocalFile('./tessdata/eng.traineddata.fast')
         ]);
 
         // 将文件内容转为字符串
