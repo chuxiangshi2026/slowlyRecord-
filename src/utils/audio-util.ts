@@ -81,8 +81,10 @@ const downloadAudioAttempt = async (url: string, wordId: string, skipProcessing:
     try {
         console.log('开始下载音频:', url.substring(0, 100));
 
-        const response = await fetch(url);
-        
+        const response = await fetch(url, {
+            credentials: 'omit', // 不发送 Cookie，避免 SameSite 警告
+        });
+
         // 检查响应状态
         if (!response.ok) {
             console.error('下载失败:', response.status, response.statusText);
