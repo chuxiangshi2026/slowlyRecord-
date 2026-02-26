@@ -285,7 +285,11 @@ const showFilteredWords = computed(() => {
 
 // 获取在原始列表中的索引
 const getIndexInOriginalList = (item: Word) => {
-  return wordsStore.words.findIndex(word => word.text === item.text)
+  const index = wordsStore.words.findIndex(word => word._id === item._id);
+  if (index === -1) {
+    console.error('找不到单词索引:', item._id, item.text);
+  }
+  return index;
 }
 
 /*
@@ -522,6 +526,10 @@ const initWord = () => {
  * 删除单词
  */
 const deleteWord = (index: number) => {
+  if (index < 0) {
+    console.error('删除单词失败：无效的索引', index);
+    return;
+  }
   wordsStore.deleteWord(index)
 }
 

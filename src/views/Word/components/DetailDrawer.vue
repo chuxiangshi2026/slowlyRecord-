@@ -71,6 +71,26 @@
       </div>
     </div>
 
+
+
+    <div>
+      <div class="setting-item">
+        <div class="content">记忆牢固度</div>
+        <el-select class="shorcut-desc" v-model="wordsStore.memoryFirmness"
+                   @change="wordsStore.setMemoryFirmness"
+                   placeholder="选择"
+                   style="width:100px">
+          <el-option
+              v-for="item in memoryFirmnessOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+          />
+        </el-select>
+      </div>
+    </div>
+
+
     <div class="titles">
       <div class="setting-item">
         <div class="content">启用快捷键</div>
@@ -413,6 +433,9 @@ const kuaijiejian = (type: number) => {
 
 
 let wordsStore = useWordsStore();
+
+// 记忆牢固度选项
+const memoryFirmnessOptions = ['正常' , '较强' , '极强'];
 
 const ocrOptions = [
   {

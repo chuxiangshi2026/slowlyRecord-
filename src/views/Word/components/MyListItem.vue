@@ -86,6 +86,9 @@ const wordModel = defineModel<Word>({required: true})
 
 const emit = defineEmits(['translation', 'remember', 'forget', 'delete'])
 
+// 删除锁，防止连续点击
+const isDeleting = ref(false)
+
 
 import {DEFAULT_INTERVALS} from "@/constants";
 // import {useUsersStore} from "@/stores/users.ts";
@@ -502,7 +505,7 @@ const remember = () => {
   }
 
 
-  //更新复习时间  ,todo 如果一直复习,可以一直无法升级,如果只有升级后更新 可能一开始就无法更新,
+  //更新复习时间  ,todo 如果一直复习,可能一直无法升级,如果只有升级后更新 可能一开始就无法更新,
   wordModel.value.learnDate = new Date();
 
   // 是否复习，改为false
@@ -517,13 +520,29 @@ const remember = () => {
   console.log('缓存单词数据', JSON.stringify(props.word));
 
   // 判断是否满足条件
-  if (now > startLearnDate && now < endLearnDate) {
-    // 等级+1
-    wordModel.value.level++;
+  const canLevelUp = now > startLearnDate && now < endLearnDate;
+  console.log(`升级检查: 当前时间=${new Date(now).toLocaleString()}, 开始时间=${new Date(startLearnDate).toLocaleString()}, 结束时间=${new Date(endLearnDate).toLocaleString()}, 可升级=${canLevelUp}`);
+  
+  if (canLevelUp) {
+    // 根据记忆牢固度决定升级速度
+    const firmness = wordsStore.memoryFirmness;
+    let levelIncrement = 1; // 默认正常：+1级
+    if (firmness === '较强') {
+      levelIncrement = 2; // 较强：+2级
+    } else if (firmness === '极强') {
+      levelIncrement = 3; // 极强：+3级
+    }
+    // 升级等级，但不超过12级
+    const currentLevel = Number(wordModel.value.level) || 1;
+    wordModel.value.level = Math.min(currentLevel + levelIncrement, 12) as Word['level'];
+    console.log(`[升级成功] 记忆牢固度: ${firmness}, 提升: +${levelIncrement}级, 当前等级: ${wordModel.value.level}`);
   } else {
     // 否则等级不变，仅更新复习时间
-    console.log("未满足升级条件");
-    // console.log(wordModel.value.learnDate.toLocaleTimeString()+'3333333');
+    if (now <= startLearnDate) {
+      console.log("[未升级] 复习太早，还没到升级时间");
+    } else {
+      console.log("[未升级] 复习太晚，已错过升级时间窗口");
+    }
   }
   wordsStore.addAndUpdateWord(wordModel.value)
 }
@@ -574,8 +593,13 @@ const forget = () => {
 }
 // 删除单词
 const deleteWord = () => {
-  // wordModel.value;
+  if (isDeleting.value) return;
+  isDeleting.value = true;
   emit('delete');
+  // 延迟重置锁，防止连续点击
+  setTimeout(() => {
+    isDeleting.value = false;
+  }, 300);
 }
 
 </script>

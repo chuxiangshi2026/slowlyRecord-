@@ -1,5 +1,5 @@
 import {computed, type Ref, ref} from "vue";
-import type {OcrPlatform, TranslationPlatform, TranslationResult, Word} from "@/types/words";
+import type {MemoryFirmnessTpye, OcrPlatform, TranslationPlatform, TranslationResult, Word} from "@/types/words";
 import {defineStore} from "pinia";
 // import {parse, stringify} from 'zipson'
 // import { serializer } from '@/utils/jsonSerializeUtil';
@@ -70,6 +70,7 @@ export const useWordsStore =
 
             const currentTranslationPlatform = ref<TranslationPlatform>('tencent'); // 默认使用有道翻译
             const currentOcrPlatform = ref<OcrPlatform>('tencent'); // 默认使用百度识图
+            const memoryFirmness = ref<MemoryFirmnessTpye>('正常');
             // 用户翻译api密钥
             const userApiKeys: Ref<Record<TranslationPlatform, { appkey: string, key: string }>> = ref({
                 tencent: {appkey: '', key: ''},
@@ -180,6 +181,23 @@ export const useWordsStore =
                 addAndUpdateSetDb(userSet);
             }
 
+            /**
+             * 设置记忆牢固度
+             */
+            function setMemoryFirmness(firmness: MemoryFirmnessTpye) {
+                log.i('更新记忆牢固度', firmness)
+                memoryFirmness.value = firmness;
+
+                let userSet = getSetDb()
+                if (userSet) {
+                    userSet.memoryFirmness = firmness
+                } else {
+                    userSet = initUserSet();
+                    userSet.memoryFirmness = firmness;
+                }
+                addAndUpdateSetDb(userSet);
+            }
+
             function setUserApiKeys(userKeys: Record<TranslationPlatform, { appkey: string, key: string }>) {
                 userApiKeys.value = userKeys;
             }
@@ -195,6 +213,7 @@ export const useWordsStore =
                     "shortcutEnabled": false,
                     "translationPlatform": 'tencent',
                     "ocrPlatform": 'tencent',
+                    "memoryFirmness": '正常',
                     "keys": {},
                     "ocrKeys": {},
                 };
@@ -296,6 +315,8 @@ export const useWordsStore =
                 }
 
                 pushWords(dbWords)
+                // 加载单词后重新计算待复习状态
+                upReview()
                 return words.value
             }
 
@@ -313,17 +334,41 @@ export const useWordsStore =
 
             /**
              * 重新计算需要复习的单词
+             * 只有到了复习时间的单词才显示在待复习列表中
              */
             function upReview() {
-                // 进行计算，哪些是需要  记的改成true
+                log.i('upReview 开始计算，单词总数:', words.value.length)
 
-                // 把所有的单词时间计算一下，修改一下是否显示
                 words.value.forEach((item) => {
-                    // 如果  当前时间>  上次复习时间+数组[等级]
-                    if (Date.now() > item.learnDate.getTime() + DEFAULT_INTERVALS[item.level] * 60 * 1000) {
-                        item.isReview = true
+                    // 确保 learnDate 是 Date 对象
+                    let learnDate = item.learnDate;
+                    if (typeof learnDate === 'string') {
+                        learnDate = new Date(learnDate);
                     }
-                })
+                    
+                    // 确保 level 有效
+                    const level = Number(item.level) || 1;
+                    const interval = DEFAULT_INTERVALS[level] || DEFAULT_INTERVALS[1];
+                    
+                    const reviewTime = learnDate.getTime() + interval * 60 * 1000;
+                    const now = Date.now();
+                    const shouldReview = now > reviewTime;
+                    
+                    log.i(`单词 ${item.text}: level=${level}, interval=${interval}分钟, shouldReview=${shouldReview}, isReview=${item.isReview}`);
+                    
+                    // 到了复习时间，设为待复习
+                    if (shouldReview && !item.isReview) {
+                        item.isReview = true;
+                        addAndUpdateDbWord(item);
+                        log.i('单词设为待复习:', item.text);
+                    }
+                    // 还没到复习时间且不是新添加的，取消待复习
+                    else if (!shouldReview && item.isReview && (now - learnDate.getTime() > 60000)) {
+                        item.isReview = false;
+                        addAndUpdateDbWord(item);
+                        log.i('单词取消待复习（时间未到）:', item.text, '下次复习:', new Date(reviewTime).toLocaleString());
+                    }
+                });
             }
 
 
@@ -352,8 +397,18 @@ export const useWordsStore =
             }
 
             function deleteWord(index: number): void {
+                // 防御性检查
+                if (index < 0 || index >= words.value.length) {
+                    log.e('删除单词失败：索引越界', index, words.value.length);
+                    return;
+                }
+                const word = words.value[index];
+                if (!word || !word._id) {
+                    log.e('删除单词失败：单词或_id不存在', word);
+                    return;
+                }
                 // 先保存要删除的单词ID
-                const wordId = words.value[index]._id;
+                const wordId = word._id;
                 // 删除index索引下的数值,删除长度为1
                 words.value.splice(index, 1)
                 // 按id删除单词
@@ -412,6 +467,7 @@ export const useWordsStore =
                 lastAddedWordText,
                 currentTranslationPlatform,
                 currentOcrPlatform,
+                memoryFirmness,
                 lastFocusWordText,
                 hiddenExplain,
                 count,
@@ -426,6 +482,7 @@ export const useWordsStore =
                 setClosePlugin,
                 setTranslationPlatform,
                 setOcrPlatform,
+                setMemoryFirmness,
                 setUserApiKeys,
                 setShortcutEnabled,
                 setApiKey, // 导出设置API密钥方法

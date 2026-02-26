@@ -1,3 +1,5 @@
+import type {MemoryFirmnessTpye} from "./words";
+
 /*
 * 加入单词后退出插件
 * */
@@ -30,6 +32,7 @@ export type UserSetType = DbDoc<{
     shortcutEnabled: boolean;
     translationPlatform: TranslationPlatform;
     ocrPlatform: OcrPlatform;
+    memoryFirmness: MemoryFirmnessTpye;
     keys: KeyType;
     ocrKeys: OcrKeyType;
 }>;

@@ -77,6 +77,10 @@ utools.onPluginEnter(async (action) => {
     wordsStore.shortcutEnabled = setDb.shortcutEnabled;
     wordsStore.currentTranslationPlatform = setDb.translationPlatform;
     wordsStore.currentOcrPlatform = setDb.ocrPlatform;
+    // 同步记忆牢固度设置
+    if (setDb.memoryFirmness) {
+      wordsStore.memoryFirmness = setDb.memoryFirmness;
+    }
 
     // 安全地同步API密钥，提供默认值以防undefined
     if (setDb.keys) {
@@ -118,7 +122,10 @@ utools.onPluginEnter(async (action) => {
       } as Record<OcrPlatform, { appkey: string; key: string }>;
     }
   }
-
+  // 延迟调用，避免初始化时重复计算
+  setTimeout(() => {
+    updateReview();
+  }, 100);
 
   // { code, type, payload, option, from }
 
@@ -313,36 +320,7 @@ function isUTools(): boolean {
   return typeof utools !== 'undefined' && !!utools.getPath;
 }
 
-/*const translate = async () => {
-  if (!selectedImage.value) return;
 
-  isLoading.value = true;
-  error.value = '';
-  translationResult.value = null;
-
-  try {
-    // 1. 将图片转换为Base64
-    const base64 = await fileToBase64(selectedImage.value);
-
-    // 2. 调用翻译函数
-    // 注意：此处仅为前端演示，appSecret 暴露有风险！
-    const appKey = '你的应用ID'; // 替换为你的appKey
-    const appSecret = '你的应用密钥'; // 替换为你的appSecret
-
-    const result = await translateImage(base64, fromLang.value, toLang.value, appKey, appSecret);
-    translationResult.value = result;
-
-    // 3. 检查错误码（0表示成功）
-    if (result.errorCode !== '0') {
-      error.value = `翻译失败，错误码: ${result.errorCode}`;
-    }
-  } catch (err: any) {
-    console.error('翻译失败:', err);
-    error.value = err.message || '翻译过程出现异常';
-  } finally {
-    isLoading.value = false;
-  }
-};*/
 
 /**
  * 显示OCR识别结果供用户选择和保存
@@ -363,20 +341,7 @@ async function displayOCRResults(resRegions: any[]) {
   console.log('[截图添加] showOCRPanel 已设置为 true:', showOCRPanel.value);
 }
 
-/**
- * 在指定坐标创建可点击区域
- */
-/*function createClickableRegion(word: string, translation: string, coords: any) {
-  // 如果有坐标信息，可以高亮显示这些区域
-  // 这里我们简单地记录坐标信息
-  console.log(`坐标:`, coords, `单词: ${word}`, `翻译: ${translation}`);
 
-  // 提供选择选项
-  if (confirm(`识别到单词: "${word}", 翻译: "${translation}"\n是否保存?`)) {
-    addWord(`${word} ${translation}`);
-    ElMessage.success(`已保存: ${word} - ${translation}`);
-  }
-}*/
 
 /**
  * 选择特定的OCR识别项
@@ -553,7 +518,10 @@ function closeTextPanel() {
 onMounted(() => {
 
   // 首页刷新时触发   自动更新需要复习的单词
-  updateReview();
+  // 延迟调用，避免初始化时重复计算
+  setTimeout(() => {
+    updateReview();
+  }, 100);
 
   // 预加载本地 OCR Worker（如果用户选择了本地 OCR）
   const wordsStore = useWordsStore();
@@ -666,29 +634,8 @@ async function handlePluginAddWord(payload: string) {
  * 更新需要复习的单词
  */
 function updateReview() {
-
-  // 获取本地的数据，如果是空或和数据库的大小不一致，比较数据，留最新的
-  let dbWords = wordsStore.listWords();
-  console.log(dbWords, 'dbWords')
-  // 过滤掉word为空字符串的单词
-  dbWords = dbWords.filter((item: any) => item.word && item.word.trim() !== '');
-
-  // console.log(words.value, typeof words.value[0].learnDate, '9999999')
-  for (const item of dbWords) {
-
-    // item.isReview = true
-    // console.log(item)
-    item.learnDate = new Date(item.learnDate);
-    item.ctime = new Date(item.ctime);
-    let learnDate = item.learnDate.getTime() + DEFAULT_INTERVALS[item.level] * 60 * 1000;
-    let now = Date.now();
-    // console.log(now, learnDate, '00000111111', item.isReview)
-    // 当前时间大于复习时间 ,
-    if (!item.isReview && now > learnDate) {
-      item.isReview = true
-      wordsStore.addAndUpdateWord(item)
-    }
-  }
+  // 调用 listWords 会自动触发 upReview 计算待复习单词
+  wordsStore.listWords();
 }
 
 </script>
