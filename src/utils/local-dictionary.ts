@@ -335,7 +335,296 @@ function findPhraseSync(text: string): string | undefined {
 }
 
 /**
- * 逐词翻译句子（异步版本）
+ * 生成 n-grams（多词组合）
+ * 例如：["i", "want", "to", "go"] 生成 ["i want to go", "want to go", "i want to", "to go", "want to", ...]
+ */
+function generateNGrams(words: string[], maxN: number = 4): Array<{ phrase: string; start: number; end: number }> {
+  const ngrams: Array<{ phrase: string; start: number; end: number }> = [];
+
+  for (let n = maxN; n >= 2; n--) {
+    for (let i = 0; i <= words.length - n; i++) {
+      ngrams.push({
+        phrase: words.slice(i, i + n).join(' '),
+        start: i,
+        end: i + n - 1
+      });
+    }
+  }
+
+  return ngrams;
+}
+
+/**
+ * 匹配短语（包括 n-gram 匹配）
+ * @returns 匹配到的短语及位置信息
+ */
+function findPhrasesInSentence(
+  words: string[],
+  phrases: Record<string, string>
+): Array<{ phrase: string; translation: string; start: number; end: number }> {
+  const matches: Array<{ phrase: string; translation: string; start: number; end: number }> = [];
+  const usedIndices = new Set<number>();
+
+  // 1. 先尝试完整句子匹配
+  const fullSentence = words.join(' ');
+  if (phrases[fullSentence]) {
+    return [{ phrase: fullSentence, translation: phrases[fullSentence], start: 0, end: words.length - 1 }];
+  }
+
+  // 2. N-gram 匹配（优先匹配更长的短语）
+  const ngrams = generateNGrams(words, 5);
+
+  for (const ngram of ngrams) {
+    // 检查这些位置是否已被使用
+    const indices = Array.from({ length: ngram.end - ngram.start + 1 }, (_, i) => ngram.start + i);
+    const isOverlapping = indices.some(i => usedIndices.has(i));
+
+    if (!isOverlapping && phrases[ngram.phrase]) {
+      matches.push({
+        phrase: ngram.phrase,
+        translation: phrases[ngram.phrase],
+        start: ngram.start,
+        end: ngram.end
+      });
+      indices.forEach(i => usedIndices.add(i));
+    }
+  }
+
+  // 按位置排序
+  return matches.sort((a, b) => a.start - b.start);
+}
+
+/**
+ * 常见句型模式及其处理
+ */
+const SENTENCE_PATTERNS = [
+  // 疑问句
+  {
+    pattern: /^(are|is|am|was|were|do|does|did|have|has|had|can|could|will|would|shall|should|may|might)\s+(.+)$/i,
+    type: 'yes_no_question',
+    transform: (match: RegExpMatchArray, translations: string[]) => {
+      // 一般疑问句：助动词 + 主语 + ...
+      return '是否' + translations.join('');
+    }
+  },
+  // What/Where/When/Why/How 疑问句
+  {
+    pattern: /^(what|where|when|why|how|who|whom|whose|which)\s+(.+)$/i,
+    type: 'wh_question',
+    transform: (match: RegExpMatchArray, translations: string[]) => {
+      const whMap: Record<string, string> = {
+        'what': '什么', 'where': '哪里', 'when': '何时',
+        'why': '为什么', 'how': '如何', 'who': '谁',
+        'whom': '谁', 'whose': '谁的', 'which': '哪个'
+      };
+      const whWord = whMap[match[1].toLowerCase()] || match[1];
+      return whWord + translations.slice(1).join('');
+    }
+  },
+  // There be 句型
+  {
+    pattern: /^there\s+(is|are|was|were)\s+(.+)$/i,
+    type: 'there_be',
+    transform: (match: RegExpMatchArray, translations: string[]) => {
+      // There be -> "有" 或 "存在"
+      return '有' + translations.slice(2).join('');
+    }
+  },
+  // I want/need/like to ...
+  {
+    pattern: /^(i|you|he|she|it|we|they)\s+(want|need|like|love|hate|prefer)\s+to\s+(.+)$/i,
+    type: 'want_to',
+    transform: (match: RegExpMatchArray, translations: string[]) => {
+      const subject = translations[0] || match[1];
+      const verb = translations[1] || match[2];
+      const rest = translations.slice(3).join('');
+      return `${subject}${verb}${rest}`;
+    }
+  },
+  // 进行时态
+  {
+    pattern: /^(i|you|he|she|it|we|they)\s+(am|is|are|was|were)\s+(\w+ing)\s*(.+)?$/i,
+    type: 'continuous',
+    transform: (match: RegExpMatchArray, translations: string[]) => {
+      const subject = translations[0] || match[1];
+      const action = translations[2] || match[3];
+      const rest = translations.slice(3).join('') || '';
+      return `${subject}正在${action}${rest}`;
+    }
+  },
+  // 完成时态
+  {
+    pattern: /^(i|you|he|she|it|we|they)\s+(have|has|had)\s+(\w+ed|\w+en)\s*(.+)?$/i,
+    type: 'perfect',
+    transform: (match: RegExpMatchArray, translations: string[]) => {
+      const subject = translations[0] || match[1];
+      const action = translations[2] || match[3];
+      const rest = translations.slice(3).join('') || '';
+      return `${subject}已经${action}${rest}`;
+    }
+  }
+];
+
+/**
+ * 检测并应用句型规则
+ */
+function applySentencePattern(sentence: string, words: string[], translations: string[]): string | null {
+  const lowerSentence = sentence.toLowerCase();
+
+  for (const rule of SENTENCE_PATTERNS) {
+    const match = lowerSentence.match(rule.pattern);
+    if (match) {
+      try {
+        return rule.transform(match, translations);
+      } catch (e) {
+        // 规则应用失败，继续尝试其他规则
+        continue;
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * 简单的词序调整：英语 SVO -> 中文也近似 SVO，但需要做微调
+ */
+function adjustWordOrder(words: string[], translations: string[]): string[] {
+  // 如果只有一个词，直接返回
+  if (words.length <= 1) return translations;
+
+  // 时间词前置处理 (yesterday, today, tomorrow, now 等)
+  const timeWords = ['yesterday', 'today', 'tomorrow', 'now', 'later', 'soon', 'recently', 'already'];
+  const timeIndices = words.map((w, i) => timeWords.includes(w.toLowerCase()) ? i : -1).filter(i => i !== -1);
+
+  if (timeIndices.length > 0) {
+    // 将时间词移到最前面
+    const timeTranslations = timeIndices.map(i => translations[i]);
+    const otherTranslations = translations.filter((_, i) => !timeIndices.includes(i));
+    return [...timeTranslations, ...otherTranslations];
+  }
+
+  return translations;
+}
+
+/**
+ * 增强版句子翻译（带短语识别和句型处理）
+ */
+async function translateSentenceEnhanced(
+  sentence: string,
+  dictionary: Record<string, DictionaryEntry>,
+  phrases: Record<string, string>
+): Promise<LocalTranslationResult> {
+  // 清理句子（保留更多连接词）
+  const cleanedSentence = sentence
+    .toLowerCase()
+    .replace(/[.,!?;:]/g, ' ')  // 只替换句末标点
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const words = cleanedSentence.split(/\s+/).filter(w => w.length > 0);
+
+  if (words.length === 0) {
+    return {
+      success: false,
+      errorMsg: '无法识别的文本',
+      isLocal: true
+    };
+  }
+
+  // 1. 首先尝试完整句子在短语库中的匹配
+  const phraseMatches = findPhrasesInSentence(words, phrases);
+
+  if (phraseMatches.length === 1 && phraseMatches[0].start === 0 && phraseMatches[0].end === words.length - 1) {
+    // 完整匹配到一个短语/句子
+    return {
+      success: true,
+      explains: phraseMatches[0].translation,
+      isLocal: true
+    };
+  }
+
+  // 2. 混合翻译：短语 + 逐词
+  const finalTranslations: string[] = [];
+  let currentIndex = 0;
+
+  while (currentIndex < words.length) {
+    // 检查当前位置是否有短语匹配
+    const match = phraseMatches.find(m => m.start === currentIndex);
+
+    if (match) {
+      // 使用短语翻译
+      finalTranslations.push(match.translation);
+      currentIndex = match.end + 1;
+    } else {
+      // 逐词翻译
+      const word = words[currentIndex];
+      const entry = queryDictionaryWithData(word, dictionary);
+
+      if (entry && entry.explains.length > 0) {
+        const meaning = entry.explains[0].replace(/^(n\.|v\.|adj\.|adv\.|prep\.|conj\.|pron\.|art\.|num\.|int\.)\s*/, '');
+        finalTranslations.push(meaning);
+      } else {
+        // 词形还原
+        const baseForm = tryGetBaseForm(word);
+        const baseEntry = baseForm ? queryDictionaryWithData(baseForm, dictionary) : null;
+        if (baseEntry && baseEntry.explains.length > 0) {
+          const meaning = baseEntry.explains[0].replace(/^(n\.|v\.|adj\.|adv\.|prep\.|conj\.|pron\.|art\.|num\.|int\.)\s*/, '');
+          finalTranslations.push(meaning);
+        } else {
+          finalTranslations.push(word);
+        }
+      }
+      currentIndex++;
+    }
+  }
+
+  // 3. 尝试应用句型规则
+  const patternResult = applySentencePattern(cleanedSentence, words, finalTranslations);
+
+  if (patternResult) {
+    return {
+      success: true,
+      explains: patternResult,
+      isLocal: true
+    };
+  }
+
+  // 4. 词序调整
+  const adjustedTranslations = adjustWordOrder(words, finalTranslations);
+
+  // 5. 智能连接（根据词性调整连接符）
+  const translatedText = smartJoin(adjustedTranslations);
+
+  return {
+    success: true,
+    explains: translatedText,
+    isLocal: true
+  };
+}
+
+/**
+ * 智能连接翻译结果
+ * 根据上下文选择合适的连接方式
+ */
+function smartJoin(translations: string[]): string {
+  if (translations.length === 0) return '';
+  if (translations.length === 1) return translations[0];
+
+  // 检查是否是完整的意群（如已包含完整语义）
+  const fullSentence = translations.join('');
+
+  // 如果结果本身通顺（不含大量分号），直接返回
+  if (!fullSentence.includes('；') && translations.length <= 5) {
+    return fullSentence;
+  }
+
+  // 否则使用逗号连接更自然
+  return translations.join('，');
+}
+
+/**
+ * 逐词翻译句子（异步版本）- 保留作为后备方案
  * @param sentence 要翻译的句子
  * @param dictionary 词典数据
  * @returns 翻译结果
@@ -393,7 +682,94 @@ async function translateSentenceByWordsAsync(
 }
 
 /**
- * 逐词翻译句子（同步版本）
+ * 同步版增强句子翻译
+ */
+function translateSentenceEnhancedSync(
+  sentence: string,
+  dictionary: Record<string, DictionaryEntry>,
+  phrases: Record<string, string>
+): LocalTranslationResult {
+  const cleanedSentence = sentence
+    .toLowerCase()
+    .replace(/[.,!?;:]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const words = cleanedSentence.split(/\s+/).filter(w => w.length > 0);
+
+  if (words.length === 0) {
+    return {
+      success: false,
+      errorMsg: '无法识别的文本',
+      isLocal: true
+    };
+  }
+
+  // 1. N-gram 短语匹配
+  const phraseMatches = findPhrasesInSentence(words, phrases);
+
+  if (phraseMatches.length === 1 && phraseMatches[0].start === 0 && phraseMatches[0].end === words.length - 1) {
+    return {
+      success: true,
+      explains: phraseMatches[0].translation,
+      isLocal: true
+    };
+  }
+
+  // 2. 混合翻译
+  const finalTranslations: string[] = [];
+  let currentIndex = 0;
+
+  while (currentIndex < words.length) {
+    const match = phraseMatches.find(m => m.start === currentIndex);
+
+    if (match) {
+      finalTranslations.push(match.translation);
+      currentIndex = match.end + 1;
+    } else {
+      const word = words[currentIndex];
+      const entry = queryDictionaryWithData(word, dictionary);
+
+      if (entry && entry.explains.length > 0) {
+        const meaning = entry.explains[0].replace(/^(n\.|v\.|adj\.|adv\.|prep\.|conj\.|pron\.|art\.|num\.|int\.)\s*/, '');
+        finalTranslations.push(meaning);
+      } else {
+        const baseForm = tryGetBaseForm(word);
+        const baseEntry = baseForm ? queryDictionaryWithData(baseForm, dictionary) : null;
+        if (baseEntry && baseEntry.explains.length > 0) {
+          const meaning = baseEntry.explains[0].replace(/^(n\.|v\.|adj\.|adv\.|prep\.|conj\.|pron\.|art\.|num\.|int\.)\s*/, '');
+          finalTranslations.push(meaning);
+        } else {
+          finalTranslations.push(word);
+        }
+      }
+      currentIndex++;
+    }
+  }
+
+  // 3. 尝试句型规则
+  const patternResult = applySentencePattern(cleanedSentence, words, finalTranslations);
+  if (patternResult) {
+    return {
+      success: true,
+      explains: patternResult,
+      isLocal: true
+    };
+  }
+
+  // 4. 词序调整和智能连接
+  const adjustedTranslations = adjustWordOrder(words, finalTranslations);
+  const translatedText = smartJoin(adjustedTranslations);
+
+  return {
+    success: true,
+    explains: translatedText,
+    isLocal: true
+  };
+}
+
+/**
+ * 逐词翻译句子（同步版本）- 保留作为后备
  * @param sentence 要翻译的句子
  * @returns 翻译结果
  */
@@ -402,7 +778,7 @@ function translateSentenceByWords(sentence: string): LocalTranslationResult {
 }
 
 /**
- * 逐词翻译句子（同步实现）
+ * 逐词翻译句子（同步实现）- 保留作为后备
  */
 function translateSentenceByWordsSync(
   sentence: string,
@@ -437,7 +813,6 @@ function translateSentenceByWordsSync(
         const meaning = baseEntry.explains[0].replace(/^(n\.|v\.|adj\.|adv\.|prep\.|conj\.|pron\.|art\.|num\.|int\.)\s*/, '');
         translations.push(meaning);
       } else {
-        // 词库中没有，显示原单词
         translations.push(word);
       }
     }
@@ -542,8 +917,8 @@ export async function translateWithLocalDictionaryAsync(text: string): Promise<L
     };
   }
 
-  // 3. 句子/短语：使用逐词翻译
-  return translateSentenceByWordsAsync(trimmedText, dictionary);
+  // 3. 句子/短语：使用增强版翻译（带短语识别和句型处理）
+  return translateSentenceEnhanced(trimmedText, dictionary, phrases);
 }
 
 /**
@@ -617,8 +992,8 @@ export function translateWithLocalDictionary(text: string): LocalTranslationResu
     };
   }
 
-  // 3. 句子/短语：使用逐词翻译
-  return translateSentenceByWords(trimmedText);
+  // 3. 句子/短语：使用增强版翻译（带短语识别和句型处理）
+  return translateSentenceEnhancedSync(trimmedText, dictionary, phrases);
 }
 
 export default {
