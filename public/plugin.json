@@ -65,6 +65,15 @@
         },
         "截图添加"
       ]
+    },
+    {
+      "code": "numMemory",
+      "explain": "数字记忆",
+      "cmds": [
+        "数字记忆",
+        "szjy",
+        "numMemory"
+      ]
     }
   ],
   "permissions": {
