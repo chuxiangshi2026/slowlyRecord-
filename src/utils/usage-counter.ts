@@ -1,6 +1,7 @@
 import {useWordsStore} from '@/stores/words.ts';
 import {USAGE_LIMITS} from '@/constants';
 import {type OcrResult, ocrTranslateMultiPlatform} from "@/utils/pic-translate.ts";
+import {AppInfo} from "@/config.ts";
 
 /**
  * 获取今日日期字符串（格式：YYYY-MM-DD）
@@ -141,21 +142,13 @@ export function hasCustomApiKey(platform: TranslationPlatform): boolean {
         return false;
     }
 
-    // 检查是否为默认配置（避免用户恰好设置了相同值的情况，这里我们假设默认值不太可能被用户重复设置）
-    // 更准确的方式是比较是否与默认配置相同
-    /*const defaultAppKey = 'REDACTED_YOUDAO_APPKEY'; // 有道默认值
-    const defaultKey = 'REDACTED_YOUDAO_SECRET'; // 有道默认值
-
-    // 对于不同平台检查不同的默认值
-    if (platform === 'youdao') {
-      return !(userKeys.appkey === defaultAppKey && userKeys.key === defaultKey);
-    } else if (platform === 'baidu') {
-      // 检查是否为百度默认值
-      return !(userKeys.appkey === 'REDACTED_BAIDU_APPKEY' && userKeys.key === 'REDACTED_BAIDU_SECRET');
-    } else if (platform === 'ali') {
-      // 检查是否为阿里默认值
-      return !(userKeys.appkey === 'REDACTED_ALI_APPKEY' && userKeys.key === 'REDACTED_ALI_SECRET');
-    }*/
+    // 从配置文件中获取默认值进行比较
+    if (platform === 'youdao' || platform === 'baidu' || platform === 'ali') {
+      const defaultConfig = AppInfo[platform];
+      if (defaultConfig) {
+        return !(userKeys.appkey === defaultConfig.appkey && userKeys.key === defaultConfig.key);
+      }
+    }
 
     return true;
 }
