@@ -65,6 +65,16 @@
         },
         "截图添加"
       ]
+    },
+    {
+      "code": "jycs",
+      "explain": "记忆力测试",
+      "cmds": [
+        "jycs",
+        "记忆力测试",
+        "记忆测试",
+        "memory"
+      ]
     }
   ],
   "permissions": {

@@ -4,7 +4,7 @@
                     :key="menus[0].path+itemChild.path"
                     :index="menus[0].path+itemChild.path">
         <el-icon>
-          <component :is="itemChild.meta?.icon"/>
+          <component :is="getIconComponent(itemChild.meta?.icon)"/>
         </el-icon>
         <template #title><span>{{ itemChild.meta?.title }}</span></template>
       </el-menu-item>
@@ -17,6 +17,8 @@ import type {RouteRecordName} from "vue-router";
 import {useRouter,useRoute} from "vue-router";
 // import {useStore} from "@/store";
 import {ref} from "vue";
+import { DocumentAdd, Calendar, FirstAidKit } from '@element-plus/icons-vue';
+
 // const  store = useStore()
 const route = useRoute()
 const router = useRouter()
@@ -32,6 +34,18 @@ const menus = _.cloneDeep(router.options.routes)
 // })
 // console.log(JSON.stringify(menus)+'_______'+JSON.stringify(permission))
 // console.log(JSON.stringify(route.fullPath))
+
+// 图标映射表
+const iconMap: Record<string, any> = {
+  'document-add': DocumentAdd,
+  'calendar': Calendar,
+  'FirstAidKit': FirstAidKit
+};
+
+function getIconComponent(iconName?: string) {
+  if (!iconName) return DocumentAdd;
+  return iconMap[iconName] || DocumentAdd;
+}
 </script>
 
 <style scoped lang="scss">
