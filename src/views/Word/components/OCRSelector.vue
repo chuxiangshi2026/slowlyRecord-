@@ -5,7 +5,11 @@
       <div class="ocr-panel-content">
         <div class="ocr-panel-header">
           <h3>选择要保存的单词</h3>
-          <button @click="closePanel" class="close-btn">×</button>
+          <div class="header-buttons">
+            <button @click="copyAllOriginal" class="header-copy-btn" title="复制全部原文">复制全部原文</button>
+            <button @click="copyAllTranslation" class="header-copy-btn" title="复制全部译文">复制全部译文</button>
+            <button @click="closePanel" class="close-btn">×</button>
+          </div>
         </div>
         <div class="ocr-items-container">
           <div v-if="!ocrResults || ocrResults.length === 0" class="ocr-empty">
@@ -17,10 +21,18 @@
             class="ocr-item"
           >
             <div class="ocr-original">
-              <strong>原文:</strong> {{ region.context }}
+              <div class="text-row">
+                <strong>原文:</strong>
+                <span class="text-content">{{ region.context }}</span>
+              </div>
+              <button class="copy-btn" @click="copyText(region.context, '原文')">复制</button>
             </div>
             <div class="ocr-translation">
-              <strong>翻译:</strong> {{ region.tranContent }}
+              <div class="text-row">
+                <strong>翻译:</strong>
+                <span class="text-content">{{ region.tranContent }}</span>
+              </div>
+              <button class="copy-btn" @click="copyText(region.tranContent, '译文')">复制</button>
             </div>
             <div class="ocr-coords" v-if="region.rect || region.coords">
               <small>位置: {{ formatCoords(region.rect || region.coords) }}</small>
@@ -291,6 +303,84 @@ const closePanel = () => {
   selectedWordsMap.value = {};
   emit('close');
 };
+
+// 复制文本到剪贴板
+const copyText = async (text: string, type: string) => {
+  if (!text) {
+    ElMessage.warning(`${type}内容为空`);
+    return;
+  }
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      // 使用现代 Clipboard API
+      await navigator.clipboard.writeText(text);
+      ElMessage.success(`${type}已复制到剪贴板`);
+    } else {
+      // 降级方案：使用传统的复制方法
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        ElMessage.success(`${type}已复制到剪贴板`);
+      } else {
+        ElMessage.error('复制失败，请手动复制');
+      }
+    }
+  } catch (err) {
+    console.error('复制失败:', err);
+    ElMessage.error('复制失败，请手动复制');
+  }
+};
+
+// 复制全部原文
+const copyAllOriginal = async () => {
+  if (!props.ocrResults || props.ocrResults.length === 0) {
+    ElMessage.warning('没有原文可复制');
+    return;
+  }
+
+  const allOriginalText = props.ocrResults
+    .map(region => region.context)
+    .filter(text => text && text.trim())
+    .join('\n');
+
+  if (!allOriginalText) {
+    ElMessage.warning('原文内容为空');
+    return;
+  }
+
+  await copyText(allOriginalText, '全部原文');
+};
+
+// 复制全部译文
+const copyAllTranslation = async () => {
+  if (!props.ocrResults || props.ocrResults.length === 0) {
+    ElMessage.warning('没有译文可复制');
+    return;
+  }
+
+  const allTranslationText = props.ocrResults
+    .map(region => region.tranContent)
+    .filter(text => text && text.trim())
+    .join('\n');
+
+  if (!allTranslationText) {
+    ElMessage.warning('译文内容为空');
+    return;
+  }
+
+  await copyText(allTranslationText, '全部译文');
+};
 </script>
 
 <style scoped>
@@ -335,6 +425,31 @@ const closePanel = () => {
   align-items: center;
 }
 
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-copy-btn {
+  padding: 6px 12px;
+  background-color: #67c23a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.header-copy-btn:hover {
+  background-color: #85ce61;
+}
+
+.header-copy-btn:active {
+  background-color: #5daf34;
+}
+
 .ocr-panel-header h3 {
   margin: 0;
   font-size: 18px;
@@ -371,6 +486,42 @@ const closePanel = () => {
 .ocr-original,
 .ocr-translation {
   margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.text-row {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.text-content {
+  flex: 1;
+  word-break: break-all;
+}
+
+.copy-btn {
+  padding: 4px 10px;
+  background-color: #409eff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.copy-btn:hover {
+  background-color: #66b1ff;
+}
+
+.copy-btn:active {
+  background-color: #3a8ee6;
 }
 
 .ocr-coords {

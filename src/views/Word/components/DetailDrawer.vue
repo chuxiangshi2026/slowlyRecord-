@@ -224,6 +224,24 @@
     <el-divider/>
 
 
+    <h4 class="header">配置管理</h4>
+    <div class="content">
+      <div class="config-buttons">
+        <el-button type="primary" @click="exportConfig" :icon="Download">导出配置</el-button>
+        <el-button type="success" @click="triggerImport" :icon="Upload">导入配置</el-button>
+        <input
+          type="file"
+          ref="fileInput"
+          style="display: none"
+          accept=".json"
+          @change="handleFileImport"
+        />
+      </div>
+      <p class="config-hint">导出配置可保存您的 API 密钥、翻译引擎设置等个人配置</p>
+    </div>
+
+    <el-divider/>
+
     <h4 class="header">其他</h4>
     <div class="content">
       <h5 style="text-align:center;">申请密钥</h5>
@@ -277,8 +295,10 @@ import {computed, onMounted, reactive, ref, watch} from 'vue'
 import {useWordsStore} from "@/stores/words.ts";
 import type {OcrPlatform, TranslationPlatform} from "@/types/words";
 import {AppInfo, TRANSLATION_PLATFORM_LINKS} from "@/config.ts";
-import {getSetDb} from "@/utils/user-set-db-util.ts";
+import {getSetDb, addAndUpdateSetDb} from "@/utils/user-set-db-util.ts";
 import {log} from "@/utils/logger.ts";
+import { Download, Upload } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 // import BasicInfoForm from './BasicInfoForm.vue'
 // import AdvancedConfig from './AdvancedConfig.vue'
 // import LogTable from './LogTable.vue'
@@ -523,6 +543,132 @@ const cardShortcuts = [
   {desc: '模式切换', shortcut: 'Shift + M'},
   {desc: '开启/关闭翻译', shortcut: 'Shift + T'},
 ]
+
+// 配置文件导入导出
+const fileInput = ref<HTMLInputElement | null>(null)
+
+// 导出配置
+const exportConfig = () => {
+  const userSet = getSetDb()
+  if (!userSet) {
+    ElMessage.warning('暂无配置可导出')
+    return
+  }
+
+  const configData = {
+    version: '1.0',
+    exportTime: new Date().toISOString(),
+    settings: {
+      pluginStatus: userSet.pluginStatus,
+      shortcutEnabled: userSet.shortcutEnabled,
+      translationPlatform: userSet.translationPlatform,
+      ocrPlatform: userSet.ocrPlatform,
+      memoryFirmness: userSet.memoryFirmness,
+      keys: userSet.keys || {},
+      ocrKeys: userSet.ocrKeys || {}
+    }
+  }
+
+  const blob = new Blob([JSON.stringify(configData, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `slowlyRecord-config-${new Date().toISOString().split('T')[0]}.json`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+
+  ElMessage.success('配置已导出')
+}
+
+// 触发文件选择
+const triggerImport = () => {
+  fileInput.value?.click()
+}
+
+// 处理文件导入
+const handleFileImport = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+
+  if (!file) {
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    try {
+      const content = e.target?.result as string
+      const configData = JSON.parse(content)
+
+      // 验证配置文件格式
+      if (!configData.settings) {
+        throw new Error('配置文件格式错误')
+      }
+
+      ElMessageBox.confirm(
+        '导入配置将覆盖当前的 API 密钥和设置，是否继续？',
+        '确认导入',
+        {
+          confirmButtonText: '确认导入',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        // 应用配置
+        const settings = configData.settings
+
+        // 更新 store
+        if (settings.pluginStatus !== undefined) {
+          wordsStore.setClosePlugin(settings.pluginStatus)
+        }
+        if (settings.shortcutEnabled !== undefined) {
+          wordsStore.setShortcutEnabled(settings.shortcutEnabled)
+        }
+        if (settings.translationPlatform) {
+          wordsStore.setTranslationPlatform(settings.translationPlatform)
+        }
+        if (settings.ocrPlatform) {
+          wordsStore.setOcrPlatform(settings.ocrPlatform)
+        }
+        if (settings.memoryFirmness) {
+          wordsStore.setMemoryFirmness(settings.memoryFirmness)
+        }
+
+        // 更新 API Keys
+        if (settings.keys) {
+          Object.entries(settings.keys).forEach(([platform, keys]: [string, any]) => {
+            if (keys.appkey !== undefined && keys.key !== undefined) {
+              wordsStore.setApiKey(platform as TranslationPlatform, keys.appkey, keys.key)
+            }
+          })
+        }
+
+        // 更新 OCR Keys
+        if (settings.ocrKeys) {
+          Object.entries(settings.ocrKeys).forEach(([platform, keys]: [string, any]) => {
+            if (keys.appkey !== undefined && keys.key !== undefined) {
+              wordsStore.setOcrApiKey(platform as OcrPlatform, keys.appkey, keys.key)
+            }
+          })
+        }
+
+        ElMessage.success('配置导入成功')
+      }).catch(() => {
+        // 用户取消
+      })
+    } catch (error) {
+      ElMessage.error('配置文件解析失败，请检查文件格式')
+      console.error('导入配置错误:', error)
+    }
+
+    // 清空 input 值，允许重复导入同一文件
+    target.value = ''
+  }
+
+  reader.readAsText(file)
+}
 </script>
 <style scoped lang="scss">
 .el-drawer {
@@ -605,6 +751,20 @@ const cardShortcuts = [
   &:hover {
     background-color: #e0e0e0;
   }
+}
+
+.config-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.config-hint {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  margin: 8px 0 0 0;
 }
 
 /* 禁用输入框样式 */

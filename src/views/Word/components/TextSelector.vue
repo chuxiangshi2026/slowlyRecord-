@@ -4,7 +4,11 @@
       <div class="text-selector-content">
         <div class="text-selector-header">
           <h3>选择要保存的单词</h3>
-          <button @click="closePanel" class="close-btn">×</button>
+          <div class="header-buttons">
+            <button @click="copyOriginal" class="header-copy-btn" title="复制原文">复制原文</button>
+            <button @click="copyTranslation" class="header-copy-btn" title="复制译文">复制译文</button>
+            <button @click="closePanel" class="close-btn">×</button>
+          </div>
         </div>
         <div class="text-items-container">
           <div class="text-item">
@@ -242,6 +246,62 @@ const closePanel = () => {
   selectedWords.value = [];
   emit('close');
 };
+
+// 复制文本到剪贴板
+const copyToClipboard = async (text: string, type: string) => {
+  if (!text) {
+    ElMessage.warning(`${type}内容为空`);
+    return;
+  }
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      // 使用现代 Clipboard API
+      await navigator.clipboard.writeText(text);
+      ElMessage.success(`${type}已复制到剪贴板`);
+    } else {
+      // 降级方案：使用传统的复制方法
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        ElMessage.success(`${type}已复制到剪贴板`);
+      } else {
+        ElMessage.error('复制失败，请手动复制');
+      }
+    }
+  } catch (err) {
+    console.error('复制失败:', err);
+    ElMessage.error('复制失败，请手动复制');
+  }
+};
+
+// 复制原文
+const copyOriginal = async () => {
+  if (!props.textContent || !props.textContent.trim()) {
+    ElMessage.warning('原文内容为空');
+    return;
+  }
+  await copyToClipboard(props.textContent.trim(), '原文');
+};
+
+// 复制译文
+const copyTranslation = async () => {
+  if (!translatedText.value || translatedText.value === '翻译中...' || translatedText.value === '翻译失败' || translatedText.value === '翻译出错，请稍后重试') {
+    ElMessage.warning('译文未准备好或翻译失败');
+    return;
+  }
+  await copyToClipboard(translatedText.value, '译文');
+};
 </script>
 
 <style scoped>
@@ -282,6 +342,31 @@ const closePanel = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-copy-btn {
+  padding: 6px 12px;
+  background-color: #67c23a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.header-copy-btn:hover {
+  background-color: #85ce61;
+}
+
+.header-copy-btn:active {
+  background-color: #5daf34;
 }
 
 .text-selector-header h3 {
