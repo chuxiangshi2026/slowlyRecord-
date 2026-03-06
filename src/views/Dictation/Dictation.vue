@@ -25,10 +25,22 @@
           <label>选择词库</label>
           <el-radio-group v-model="wordBank" size="large">
             <el-radio-button label="current">当前词库</el-radio-button>
-            <el-radio-button label="cet4">四级词库</el-radio-button>
-            <el-radio-button label="cet6">六级词库</el-radio-button>
+            <el-radio-button label="cet4">四级词汇</el-radio-button>
+            <el-radio-button label="cet6">六级词汇</el-radio-button>
+            <el-radio-button label="kaoyan">考研词汇</el-radio-button>
+            <el-radio-button label="kaogong">考公词汇</el-radio-button>
+            <el-radio-button label="ielts">雅思词汇</el-radio-button>
+            <el-radio-button label="toefl">托福词汇</el-radio-button>
+            <el-radio-button label="gre">GRE词汇</el-radio-button>
             <el-radio-button label="import">导入词库</el-radio-button>
           </el-radio-group>
+          <div v-if="wordBank !== 'current' && wordBank !== 'import'" class="wordbank-info">
+            <el-tag size="small" type="info">
+              {{ getWordBankInfo(wordBank)?.description }}
+              (约{{ getWordBankInfo(wordBank)?.wordCount }}词)
+              <span v-if="isWordBankCached(wordBank as WordBankType)" class="cached-badge">已缓存</span>
+            </el-tag>
+          </div>
         </div>
 
         <div class="setup-item" v-if="wordBank !== 'import'">
@@ -195,10 +207,16 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElLoading } from 'element-plus';
 import { ArrowLeft, VideoPlay, CircleCheck, Right } from '@element-plus/icons-vue';
 import { useWordsStore } from '@/stores/words';
 import type { Word } from '@/types/words';
+import { 
+  fetchWordBank, 
+  WORDBANK_LIST, 
+  type WordBankType,
+  isWordBankCached 
+} from '@/utils/wordbank-service';
 
 const router = useRouter();
 const wordsStore = useWordsStore();
@@ -207,10 +225,12 @@ const wordsStore = useWordsStore();
 type DictationMode = 'setup' | 'review' | 'complete';
 const dictationMode = ref<DictationMode>('setup');
 
-const wordBank = ref<'current' | 'cet4' | 'cet6' | 'import'>('current');
+const wordBank = ref<'current' | WordBankType | 'import'>('current');
 const wordCount = ref(20);
 const displayMode = ref<'blank' | 'partial'>('partial');
 const options = ref<string[]>(['autoPlay', 'showPhonetic', 'showMeaning']);
+const isLoading = ref(false);
+const loadingText = ref('');
 
 const wordList = ref<Word[]>([]);
 const currentIndex = ref(0);
@@ -241,6 +261,10 @@ function getSimplePhonetic(text: string): string {
   return text;
 }
 
+function getWordBankInfo(type: string) {
+  return WORDBANK_LIST.find(wb => wb.id === type);
+}
+
 async function startDictation() {
   let words: Word[] = [];
 
@@ -258,11 +282,42 @@ async function startDictation() {
 
     case 'cet4':
     case 'cet6':
-      ElMessage.info(`${wordBank.value === 'cet4' ? '四级' : '六级'}词库开发中，使用当前词库`);
-      words = [...wordsStore.words]
-        .filter(w => w.text && w.text.match(/^[a-zA-Z]+$/))
-        .sort(() => Math.random() - 0.5)
-        .slice(0, wordCount.value);
+    case 'kaoyan':
+    case 'kaogong':
+    case 'ielts':
+    case 'toefl':
+    case 'gre':
+    case 'gmat':
+      const bankType = wordBank.value as WordBankType;
+      const info = getWordBankInfo(bankType);
+      
+      // 显示加载状态
+      const loading = ElLoading.service({
+        lock: true,
+        text: `正在加载${info?.name || bankType}...`,
+        background: 'rgba(0, 0, 0, 0.7)',
+      });
+      
+      try {
+        const bankWords = await fetchWordBank(bankType, true);
+        loading.close();
+        
+        if (bankWords.length === 0) {
+          ElMessage.warning('词库加载失败，请检查网络连接');
+          return;
+        }
+        
+        words = bankWords
+          .sort(() => Math.random() - 0.5)
+          .slice(0, wordCount.value);
+        
+        ElMessage.success(`已加载 ${info?.name}，共 ${bankWords.length} 词`);
+      } catch (error) {
+        loading.close();
+        ElMessage.error('词库加载失败');
+        console.error(error);
+        return;
+      }
       break;
 
     case 'import':
@@ -563,6 +618,15 @@ onMounted(() => {
         margin-bottom: 12px;
         font-size: 14px;
         color: #595959;
+      }
+
+      .wordbank-info {
+        margin-top: 8px;
+        
+        .cached-badge {
+          color: #67C23A;
+          margin-left: 4px;
+        }
       }
     }
 
