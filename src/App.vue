@@ -82,6 +82,14 @@ utools.onPluginEnter(async (action) => {
       wordsStore.memoryFirmness = setDb.memoryFirmness;
     }
 
+    // 同步专注模式设置
+    if (setDb.focusMode) {
+      wordsStore.focusMode = {
+        ...wordsStore.focusMode,
+        ...setDb.focusMode
+      };
+    }
+
     // 安全地同步API密钥，提供默认值以防undefined
     if (setDb.keys) {
       // 为每个翻译平台提供默认空值

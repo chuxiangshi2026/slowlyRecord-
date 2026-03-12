@@ -58,7 +58,7 @@
   </div>
 
   <div>
-    <!-- 抽屉组件化   -->
+  <!-- 抽屉组件化   -->
     <DetailDrawer v-model="drawerVisible" :title="title" :detail-id="currentId"/>
   </div>
 
@@ -139,7 +139,7 @@
             @click="showOnlyRemembered"> 已记完: {{ wordsStore.rememberCount }} </span>
       <span :class="{ 'remembered-highlight': listMode==3 }" @click="showAll"> 单词总数: {{ wordsStore.count }} </span>
     </div>
-    <div>
+<div>
       <el-tooltip class="box-item" effect="dark" content="设置" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-setting" @click="drawerVisible = true"></i>
       </el-tooltip>
@@ -149,6 +149,9 @@
       </el-tooltip>
       <el-tooltip class="box-item" effect="dark" content="置底" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-down" @click="scrollToBottom"></i>
+      </el-tooltip>
+      <el-tooltip class="box-item" effect="dark" content="专注模式" placement="top" popper-class="small-tooltip">
+        <i class="iconfont icon-card" @click="openFocusMode" :class="{ 'focus-mode-active': wordsStore.focusMode.enabled }"></i>
       </el-tooltip>
       <el-tooltip class="box-item" effect="dark" content="显示释义" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-visible" @click="visibleExplained"></i>
@@ -230,6 +233,109 @@ const router = useRouter();
 const drawerVisible = ref(false)
 const title = ref('设置')
 const currentId = ref<string | number | undefined>(undefined)
+
+// 专注模式窗口实例
+let focusWindow: any = null;
+
+// 打开专注模式 - 创建独立子窗口
+const openFocusMode = () => {
+  // 如果没有待复习单词，提示用户
+  if (wordsStore.forgetCount === 0) {
+    ElMessage.info('暂无待复习单词');
+    return;
+  }
+
+  // 如果窗口已存在，聚焦它
+  if (focusWindow && !focusWindow.isDestroyed?.()) {
+    focusWindow.focus?.();
+    return;
+  }
+
+  // 创建独立窗口
+  try {
+    // @ts-ignore
+    if (typeof utools !== 'undefined' && utools.createBrowserWindow) {
+      // @ts-ignore
+      focusWindow = utools.createBrowserWindow('focus.html', {
+        width: 320,
+        height: 100,
+        minWidth: 200,
+        minHeight: 80,
+        maxWidth: 400,
+        maxHeight: 150,
+        alwaysOnTop: true, // 默认置顶
+        frame: false, // 无边框
+        transparent: false,
+        resizable: true,
+        modal: false,
+      }, () => {
+        console.log('专注模式窗口已创建，默认置顶');
+      });
+
+      // 窗口关闭时清理引用
+      focusWindow.on?.('closed', () => {
+        focusWindow = null;
+      });
+
+      // 方案：使用 webContents 监听子窗口通过 sendToParent 发送的消息
+      console.log('父窗口设置 webContents 监听');
+      
+      // 处理置顶请求的函数
+      const handleAlwaysOnTopRequest = (value: boolean) => {
+        console.log('父窗口处理置顶请求:', value);
+        if (focusWindow && typeof focusWindow.setAlwaysOnTop === 'function') {
+          focusWindow.setAlwaysOnTop(value);
+          console.log('父窗口执行 setAlwaysOnTop:', value);
+        } else {
+          console.log('focusWindow 不可用或没有 setAlwaysOnTop 方法');
+        }
+      };
+      
+      // 使用 webContents.ipc 监听 (uTools/Electron 方式)
+      // @ts-ignore
+      if (focusWindow.webContents && focusWindow.webContents.ipc) {
+        // @ts-ignore
+        focusWindow.webContents.ipc.on('setAlwaysOnTop', (event: any, data: any) => {
+          console.log('父窗口 webContents.ipc 收到消息:', data);
+          if (data && typeof data.value === 'boolean') {
+            handleAlwaysOnTopRequest(data.value);
+          }
+        });
+        console.log('父窗口 webContents.ipc 监听已设置');
+      }
+      
+      // 备选：监听 ipc-message 事件
+      // @ts-ignore
+      if (focusWindow.webContents) {
+        // @ts-ignore
+        focusWindow.webContents.on?.('ipc-message', (event: any, channel: string, ...args: any[]) => {
+          console.log('父窗口收到 ipc-message:', channel, args);
+          if (channel === 'setAlwaysOnTop' && args[0]) {
+            handleAlwaysOnTopRequest(args[0].value);
+          }
+        });
+        
+        // 备选2：直接监听 message 事件
+        // @ts-ignore
+        focusWindow.webContents.on?.('message', (event: any, data: any) => {
+          console.log('父窗口 webContents 收到 message:', data);
+          if (data && data.type === 'setAlwaysOnTop') {
+            handleAlwaysOnTopRequest(data.value);
+          }
+        });
+        
+        console.log('父窗口 webContents 事件监听已设置');
+      }
+    } else {
+      // 回退：使用路由方式
+      router.push('/focus');
+    }
+  } catch (e) {
+    console.log('创建专注模式窗口失败:', e);
+    // 回退：使用路由方式
+    router.push('/focus');
+  }
+}
 
 // 截图翻译相关状态
 const ocrDialogVisible = ref(false)
@@ -973,6 +1079,11 @@ watch(() => wordsStore.lastAddedWordText, (wordText) => {
   .remembered-highlight {
     color: red;
     cursor: pointer;
+  }
+
+  .focus-mode-active {
+    color: #409eff;
+    font-weight: bold;
   }
 
   .disabled {
