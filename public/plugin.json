@@ -67,6 +67,16 @@
       ]
     },
     {
+      "code": "jycs",
+      "explain": "记忆力测试",
+      "cmds": [
+        "jycs",
+        "记忆力测试",
+        "记忆测试",
+        "memory"
+      ]
+    },
+    {
       "code": "numMemory",
       "explain": "数字记忆",
       "cmds": [

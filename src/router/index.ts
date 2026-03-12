@@ -4,6 +4,7 @@ import type { RouteRecordRaw } from 'vue-router'
 const Home = () => import('@/views/Home/Home.vue');
 const Sign = () => import('@/views/Sign/Sign.vue');
 const Word = () => import('@/views/Word/Word.vue');
+const MemoryTest = () => import('@/views/MemoryTest/MemoryTest.vue');
 const NumberMemory = () => import('@/views/NumberMemory/NumberMemory.vue');
 const NumberMemoryTraining = () => import('@/views/NumberMemory/NumberMemoryTraining.vue');
 // const Exception = () => import('@/views/Exception/Exception.vue');
@@ -75,6 +76,16 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           menu: false,
           title: '记忆训练',
+        },
+      },
+      {
+        path: 'memory',
+        name: 'memory',
+        component: MemoryTest,
+        meta: {
+          menu: true,
+          title: '记忆力测试',
+          icon: 'FirstAidKit',
         },
       },
      /* {
