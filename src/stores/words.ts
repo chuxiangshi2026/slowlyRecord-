@@ -16,7 +16,14 @@ import {AppInfo} from "@/config.ts";
 import {translateWithPlatform as externalTranslateWithPlatform} from "@/utils/translation-api";
 import {addAndUpdateSetDb, getSetDb} from "@/utils/user-set-db-util.ts";
 import {v4 as uuidv4} from "uuid";
-import type {UserSetType} from "@/types/user-set";
+import type {UserSetType, FocusModeSettings} from "@/types/user-set";
+
+// 默认专注模式设置
+const defaultFocusMode: FocusModeSettings = {
+    enabled: false,
+    autoStick: true,
+    alwaysOnTop: true
+};
 
 // 添加 API 密钥相关的响应式变量
 // const userApiKeys = ref({
@@ -95,6 +102,8 @@ export const useWordsStore =
             const pluginStatus = ref(false);
             // 默认关闭快捷键
             const shortcutEnabled = ref(false);
+            // 专注模式设置
+            const focusMode = ref<FocusModeSettings>({...defaultFocusMode});
 
             // 当前操作释义的单词
             const hiddenExplain = ref('');
@@ -216,8 +225,35 @@ export const useWordsStore =
                     "memoryFirmness": '正常',
                     "keys": {},
                     "ocrKeys": {},
+                    "focusMode": {...defaultFocusMode},
                 };
                 return userSet;
+            }
+
+            /**
+             * 设置专注模式
+             */
+            function setFocusMode(settings: Partial<FocusModeSettings>) {
+                log.i('更新专注模式设置', settings);
+                focusMode.value = { ...focusMode.value, ...settings };
+
+                let userSet = getSetDb();
+                if (userSet) {
+                    userSet.focusMode = focusMode.value;
+                } else {
+                    userSet = initUserSet();
+                    userSet.focusMode = focusMode.value;
+                }
+                addAndUpdateSetDb(userSet);
+            }
+
+            /**
+             * 切换专注模式开关
+             */
+            function toggleFocusMode() {
+                const newEnabled = !focusMode.value.enabled;
+                setFocusMode({ enabled: newEnabled });
+                return newEnabled;
             }
 
 
@@ -476,6 +512,7 @@ export const useWordsStore =
                 reviewCount,
                 forgetCount,
                 shortcutEnabled,
+                focusMode,
                 userApiKeys, // 导出用户API密钥
                 userOcrApiKeys,
                 setLastAddedWordText,
@@ -489,6 +526,8 @@ export const useWordsStore =
                 setOcrApiKey,
                 getApiKey, // 导出获取API密钥方法
                 getOcrApiKey, // 导出获取API密钥方法
+                setFocusMode,
+                toggleFocusMode,
                 findWord,
                 addAndUpdateWord,
                 addAndUpdateWords,

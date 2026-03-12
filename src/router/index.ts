@@ -7,6 +7,8 @@ const Word = () => import('@/views/Word/Word.vue');
 const MemoryTest = () => import('@/views/MemoryTest/MemoryTest.vue');
 const NumberMemory = () => import('@/views/NumberMemory/NumberMemory.vue');
 const NumberMemoryTraining = () => import('@/views/NumberMemory/NumberMemoryTraining.vue');
+const MemoryTest = () => import('@/views/MemoryTest/MemoryTest.vue');
+const Dictation = () => import('@/views/Dictation/Dictation.vue');
 // const Exception = () => import('@/views/Exception/Exception.vue');
 // const Apply = () => import('@/views/Apply/Apply.vue');
 // const Check = () => import('@/views/Check/Check.vue');
@@ -86,6 +88,25 @@ const routes: Array<RouteRecordRaw> = [
           menu: true,
           title: '记忆力测试',
           icon: 'FirstAidKit',
+        },
+      },
+      {
+        path: 'memory',
+        name: 'memory',
+        component: MemoryTest,
+        meta: {
+          menu: true,
+          title: '记忆力测试',
+          icon: 'FirstAidKit',
+        },
+      },
+      {
+        path: 'dictation',
+        name: 'dictation',
+        component: Dictation,
+        meta: {
+          menu: false,
+          title: '听写练习',
         },
       },
      /* {

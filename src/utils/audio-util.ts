@@ -186,3 +186,51 @@ const downloadAudioAttempt = async (url: string, wordId: string, skipProcessing:
         return null;
     }
 };
+
+/**
+ * 播放单词发音
+ * 优先使用本地缓存，如果没有则使用有道TTS在线播放
+ * @param word 要播放的单词
+ * @param pronunciation 可选的发音URL（如果传入则直接使用）
+ */
+export const playWordAudio = async (word: string, pronunciation?: string): Promise<void> => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // 创建音频元素
+            const audio = new Audio();
+            
+            // 如果有传入的发音URL，直接使用
+            if (pronunciation && (pronunciation.startsWith('data:audio') || pronunciation.startsWith('http'))) {
+                audio.src = pronunciation;
+            } else {
+                // 使用有道TTS服务
+                const ttsUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=1`;
+                audio.src = ttsUrl;
+            }
+            
+            // 播放音频
+            audio.oncanplaythrough = () => {
+                audio.play().then(() => {
+                    resolve();
+                }).catch((err) => {
+                    console.error('播放音频失败:', err);
+                    reject(new Error('播放音频失败'));
+                });
+            };
+            
+            audio.onerror = () => {
+                console.error('音频加载失败');
+                reject(new Error('音频加载失败'));
+            };
+            
+            // 设置超时
+            setTimeout(() => {
+                reject(new Error('音频加载超时'));
+            }, 10000);
+            
+        } catch (error) {
+            console.error('播放发音失败:', error);
+            reject(error);
+        }
+    });
+};

@@ -25,6 +25,15 @@ export type OcrKeyType = Record<OcrPlatform, {
 }>;
 
 /**
+ * 专注模式设置
+ */
+export interface FocusModeSettings {
+    enabled: boolean;
+    autoStick: boolean;
+    alwaysOnTop: boolean;
+}
+
+/**
  * 用户设置类型
  */
 export type UserSetType = DbDoc<{
@@ -35,6 +44,7 @@ export type UserSetType = DbDoc<{
     memoryFirmness: MemoryFirmnessTpye;
     keys: KeyType;
     ocrKeys: OcrKeyType;
+    focusMode: FocusModeSettings;
 }>;
 
 
