@@ -50,6 +50,7 @@ import {getSetDb} from "@/utils/user-set-db-util.ts";
 import type {OcrPlatform, TranslationPlatform} from "@/types/words";
 
 const wordsStore = useWordsStore();
+const router = useRouter();
 
 // import {fileToBase64, ocrTranslate, translateImage} from '@/utils/pic-translate.ts'
 
@@ -278,6 +279,10 @@ utools.onPluginEnter(async (action) => {
   if (action.code === 'review') {
     handlePluginReview()
     open()
+  }
+
+  if (action.code === 'numMemory') {
+    handlePluginNumMemory()
   }
 
 
@@ -525,6 +530,7 @@ onMounted(() => {
 
   // 预加载本地 OCR Worker（如果用户选择了本地 OCR）
   const wordsStore = useWordsStore();
+const router = useRouter();
   if (wordsStore.currentOcrPlatform === 'local') {
     setTimeout(() => {
       preloadWorker();
@@ -608,6 +614,16 @@ function handlePluginReview() {
 
   // 可以添加其他复习相关的逻辑
   // 例如：切换到复习页面、加载复习数据等
+}
+
+/**
+ * 处理数字记忆的插件入口
+ */
+function handlePluginNumMemory() {
+  // 显示主窗口
+  window.utools.showMainWindow()
+  // 跳转到数字记忆页面
+  router.push('/number-memory')
 }
 
 /**

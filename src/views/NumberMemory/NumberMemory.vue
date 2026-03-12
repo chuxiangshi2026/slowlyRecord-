@@ -1,0 +1,604 @@
+<template>
+  <div class="number-memory-page">
+    <el-card class="main-card">
+      <template #header>
+        <div class="card-header">
+          <span class="title">🧠 数字记忆训练</span>
+          <div class="header-actions">
+            <el-tag v-if="store.hasAssociations" type="success">
+              已保存 {{ store.associationCount }} 个数字
+            </el-tag>
+            <el-button @click="showGuide = true">
+              ❓ 使用帮助
+            </el-button>
+            <el-button @click="showHistory = true">
+              📊 训练历史
+            </el-button>
+            <el-button type="warning" @click="batchImportPresets">
+              ⚡ 一键导入预设
+            </el-button>
+            <el-button type="primary" @click="goToTraining" :disabled="!store.hasAssociations">
+              开始训练
+            </el-button>
+          </div>
+        </div>
+      </template>
+
+      <!-- 范围选择 -->
+      <div class="range-selector">
+        <el-radio-group v-model="numberRange" size="large">
+          <el-radio-button label="single">个位数 (0-9)</el-radio-button>
+          <el-radio-button label="double">两位数 (10-99)</el-radio-button>
+          <el-radio-button label="all">全部 (0-99)</el-radio-button>
+        </el-radio-group>
+      </div>
+
+      <!-- 输入区域 -->
+      <div class="input-section">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div class="number-input-wrapper">
+              <label class="section-label">
+                选择数字
+                <el-tag size="small" type="info">{{ rangeText }}</el-tag>
+              </label>
+              <div class="number-buttons" :class="{ 'double-digit': numberRange !== 'single' }">
+                <el-button
+                  v-for="num in displayNumbers"
+                  :key="num"
+                  :type="selectedNumber === num ? 'primary' : 'default'"
+                  size="large"
+                  circle
+                  @click="selectNumber(num)"
+                  :class="{ 'has-image': store.hasAssociation(num) }"
+                >
+                  {{ num }}
+                  <el-icon v-if="store.hasAssociation(num)" class="check-icon"><Check /></el-icon>
+                </el-button>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="current-association" v-if="selectedNumber !== null">
+              <label class="section-label">
+                数字 {{ selectedNumber }} 的关联
+                <el-tag size="small" type="info">{{ keyword }}</el-tag>
+              </label>
+              <div class="current-image" v-if="currentAssociation">
+                <img :src="currentAssociation.imageUrl" alt="已保存的图片" />
+                <el-button 
+                  type="danger" 
+                  size="small" 
+                  @click="deleteCurrentAssociation"
+                  class="delete-btn"
+                >
+                  <el-icon><Delete /></el-icon>
+                  删除
+                </el-button>
+              </div>
+              <div class="no-association" v-else>
+                <el-empty description="暂无关联图片" :image-size="100" />
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+
+      <el-divider />
+
+      <!-- 图片选择区域 -->
+      <div class="image-section" v-if="selectedNumber !== null">
+        <label class="section-label">选择或上传图片</label>
+        
+        <!-- 预设推荐 -->
+        <div class="preset-section">
+          <h4>🎯 推荐图片（{{ keyword }}）</h4>
+          <div class="preset-grid">
+            <div
+              v-for="(item, index) in recommendations"
+              :key="index"
+              class="preset-item"
+              @click="selectPresetImage(item)"
+              :class="{ selected: selectedImage === item.url }"
+            >
+              <div class="emoji-display">{{ item.url }}</div>
+              <div class="preset-name">{{ item.name }}</div>
+              <div class="preset-desc">{{ item.description }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 自定义上传 -->
+        <div class="upload-section">
+          <h4>📤 上传自定义图片</h4>
+          <div class="upload-wrapper">
+            <el-upload
+              class="image-uploader"
+              action="#"
+              :auto-upload="false"
+              :on-change="handleImageChange"
+              :show-file-list="false"
+              accept="image/*"
+            >
+              <el-button type="primary" plain>
+                <el-icon><Upload /></el-icon>
+                选择图片
+              </el-button>
+            </el-upload>
+            <div v-if="uploadedImage" class="upload-preview">
+              <img :src="uploadedImage" alt="上传预览" />
+              <el-button type="success" @click="saveUploadedImage">
+                <el-icon><Check /></el-icon>
+                保存此图片
+              </el-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 提示信息 -->
+      <el-alert
+        v-else
+        title="请先选择一个数字"
+        type="info"
+        :closable="false"
+        center
+        show-icon
+      />
+    </el-card>
+
+    <!-- 训练历史弹窗 -->
+    <TrainingHistory
+      v-model="showHistory"
+      :history="trainingHistory"
+      @clear="clearTrainingHistory"
+    />
+
+    <!-- 新手引导 -->
+    <QuickStartGuide v-model="showGuide" @finish="onGuideFinish" />
+
+    <!-- 已保存的关联列表 -->
+    <el-card class="list-card" v-if="store.hasAssociations">
+      <template #header>
+        <span>📋 已保存的数字-图片关联</span>
+      </template>
+      <el-table :data="store.associations" style="width: 100%">
+        <el-table-column prop="number" label="数字" width="80" align="center">
+          <template #default="{ row }">
+            <el-tag size="large">{{ row.number }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="图片" width="120" align="center">
+          <template #default="{ row }">
+            <img :src="row.imageUrl" class="table-image" alt="图片" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="source" label="来源" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.source === 'preset' ? 'success' : 'warning'">
+              {{ row.source === 'preset' ? '预设' : '上传' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="120">
+          <template #default="{ row }">
+            <el-button type="danger" size="small" @click="deleteAssociation(row.number)">
+              <el-icon><Delete /></el-icon>
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useNumberMemoryStore } from "@/stores/numberMemory";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { Check, Delete, Upload } from "@element-plus/icons-vue";
+import type { UploadFile } from "element-plus";
+import TrainingHistory from "./components/TrainingHistory.vue";
+import QuickStartGuide from "./components/QuickStartGuide.vue";
+import type { TrainingResult } from "@/types/number-memory";
+
+const router = useRouter();
+const store = useNumberMemoryStore();
+
+// State
+const selectedNumber = ref<number | null>(null);
+const selectedImage = ref<string>("");
+const uploadedImage = ref<string>("");
+const showHistory = ref(false);
+const showGuide = ref(false);
+const trainingHistory = ref<TrainingResult[]>([]);
+const numberRange = ref<'single' | 'double' | 'all'>('single');
+
+// Computed
+const currentAssociation = computed(() => {
+  if (selectedNumber.value === null) return null;
+  return store.getAssociation(selectedNumber.value);
+});
+
+const recommendations = computed(() => {
+  if (selectedNumber.value === null) return [];
+  return store.getRecommendations(selectedNumber.value);
+});
+
+const keyword = computed(() => {
+  if (selectedNumber.value === null) return "";
+  return store.getKeyword(selectedNumber.value);
+});
+
+const displayNumbers = computed(() => {
+  switch (numberRange.value) {
+    case 'single':
+      return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    case 'double':
+      return Array.from({ length: 90 }, (_, i) => i + 10);
+    case 'all':
+    default:
+      return Array.from({ length: 100 }, (_, i) => i);
+  }
+});
+
+const rangeText = computed(() => {
+  switch (numberRange.value) {
+    case 'single':
+      return '0-9';
+    case 'double':
+      return '10-99';
+    case 'all':
+    default:
+      return '0-99';
+  }
+});
+
+// Methods
+function selectNumber(num: number) {
+  selectedNumber.value = num;
+  selectedImage.value = "";
+  uploadedImage.value = "";
+}
+
+async function selectPresetImage(item: { name: string; url: string; description: string }) {
+  if (selectedNumber.value === null) return;
+  
+  const result = await store.addAssociation(
+    selectedNumber.value,
+    item.url,
+    "preset",
+    item.description
+  );
+  
+  if (result.ok) {
+    ElMessage.success(`已保存数字 ${selectedNumber.value} 与 ${item.name} 的关联`);
+    selectedImage.value = item.url;
+  } else {
+    ElMessage.error("保存失败");
+  }
+}
+
+function handleImageChange(file: UploadFile) {
+  if (!file.raw) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedImage.value = e.target?.result as string;
+  };
+  reader.readAsDataURL(file.raw);
+}
+
+async function saveUploadedImage() {
+  if (selectedNumber.value === null || !uploadedImage.value) return;
+  
+  const result = await store.addAssociation(
+    selectedNumber.value,
+    uploadedImage.value,
+    "upload"
+  );
+  
+  if (result.ok) {
+    ElMessage.success(`已保存数字 ${selectedNumber.value} 的自定义图片`);
+    uploadedImage.value = "";
+  } else {
+    ElMessage.error("保存失败");
+  }
+}
+
+async function deleteAssociation(number: number) {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除数字 ${number} 的图片关联吗？`,
+      "确认删除",
+      { type: "warning" }
+    );
+    
+    const result = await store.deleteAssociation(number);
+    if (result.ok) {
+      ElMessage.success("删除成功");
+      if (selectedNumber.value === number) {
+        selectedNumber.value = null;
+      }
+    } else {
+      ElMessage.error("删除失败");
+    }
+  } catch {
+    // 用户取消
+  }
+}
+
+async function deleteCurrentAssociation() {
+  if (selectedNumber.value === null) return;
+  await deleteAssociation(selectedNumber.value);
+}
+
+function goToTraining() {
+  router.push("/number-memory/training");
+}
+
+// 加载训练历史
+function loadTrainingHistory() {
+  trainingHistory.value = store.getTrainingHistory();
+}
+
+// 清空训练历史
+async function clearTrainingHistory() {
+  // 这里可以实现清空历史的逻辑，目前只是重新加载
+  trainingHistory.value = [];
+  showHistory.value = false;
+  ElMessage.success("训练历史已清空");
+}
+
+function onGuideFinish() {
+  showGuide.value = false;
+}
+
+// 批量导入预设
+async function batchImportPresets() {
+  const rangeMap = {
+    'single': { start: 0, end: 9, text: '0-9' },
+    'double': { start: 10, end: 99, text: '10-99' },
+    'all': { start: 0, end: 99, text: '0-99' }
+  };
+  const { start, end, text } = rangeMap[numberRange.value];
+
+  try {
+    await ElMessageBox.confirm(
+      `这将导入${text}所有数字的预设图片（每个数字第一个推荐），是否继续？`,
+      "批量导入预设",
+      { type: "info" }
+    );
+
+    const loading = ElMessage({
+      message: "正在导入预设...",
+      type: "info",
+      duration: 0
+    });
+
+    let importedCount = 0;
+    for (let i = start; i <= end; i++) {
+      const recommendations = store.getRecommendations(i);
+      if (recommendations.length > 0) {
+        const first = recommendations[0];
+        const result = await store.addAssociation(i, first.url, "preset", first.description);
+        if (result.ok) {
+          importedCount++;
+        }
+      }
+    }
+
+    loading.close();
+    ElMessage.success(`成功导入 ${importedCount} 个数字的预设图片`);
+  } catch {
+    // 用户取消
+  }
+}
+
+onMounted(() => {
+  loadTrainingHistory();
+  
+  // 检查是否是首次使用
+  const guideShown = localStorage.getItem("numberMemoryGuideShown");
+  if (!guideShown) {
+    showGuide.value = true;
+  }
+});
+</script>
+
+<style scoped lang="scss">
+.number-memory-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-card {
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+  }
+
+  .range-selector {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .section-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #606266;
+
+    .el-tag {
+      margin-left: 10px;
+    }
+  }
+
+  .number-input-wrapper {
+    .number-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 5px;
+
+      &.double-digit {
+        .el-button {
+          width: 56px;
+          height: 56px;
+          font-size: 16px;
+        }
+      }
+
+      .el-button {
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+        position: relative;
+        flex-shrink: 0;
+
+        &.has-image {
+          border-color: #67c23a;
+          border-width: 2px;
+        }
+
+        .check-icon {
+          position: absolute;
+          top: -5px;
+          right: -5px;
+          font-size: 12px;
+          color: #67c23a;
+          background: white;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+
+  .current-association {
+    .current-image {
+      text-align: center;
+      
+      img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        border: 2px solid #dcdfe6;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .delete-btn {
+        display: block;
+        margin: 0 auto;
+      }
+    }
+
+    .no-association {
+      padding: 20px;
+    }
+  }
+
+  .preset-section {
+    margin-bottom: 30px;
+
+    h4 {
+      margin-bottom: 15px;
+      color: #409eff;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+
+      .preset-item {
+        border: 2px solid #e4e7ed;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover {
+          border-color: #409eff;
+          transform: translateY(-2px);
+        }
+
+        &.selected {
+          border-color: #67c23a;
+          background-color: #f0f9ff;
+        }
+
+        .emoji-display {
+          font-size: 48px;
+          margin-bottom: 8px;
+        }
+
+        .preset-name {
+          font-weight: bold;
+          font-size: 14px;
+          margin-bottom: 4px;
+        }
+
+        .preset-desc {
+          font-size: 12px;
+          color: #909399;
+        }
+      }
+    }
+  }
+
+  .upload-section {
+    h4 {
+      margin-bottom: 15px;
+      color: #409eff;
+    }
+
+    .upload-wrapper {
+      .upload-preview {
+        margin-top: 15px;
+        text-align: center;
+
+        img {
+          width: 150px;
+          height: 150px;
+          object-fit: contain;
+          border: 2px solid #dcdfe6;
+          border-radius: 8px;
+          margin-bottom: 10px;
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+      }
+    }
+  }
+
+  .list-card {
+    .table-image {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+  }
+}
+</style>

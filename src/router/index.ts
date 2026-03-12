@@ -4,6 +4,8 @@ import type { RouteRecordRaw } from 'vue-router'
 const Home = () => import('@/views/Home/Home.vue');
 const Sign = () => import('@/views/Sign/Sign.vue');
 const Word = () => import('@/views/Word/Word.vue');
+const NumberMemory = () => import('@/views/NumberMemory/NumberMemory.vue');
+const NumberMemoryTraining = () => import('@/views/NumberMemory/NumberMemoryTraining.vue');
 // const Exception = () => import('@/views/Exception/Exception.vue');
 // const Apply = () => import('@/views/Apply/Apply.vue');
 // const Check = () => import('@/views/Check/Check.vue');
@@ -54,6 +56,25 @@ const routes: Array<RouteRecordRaw> = [
           menu: true,
           title: '打卡',
           icon: 'calendar',
+        },
+      },
+      {
+        path: 'number-memory',
+        name: 'numberMemory',
+        component: NumberMemory,
+        meta: {
+          menu: true,
+          title: '数字记忆',
+          icon: 'aim',
+        },
+      },
+      {
+        path: 'number-memory/training',
+        name: 'numberMemoryTraining',
+        component: NumberMemoryTraining,
+        meta: {
+          menu: false,
+          title: '记忆训练',
         },
       },
      /* {

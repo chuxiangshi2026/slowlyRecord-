@@ -117,4 +117,9 @@ const DB_KEY = 'words-list';
  */
 const DB_KEY_USER_SET = 'user-set';
 
-export {DEFAULT_INTERVALS, APP_KEY, KEY, FROM, TO, DB_KEY, DB_KEY_USER_SET, USAGE_LIMITS};
+/**
+ * 数字记忆训练数据库前缀
+ */
+const DB_KEY_NUMBER_MEMORY = 'number_memory_';
+
+export {DEFAULT_INTERVALS, APP_KEY, KEY, FROM, TO, DB_KEY, DB_KEY_USER_SET, USAGE_LIMITS, DB_KEY_NUMBER_MEMORY};
