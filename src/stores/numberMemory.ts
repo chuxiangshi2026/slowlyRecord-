@@ -27,11 +27,11 @@ export const useNumberMemoryStore = defineStore("numberMemory", () => {
   
   const hasAssociations = computed(() => associations.value.length > 0);
   
-  const getAssociation = (number: number) => {
+  const getAssociation = (number: string) => {
     return associations.value.find(a => a.number === number);
   };
   
-  const hasAssociation = (number: number) => {
+  const hasAssociation = (number: string) => {
     return associations.value.some(a => a.number === number);
   };
 
@@ -52,7 +52,7 @@ export const useNumberMemoryStore = defineStore("numberMemory", () => {
   /**
    * 添加或更新数字-图片关联
    */
-  async function addAssociation(number: number, imageUrl: string, source: 'upload' | 'preset', description?: string) {
+  async function addAssociation(number: string, imageUrl: string, source: 'upload' | 'preset', description?: string) {
     const association: NumberImageAssociation = {
       number,
       imageUrl,
@@ -70,7 +70,7 @@ export const useNumberMemoryStore = defineStore("numberMemory", () => {
   /**
    * 删除数字-图片关联
    */
-  async function deleteAssociation(number: number) {
+  async function deleteAssociation(number: string) {
     const result = await removeAssociation(number);
     if (result.ok) {
       loadAssociations();
@@ -81,15 +81,17 @@ export const useNumberMemoryStore = defineStore("numberMemory", () => {
   /**
    * 获取数字的推荐图片
    */
-  function getRecommendations(number: number) {
-    return getRecommendedImages(number);
+  function getRecommendations(number: string) {
+    const num = parseInt(number, 10);
+    return getRecommendedImages(num);
   }
 
   /**
    * 获取数字关键词
    */
-  function getKeyword(number: number) {
-    return getNumberKeyword(number);
+  function getKeyword(number: string) {
+    const num = parseInt(number, 10);
+    return getNumberKeyword(num);
   }
 
   /**
@@ -160,7 +162,7 @@ export const useNumberMemoryStore = defineStore("numberMemory", () => {
     totalQuestions: number,
     correctAnswers: number,
     duration: number,
-    details: { number: number; correct: boolean; responseTime: number }[]
+    details: { number: string; correct: boolean; responseTime: number }[]
   ) {
     const result: Omit<TrainingResult, '_id'> = {
       type: 'number_memory_result',

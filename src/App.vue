@@ -625,8 +625,8 @@ function handlePluginReview() {
   // 显示主窗口
   window.utools.showMainWindow()
 
-  // 可以添加其他复习相关的逻辑
-  // 例如：切换到复习页面、加载复习数据等
+  // 跳转到单词列表主界面
+  router.push('/word')
 }
 
 /**

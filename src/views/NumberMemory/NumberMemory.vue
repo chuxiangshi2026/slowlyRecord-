@@ -28,6 +28,7 @@
       <div class="range-selector">
         <el-radio-group v-model="numberRange" size="large">
           <el-radio-button label="single">个位数 (0-9)</el-radio-button>
+          <el-radio-button label="zero-padded">前导零 (00-09)</el-radio-button>
           <el-radio-button label="double">两位数 (10-99)</el-radio-button>
           <el-radio-button label="all">全部 (0-99)</el-radio-button>
         </el-radio-group>
@@ -42,7 +43,7 @@
                 选择数字
                 <el-tag size="small" type="info">{{ rangeText }}</el-tag>
               </label>
-              <div class="number-buttons" :class="{ 'double-digit': numberRange !== 'single' }">
+              <div class="number-buttons" :class="{ 'double-digit': numberRange !== 'single', 'zero-padded': numberRange === 'zero-padded' || numberRange === 'all' }">
                 <el-button
                   v-for="num in displayNumbers"
                   :key="num"
@@ -52,7 +53,7 @@
                   @click="selectNumber(num)"
                   :class="{ 'has-image': store.hasAssociation(num) }"
                 >
-                  {{ num }}
+                  {{ formatNumberDisplay(num) }}
                   <el-icon v-if="store.hasAssociation(num)" class="check-icon"><Check /></el-icon>
                 </el-button>
               </div>
@@ -65,7 +66,10 @@
                 <el-tag size="small" type="info">{{ keyword }}</el-tag>
               </label>
               <div class="current-image" v-if="currentAssociation">
-                <img :src="currentAssociation.imageUrl" alt="已保存的图片" />
+                <!-- 用户上传的base64图片 -->
+                <img v-if="isBase64Image(currentAssociation.imageUrl)" :src="currentAssociation.imageUrl" alt="已保存的图片" />
+                <!-- 预设emoji图片 -->
+                <div v-else class="emoji-display-large">{{ currentAssociation.imageUrl }}</div>
                 <el-button 
                   type="danger" 
                   size="small" 
@@ -170,7 +174,10 @@
         </el-table-column>
         <el-table-column label="图片" width="120" align="center">
           <template #default="{ row }">
-            <img :src="row.imageUrl" class="table-image" alt="图片" />
+            <!-- 用户上传的base64图片 -->
+            <img v-if="isBase64Image(row.imageUrl)" :src="row.imageUrl" class="table-image" alt="图片" />
+            <!-- 预设emoji图片 -->
+            <span v-else class="table-emoji">{{ row.imageUrl }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="source" label="来源" width="100">
@@ -207,13 +214,13 @@ const router = useRouter();
 const store = useNumberMemoryStore();
 
 // State
-const selectedNumber = ref<number | null>(null);
+const selectedNumber = ref<string | null>(null);
 const selectedImage = ref<string>("");
 const uploadedImage = ref<string>("");
 const showHistory = ref(false);
 const showGuide = ref(false);
 const trainingHistory = ref<TrainingResult[]>([]);
-const numberRange = ref<'single' | 'double' | 'all'>('single');
+const numberRange = ref<'single' | 'zero-padded' | 'double' | 'all'>('single');
 
 // Computed
 const currentAssociation = computed(() => {
@@ -231,15 +238,22 @@ const keyword = computed(() => {
   return store.getKeyword(selectedNumber.value);
 });
 
-const displayNumbers = computed(() => {
+const displayNumbers = computed((): string[] => {
   switch (numberRange.value) {
     case 'single':
-      return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    case 'zero-padded':
+      return ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09'];
     case 'double':
-      return Array.from({ length: 90 }, (_, i) => i + 10);
+      return Array.from({ length: 90 }, (_, i) => String(i + 10));
     case 'all':
     default:
-      return Array.from({ length: 100 }, (_, i) => i);
+      // 全部: 0-9, 00-09, 10-99
+      return [
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
+        ...Array.from({ length: 90 }, (_, i) => String(i + 10))
+      ];
   }
 });
 
@@ -247,6 +261,8 @@ const rangeText = computed(() => {
   switch (numberRange.value) {
     case 'single':
       return '0-9';
+    case 'zero-padded':
+      return '00-09';
     case 'double':
       return '10-99';
     case 'all':
@@ -256,7 +272,7 @@ const rangeText = computed(() => {
 });
 
 // Methods
-function selectNumber(num: number) {
+function selectNumber(num: string) {
   selectedNumber.value = num;
   selectedImage.value = "";
   uploadedImage.value = "";
@@ -307,7 +323,7 @@ async function saveUploadedImage() {
   }
 }
 
-async function deleteAssociation(number: number) {
+async function deleteAssociation(number: string) {
   try {
     await ElMessageBox.confirm(
       `确定要删除数字 ${number} 的图片关联吗？`,
@@ -355,14 +371,37 @@ function onGuideFinish() {
   showGuide.value = false;
 }
 
+/**
+ * 判断是否为base64格式的图片
+ */
+function isBase64Image(url: string): boolean {
+  return url?.startsWith('data:image/') || false;
+}
+
+/**
+ * 格式化数字显示
+ * 直接返回数字字符串，因为 displayNumbers 已经格式化了
+ */
+function formatNumberDisplay(num: string): string {
+  return num;
+}
+
 // 批量导入预设
 async function batchImportPresets() {
   const rangeMap = {
-    'single': { start: 0, end: 9, text: '0-9' },
-    'double': { start: 10, end: 99, text: '10-99' },
-    'all': { start: 0, end: 99, text: '0-99' }
+    'single': { numbers: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], text: '0-9' },
+    'zero-padded': { numbers: ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09'], text: '00-09' },
+    'double': { numbers: Array.from({ length: 90 }, (_, i) => String(i + 10)), text: '10-99' },
+    'all': {
+      numbers: [
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
+        ...Array.from({ length: 90 }, (_, i) => String(i + 10))
+      ],
+      text: '0-9, 00-09, 10-99'
+    }
   };
-  const { start, end, text } = rangeMap[numberRange.value];
+  const { numbers, text } = rangeMap[numberRange.value];
 
   try {
     await ElMessageBox.confirm(
@@ -378,11 +417,11 @@ async function batchImportPresets() {
     });
 
     let importedCount = 0;
-    for (let i = start; i <= end; i++) {
-      const recommendations = store.getRecommendations(i);
+    for (const num of numbers) {
+      const recommendations = store.getRecommendations(num);
       if (recommendations.length > 0) {
         const first = recommendations[0];
-        const result = await store.addAssociation(i, first.url, "preset", first.description);
+        const result = await store.addAssociation(num, first.url, "preset", first.description);
         if (result.ok) {
           importedCount++;
         }
@@ -467,6 +506,14 @@ onMounted(() => {
         }
       }
 
+      &.zero-padded {
+        .el-button {
+          width: 56px;
+          height: 56px;
+          font-size: 14px;
+        }
+      }
+
       .el-button {
         width: 50px;
         height: 50px;
@@ -502,6 +549,12 @@ onMounted(() => {
         object-fit: contain;
         border: 2px solid #dcdfe6;
         border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .emoji-display-large {
+        font-size: 80px;
+        line-height: 120px;
         margin-bottom: 10px;
       }
 
@@ -598,6 +651,11 @@ onMounted(() => {
       height: 50px;
       object-fit: contain;
       border-radius: 4px;
+    }
+
+    .table-emoji {
+      font-size: 32px;
+      line-height: 50px;
     }
   }
 }

@@ -79,7 +79,10 @@
                 }"
                 @click="selectAnswer(option)"
               >
-                <img :src="option" alt="选项图片" />
+                <!-- 用户上传的base64图片 -->
+                <img v-if="isBase64Image(option)" :src="option" alt="选项图片" />
+                <!-- 预设emoji图片 -->
+                <span v-else class="emoji-option">{{ option }}</span>
               </div>
             </div>
           </template>
@@ -88,7 +91,10 @@
           <template v-else>
             <div class="question-image">
               <span class="label">这张图片代表什么数字？</span>
-              <img :src="currentQuestion?.question" alt="题目图片" />
+              <!-- 用户上传的base64图片 -->
+              <img v-if="isBase64Image(currentQuestion?.question || '')" :src="currentQuestion?.question" alt="题目图片" />
+              <!-- 预设emoji图片 -->
+              <div v-else class="emoji-question">{{ currentQuestion?.question }}</div>
             </div>
             <div class="options-grid number-options">
               <div
@@ -165,18 +171,33 @@
           <el-table-column label="题目" align="center">
             <template #default="{ row }">
               <span v-if="currentMode === 'numberToImage'" class="table-number">{{ row.question }}</span>
-              <img v-else :src="row.question" class="table-image" alt="题目" />
+              <template v-else>
+                <!-- 用户上传的base64图片 -->
+                <img v-if="isBase64Image(row.question)" :src="row.question" class="table-image" alt="题目" />
+                <!-- 预设emoji图片 -->
+                <span v-else class="table-emoji">{{ row.question }}</span>
+              </template>
             </template>
           </el-table-column>
           <el-table-column label="你的答案" align="center">
             <template #default="{ row }">
-              <img v-if="currentMode === 'numberToImage'" :src="row.yourAnswer" class="table-image" alt="答案" />
+              <template v-if="currentMode === 'numberToImage'">
+                <!-- 用户上传的base64图片 -->
+                <img v-if="isBase64Image(row.yourAnswer)" :src="row.yourAnswer" class="table-image" alt="答案" />
+                <!-- 预设emoji图片 -->
+                <span v-else class="table-emoji">{{ row.yourAnswer }}</span>
+              </template>
               <span v-else class="table-number" :class="{ wrong: !row.correct }">{{ row.yourAnswer }}</span>
             </template>
           </el-table-column>
           <el-table-column label="正确答案" align="center">
             <template #default="{ row }">
-              <img v-if="currentMode === 'numberToImage'" :src="row.correctAnswer" class="table-image" alt="正确答案" />
+              <template v-if="currentMode === 'numberToImage'">
+                <!-- 用户上传的base64图片 -->
+                <img v-if="isBase64Image(row.correctAnswer)" :src="row.correctAnswer" class="table-image" alt="正确答案" />
+                <!-- 预设emoji图片 -->
+                <span v-else class="table-emoji">{{ row.correctAnswer }}</span>
+              </template>
               <span v-else class="table-number">{{ row.correctAnswer }}</span>
             </template>
           </el-table-column>
@@ -205,6 +226,13 @@ import { useNumberMemoryStore } from "@/stores/numberMemory";
 import { ElMessage } from "element-plus";
 import { Timer } from "@element-plus/icons-vue";
 
+/**
+ * 判断是否为base64格式的图片
+ */
+function isBase64Image(url: string): boolean {
+  return url?.startsWith('data:image/') || false;
+}
+
 const router = useRouter();
 const store = useNumberMemoryStore();
 
@@ -217,7 +245,7 @@ const hasAnswered = ref(false);
 const isCorrect = ref(false);
 const isFinished = ref(false);
 const elapsedTime = ref(0);
-const answerResults = ref<{ question: number; selectedImage: string | null; selectedNumber: number | null; correct: boolean; responseTime: number }[]>([]);
+const answerResults = ref<{ question: string; selectedImage: string | null; selectedNumber: string | null; correct: boolean; responseTime: number }[]>([]);
 
 // Timer
 let timer: number | null = null;
@@ -529,6 +557,12 @@ onUnmounted(() => {
           border-radius: 12px;
           margin-top: 20px;
         }
+
+        .emoji-question {
+          font-size: 100px;
+          line-height: 150px;
+          margin-top: 20px;
+        }
       }
 
       .options-grid {
@@ -546,6 +580,11 @@ onUnmounted(() => {
               max-width: 100%;
               max-height: 100%;
               object-fit: contain;
+            }
+
+            .emoji-option {
+              font-size: 64px;
+              line-height: 150px;
             }
           }
         }
@@ -630,6 +669,11 @@ onUnmounted(() => {
       width: 50px;
       height: 50px;
       object-fit: contain;
+    }
+
+    .table-emoji {
+      font-size: 32px;
+      line-height: 50px;
     }
 
     .table-number {

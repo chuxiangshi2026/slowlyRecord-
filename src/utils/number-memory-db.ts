@@ -31,7 +31,7 @@ export function getAllAssociations(): NumberImageAssociation[] {
  * @param number 数字
  * @returns 数字图片关联
  */
-export function getAssociationByNumber(number: number): NumberImageAssociation | undefined {
+export function getAssociationByNumber(number: string): NumberImageAssociation | undefined {
   const associations = getAllAssociations();
   return associations.find(a => a.number === number);
 }
@@ -85,7 +85,7 @@ export async function saveAssociation(association: NumberImageAssociation): Prom
  * @param number 要删除的数字
  * @returns 删除结果
  */
-export async function removeAssociation(number: number): Promise<DbReturn> {
+export async function removeAssociation(number: string): Promise<DbReturn> {
   log.i('删除数字图片关联', number);
   
   const training = getNumberMemoryTraining();

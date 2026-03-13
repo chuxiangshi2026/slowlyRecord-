@@ -5,7 +5,7 @@
 
 // 单个数字的图片关联
 export interface NumberImageAssociation {
-  number: number;           // 数字 (0-99)
+  number: string;           // 数字 (0-99, 00-09)
   imageUrl: string;         // 图片路径/URL
   description?: string;     // 图片描述（可选）
   source: 'upload' | 'preset'; // 图片来源：用户上传或预设
@@ -31,7 +31,7 @@ export interface TrainingResult {
   correctAnswers: number;   // 答对题数
   duration: number;         // 用时（秒）
   details: {
-    number: number;
+    number: string;
     correct: boolean;
     responseTime: number;   // 该题响应时间（毫秒）
   }[];
