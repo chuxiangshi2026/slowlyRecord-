@@ -222,17 +222,17 @@
           <el-input v-model="item.appkey"
                     @update:model-value="(val: string) => updateKey(index, 'appkey', val)"
                     style="width: 153px"
-                    :placeholder="'ollama'===index?'http://localhost:11434）':['ollama','deepseek', 'qwen', 'kimi'].includes(index)?'使用必需填写':'没有请留空'"
+                    :placeholder="'ollama'===index?'http://localhost:11434）':['ollama','deepseek', 'qwen', 'kimi', 'glm'].includes(index)?'使用必需填写':'没有请留空'"
           />
         </span>
         <span class="shorcut-desc">
           {{ index }} SecretKey
           <!--          type="password"-->
           <el-input v-model="item.key"
-                    :disabled="['deepseek', 'qwen', 'kimi'].includes(index)"
+                    :disabled="['deepseek', 'qwen', 'kimi', 'glm'].includes(index)"
                     @update:model-value="(val: string) => updateKey(index, 'key', val)"
                     style="width: 185px"
-                    :placeholder="'ollama'===index?'模型名如（qwen2.5:0.5b）':['deepseek', 'qwen', 'kimi'].includes(index)?'无需填写':'没有请留空'"/>
+                    :placeholder="'ollama'===index?'模型名如（qwen2.5:0.5b）':['ollama', 'deepseek', 'qwen', 'kimi', 'glm'].includes(index)?'无需填写':'没有请留空'"/>
         </span>
       </div>
 
@@ -555,6 +555,9 @@ const options = [
   }, {
     value: 'kimi',
     label: 'kimi',
+  }, {
+    value: 'glm',
+    label: '智谱GLM',
   }
 ]
 /*{

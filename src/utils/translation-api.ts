@@ -567,6 +567,9 @@ export async function translateWithPlatform(query: string, platform: Translation
             case 'kimi':
                 console.log('调用Kimi')
                 return callKimi(query);
+            case 'glm':
+                console.log('调用智谱GLM')
+                return callGlm(query);
             case 'ollama':
                 console.log('调用Ollama')
                 return callOllama(query);
@@ -1034,6 +1037,73 @@ async function callKimi(query: string): Promise<TranslationResult> {
         return {
             success: false,
             errorMsg: 'Kimi service error: ' + errorMessage
+        };
+    }
+}
+
+/**
+ * 调用智谱GLM模型
+ */
+async function callGlm(query: string): Promise<TranslationResult> {
+    try {
+        const {appkey: apiKey, key: modelName} = getTranslationApiKey('glm');
+
+        if (!apiKey) {
+            return {
+                success: false,
+                errorMsg: '请先配置智谱GLM模型密钥'
+            };
+        }
+
+        const model = modelName || 'glm-4-flash';
+
+        const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are a helpful translator. Please translate the following text to Chinese. Only return the translation result, without any explanation.'
+                    },
+                    {
+                        role: 'user',
+                        content: query
+                    }
+                ]
+            })
+        });
+
+        log.i('GLM response:', response);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({error: {message: 'Unknown error'}}));
+            throw new Error(`GLM request failed: ${response.status} - ${JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+
+        if (!content) {
+            throw new Error('Invalid response from GLM');
+        }
+
+        // 获取发音URL
+        const pronunciation = getPronunciationUrlSync(query);
+
+        return {
+            success: true,
+            explains: content.trim(),
+            pronunciation
+        };
+    } catch (error) {
+        console.error('GLM error:', error);
+        return {
+            success: false,
+            errorMsg: 'GLM service error: ' + (error as Error).message
         };
     }
 }

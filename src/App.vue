@@ -104,6 +104,7 @@ utools.onPluginEnter(async (action) => {
         deepseek: {appkey: '', key: ''},
         qwen: {appkey: '', key: ''},
         kimi: {appkey: '', key: ''},
+        glm: {appkey: '', key: ''},
         local: {appkey: '', key: ''}
       };
 
