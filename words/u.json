@@ -20,11 +20,33 @@
       "prep. 在… 下面；低于；少于；在… 指导下"
     ]
   },
+  "understand": {
+    "word": "understand",
+    "phonetic": "/ˌʌndəˈstænd/",
+    "explains": [
+      "v. 理解；懂得；明白；了解"
+    ]
+  },
   "underline": {
     "word": "underline",
     "phonetic": "/ˌʌndəˈlaɪn/",
     "explains": [
       "v. 在… 下面划线；强调；突出"
+    ]
+  },
+  "uniform": {
+    "word": "uniform",
+    "phonetic": "/ˈjuːnɪfɔːm/",
+    "explains": [
+      "n. 制服；校服",
+      "adj. 统一的；一致的；均匀的"
+    ]
+  },
+  "unique": {
+    "word": "unique",
+    "phonetic": "/juˈniːk/",
+    "explains": [
+      "adj. 唯一的；独特的；独一无二的"
     ]
   },
   "unit": {
@@ -34,11 +56,25 @@
       "n. 单位；单元；部件；组件；部队"
     ]
   },
+  "unite": {
+    "word": "unite",
+    "phonetic": "/juˈnaɪt/",
+    "explains": [
+      "v. 联合；团结；统一；合并"
+    ]
+  },
   "university": {
     "word": "university",
     "phonetic": "/ˌjuːnɪˈvɜːsəti/",
     "explains": [
       "n. 大学；综合性大学；大学校舍"
+    ]
+  },
+  "unless": {
+    "word": "unless",
+    "phonetic": "/ənˈles/",
+    "explains": [
+      "conj. 除非；如果不"
     ]
   },
   "until": {
@@ -76,11 +112,32 @@
       "v. 使用；运用；利用；耗费 n. 使用；用途；发挥"
     ]
   },
+  "used": {
+    "word": "used",
+    "phonetic": "/juːzd/",
+    "explains": [
+      "adj. 用过的；二手的；习惯于"
+    ]
+  },
   "useful": {
     "word": "useful",
     "phonetic": "/ˈjuːsfl/",
     "explains": [
       "adj. 有用的；有益的；有帮助的"
+    ]
+  },
+  "useless": {
+    "word": "useless",
+    "phonetic": "/ˈjuːsləs/",
+    "explains": [
+      "adj. 无用的；无效的；无价值的"
+    ]
+  },
+  "user": {
+    "word": "user",
+    "phonetic": "/ˈjuːzə(r)/",
+    "explains": [
+      "n. 用户；使用者；吸毒者"
     ]
   },
   "usual": {

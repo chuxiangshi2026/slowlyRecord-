@@ -55,6 +55,14 @@
       "n. 军官；警官；官员"
     ]
   },
+  "official": {
+    "word": "official",
+    "phonetic": "/əˈfɪʃl/",
+    "explains": [
+      "adj. 官方的；正式的；公务的",
+      "n. 官员；公务员"
+    ]
+  },
   "often": {
     "word": "often",
     "phonetic": "/ˈɒfn/",
@@ -118,11 +126,40 @@
       "v. 操作；经营；动手术"
     ]
   },
+  "operation": {
+    "word": "operation",
+    "phonetic": "/ˌɒpəˈreɪʃn/",
+    "explains": [
+      "n. 操作；经营；手术；运算"
+    ]
+  },
   "opinion": {
     "word": "opinion",
     "phonetic": "/əˈpɪnjən/",
     "explains": [
       "n. 意见；主张；看法"
+    ]
+  },
+  "opportunity": {
+    "word": "opportunity",
+    "phonetic": "/ˌɒpəˈtjuːnəti/",
+    "explains": [
+      "n. 机会；时机；良机"
+    ]
+  },
+  "oppose": {
+    "word": "oppose",
+    "phonetic": "/əˈpəʊz/",
+    "explains": [
+      "v. 反对；反抗；对抗"
+    ]
+  },
+  "opposite": {
+    "word": "opposite",
+    "phonetic": "/ˈɒpəzɪt/",
+    "explains": [
+      "adj. 相反的；对面的；对立的",
+      "n. 对立面；反面 prep. 在…对面"
     ]
   },
   "or": {
@@ -165,6 +202,14 @@
     "phonetic": "/ˈɒrɪdʒɪn/",
     "explains": [
       "n. 起源；源头；出身"
+    ]
+  },
+  "original": {
+    "word": "original",
+    "phonetic": "/əˈrɪdʒənl/",
+    "explains": [
+      "adj. 最初的；原始的；独创的",
+      "n. 原作；原件；原稿"
     ]
   },
   "other": {
@@ -214,6 +259,13 @@
     "phonetic": "/ˈəʊvə(r)/",
     "explains": [
       "prep. 在… 上方；越过；关于"
+    ]
+  },
+  "overcome": {
+    "word": "overcome",
+    "phonetic": "/ˌəʊvəˈkʌm/",
+    "explains": [
+      "v. 克服；战胜；征服"
     ]
   },
   "own": {

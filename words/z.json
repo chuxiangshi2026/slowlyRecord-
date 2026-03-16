@@ -44,5 +44,37 @@
     "explains": [
       "n. 动物园（= zoological garden 的缩写）"
     ]
+  },
+  "zombie": {
+    "word": "zombie",
+    "phonetic": "/ˈzɒmbi/",
+    "explains": [
+      "n. 僵尸；丧尸；行尸走肉"
+    ]
+  },
+  "zoom": {
+    "word": "zoom",
+    "phonetic": "/zuːm/",
+    "explains": [
+      "v. 快速移动；急升；猛涨；（镜头）拉近/推远",
+      "n. 变焦镜头；嗡嗡声；激增"
+    ]
+  },
+  "zest": {
+    "word": "zest",
+    "phonetic": "/zest/",
+    "explains": [
+      "n. 热情；兴趣；柠檬皮（调味用）",
+      "v. 刮下柠檬皮"
+    ]
+  },
+  "zigzag": {
+    "word": "zigzag",
+    "phonetic": "/ˈzɪɡzæɡ/",
+    "explains": [
+      "n. 之字形；锯齿形",
+      "adj./adv. 之字形的/地",
+      "v. 呈之字形前进"
+    ]
   }
 }

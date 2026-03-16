@@ -1,4 +1,27 @@
 {
+  "quality": {
+    "word": "quality",
+    "phonetic": "/ˈkwɒləti/",
+    "explains": [
+      "n. 质量；品质；特性；才能",
+      "adj. 优质的；高质量的"
+    ]
+  },
+  "quantity": {
+    "word": "quantity",
+    "phonetic": "/ˈkwɒntəti/",
+    "explains": [
+      "n. 数量；大量；总量"
+    ]
+  },
+  "quarter": {
+    "word": "quarter",
+    "phonetic": "/ˈkwɔːtə(r)/",
+    "explains": [
+      "n. 四分之一；季度；一刻钟；地区",
+      "v. 把…分成四部分；供…住宿"
+    ]
+  },
   "queen": {
     "word": "queen",
     "phonetic": "/kwiːn/",
@@ -32,6 +55,22 @@
     "phonetic": "/kwaɪt/",
     "explains": [
       "adv. 很；相当；完全"
+    ]
+  },
+  "quiz": {
+    "word": "quiz",
+    "phonetic": "/kwɪz/",
+    "explains": [
+      "n. 测验；问答比赛；恶作剧",
+      "v. 盘问；对…进行测验"
+    ]
+  },
+  "quote": {
+    "word": "quote",
+    "phonetic": "/kwəʊt/",
+    "explains": [
+      "v. 引用；引述；报价",
+      "n. 引语；引号；报价"
     ]
   }
 }

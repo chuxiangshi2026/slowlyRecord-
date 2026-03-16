@@ -1,9 +1,53 @@
 {
+  "vacation": {
+    "word": "vacation",
+    "phonetic": "/vəˈkeɪʃn/",
+    "explains": [
+      "n. 假期；休假； vacate",
+      "v. 度假"
+    ]
+  },
+  "valley": {
+    "word": "valley",
+    "phonetic": "/ˈvæli/",
+    "explains": [
+      "n. 山谷；溪谷；流域"
+    ]
+  },
+  "valuable": {
+    "word": "valuable",
+    "phonetic": "/ˈvæljuəbl/",
+    "explains": [
+      "adj. 有价值的；贵重的；宝贵的",
+      "n. 贵重物品"
+    ]
+  },
   "value": {
     "word": "value",
     "phonetic": "/ˈvæljuː/",
     "explains": [
       "n. 价值；价格；重要性；益处 v. 重视；珍视；给… 估价"
+    ]
+  },
+  "van": {
+    "word": "van",
+    "phonetic": "/væn/",
+    "explains": [
+      "n. 厢式货车；面包车；先锋"
+    ]
+  },
+  "variety": {
+    "word": "variety",
+    "phonetic": "/vəˈraɪəti/",
+    "explains": [
+      "n. 多样；种类；变化；品种"
+    ]
+  },
+  "various": {
+    "word": "various",
+    "phonetic": "/ˈveəriəs/",
+    "explains": [
+      "adj. 各种各样的；不同的；多方面的"
     ]
   },
   "vegetable": {
@@ -13,11 +57,47 @@
       "n. 蔬菜；植物；植物人 adj. 蔬菜的；植物的"
     ]
   },
+  "vehicle": {
+    "word": "vehicle",
+    "phonetic": "/ˈviːəkl/",
+    "explains": [
+      "n. 车辆；交通工具；媒介物；传达手段"
+    ]
+  },
+  "version": {
+    "word": "version",
+    "phonetic": "/ˈvɜːʃn/",
+    "explains": [
+      "n. 版本；说法；译本；形式"
+    ]
+  },
   "very": {
     "word": "very",
     "phonetic": "/ˈveri/",
     "explains": [
       "adv. 非常；很；十分；极 adj. 恰好的；正是的；十足的"
+    ]
+  },
+  "victim": {
+    "word": "victim",
+    "phonetic": "/ˈvɪktɪm/",
+    "explains": [
+      "n. 受害者；牺牲品；受骗者"
+    ]
+  },
+  "victory": {
+    "word": "victory",
+    "phonetic": "/ˈvɪktəri/",
+    "explains": [
+      "n. 胜利；成功；克服"
+    ]
+  },
+  "view": {
+    "word": "view",
+    "phonetic": "/vjuː/",
+    "explains": [
+      "n. 看法；风景；视线；观点",
+      "v. 看待；观看；查看"
     ]
   },
   "village": {
@@ -27,6 +107,34 @@
       "n. 村庄；村镇；乡村；村民"
     ]
   },
+  "violence": {
+    "word": "violence",
+    "phonetic": "/ˈvaɪələns/",
+    "explains": [
+      "n. 暴力；暴行；激烈；猛烈"
+    ]
+  },
+  "violent": {
+    "word": "violent",
+    "phonetic": "/ˈvaɪələnt/",
+    "explains": [
+      "adj. 暴力的；猛烈的；剧烈的；强烈的"
+    ]
+  },
+  "virtue": {
+    "word": "virtue",
+    "phonetic": "/ˈvɜːtʃuː/",
+    "explains": [
+      "n. 美德；优点；德行；贞操"
+    ]
+  },
+  "virus": {
+    "word": "virus",
+    "phonetic": "/ˈvaɪrəs/",
+    "explains": [
+      "n. 病毒；病原体；恶意软件"
+    ]
+  },
   "visit": {
     "word": "visit",
     "phonetic": "/ˈvɪzɪt/",
@@ -34,11 +142,33 @@
       "v./n. 访问；参观；拜访；看望；游览"
     ]
   },
+  "visitor": {
+    "word": "visitor",
+    "phonetic": "/ˈvɪzɪtə(r)/",
+    "explains": [
+      "n. 访问者；游客；参观者"
+    ]
+  },
   "voice": {
     "word": "voice",
     "phonetic": "/vɔɪs/",
     "explains": [
       "n. 嗓音；声音；发言权；意见 v. 表达；吐露"
+    ]
+  },
+  "volume": {
+    "word": "volume",
+    "phonetic": "/ˈvɒljuːm/",
+    "explains": [
+      "n. 体积；容积；音量；卷；册"
+    ]
+  },
+  "vote": {
+    "word": "vote",
+    "phonetic": "/vəʊt/",
+    "explains": [
+      "n. 投票；选举；表决；选票",
+      "v. 投票；表决；选举"
     ]
   }
 }

@@ -1,9 +1,16 @@
 {
+  "keen": {
+    "word": "keen",
+    "phonetic": "/kiːn/",
+    "explains": [
+      "adj. 热心的；敏锐的；强烈的；锋利的"
+    ]
+  },
   "keep": {
     "word": "keep",
     "phonetic": "/kiːp/",
     "explains": [
-      "v. 保持；保留；遵守；饲养"
+      "v. 保持；保留；遵守；饲养；继续"
     ]
   },
   "key": {
@@ -69,6 +76,13 @@
       "n. 国王；君主；最有势力者"
     ]
   },
+  "kiss": {
+    "word": "kiss",
+    "phonetic": "/kɪs/",
+    "explains": [
+      "v./n. 亲吻；接吻；轻拂"
+    ]
+  },
   "kitchen": {
     "word": "kitchen",
     "phonetic": "/ˈkɪtʃɪn/",
@@ -81,6 +95,13 @@
     "phonetic": "/kaɪt/",
     "explains": [
       "n. 风筝"
+    ]
+  },
+  "knee": {
+    "word": "knee",
+    "phonetic": "/niː/",
+    "explains": [
+      "n. 膝盖；膝关节"
     ]
   },
   "knife": {

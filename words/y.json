@@ -13,6 +13,13 @@
       "n. 年；年度；历年；年纪；一年的期间"
     ]
   },
+  "yell": {
+    "word": "yell",
+    "phonetic": "/jel/",
+    "explains": [
+      "v./n. 大喊；叫喊；吼叫"
+    ]
+  },
   "yellow": {
     "word": "yellow",
     "phonetic": "/ˈjeləʊ/",
@@ -39,6 +46,14 @@
     "phonetic": "/jet/",
     "explains": [
       "adv. 还；仍然；已经；但是 conj. 然而；但是"
+    ]
+  },
+  "yield": {
+    "word": "yield",
+    "phonetic": "/jiːld/",
+    "explains": [
+      "v. 产生；屈服；让步；提供",
+      "n. 产量；收益；利润"
     ]
   },
   "you": {
@@ -81,6 +96,13 @@
     "phonetic": "/jɔːˈselvz/",
     "explains": [
       "pron. 你们自己；你们亲自；你们本人"
+    ]
+  },
+  "youth": {
+    "word": "youth",
+    "phonetic": "/juːθ/",
+    "explains": [
+      "n. 青年；青春；年轻；青年时期"
     ]
   }
 }

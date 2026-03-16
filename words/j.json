@@ -1,4 +1,12 @@
 {
+  "jam": {
+    "word": "jam",
+    "phonetic": "/dʒæm/",
+    "explains": [
+      "n. 果酱；拥挤；堵塞",
+      "v. 堵塞；拥挤；卡住"
+    ]
+  },
   "jacket": {
     "word": "jacket",
     "phonetic": "/ˈdʒækɪt/",
@@ -27,6 +35,13 @@
       "adj. 日本的；日本人的 n. 日本人；日语"
     ]
   },
+  "jealous": {
+    "word": "jealous",
+    "phonetic": "/ˈdʒeləs/",
+    "explains": [
+      "adj. 嫉妒的；妒忌的；羡慕的"
+    ]
+  },
   "job": {
     "word": "job",
     "phonetic": "/dʒɒb/",
@@ -46,6 +61,13 @@
     "phonetic": "/dʒəʊk/",
     "explains": [
       "n. 笑话；玩笑 v. 开玩笑"
+    ]
+  },
+  "joyful": {
+    "word": "joyful",
+    "phonetic": "/ˈdʒɔɪfl/",
+    "explains": [
+      "adj. 快乐的；高兴的；令人愉快的"
     ]
   },
   "journey": {
@@ -69,6 +91,14 @@
       "n. 法官；裁判员 v. 判断；审判"
     ]
   },
+  "juice": {
+    "word": "juice",
+    "phonetic": "/dʒuːs/",
+    "explains": [
+      "n. 果汁；液；电",
+      "v. 榨取果汁"
+    ]
+  },
   "jump": {
     "word": "jump",
     "phonetic": "/dʒʌmp/",
@@ -76,11 +106,33 @@
       "v./n. 跳跃；跳动；暴涨"
     ]
   },
+  "jungle": {
+    "word": "jungle",
+    "phonetic": "/ˈdʒʌŋɡl/",
+    "explains": [
+      "n. 丛林；密林；危险地带"
+    ]
+  },
+  "junior": {
+    "word": "junior",
+    "phonetic": "/ˈdʒuːniə(r)/",
+    "explains": [
+      "adj. 年少的；初级的；下级的",
+      "n. 晚辈；三年级生"
+    ]
+  },
   "just": {
     "word": "just",
     "phonetic": "/dʒʌst/",
     "explains": [
       "adv. 只是；正好；恰好 adj. 公正的；合理的"
+    ]
+  },
+  "justice": {
+    "word": "justice",
+    "phonetic": "/ˈdʒʌstɪs/",
+    "explains": [
+      "n. 正义；公正；司法；法官"
     ]
   }
 }
