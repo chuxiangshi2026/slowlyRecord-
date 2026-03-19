@@ -237,6 +237,100 @@ const currentId = ref<string | number | undefined>(undefined)
 // 专注模式窗口实例
 let focusWindow: any = null;
 
+// 处理置顶请求的函数
+const handleAlwaysOnTopRequest = (value: boolean) => {
+  console.log('父窗口处理置顶请求:', value);
+  if (!focusWindow) {
+    console.log('focusWindow 不可用');
+    return;
+  }
+
+  // 方式1: 直接调用 setAlwaysOnTop
+  if (typeof focusWindow.setAlwaysOnTop === 'function') {
+    try {
+      focusWindow.setAlwaysOnTop(value);
+      console.log('方式1成功: setAlwaysOnTop', value);
+      return;
+    } catch (e) {
+      console.error('方式1失败:', e);
+    }
+  }
+
+  // 方式2: 尝试通过 Electron remote 获取 BrowserWindow 实例
+  try {
+    // @ts-ignore
+    if (typeof require !== 'undefined') {
+      // @ts-ignore
+      const { remote } = require('electron');
+      if (remote && remote.BrowserWindow) {
+        // 获取所有窗口，找到子窗口
+        const allWindows = remote.BrowserWindow.getAllWindows();
+        console.log('所有窗口数量:', allWindows.length);
+        for (const win of allWindows) {
+          // 找到非当前窗口（子窗口）
+          // @ts-ignore
+          if (win !== remote.getCurrentWindow() && typeof win.setAlwaysOnTop === 'function') {
+            win.setAlwaysOnTop(value);
+            console.log('方式2成功: remote BrowserWindow.setAlwaysOnTop', value);
+            return;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error('方式2失败:', e);
+  }
+
+  // 方式3: 尝试使用 _window 或 window 对象
+  try {
+    // @ts-ignore
+    const win = focusWindow._window || focusWindow.window || focusWindow;
+    if (win && typeof win.setAlwaysOnTop === 'function') {
+      win.setAlwaysOnTop(value);
+      console.log('方式3成功: _window.setAlwaysOnTop', value);
+      return;
+    }
+  } catch (e) {
+    console.error('方式3失败:', e);
+  }
+
+  console.log('所有方式都失败了');
+};
+
+// 处理打开单词列表请求
+const handleOpenWordList = () => {
+  console.log('父窗口处理打开列表请求');
+  // 显示主窗口
+  if (typeof utools !== 'undefined' && utools.showMainWindow) {
+    utools.showMainWindow();
+  }
+  // 跳转到单词列表
+  router.push('/word');
+};
+
+// 处理子窗口消息的通用函数
+const handleChildMessage = (data: any) => {
+  console.log('父窗口收到子窗口消息:', data);
+  if (!data) return;
+  
+  if (data.type === 'setAlwaysOnTop' && typeof data.value === 'boolean') {
+    handleAlwaysOnTopRequest(data.value);
+  } else if (data.type === 'openWordList') {
+    handleOpenWordList();
+  }
+};
+
+// 全局设置 uTools 消息监听（只设置一次）
+// @ts-ignore
+if (typeof utools !== 'undefined' && utools.onMessage) {
+  // @ts-ignore
+  utools.onMessage((data: any) => {
+    console.log('【全局】父窗口 utools.onMessage 收到:', data);
+    handleChildMessage(data);
+  });
+  console.log('【全局】父窗口 utools.onMessage 监听已设置');
+}
+
 // 打开专注模式 - 创建独立子窗口
 const openFocusMode = () => {
   // 如果没有待复习单词，提示用户
@@ -285,54 +379,22 @@ const openFocusMode = () => {
         focusWindow = null;
       });
 
-      // 方案：使用 webContents 监听子窗口通过 sendToParent 发送的消息
-      console.log('父窗口设置 webContents 监听');
+      // 设置窗口特定的消息监听（作为全局监听的补充）
+      console.log('父窗口设置特定监听');
       
-      // 处理置顶请求的函数
-      const handleAlwaysOnTopRequest = (value: boolean) => {
-        console.log('父窗口处理置顶请求:', value);
-        if (focusWindow && typeof focusWindow.setAlwaysOnTop === 'function') {
-          focusWindow.setAlwaysOnTop(value);
-          console.log('父窗口执行 setAlwaysOnTop:', value);
-        } else {
-          console.log('focusWindow 不可用或没有 setAlwaysOnTop 方法');
-        }
-      };
-      
-      // 使用 webContents.ipc 监听 (uTools/Electron 方式)
-      // @ts-ignore
-      if (focusWindow.webContents && focusWindow.webContents.ipc) {
+      // 尝试通过窗口对象监听消息
+      if (focusWindow) {
         // @ts-ignore
-        focusWindow.webContents.ipc.on('setAlwaysOnTop', (event: any, data: any) => {
-          console.log('父窗口 webContents.ipc 收到消息:', data);
-          if (data && typeof data.value === 'boolean') {
-            handleAlwaysOnTopRequest(data.value);
-          }
-        });
-        console.log('父窗口 webContents.ipc 监听已设置');
-      }
-      
-      // 备选：监听 ipc-message 事件
-      // @ts-ignore
-      if (focusWindow.webContents) {
-        // @ts-ignore
-        focusWindow.webContents.on?.('ipc-message', (event: any, channel: string, ...args: any[]) => {
-          console.log('父窗口收到 ipc-message:', channel, args);
-          if (channel === 'setAlwaysOnTop' && args[0]) {
-            handleAlwaysOnTopRequest(args[0].value);
-          }
+        focusWindow.on?.('message', (data: any) => {
+          console.log('【窗口特定】focusWindow.on message 收到:', data);
+          handleChildMessage(data);
         });
         
-        // 备选2：直接监听 message 事件
         // @ts-ignore
-        focusWindow.webContents.on?.('message', (event: any, data: any) => {
-          console.log('父窗口 webContents 收到 message:', data);
-          if (data && data.type === 'setAlwaysOnTop') {
-            handleAlwaysOnTopRequest(data.value);
-          }
+        focusWindow.webContents?.on?.('message', (event: any, data: any) => {
+          console.log('【窗口特定】webContents.message 收到:', data);
+          handleChildMessage(data);
         });
-        
-        console.log('父窗口 webContents 事件监听已设置');
       }
     } else {
       // 回退：使用路由方式

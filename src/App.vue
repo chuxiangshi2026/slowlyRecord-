@@ -179,6 +179,9 @@ utools.onPluginEnter(async (action) => {
       }
     });
 
+    // 添加单词后跳转到单词列表（避免停留在数字记忆或记忆测试页面）
+    router.push('/word')
+
   }
 
 
@@ -381,6 +384,8 @@ function handleSelectOCRItem(region: any) {
   if (word) {
     console.log('待添加的选中单词' + `[${word}]`)
     batchAddWords([`${word}`.trim()]);
+    // 添加单词后跳转到单词列表
+    router.push('/word')
     // ElMessage.success(`已保存: ${word} - ${translation}`);
   } else {
     ElMessage.warning('单词或翻译内容为空');
@@ -404,6 +409,8 @@ function handleSelectAllItems(items: any[]) {
 
   if (items.length > 0) {
     ElMessage.success(`已保存全部 ${items.length} 个单词`);
+    // 添加单词后跳转到单词列表
+    router.push('/word')
   }
 }
 
@@ -501,7 +508,9 @@ function checkShearBoardAddWork(text: string) {
   addWord(processedText).then(err => {
     ElMessage.warning(err.message)
   });
-  ;
+  
+  // 添加单词后跳转到单词列表
+  router.push('/word')
 }
 
 /**
@@ -524,6 +533,8 @@ function handleSelectTextItems(words: string[], platform?: string) {
   if (words && words.length > 0) {
     console.log('待添加的选中单词', words);
     batchAddWords(words);
+    // 添加单词后跳转到单词列表
+    router.push('/word')
   } else {
     ElMessage.warning('单词内容为空');
   }

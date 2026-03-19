@@ -162,10 +162,47 @@
       cursor: pointer;
       padding: 2px;
       transition: color 0.3s ease;
+      -webkit-app-region: no-drag;
     }
 
     .btn-close:hover {
       color: var(--text-primary);
+    }
+
+    .btn-top {
+      position: absolute;
+      top: 2px;
+      right: 26px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      padding: 2px;
+      transition: color 0.3s ease;
+      -webkit-app-region: no-drag;
+    }
+
+    .btn-top:hover {
+      color: var(--primary-color);
+    }
+
+    .btn-top.active {
+      color: var(--primary-color);
+    }
+
+    .btn-list {
+      position: absolute;
+      top: 2px;
+      right: 46px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      padding: 2px;
+      transition: color 0.3s ease;
+      -webkit-app-region: no-drag;
+    }
+
+    .btn-list:hover {
+      color: var(--primary-color);
     }
 
     .counter {
@@ -194,6 +231,8 @@
     </div>
 
     <i class="iconfont icon-close btn-close" id="btn-close" title="关闭"></i>
+    <i class="iconfont icon-top btn-top" id="btn-top" title="取消置顶"></i>
+    <i class="iconfont icon-card btn-list" id="btn-list" title="返回列表"></i>
     <div class="counter" id="counter">0/0</div>
   </div>
 
@@ -330,6 +369,75 @@
     document.getElementById('btn-remember').addEventListener('click', markRemembered);
     document.getElementById('btn-forgot').addEventListener('click', markForgot);
     document.getElementById('btn-close').addEventListener('click', () => window.close());
+
+    // 置顶按钮
+    let isAlwaysOnTop = true; // 默认置顶
+    const btnTop = document.getElementById('btn-top');
+    btnTop.classList.add('active'); // 初始状态为激活
+    
+    // 尝试多种方式设置置顶
+    function setWindowAlwaysOnTop(value) {
+      console.log('尝试设置置顶状态:', value);
+      
+      // 方式1: 通过 utools.sendToParent 发送消息给父窗口
+      if (typeof utools !== 'undefined' && utools.sendToParent) {
+        try {
+          utools.sendToParent({ type: 'setAlwaysOnTop', value: value });
+          console.log('方式1: sendToParent 发送成功');
+        } catch (e) {
+          console.error('方式1失败:', e);
+        }
+      }
+      
+      // 方式2: 尝试直接使用 Electron remote API (子窗口内)
+      try {
+        // @ts-ignore
+        if (typeof require !== 'undefined') {
+          // @ts-ignore
+          const { remote } = require('electron');
+          if (remote) {
+            const currentWindow = remote.getCurrentWindow();
+            if (currentWindow && typeof currentWindow.setAlwaysOnTop === 'function') {
+              currentWindow.setAlwaysOnTop(value);
+              console.log('方式2: remote.getCurrentWindow().setAlwaysOnTop 成功');
+              return;
+            }
+          }
+        }
+      } catch (e) {
+        console.log('方式2不可用:', e.message);
+      }
+      
+      // 方式3: 尝试通过 window.opener 发送消息
+      try {
+        if (window.opener) {
+          window.opener.postMessage({ type: 'setAlwaysOnTop', value: value }, '*');
+          console.log('方式3: postMessage 发送成功');
+        }
+      } catch (e) {
+        console.log('方式3不可用:', e.message);
+      }
+    }
+    
+    btnTop.addEventListener('click', () => {
+      isAlwaysOnTop = !isAlwaysOnTop;
+      btnTop.classList.toggle('active', isAlwaysOnTop);
+      // 更新 title 提示
+      btnTop.title = isAlwaysOnTop ? '取消置顶' : '置顶';
+      console.log('置顶按钮点击，新状态:', isAlwaysOnTop);
+      // 设置置顶状态
+      setWindowAlwaysOnTop(isAlwaysOnTop);
+    });
+
+    // 返回列表按钮
+    document.getElementById('btn-list').addEventListener('click', () => {
+      // 发送消息给父窗口打开列表
+      if (typeof utools !== 'undefined' && utools.sendToParent) {
+        utools.sendToParent({ type: 'openWordList' });
+      }
+      // 关闭专注窗口
+      window.close();
+    });
 
     // 键盘快捷键
     document.addEventListener('keydown', (e) => {
