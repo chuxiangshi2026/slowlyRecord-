@@ -231,8 +231,8 @@
     </div>
 
     <i class="iconfont icon-close btn-close" id="btn-close" title="关闭"></i>
-    <i class="iconfont icon-top btn-top" id="btn-top" title="取消置顶"></i>
-    <i class="iconfont icon-card btn-list" id="btn-list" title="返回列表"></i>
+    <i class="iconfont icon-top btn-top" id="btn-top" title="取消置顶" style="display: none;"></i>
+    <i class="iconfont icon-card btn-list" id="btn-list" title="返回列表" style="display: none;"></i>
     <div class="counter" id="counter">0/0</div>
   </div>
 
@@ -398,8 +398,9 @@
           if (remote) {
             const currentWindow = remote.getCurrentWindow();
             if (currentWindow && typeof currentWindow.setAlwaysOnTop === 'function') {
-              currentWindow.setAlwaysOnTop(value);
-              console.log('方式2: remote.getCurrentWindow().setAlwaysOnTop 成功');
+              // 使用 'screen-saver' 级别确保窗口在其他应用之上
+              currentWindow.setAlwaysOnTop(value, 'screen-saver');
+              console.log('方式2: remote.getCurrentWindow().setAlwaysOnTop 成功, 级别: screen-saver');
               return;
             }
           }

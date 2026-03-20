@@ -248,8 +248,9 @@ const handleAlwaysOnTopRequest = (value: boolean) => {
   // 方式1: 直接调用 setAlwaysOnTop
   if (typeof focusWindow.setAlwaysOnTop === 'function') {
     try {
-      focusWindow.setAlwaysOnTop(value);
-      console.log('方式1成功: setAlwaysOnTop', value);
+      // 使用 'screen-saver' 级别确保窗口在其他应用之上
+      focusWindow.setAlwaysOnTop(value, 'screen-saver');
+      console.log('方式1成功: setAlwaysOnTop', value, '级别: screen-saver');
       return;
     } catch (e) {
       console.error('方式1失败:', e);
@@ -270,7 +271,7 @@ const handleAlwaysOnTopRequest = (value: boolean) => {
           // 找到非当前窗口（子窗口）
           // @ts-ignore
           if (win !== remote.getCurrentWindow() && typeof win.setAlwaysOnTop === 'function') {
-            win.setAlwaysOnTop(value);
+            win.setAlwaysOnTop(value, 'screen-saver');
             console.log('方式2成功: remote BrowserWindow.setAlwaysOnTop', value);
             return;
           }
@@ -286,8 +287,8 @@ const handleAlwaysOnTopRequest = (value: boolean) => {
     // @ts-ignore
     const win = focusWindow._window || focusWindow.window || focusWindow;
     if (win && typeof win.setAlwaysOnTop === 'function') {
-      win.setAlwaysOnTop(value);
-      console.log('方式3成功: _window.setAlwaysOnTop', value);
+      win.setAlwaysOnTop(value, 'screen-saver');
+      console.log('方式3成功: _window.setAlwaysOnTop', value, '级别: screen-saver');
       return;
     }
   } catch (e) {
