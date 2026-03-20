@@ -8,6 +8,35 @@
       
       <!-- 输入区域 -->
       <div class="input-section">
+        <!-- 语言选择器 -->
+        <div class="language-selector">
+          <el-select v-model="sourceLang" size="small" class="lang-select">
+            <el-option
+              v-for="item in languageOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <el-button
+            link
+            size="small"
+            @click="swapLanguages"
+            class="swap-btn"
+            title="交换语言"
+          >
+            <el-icon><Switch /></el-icon>
+          </el-button>
+          <el-select v-model="targetLang" size="small" class="lang-select">
+            <el-option
+              v-for="item in targetLanguageOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+
         <el-input
           v-model="inputText"
           type="textarea"
@@ -25,8 +54,8 @@
               :value="item.value"
             />
           </el-select>
-          <el-button 
-            type="primary" 
+          <el-button
+            type="primary"
             :loading="loading"
             @click="handleTranslate"
             class="translate-btn"
@@ -34,7 +63,7 @@
             <el-icon><Promotion /></el-icon>
             翻译
           </el-button>
-          <el-button 
+          <el-button
             @click="clearInput"
             class="clear-btn"
           >
@@ -74,6 +103,32 @@
           
           <div class="translation-text" :class="{ 'error': !result.success }">
             {{ result.explains || result.errorMsg }}
+          </div>
+
+          <!-- 记忆提示 -->
+          <div v-if="result.memoryTip || result.memoryImage" class="detail-section memory-section">
+            <div class="detail-label">
+              <el-icon><InfoFilled /></el-icon>
+              记忆提示
+            </div>
+            <div class="memory-content">
+              <div v-if="result.memoryTip" class="memory-tip">
+                <span class="memory-label">技巧:</span>
+                <span>{{ result.memoryTip }}</span>
+              </div>
+              <!-- 联想图片 - 使用 Emoji 视觉化 -->
+              <div v-if="result.memoryImage" class="memory-image-wrapper">
+                <div class="memory-image-desc">
+                  <span class="memory-label">联想:</span>
+                  <span>{{ result.memoryImage }}</span>
+                </div>
+                <!-- Emoji 视觉展示 -->
+                <div class="memory-emoji-container">
+                  <div class="memory-emoji">{{ getMemoryEmoji(result.memoryImage) }}</div>
+                  <div class="memory-emoji-hint">视觉联想</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- 近义词 -->
@@ -159,23 +214,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { 
-  Document, 
-  Promotion, 
-  Delete, 
-  VideoPlay, 
-  CopyDocument, 
+import {
+  Document,
+  Promotion,
+  Delete,
+  VideoPlay,
+  CopyDocument,
   ArrowRight,
   Connection,
   Switch,
-  Reading
+  Reading,
+  InfoFilled,
+  View,
+  Refresh,
+  Picture
 } from '@element-plus/icons-vue';
 import { translateWithPlatform } from '@/utils/translation-api';
 import { useWordsStore } from '@/stores/words';
-import type { TranslationPlatform, TranslationResult, ExampleSentence } from '@/types/words';
+import type { TranslationPlatform, TranslationResult, ExampleSentence, LanguageOption } from '@/types/words';
 
 const wordsStore = useWordsStore();
 const route = useRoute();
@@ -185,7 +244,30 @@ const inputText = ref('');
 const loading = ref(false);
 const result = ref<TranslationResult | null>(null);
 const selectedPlatform = ref<TranslationPlatform>('glm');
-const history = ref<{source: string, target: string, platform: TranslationPlatform}[]>([]);
+const history = ref<{source: string, target: string, platform: TranslationPlatform, from: string, to: string}[]>([]);
+const imageLoading = ref(false);
+
+// 语言选择
+const sourceLang = ref('auto');
+const targetLang = ref('zh');
+
+// 语言选项
+const languageOptions: LanguageOption[] = [
+  { label: '自动检测', value: 'auto' },
+  { label: '中文', value: 'zh' },
+  { label: '英语', value: 'en' },
+  { label: '日语', value: 'ja' },
+  { label: '韩语', value: 'ko' },
+  { label: '法语', value: 'fr' },
+  { label: '德语', value: 'de' },
+  { label: '西班牙语', value: 'es' },
+  { label: '俄语', value: 'ru' },
+];
+
+// 目标语言选项（排除自动检测）
+const targetLanguageOptions = computed(() =>
+  languageOptions.filter(lang => lang.value !== 'auto')
+);
 
 // 翻译平台选项
 const platformOptions = [
@@ -201,6 +283,17 @@ const platformOptions = [
   { label: 'Ollama', value: 'ollama' },
   { label: '本地词典', value: 'local' },
 ];
+
+// 交换语言
+function swapLanguages() {
+  if (sourceLang.value === 'auto') {
+    // 如果源语言是自动检测，默认设为英文
+    sourceLang.value = 'en';
+  }
+  const temp = sourceLang.value;
+  sourceLang.value = targetLang.value;
+  targetLang.value = temp;
+}
 
 // 从 store 获取默认平台
 onMounted(() => {
@@ -227,12 +320,23 @@ async function handleTranslate() {
   result.value = null;
 
   try {
-    const res = await translateWithPlatform(text, selectedPlatform.value);
+    // 检测输入语言，如果是中文则自动调整翻译方向
+    const isChinese = /[\u4e00-\u9fa5]/.test(text);
+    let from = sourceLang.value;
+    let to = targetLang.value;
+
+    // 如果源语言是自动检测，根据内容判断
+    if (from === 'auto') {
+      from = isChinese ? 'zh' : 'en';
+      to = isChinese ? 'en' : 'zh';
+    }
+
+    const res = await translateWithPlatform(text, selectedPlatform.value, from, to);
     result.value = res;
 
     if (res.success) {
       // 添加到历史记录
-      addToHistory(text, res.explains || '', selectedPlatform.value);
+      addToHistory(text, res.explains || '', selectedPlatform.value, from, to);
     }
   } catch (error) {
     ElMessage.error('翻译失败: ' + (error as Error).message);
@@ -276,14 +380,14 @@ function truncateText(text: string, maxLength: number): string {
 }
 
 // 添加到历史记录
-function addToHistory(source: string, target: string, platform: TranslationPlatform) {
+function addToHistory(source: string, target: string, platform: TranslationPlatform, from: string, to: string) {
   // 避免重复添加相同的源文本
   const existingIndex = history.value.findIndex(h => h.source === source);
   if (existingIndex !== -1) {
     history.value.splice(existingIndex, 1);
   }
-  
-  history.value.unshift({ source, target, platform });
+
+  history.value.unshift({ source, target, platform, from, to });
   // 只保留最近10条
   if (history.value.length > 10) {
     history.value = history.value.slice(0, 10);
@@ -292,9 +396,11 @@ function addToHistory(source: string, target: string, platform: TranslationPlatf
 }
 
 // 从历史记录加载
-function loadFromHistory(item: {source: string, target: string, platform: TranslationPlatform}) {
+function loadFromHistory(item: {source: string, target: string, platform: TranslationPlatform, from: string, to: string}) {
   inputText.value = item.source;
   selectedPlatform.value = item.platform;
+  sourceLang.value = item.from;
+  targetLang.value = item.to;
   result.value = {
     success: true,
     explains: item.target
@@ -321,6 +427,113 @@ function loadHistory() {
     } catch (e) {
       console.error('加载历史记录失败:', e);
     }
+  }
+}
+
+// 生成联想图片URL（使用多源策略）
+function generateMemoryImageUrl(description: string): string {
+  // 提取中文关键词
+  const keywords = description
+    .replace(/^(想象|画面|场景|描述|一个|一只|一张|一条|片|幅)/g, '')
+    .replace(/[，。！？、；：""''（）【】]/g, ' ')
+    .split(/\s+/)
+    .filter(word => word.length >= 2 && !['这个', '那个', '正在', '表示'].includes(word))
+    .slice(0, 4)
+    .join(' ');
+
+  // 使用 Bing 图片搜索 API（通过 URL 参数）
+  // 或者使用 Wikimedia Commons 搜索
+  const timestamp = Date.now();
+  return `https://commons.wikimedia.org/w/index.php?title=Special:Search&search=${encodeURIComponent(keywords)}&ns6=1&format=json`;
+}
+
+// 使用 Emoji 作为视觉记忆辅助
+function getMemoryEmoji(description: string): string {
+  // 常见物体与 Emoji 的映射
+  const emojiMap: Record<string, string> = {
+    '大象': '🐘', '老虎': '🐅', '狮子': '🦁', '熊': '🐻', '熊猫': '🐼',
+    '狗': '🐕', '猫': '🐈', '兔子': '🐇', '老鼠': '🐀', '牛': '🐄',
+    '马': '🐎', '羊': '🐑', '猪': '🐖', '鸡': '🐔', '鸟': '🐦',
+    '鱼': '🐟', '鲨鱼': '🦈', '鲸鱼': '🐋', '海豚': '🐬', '乌龟': '🐢',
+    '蛇': '🐍', '青蛙': '🐸', '蝴蝶': '🦋', '蜜蜂': '🐝', '蚂蚁': '🐜',
+    '苹果': '🍎', '香蕉': '🍌', '橙子': '🍊', '葡萄': '🍇', '西瓜': '🍉',
+    '草莓': '🍓', '樱桃': '🍒', '梨': '🍐', '桃子': '🍑', '菠萝': '🍍',
+    '西红柿': '🍅', '胡萝卜': '🥕', '玉米': '🌽', '茄子': '🍆', '土豆': '🥔',
+    '太阳': '☀️', '月亮': '🌙', '星星': '⭐', '云': '☁️', '雨': '🌧️',
+    '雪': '❄️', '闪电': '⚡', '彩虹': '🌈', '山': '⛰️', '海': '🌊',
+    '树': '🌳', '花': '🌸', '草': '🌿', '叶子': '🍃', '火': '🔥',
+    '水': '💧', '房子': '🏠', '学校': '🏫', '医院': '🏥', '商店': '🏪',
+    '汽车': '🚗', '公交车': '🚌', '火车': '🚂', '飞机': '✈️', '船': '🚢',
+    '自行车': '🚲', '摩托车': '🏍️', '书': '📚', '笔': '✏️', '纸': '📄',
+    '电脑': '💻', '手机': '📱', '电视': '📺', '相机': '📷', '音乐': '🎵',
+    '足球': '⚽', '篮球': '🏀', '网球': '🎾', '游泳': '🏊', '跑步': '🏃',
+    '吃饭': '🍽️', '睡觉': '😴', '读书': '📖', '写字': '✍️', '唱歌': '🎤',
+    '跳舞': '💃', '笑': '😊', '哭': '😢', '生气': '😠', '惊讶': '😲',
+    '爱': '❤️', '心': '💖', '礼物': '🎁', '生日': '🎂', '派对': '🎉',
+    '钱': '💰', '时间': '⏰', '电话': '📞', '邮件': '✉️', '锁': '🔒',
+    '钥匙': '🔑', '灯': '💡', '垃圾桶': '🗑️', '工具': '🔧', '药': '💊'
+  };
+
+  // 查找匹配的 Emoji
+  for (const [key, emoji] of Object.entries(emojiMap)) {
+    if (description.includes(key)) {
+      return emoji;
+    }
+  }
+
+  // 默认返回灯泡表示记忆提示
+  return '💡';
+}
+
+// 生成联想图片
+async function generateMemoryImage() {
+  if (!result.value?.memoryImage) return;
+
+  imageLoading.value = true;
+
+  // 如果已经有图片URL，先清空重新生成
+  if (result.value.memoryImageUrl) {
+    result.value.memoryImageUrl = '';
+  }
+
+  const imageUrl = generateMemoryImageUrl(result.value.memoryImage);
+  console.log('生成图片URL:', imageUrl);
+
+  // 预加载图片检查是否可用
+  const img = new Image();
+
+  // 设置加载超时
+  const timeoutId = setTimeout(() => {
+    console.error('图片加载超时');
+    imageLoading.value = false;
+    ElMessage.warning('图片加载超时，请重试');
+  }, 15000); // 15秒超时
+
+  img.onload = () => {
+    clearTimeout(timeoutId);
+    console.log('图片预加载成功');
+    imageLoading.value = false;
+    if (result.value) {
+      result.value.memoryImageUrl = imageUrl;
+    }
+  };
+
+  img.onerror = () => {
+    clearTimeout(timeoutId);
+    console.error('图片预加载失败');
+    imageLoading.value = false;
+    ElMessage.error('图片加载失败，请重试');
+  };
+
+  img.src = imageUrl;
+}
+
+// 处理图片加载失败
+function handleImageError() {
+  imageLoading.value = false;
+  ElMessage.warning('图片加载失败，请重试');
+  if (result.value) {
+    result.value.memoryImageUrl = '';
   }
 }
 </script>
@@ -359,6 +572,38 @@ function loadHistory() {
 }
 
 .input-section {
+  .language-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: var(--utools-bg-tertiary);
+    border-radius: 8px;
+
+    .lang-select {
+      width: 120px;
+    }
+
+    .swap-btn {
+      padding: 6px;
+      color: var(--utools-primary);
+
+      &:hover {
+        color: var(--utools-primary);
+        background: var(--utools-primary-light);
+      }
+
+      .el-icon {
+        transition: transform 0.3s;
+      }
+
+      &:hover .el-icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
   .translate-input {
     :deep(.el-textarea__inner) {
       border-radius: 8px;
@@ -368,33 +613,33 @@ function loadHistory() {
       background-color: var(--utools-bg-input);
       color: var(--utools-text-primary);
       border-color: var(--utools-border-primary);
-      
+
       &::placeholder {
         color: var(--utools-text-placeholder);
       }
-      
+
       &:focus {
         border-color: var(--utools-primary);
       }
     }
   }
-  
+
   .input-actions {
     display: flex;
     gap: 12px;
     margin-top: 16px;
     align-items: center;
     flex-wrap: wrap;
-    
+
     .platform-select {
       width: 140px;
     }
-    
+
     .translate-btn {
       flex: 1;
       min-width: 100px;
     }
-    
+
     .clear-btn {
       width: 80px;
     }
@@ -480,6 +725,102 @@ function loadHistory() {
       &:hover {
         transform: translateY(-1px);
       }
+    }
+  }
+}
+
+// 记忆提示特殊样式
+.memory-section {
+  background: linear-gradient(135deg, rgba(103, 194, 58, 0.1) 0%, var(--utools-bg-card) 100%);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(103, 194, 58, 0.3);
+  
+  .detail-label {
+    color: #67c23a;
+    font-weight: 600;
+    
+    .el-icon {
+      color: #67c23a;
+    }
+  }
+  
+  .memory-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .memory-tip {
+    font-size: 14px;
+    color: var(--utools-text-primary);
+    line-height: 1.6;
+    padding: 8px 12px;
+    background: var(--utools-bg-card);
+    border-radius: 6px;
+    border-left: 3px solid #67c23a;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    
+    .memory-label {
+      color: #67c23a;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+  }
+  
+  .memory-image-desc {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--utools-text-secondary);
+    padding: 8px 12px;
+    background: var(--utools-bg-tertiary);
+    border-radius: 6px;
+    line-height: 1.5;
+
+    .memory-label {
+      color: var(--utools-primary);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    span {
+      flex: 1;
+    }
+  }
+
+  // 联想图片样式
+  .memory-image-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  // Emoji 视觉展示
+  .memory-emoji-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(103, 194, 58, 0.1) 0%, rgba(103, 194, 58, 0.05) 100%);
+    border-radius: 12px;
+    border: 2px solid rgba(103, 194, 58, 0.3);
+
+    .memory-emoji {
+      font-size: 64px;
+      line-height: 1;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    .memory-emoji-hint {
+      font-size: 12px;
+      color: var(--utools-text-secondary);
+      font-weight: 500;
     }
   }
 }

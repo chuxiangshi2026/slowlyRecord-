@@ -302,7 +302,7 @@ utools.onPluginEnter(async (action) => {
 
   // 快速翻译 - 通过 fy/翻译/fanyi 关键字进入
   if (action.code === 'translate') {
-    handlePluginTranslate()
+    handlePluginTranslate(action)
   }
 
 
@@ -668,11 +668,18 @@ function handlePluginNumMemory() {
 /**
  * 处理快速翻译的插件入口
  */
-function handlePluginTranslate() {
+function handlePluginTranslate(action: any) {
   // 显示主窗口
   window.utools.showMainWindow()
-  // 跳转到快速翻译页面
-  router.push('/translate')
+  // 跳转到快速翻译页面，如果有payload则传递文本参数
+  if (action.payload) {
+    router.push({
+      path: '/translate',
+      query: { text: action.payload }
+    })
+  } else {
+    router.push('/translate')
+  }
 }
 
 /**

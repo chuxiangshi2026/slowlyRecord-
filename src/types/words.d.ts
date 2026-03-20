@@ -78,6 +78,14 @@ export interface ExampleSentence {
 }
 
 /**
+ * 语言选项
+ */
+export interface LanguageOption {
+    label: string;
+    value: string;
+}
+
+/**
  * 翻译结果结构
  */
 export interface TranslationResult {
@@ -90,4 +98,8 @@ export interface TranslationResult {
     examples?: ExampleSentence[];
     synonyms?: string[];
     antonyms?: string[];
+    // 记忆辅助字段
+    memoryTip?: string;
+    memoryImage?: string;
+    memoryImageUrl?: string;
 }

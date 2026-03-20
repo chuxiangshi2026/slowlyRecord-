@@ -373,7 +373,7 @@ export function logAvailableVoices(): void {
 /**
  * 生成有道翻译签名参数
  */
-function generateYoudaoParams(query: string): YdParams {
+function generateYoudaoParams(query: string, from: string = 'auto', to: string = 'zh'): YdParams {
     const {appkey, key} = getTranslationApiKey('youdao');
     const salt = (new Date).getTime();
     const curtime = Math.round(new Date().getTime() / 1000);
@@ -384,8 +384,8 @@ function generateYoudaoParams(query: string): YdParams {
         q: query,
         appKey: appkey,
         salt: salt,
-        from: FROM,
-        to: TO,
+        from: from === 'auto' ? 'auto' : from,
+        to: to,
         sign: sign,
         signType: "v3",
         curtime: curtime,
@@ -396,7 +396,7 @@ function generateYoudaoParams(query: string): YdParams {
 /**
  * 生成百度翻译签名参数
  */
-function generateBaiduParams(query: string): any {
+function generateBaiduParams(query: string, from: string = 'auto', to: string = 'zh'): any {
     const {appkey, key: secretKey} = getTranslationApiKey('baidu');
     const appId = appkey;
     const salt = '' + (new Date).getTime();
@@ -404,8 +404,8 @@ function generateBaiduParams(query: string): any {
     const sign = CryptoJS.MD5(signStr).toString();
     return {
         q: query,
-        from: FROM,
-        to: "zh",
+        from: from === 'auto' ? 'auto' : from,
+        to: to,
         appid: appId,
         salt: salt,
         sign: sign
@@ -415,7 +415,7 @@ function generateBaiduParams(query: string): any {
 /**
  * 生成阿里翻译参数
  */
-function generateAliParamsSync(query: string): any {
+function generateAliParamsSync(query: string, from: string = 'auto', to: string = 'zh'): any {
     const {appkey, key: accessKeySecret} = getTranslationApiKey('ali');
     const timestamp = new Date().toISOString().replace(/\.\d+Z/, 'Z');
 
@@ -428,8 +428,8 @@ function generateAliParamsSync(query: string): any {
         SignatureVersion: '1.0',
         SignatureNonce: Math.random().toString(36).slice(2, 15),
         Action: 'TranslateGeneral',
-        SourceLanguage: String(FROM || 'auto'),
-        TargetLanguage: String(TO),
+        SourceLanguage: from === 'auto' ? 'auto' : from,
+        TargetLanguage: to,
         SourceText: String(query),
         FormatType: 'text',
         Scene: 'general',
@@ -484,7 +484,12 @@ function percentEncode(str: string): string {
 /**
  * 调用不同平台的翻译接口
  */
-export async function translateWithPlatform(query: string, platform: TranslationPlatform = 'tencent'): Promise<TranslationResult> {
+export async function translateWithPlatform(
+    query: string,
+    platform: TranslationPlatform = 'tencent',
+    from: string = 'auto',
+    to: string = 'zh'
+): Promise<TranslationResult> {
     log.i('待翻译参数', query)
     try {
         // 本地翻译不使用限制检查
@@ -512,7 +517,7 @@ export async function translateWithPlatform(query: string, platform: Translation
         switch (platform) {
             case 'youdao':
                 console.log('调用有道')
-                const youdaoParams = generateYoudaoParams(query);
+                const youdaoParams = generateYoudaoParams(query, from, to);
                 const youdaoResponse = await http.get('/', {...youdaoParams}, {
                     headers: {
                         'Access-Control-Allow-Origin': 'https://openapi.youdao.com/api'
@@ -522,8 +527,7 @@ export async function translateWithPlatform(query: string, platform: Translation
                 return handleYoudaoResponse(youdaoResponse.data, query);
 
             case 'baidu':
-                const baiduParams = generateBaiduParams(query);
-                // 必须对q进行URL编码
+                const baiduParams = generateBaiduParams(query, from, to);
                 baiduParams.q = encodeURIComponent(baiduParams.q);
                 const baiduResponse = await http.get('https://fanyi-api.baidu.com/api/trans/vip/translate', {...baiduParams}, {
                     headers: {
@@ -534,53 +538,45 @@ export async function translateWithPlatform(query: string, platform: Translation
 
             case 'ali':
                 log.i('调用阿里翻译');
-
-                const aliParams = generateAliParamsSync(query);
-
-                // 手动构造查询字符串
+                const aliParams = generateAliParamsSync(query, from, to);
                 const queryString = Object.entries(aliParams)
                     .map(([key, value]) => `${encodeURIComponent(key as string)}=${encodeURIComponent(value as string)}`)
                     .join('&');
-
                 const fullUrl = `https://mt.aliyuncs.com/?${queryString}`;
-
-                // 使用fetch发送请求
                 const aliResponse = await fetch(fullUrl, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     }
                 });
-
                 const aliData = await aliResponse.json();
                 return handleAliResponse(aliData, query);
             case 'utoolsai':
-                let utoolAiData = await callUtoolsAi(query);
+                let utoolAiData = await callUtoolsAi(query, from, to);
                 console.log('utool', utoolAiData)
                 return utoolAiData;
             case 'deepseek':
                 console.log('调用DeepSeek')
-                return callDeepSeek(query);
+                return callDeepSeek(query, from, to);
             case 'qwen':
                 console.log('调用通义千问')
-                return callQwen(query);
+                return callQwen(query, from, to);
             case 'kimi':
                 console.log('调用Kimi')
-                return callKimi(query);
+                return callKimi(query, from, to);
             case 'glm':
                 console.log('调用智谱GLM')
-                return callGlm(query);
+                return callGlm(query, from, to);
             case 'ollama':
                 console.log('调用Ollama')
-                return callOllama(query);
+                return callOllama(query, from, to);
             case 'tencent':
                 console.log('调用腾讯翻译')
-                return callTencent(query);
+                return callTencent(query, from, to);
             case 'local':
                 console.log('调用本地词典翻译, 查询词:', query)
                 const localResult = await translateWithLocalDictionaryAsync(query);
                 console.log('本地翻译结果:', localResult)
-                // 如果本地词典未收录，直接返回原文（不回退到网络翻译）
                 if (!localResult.success) {
                     console.log('本地词典未收录，直接显示原文:', query)
                     return {
@@ -706,18 +702,21 @@ function handleGoogleResponse(data: any): TranslationResult {
 /**
  * 调用uTools AI引擎
  */
-async function callUtoolsAi(query: string): Promise<TranslationResult> {
+async function callUtoolsAi(query: string, from: string = 'auto', to: string = 'zh'): Promise<TranslationResult> {
     try {
+        // 根据语言方向确定翻译指令
+        const isToEnglish = to === 'en';
+        const targetLang = isToEnglish ? '英文' : '中文';
+        const sourceLang = from === 'zh' ? '中文' : (from === 'en' ? '英文' : '文本');
 
         const messages = [
             {
                 role: "system" as const,
-                content:
-                    "你是一个中英文翻译专家，翻译结果要符合中英文语言习惯"
+                content: `你是一个专业翻译专家，请将${sourceLang}翻译成${targetLang}，翻译结果要地道自然。`
             },
             {
                 role: 'user' as const,
-                content: `请将以下文本翻译为中文：${query}`,
+                content: query,
             }]
 
         // 尝试调用AI服务，使用类型断言避免编译错误
@@ -756,13 +755,18 @@ async function callUtoolsAi(query: string): Promise<TranslationResult> {
 /**
  * 调用Ollama本地模型
  */
-async function callOllama(query: string): Promise<TranslationResult> {
+async function callOllama(query: string, from: string = 'auto', to: string = 'zh'): Promise<TranslationResult> {
     try {
         const {appkey: baseUrl, key: modelName} = getTranslationApiKey('ollama');
 
         // 默认Ollama地址
         const ollamaUrl = baseUrl || 'http://localhost:11434';
         const model = modelName || 'qwen2.5:0.5b';
+
+        // 根据语言方向确定翻译指令
+        const isToEnglish = to === 'en';
+        const targetLang = isToEnglish ? '英文' : '中文';
+        const sourceLang = from === 'zh' ? '中文' : (from === 'en' ? '英文' : '文本');
 
         const response = await fetch(`${ollamaUrl}/api/generate`, {
             method: 'POST',
@@ -771,7 +775,7 @@ async function callOllama(query: string): Promise<TranslationResult> {
             },
             body: JSON.stringify({
                 model: model,
-                prompt: `请将以下文本翻译为中文：${query}`,
+                prompt: `请将以下${sourceLang}翻译成${targetLang}：${query}`,
                 stream: false
             })
         });
@@ -822,7 +826,7 @@ async function callOllama(query: string): Promise<TranslationResult> {
 /**
  * 调用DeepSeek模型
  */
-async function callDeepSeek(query: string): Promise<TranslationResult> {
+async function callDeepSeek(query: string, from: string = 'auto', to: string = 'zh'): Promise<TranslationResult> {
     try {
         const {appkey: apiKey, key: modelName} = getTranslationApiKey('deepseek');
 
@@ -836,7 +840,15 @@ async function callDeepSeek(query: string): Promise<TranslationResult> {
 
         const model = modelName || 'deepseek-chat';
 
-        const systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的英文单词或短语翻译成中文，并以JSON格式返回以下信息：
+        // 根据语言方向确定翻译方向和提示词
+        const isToEnglish = to === 'en';
+        const isEnglishToChinese = (from === 'en' || from === 'auto') && to === 'zh';
+
+        let systemPrompt: string;
+
+        if (isEnglishToChinese) {
+            // 英文到中文：提供详细的单词学习信息
+            systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的英文单词或短语翻译成中文，并以JSON格式返回以下信息：
 {
   "translation": "中文翻译",
   "phonetic": "音标（如有）",
@@ -845,12 +857,49 @@ async function callDeepSeek(query: string): Promise<TranslationResult> {
     {"english": "英文例句2", "chinese": "中文翻译2"}
   ],
   "synonyms": ["近义词1", "近义词2"],
-  "antonyms": ["反义词1", "反义词2"]
+  "antonyms": ["反义词1", "反义词2"],
+  "memoryTip": "记忆提示：用词根词缀、发音规律、谐音联想、场景联想等方法帮助记忆这个单词",
+  "memoryImage": "描述一个生动的画面，帮助通过视觉联想记住这个单词的含义"
 }
 注意：
-1. 如果是单个单词，请提供音标、2-3个例句、近义词和反义词
+1. 如果是单个单词，请提供音标、2-3个例句、近义词和反义词、记忆提示和记忆画面描述
 2. 如果是短语或句子，只需提供translation和examples
-3. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+3. memoryTip要求：使用中文，50字以内，优先使用词根词缀、发音规律等语言学方法，也可用谐音联想
+4. memoryImage要求：用中文描述一个具体的视觉画面（如：一只大象在...），帮助用户通过画面感记住单词，80字以内
+5. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        } else if (isToEnglish) {
+            // 中文到英文
+            systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的中文翻译成英文，并以JSON格式返回以下信息：
+{
+  "translation": "英文翻译",
+  "phonetic": "音标（如有）",
+  "examples": [
+    {"english": "英文例句1", "chinese": "中文翻译1"},
+    {"english": "英文例句2", "chinese": "中文翻译2"}
+  ],
+  "synonyms": ["英文近义词1", "英文近义词2"],
+  "antonyms": ["英文反义词1", "英文反义词2"],
+  "memoryTip": "记忆提示：用中文解释如何记忆这个英文表达，可以是词根词缀、联想等方法",
+  "memoryImage": "描述一个生动的画面，帮助通过视觉联想记住这个英文表达"
+}
+注意：
+1. 如果是单个单词或短语，请提供音标、2-3个例句、近义词和反义词、记忆提示和记忆画面描述
+2. 如果是长句子，只需提供translation和examples
+3. memoryTip要求：使用中文，50字以内
+4. memoryImage要求：用中文描述一个具体的视觉画面，80字以内
+5. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        } else {
+            // 其他语言组合，简化处理
+            systemPrompt = `你是一个专业的翻译助手。请将用户输入的文本翻译成目标语言，并以JSON格式返回：
+{
+  "translation": "翻译结果",
+  "examples": [
+    {"source": "原文例句1", "target": "翻译1"},
+    {"source": "原文例句2", "target": "翻译2"}
+  ]
+}
+必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        }
 
         const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
             method: 'POST',
@@ -901,7 +950,9 @@ async function callDeepSeek(query: string): Promise<TranslationResult> {
                     pronunciation,
                     examples: parsed.examples || [],
                     synonyms: parsed.synonyms || [],
-                    antonyms: parsed.antonyms || []
+                    antonyms: parsed.antonyms || [],
+                    memoryTip: parsed.memoryTip || '',
+                    memoryImage: parsed.memoryImage || ''
                 };
             }
         } catch (e) {
@@ -925,7 +976,7 @@ async function callDeepSeek(query: string): Promise<TranslationResult> {
 /**
  * 调用通义千问模型
  */
-async function callQwen(query: string): Promise<TranslationResult> {
+async function callQwen(query: string, from: string = 'auto', to: string = 'zh'): Promise<TranslationResult> {
     try {
         const {appkey: apiKey, key: modelName} = getTranslationApiKey('qwen');
 
@@ -938,7 +989,14 @@ async function callQwen(query: string): Promise<TranslationResult> {
 
         const model = modelName || 'qwen-max';
 
-        const systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的英文单词或短语翻译成中文，并以JSON格式返回以下信息：
+        // 根据语言方向确定翻译方向和提示词
+        const isToEnglish = to === 'en';
+        const isEnglishToChinese = (from === 'en' || from === 'auto') && to === 'zh';
+
+        let systemPrompt: string;
+
+        if (isEnglishToChinese) {
+            systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的英文单词或短语翻译成中文，并以JSON格式返回以下信息：
 {
   "translation": "中文翻译",
   "phonetic": "音标（如有）",
@@ -947,12 +1005,47 @@ async function callQwen(query: string): Promise<TranslationResult> {
     {"english": "英文例句2", "chinese": "中文翻译2"}
   ],
   "synonyms": ["近义词1", "近义词2"],
-  "antonyms": ["反义词1", "反义词2"]
+  "antonyms": ["反义词1", "反义词2"],
+  "memoryTip": "记忆提示：用词根词缀、发音规律、谐音联想、场景联想等方法帮助记忆这个单词",
+  "memoryImage": "描述一个生动的画面，帮助通过视觉联想记住这个单词的含义"
 }
 注意：
-1. 如果是单个单词，请提供音标、2-3个例句、近义词和反义词
+1. 如果是单个单词，请提供音标、2-3个例句、近义词和反义词、记忆提示和记忆画面描述
 2. 如果是短语或句子，只需提供translation和examples
-3. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+3. memoryTip要求：使用中文，50字以内，优先使用词根词缀、发音规律等语言学方法，也可用谐音联想
+4. memoryImage要求：用中文描述一个具体的视觉画面（如：一只大象在...），帮助用户通过画面感记住单词，80字以内
+5. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        } else if (isToEnglish) {
+            systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的中文翻译成英文，并以JSON格式返回以下信息：
+{
+  "translation": "英文翻译",
+  "phonetic": "音标（如有）",
+  "examples": [
+    {"english": "英文例句1", "chinese": "中文翻译1"},
+    {"english": "英文例句2", "chinese": "中文翻译2"}
+  ],
+  "synonyms": ["英文近义词1", "英文近义词2"],
+  "antonyms": ["英文反义词1", "英文反义词2"],
+  "memoryTip": "记忆提示：用中文解释如何记忆这个英文表达，可以是词根词缀、联想等方法",
+  "memoryImage": "描述一个生动的画面，帮助通过视觉联想记住这个英文表达"
+}
+注意：
+1. 如果是单个单词或短语，请提供音标、2-3个例句、近义词和反义词、记忆提示和记忆画面描述
+2. 如果是长句子，只需提供translation和examples
+3. memoryTip要求：使用中文，50字以内
+4. memoryImage要求：用中文描述一个具体的视觉画面，80字以内
+5. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        } else {
+            systemPrompt = `你是一个专业的翻译助手。请将用户输入的文本翻译成目标语言，并以JSON格式返回：
+{
+  "translation": "翻译结果",
+  "examples": [
+    {"source": "原文例句1", "target": "翻译1"},
+    {"source": "原文例句2", "target": "翻译2"}
+  ]
+}
+必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        }
 
         const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
             method: 'POST',
@@ -1002,7 +1095,9 @@ async function callQwen(query: string): Promise<TranslationResult> {
                     pronunciation,
                     examples: parsed.examples || [],
                     synonyms: parsed.synonyms || [],
-                    antonyms: parsed.antonyms || []
+                    antonyms: parsed.antonyms || [],
+                    memoryTip: parsed.memoryTip || '',
+                    memoryImage: parsed.memoryImage || ''
                 };
             }
         } catch (e) {
@@ -1026,7 +1121,7 @@ async function callQwen(query: string): Promise<TranslationResult> {
 /**
  * 调用Kimi模型
  */
-async function callKimi(query: string): Promise<TranslationResult> {
+async function callKimi(query: string, from: string = 'auto', to: string = 'zh'): Promise<TranslationResult> {
     try {
         const {appkey: apiKey, key: modelName} = getTranslationApiKey('kimi');
 
@@ -1039,7 +1134,14 @@ async function callKimi(query: string): Promise<TranslationResult> {
 
         const model = modelName || 'kimi-k2-turbo-preview';
 
-        const systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的英文单词或短语翻译成中文，并以JSON格式返回以下信息：
+        // 根据语言方向确定翻译方向和提示词
+        const isToEnglish = to === 'en';
+        const isEnglishToChinese = (from === 'en' || from === 'auto') && to === 'zh';
+
+        let systemPrompt: string;
+
+        if (isEnglishToChinese) {
+            systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的英文单词或短语翻译成中文，并以JSON格式返回以下信息：
 {
   "translation": "中文翻译",
   "phonetic": "音标（如有）",
@@ -1048,12 +1150,47 @@ async function callKimi(query: string): Promise<TranslationResult> {
     {"english": "英文例句2", "chinese": "中文翻译2"}
   ],
   "synonyms": ["近义词1", "近义词2"],
-  "antonyms": ["反义词1", "反义词2"]
+  "antonyms": ["反义词1", "反义词2"],
+  "memoryTip": "记忆提示：用词根词缀、发音规律、谐音联想、场景联想等方法帮助记忆这个单词",
+  "memoryImage": "描述一个生动的画面，帮助通过视觉联想记住这个单词的含义"
 }
 注意：
-1. 如果是单个单词，请提供音标、2-3个例句、近义词和反义词
+1. 如果是单个单词，请提供音标、2-3个例句、近义词和反义词、记忆提示和记忆画面描述
 2. 如果是短语或句子，只需提供translation和examples
-3. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+3. memoryTip要求：使用中文，50字以内，优先使用词根词缀、发音规律等语言学方法，也可用谐音联想
+4. memoryImage要求：用中文描述一个具体的视觉画面（如：一只大象在...），帮助用户通过画面感记住单词，80字以内
+5. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        } else if (isToEnglish) {
+            systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的中文翻译成英文，并以JSON格式返回以下信息：
+{
+  "translation": "英文翻译",
+  "phonetic": "音标（如有）",
+  "examples": [
+    {"english": "英文例句1", "chinese": "中文翻译1"},
+    {"english": "英文例句2", "chinese": "中文翻译2"}
+  ],
+  "synonyms": ["英文近义词1", "英文近义词2"],
+  "antonyms": ["英文反义词1", "英文反义词2"],
+  "memoryTip": "记忆提示：用中文解释如何记忆这个英文表达，可以是词根词缀、联想等方法",
+  "memoryImage": "描述一个生动的画面，帮助通过视觉联想记住这个英文表达"
+}
+注意：
+1. 如果是单个单词或短语，请提供音标、2-3个例句、近义词和反义词、记忆提示和记忆画面描述
+2. 如果是长句子，只需提供translation和examples
+3. memoryTip要求：使用中文，50字以内
+4. memoryImage要求：用中文描述一个具体的视觉画面，80字以内
+5. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        } else {
+            systemPrompt = `你是一个专业的翻译助手。请将用户输入的文本翻译成目标语言，并以JSON格式返回：
+{
+  "translation": "翻译结果",
+  "examples": [
+    {"source": "原文例句1", "target": "翻译1"},
+    {"source": "原文例句2", "target": "翻译2"}
+  ]
+}
+必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        }
 
         // Kimi由月之暗面开发，但目前API可能需要特定接入方式
         // 这里使用Moonshot API作为示例（Kimi的提供商）
@@ -1115,7 +1252,9 @@ async function callKimi(query: string): Promise<TranslationResult> {
                     pronunciation,
                     examples: parsed.examples || [],
                     synonyms: parsed.synonyms || [],
-                    antonyms: parsed.antonyms || []
+                    antonyms: parsed.antonyms || [],
+                    memoryTip: parsed.memoryTip || '',
+                    memoryImage: parsed.memoryImage || ''
                 };
             }
         } catch (e) {
@@ -1149,7 +1288,7 @@ async function callKimi(query: string): Promise<TranslationResult> {
 /**
  * 调用智谱GLM模型
  */
-async function callGlm(query: string): Promise<TranslationResult> {
+async function callGlm(query: string, from: string = 'auto', to: string = 'zh'): Promise<TranslationResult> {
     try {
         const {appkey: apiKey, key: modelName} = getTranslationApiKey('glm');
 
@@ -1162,7 +1301,14 @@ async function callGlm(query: string): Promise<TranslationResult> {
 
         const model = modelName || 'glm-4-flash';
 
-        const systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的英文单词或短语翻译成中文，并以JSON格式返回以下信息：
+        // 根据语言方向确定翻译方向和提示词
+        const isToEnglish = to === 'en';
+        const isEnglishToChinese = (from === 'en' || from === 'auto') && to === 'zh';
+
+        let systemPrompt: string;
+
+        if (isEnglishToChinese) {
+            systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的英文单词或短语翻译成中文，并以JSON格式返回以下信息：
 {
   "translation": "中文翻译",
   "phonetic": "音标（如有）",
@@ -1171,12 +1317,47 @@ async function callGlm(query: string): Promise<TranslationResult> {
     {"english": "英文例句2", "chinese": "中文翻译2"}
   ],
   "synonyms": ["近义词1", "近义词2"],
-  "antonyms": ["反义词1", "反义词2"]
+  "antonyms": ["反义词1", "反义词2"],
+  "memoryTip": "记忆提示：用词根词缀、发音规律、谐音联想、场景联想等方法帮助记忆这个单词",
+  "memoryImage": "描述一个生动的画面，帮助通过视觉联想记住这个单词的含义"
 }
 注意：
-1. 如果是单个单词，请提供音标、2-3个例句、近义词和反义词
+1. 如果是单个单词，请提供音标、2-3个例句、近义词和反义词、记忆提示和记忆画面描述
 2. 如果是短语或句子，只需提供translation和examples
-3. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+3. memoryTip要求：使用中文，50字以内，优先使用词根词缀、发音规律等语言学方法，也可用谐音联想
+4. memoryImage要求：用中文描述一个具体的视觉画面（如：一只大象在...），帮助用户通过画面感记住单词，80字以内
+5. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        } else if (isToEnglish) {
+            systemPrompt = `你是一个专业的中英文翻译助手。请将用户输入的中文翻译成英文，并以JSON格式返回以下信息：
+{
+  "translation": "英文翻译",
+  "phonetic": "音标（如有）",
+  "examples": [
+    {"english": "英文例句1", "chinese": "中文翻译1"},
+    {"english": "英文例句2", "chinese": "中文翻译2"}
+  ],
+  "synonyms": ["英文近义词1", "英文近义词2"],
+  "antonyms": ["英文反义词1", "英文反义词2"],
+  "memoryTip": "记忆提示：用中文解释如何记忆这个英文表达，可以是词根词缀、联想等方法",
+  "memoryImage": "描述一个生动的画面，帮助通过视觉联想记住这个英文表达"
+}
+注意：
+1. 如果是单个单词或短语，请提供音标、2-3个例句、近义词和反义词、记忆提示和记忆画面描述
+2. 如果是长句子，只需提供translation和examples
+3. memoryTip要求：使用中文，50字以内
+4. memoryImage要求：用中文描述一个具体的视觉画面，80字以内
+5. 必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        } else {
+            systemPrompt = `你是一个专业的翻译助手。请将用户输入的文本翻译成目标语言，并以JSON格式返回：
+{
+  "translation": "翻译结果",
+  "examples": [
+    {"source": "原文例句1", "target": "翻译1"},
+    {"source": "原文例句2", "target": "翻译2"}
+  ]
+}
+必须返回有效的JSON格式，不要添加任何其他文字说明`;
+        }
 
         const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
             method: 'POST',
@@ -1227,7 +1408,9 @@ async function callGlm(query: string): Promise<TranslationResult> {
                     pronunciation,
                     examples: parsed.examples || [],
                     synonyms: parsed.synonyms || [],
-                    antonyms: parsed.antonyms || []
+                    antonyms: parsed.antonyms || [],
+                    memoryTip: parsed.memoryTip || '',
+                    memoryImage: parsed.memoryImage || ''
                 };
             }
         } catch (e) {
@@ -1280,7 +1463,7 @@ export async function translation(payload: YdParams): Promise<AxiosResponse> {
 /**
  * 调用腾讯翻译API
  */
-async function callTencent(query: string): Promise<TranslationResult> {
+async function callTencent(query: string, from: string = 'auto', to: string = 'zh'): Promise<TranslationResult> {
     try {
         const {appkey: secretId, key: secretKey} = getTranslationApiKey('tencent');
 
@@ -1304,8 +1487,8 @@ async function callTencent(query: string): Promise<TranslationResult> {
         // 请求参数
         const payload = JSON.stringify({
             SourceText: query,
-            Source: 'auto',
-            Target: 'zh',
+            Source: from === 'auto' ? 'auto' : from,
+            Target: to,
             ProjectId: 0
         });
 
