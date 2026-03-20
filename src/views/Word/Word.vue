@@ -151,7 +151,7 @@
         <i class="iconfont icon-down" @click="scrollToBottom"></i>
       </el-tooltip>
       <el-tooltip class="box-item" effect="dark" content="专注模式" placement="top" popper-class="small-tooltip">
-        <i class="iconfont icon-card" @click="openFocusMode" :class="{ 'focus-mode-active': wordsStore.focusMode.enabled }"></i>
+        <i class="iconfont icon-card" @click="openFocusMode"></i>
       </el-tooltip>
       <el-tooltip class="box-item" effect="dark" content="显示释义" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-visible" @click="visibleExplained"></i>
@@ -241,83 +241,173 @@ let focusWindow: any = null;
 const handleAlwaysOnTopRequest = (value: boolean) => {
   console.log('父窗口处理置顶请求:', value);
   if (!focusWindow) {
-    console.log('focusWindow 不可用');
+    console.log('focusWindow 不可用，置顶设置失败');
     return;
   }
 
-  // 方式1: 直接调用 setAlwaysOnTop
   if (typeof focusWindow.setAlwaysOnTop === 'function') {
     try {
-      // 使用 'screen-saver' 级别确保窗口在其他应用之上
-      focusWindow.setAlwaysOnTop(value, 'screen-saver');
-      console.log('方式1成功: setAlwaysOnTop', value, '级别: screen-saver');
-      return;
+      // 根据 uTools 文档，使用 screen-saver 级别确保置顶稳定
+      const level = value ? 'screen-saver' : 'normal';
+      focusWindow.setAlwaysOnTop(value, level);
+      console.log('setAlwaysOnTop 成功:', value, level);
     } catch (e) {
-      console.error('方式1失败:', e);
-    }
-  }
-
-  // 方式2: 尝试通过 Electron remote 获取 BrowserWindow 实例
-  try {
-    // @ts-ignore
-    if (typeof require !== 'undefined') {
-      // @ts-ignore
-      const { remote } = require('electron');
-      if (remote && remote.BrowserWindow) {
-        // 获取所有窗口，找到子窗口
-        const allWindows = remote.BrowserWindow.getAllWindows();
-        console.log('所有窗口数量:', allWindows.length);
-        for (const win of allWindows) {
-          // 找到非当前窗口（子窗口）
-          // @ts-ignore
-          if (win !== remote.getCurrentWindow() && typeof win.setAlwaysOnTop === 'function') {
-            win.setAlwaysOnTop(value, 'screen-saver');
-            console.log('方式2成功: remote BrowserWindow.setAlwaysOnTop', value);
-            return;
-          }
-        }
+      console.error('setAlwaysOnTop 失败:', e);
+      // 尝试简化调用方式
+      try {
+        focusWindow.setAlwaysOnTop(value);
+        console.log('setAlwaysOnTop (简化) 成功:', value);
+      } catch (e2) {
+        console.error('setAlwaysOnTop (简化) 也失败:', e2);
       }
     }
-  } catch (e) {
-    console.error('方式2失败:', e);
+  } else {
+    console.log('focusWindow.setAlwaysOnTop 不是函数');
+  }
+};
+
+// 贴边隐藏相关
+let edgeStickTimer: any = null;
+let isEdgeHidden = false;
+let savedBounds: any = null;
+
+// 监听窗口移动，检测是否到屏幕边缘
+const setupEdgeStick = () => {
+  if (!focusWindow) return;
+
+  // 清理旧的定时器
+  if (edgeStickTimer) {
+    clearInterval(edgeStickTimer);
   }
 
-  // 方式3: 尝试使用 _window 或 window 对象
-  try {
-    // @ts-ignore
-    const win = focusWindow._window || focusWindow.window || focusWindow;
-    if (win && typeof win.setAlwaysOnTop === 'function') {
-      win.setAlwaysOnTop(value, 'screen-saver');
-      console.log('方式3成功: _window.setAlwaysOnTop', value, '级别: screen-saver');
+  edgeStickTimer = setInterval(() => {
+    if (!focusWindow || focusWindow.isDestroyed?.()) {
+      clearInterval(edgeStickTimer);
       return;
     }
-  } catch (e) {
-    console.error('方式3失败:', e);
-  }
 
-  console.log('所有方式都失败了');
+    try {
+      const bounds = focusWindow.getBounds?.();
+      if (!bounds || isEdgeHidden) return;
+
+      const screenBounds = {
+        width: focusWindow.screen?.width || screen.width,
+        height: focusWindow.screen?.height || screen.height
+      };
+
+      const threshold = 2;
+      const stickWidth = 6;
+
+      // 检测左边缘
+      if (bounds.x <= threshold) {
+        isEdgeHidden = true;
+        savedBounds = { ...bounds };
+        focusWindow.setBounds({ x: -bounds.width + stickWidth, y: bounds.y, width: bounds.width, height: bounds.height });
+        return;
+      }
+
+      // 检测右边缘
+      if (bounds.x + bounds.width >= screenBounds.width - threshold) {
+        isEdgeHidden = true;
+        savedBounds = { ...bounds };
+        focusWindow.setBounds({ x: screenBounds.width - stickWidth, y: bounds.y, width: bounds.width, height: bounds.height });
+        return;
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, 500);
+
+  // 监听全局鼠标移动，检测是否靠近贴边位置来恢复
+  const onMouseMove = (e: MouseEvent) => {
+    if (!isEdgeHidden || !savedBounds) return;
+    const restoreThreshold = 8;
+
+    // 左边缘恢复
+    if (savedBounds.x <= restoreThreshold && e.screenX <= restoreThreshold) {
+      restoreFromEdge();
+      return;
+    }
+    // 右边缘恢复
+    if (savedBounds.x + savedBounds.width >= (screen.width - restoreThreshold) && e.screenX >= screen.width - restoreThreshold) {
+      restoreFromEdge();
+      return;
+    }
+  };
+
+  window.addEventListener('mousemove', onMouseMove);
+  // 将清理函数存储以便窗口关闭时调用
+  // @ts-ignore
+  edgeStickTimer._cleanup = () => window.removeEventListener('mousemove', onMouseMove);
+};
+
+// 从贴边恢复
+const restoreFromEdge = () => {
+  if (!focusWindow || !isEdgeHidden || !savedBounds) return;
+
+  try {
+    focusWindow.setBounds(savedBounds);
+    isEdgeHidden = false;
+    savedBounds = null;
+  } catch (e) {
+    console.error('恢复窗口失败:', e);
+  }
 };
 
 // 处理打开单词列表请求
 const handleOpenWordList = () => {
   console.log('父窗口处理打开列表请求');
-  // 显示主窗口
+
+  // 刷新单词列表数据 - 从数据库重新加载
+  try {
+    console.log('刷新单词列表数据...');
+    wordsStore.listWords();
+  } catch (e) {
+    console.error('刷新单词列表失败:', e);
+  }
+
+  // 先关闭专注窗口
+  if (focusWindow && !focusWindow.isDestroyed?.()) {
+    try {
+      focusWindow.close();
+    } catch (e) {
+      console.error('关闭专注窗口失败:', e);
+    }
+    focusWindow = null;
+  }
+
+  // 清理贴边相关
+  isEdgeHidden = false;
+  savedBounds = null;
+  if (edgeStickTimer) {
+    clearInterval(edgeStickTimer);
+    // @ts-ignore
+    if (edgeStickTimer._cleanup) edgeStickTimer._cleanup();
+    edgeStickTimer = null;
+  }
+
+  // 显示主窗口并刷新
   if (typeof utools !== 'undefined' && utools.showMainWindow) {
     utools.showMainWindow();
+    // 强制刷新列表显示
+    setTimeout(() => {
+      // 重新计算显示列表
+      listMode.value = listMode.value;
+    }, 100);
   }
-  // 跳转到单词列表
-  router.push('/word');
 };
 
 // 处理子窗口消息的通用函数
-const handleChildMessage = (data: any) => {
-  console.log('父窗口收到子窗口消息:', data);
-  if (!data) return;
-  
-  if (data.type === 'setAlwaysOnTop' && typeof data.value === 'boolean') {
-    handleAlwaysOnTopRequest(data.value);
-  } else if (data.type === 'openWordList') {
+const handleChildMessage = (message: any) => {
+  console.log('父窗口收到子窗口消息:', message);
+  if (!message) return;
+
+  if (message.channel === 'setAlwaysOnTop' && typeof message.payload === 'boolean') {
+    handleAlwaysOnTopRequest(message.payload);
+  } else if (message.channel === 'openWordList') {
     handleOpenWordList();
+  } else if (message.channel === 'restoreFromEdge') {
+    restoreFromEdge();
   }
 };
 
@@ -325,9 +415,9 @@ const handleChildMessage = (data: any) => {
 // @ts-ignore
 if (typeof utools !== 'undefined' && utools.onMessage) {
   // @ts-ignore
-  utools.onMessage((data: any) => {
-    console.log('【全局】父窗口 utools.onMessage 收到:', data);
-    handleChildMessage(data);
+  utools.onMessage((message: any) => {
+    console.log('【全局】父窗口 utools.onMessage 收到:', message);
+    handleChildMessage(message);
   });
   console.log('【全局】父窗口 utools.onMessage 监听已设置');
 }
@@ -366,37 +456,56 @@ const openFocusMode = () => {
         minHeight: 80,
         maxWidth: 400,
         maxHeight: 150,
-        alwaysOnTop: true, // 默认置顶
-        frame: false, // 无边框
-        transparent: false,
+        alwaysOnTop: true,
+        frame: false,
+        transparent: true,
+        // 透明背景色，确保正确接收透明效果
+        backgroundColor: '#00000000',
         resizable: true,
         modal: false,
+        // 允许关闭窗口
+        closable: true,
       }, () => {
         console.log('专注模式窗口已创建，主题:', themeParam);
+        // 在 callback 中设置置顶，确保窗口已准备好
+        if (focusWindow && typeof focusWindow.setAlwaysOnTop === 'function') {
+          try {
+            // 使用 screen-saver 级别确保置顶稳定
+            focusWindow.setAlwaysOnTop(true, 'screen-saver');
+            console.log('专注窗口置顶设置成功');
+          } catch (e) {
+            console.error('设置置顶失败:', e);
+            // 降级方案
+            try {
+              focusWindow.setAlwaysOnTop(true);
+            } catch (e2) {
+              console.error('降级置顶也失败:', e2);
+            }
+          }
+        }
+        // 显示窗口
+        if (focusWindow && typeof focusWindow.show === 'function') {
+          focusWindow.show();
+        }
       });
 
       // 窗口关闭时清理引用
       focusWindow.on?.('closed', () => {
         focusWindow = null;
+        isEdgeHidden = false;
+        savedBounds = null;
+        if (edgeStickTimer) {
+          clearInterval(edgeStickTimer);
+          // @ts-ignore
+          if (edgeStickTimer._cleanup) edgeStickTimer._cleanup();
+          edgeStickTimer = null;
+        }
       });
 
-      // 设置窗口特定的消息监听（作为全局监听的补充）
-      console.log('父窗口设置特定监听');
-      
-      // 尝试通过窗口对象监听消息
-      if (focusWindow) {
-        // @ts-ignore
-        focusWindow.on?.('message', (data: any) => {
-          console.log('【窗口特定】focusWindow.on message 收到:', data);
-          handleChildMessage(data);
-        });
-        
-        // @ts-ignore
-        focusWindow.webContents?.on?.('message', (event: any, data: any) => {
-          console.log('【窗口特定】webContents.message 收到:', data);
-          handleChildMessage(data);
-        });
-      }
+      // 设置贴边隐藏检测（延迟一点确保窗口稳定）
+      setTimeout(() => {
+        setupEdgeStick();
+      }, 500);
     } else {
       // 回退：使用路由方式
       router.push('/focus');

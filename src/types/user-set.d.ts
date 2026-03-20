@@ -25,12 +25,11 @@ export type OcrKeyType = Record<OcrPlatform, {
 }>;
 
 /**
- * 专注模式设置
+ * 专注模式设置（存储窗口相关配置）
  */
 export interface FocusModeSettings {
-    enabled: boolean;
-    autoStick: boolean;
     alwaysOnTop: boolean;
+    opacity: number; // 窗口透明度 0.3-1.0
 }
 
 /**

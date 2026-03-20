@@ -20,9 +20,8 @@ import type {UserSetType, FocusModeSettings} from "@/types/user-set";
 
 // 默认专注模式设置
 const defaultFocusMode: FocusModeSettings = {
-    enabled: false,
-    autoStick: true,
-    alwaysOnTop: true
+    alwaysOnTop: true,
+    opacity: 1.0 // 默认不透明
 };
 
 // 添加 API 密钥相关的响应式变量
@@ -247,16 +246,6 @@ export const useWordsStore =
                 }
                 addAndUpdateSetDb(userSet);
             }
-
-            /**
-             * 切换专注模式开关
-             */
-            function toggleFocusMode() {
-                const newEnabled = !focusMode.value.enabled;
-                setFocusMode({ enabled: newEnabled });
-                return newEnabled;
-            }
-
 
             // 设置快捷键开关
             function setShortcutEnabled(enabled: boolean) {
@@ -528,7 +517,6 @@ export const useWordsStore =
                 getApiKey, // 导出获取API密钥方法
                 getOcrApiKey, // 导出获取API密钥方法
                 setFocusMode,
-                toggleFocusMode,
                 findWord,
                 addAndUpdateWord,
                 addAndUpdateWords,

@@ -5,33 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>专注模式</title>
   <style>
-    /* Iconfont 字体 */
-    @font-face {
-      font-family: "iconfont";
-      src: url('../src/assets/icons/iconfont.woff2?t=1763429391127') format('woff2'),
-           url('../src/assets/icons/iconfont.woff?t=1763429391127') format('woff'),
-           url('../src/assets/icons/iconfont.ttf?t=1763429391127') format('truetype');
+    /* SVG 图标样式 */
+    .icon {
+      width: 16px;
+      height: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: opacity 0.15s, color 0.3s ease;
     }
 
-    .iconfont {
-      font-family: "iconfont" !important;
-      font-size: 16px;
-      font-style: normal;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    .icon svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
     }
 
-    .icon-lock:before { content: "\e676"; }
-    .icon-top:before { content: "\e681"; }
-    .icon-card:before { content: "\e61a"; }
-    .icon-close:before { content: "\e616"; }
-    .icon-left:before { content: "\e612"; }
-    .icon-right:before { content: "\e613"; }
-    .icon-visible:before { content: "\e7ec"; }
-    .icon-invisible:before { content: "\e64e"; }
-    .icon-player:before { content: "\e60b"; }
-    .icon-check:before { content: "\e861"; }
-    .icon-delete:before { content: "\e60e"; }
+    .icon.disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
+    .icon:hover:not(.disabled) {
+      opacity: 0.6;
+    }
   </style>
   <style>
     /* CSS 变量定义 */
@@ -74,7 +72,8 @@
       height: 100%;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-primary);
+      /* 初始透明背景，让 Electron 透明窗口正常工作 */
+      background: transparent !important;
       transition: background-color 0.3s ease;
     }
 
@@ -89,6 +88,9 @@
       position: relative;
       /* 允许拖拽移动窗口 */
       -webkit-app-region: drag;
+      /* 设置背景色，支持透明 */
+      background: var(--bg-primary);
+      transition: background-color 0.3s ease;
     }
 
     /* 按钮区域不响应拖拽，允许点击 */
@@ -123,41 +125,26 @@
       gap: 10px;
     }
 
-    .actions .iconfont {
-      font-size: 14px;
+    .actions .icon {
       color: var(--text-secondary);
-      cursor: pointer;
-      padding: 2px;
-      transition: opacity 0.15s, color 0.3s ease;
     }
 
-    .actions .iconfont:hover:not(.disabled) {
-      opacity: 0.6;
-    }
-
-    .actions .iconfont.disabled {
-      opacity: 0.25;
-      cursor: not-allowed;
-    }
-
-    .actions .icon-delete {
+    .actions .icon-forgot {
       color: var(--text-tertiary);
     }
 
-    .actions .icon-delete:hover:not(.disabled) {
+    .actions .icon-forgot:hover:not(.disabled) {
       color: var(--danger-color);
     }
 
-    .actions .icon-check {
+    .actions .icon-remember {
       color: var(--success-color);
-      font-weight: bold;
     }
 
     .btn-close {
       position: absolute;
       top: 2px;
       right: 6px;
-      font-size: 12px;
       color: var(--text-tertiary);
       cursor: pointer;
       padding: 2px;
@@ -173,7 +160,6 @@
       position: absolute;
       top: 2px;
       right: 26px;
-      font-size: 12px;
       color: var(--text-tertiary);
       cursor: pointer;
       padding: 2px;
@@ -193,7 +179,6 @@
       position: absolute;
       top: 2px;
       right: 46px;
-      font-size: 12px;
       color: var(--text-tertiary);
       cursor: pointer;
       padding: 2px;
@@ -214,6 +199,71 @@
       transition: color 0.3s ease;
     }
 
+    /* 透明度滑条 */
+    .opacity-bar {
+      position: absolute;
+      bottom: 2px;
+      left: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      -webkit-app-region: no-drag;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .focus-container:hover .opacity-bar {
+      opacity: 1;
+    }
+
+    .opacity-bar svg {
+      width: 10px;
+      height: 10px;
+      fill: var(--text-quaternary);
+      flex-shrink: 0;
+    }
+
+    .opacity-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 60px;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border-color);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .opacity-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .opacity-slider:hover::-webkit-slider-thumb {
+      background: var(--primary-color);
+    }
+
+    .opacity-slider::-moz-range-thumb {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+      cursor: pointer;
+      border: none;
+    }
+
+    .opacity-slider::-moz-range-track {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border-color);
+    }
+
   </style>
 </head>
 <body>
@@ -222,17 +272,49 @@
     <div class="explains" id="explains"></div>
 
     <div class="actions">
-      <i class="iconfont icon-left" id="btn-prev" title="上一个"></i>
-      <i class="iconfont icon-visible" id="btn-toggle" title="显示/隐藏释义"></i>
-      <i class="iconfont icon-player" id="btn-play" title="播放发音"></i>
-      <i class="iconfont icon-delete" id="btn-forgot" title="忘记"></i>
-      <i class="iconfont icon-check" id="btn-remember" title="记得"></i>
-      <i class="iconfont icon-right" id="btn-next" title="下一个"></i>
+      <!-- 上一个 -->
+      <span class="icon" id="btn-prev" title="上一个">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </span>
+      <!-- 显示/隐藏释义 -->
+      <span class="icon" id="btn-toggle" title="显示/隐藏释义">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </span>
+      <!-- 播放发音 -->
+      <span class="icon" id="btn-play" title="播放发音">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+      <!-- 忘记 -->
+      <span class="icon icon-forgot" id="btn-forgot" title="忘记">
+        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </span>
+      <!-- 记得 -->
+      <span class="icon icon-remember" id="btn-remember" title="记得">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </span>
+      <!-- 下一个 -->
+      <span class="icon" id="btn-next" title="下一个">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+      </span>
     </div>
 
-    <i class="iconfont icon-close btn-close" id="btn-close" title="关闭"></i>
-    <i class="iconfont icon-top btn-top" id="btn-top" title="取消置顶" style="display: none;"></i>
-    <i class="iconfont icon-card btn-list" id="btn-list" title="返回列表" style="display: none;"></i>
+    <!-- 关闭 -->
+    <span class="icon btn-close" id="btn-close" title="关闭">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </span>
+    <!-- 置顶 -->
+    <span class="icon btn-top" id="btn-top" title="取消置顶">
+      <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+    </span>
+    <!-- 返回列表 -->
+    <span class="icon btn-list" id="btn-list" title="返回列表">
+      <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+    </span>
+    <!-- 透明度滑条 -->
+    <div class="opacity-bar">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z"/></svg>
+      <input type="range" class="opacity-slider" id="opacity-slider" min="30" max="100" value="100">
+    </div>
     <div class="counter" id="counter">0/0</div>
   </div>
 
@@ -292,10 +374,12 @@
           ? word.explains.join('; ')
           : word.explains;
         elExplains.style.display = 'block';
-        elBtnToggle.className = 'iconfont icon-invisible';
+        // 隐藏图标 (眼睛带斜杠)
+        elBtnToggle.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>';
       } else {
         elExplains.style.display = 'none';
-        elBtnToggle.className = 'iconfont icon-visible';
+        // 显示图标 (眼睛)
+        elBtnToggle.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>';
       }
 
       elBtnPrev.classList.toggle('disabled', currentIndex <= 0);
@@ -371,76 +455,193 @@
     document.getElementById('btn-close').addEventListener('click', () => window.close());
 
     // 置顶按钮
-    let isAlwaysOnTop = true; // 默认置顶
+    let isAlwaysOnTop = true;
     const btnTop = document.getElementById('btn-top');
-    btnTop.classList.add('active'); // 初始状态为激活
-    
-    // 尝试多种方式设置置顶
+    btnTop.classList.add('active');
+
+    // 设置置顶状态 - 通过 utools.sendToParent 让父窗口操作 BrowserWindow
     function setWindowAlwaysOnTop(value) {
-      console.log('尝试设置置顶状态:', value);
-      
-      // 方式1: 通过 utools.sendToParent 发送消息给父窗口
       if (typeof utools !== 'undefined' && utools.sendToParent) {
-        try {
-          utools.sendToParent({ type: 'setAlwaysOnTop', value: value });
-          console.log('方式1: sendToParent 发送成功');
-        } catch (e) {
-          console.error('方式1失败:', e);
-        }
-      }
-      
-      // 方式2: 尝试直接使用 Electron remote API (子窗口内)
-      try {
-        // @ts-ignore
-        if (typeof require !== 'undefined') {
-          // @ts-ignore
-          const { remote } = require('electron');
-          if (remote) {
-            const currentWindow = remote.getCurrentWindow();
-            if (currentWindow && typeof currentWindow.setAlwaysOnTop === 'function') {
-              // 使用 'screen-saver' 级别确保窗口在其他应用之上
-              currentWindow.setAlwaysOnTop(value, 'screen-saver');
-              console.log('方式2: remote.getCurrentWindow().setAlwaysOnTop 成功, 级别: screen-saver');
-              return;
-            }
-          }
-        }
-      } catch (e) {
-        console.log('方式2不可用:', e.message);
-      }
-      
-      // 方式3: 尝试通过 window.opener 发送消息
-      try {
-        if (window.opener) {
-          window.opener.postMessage({ type: 'setAlwaysOnTop', value: value }, '*');
-          console.log('方式3: postMessage 发送成功');
-        }
-      } catch (e) {
-        console.log('方式3不可用:', e.message);
+        console.log('[专注模式] 发送置顶设置:', value);
+        // 根据 uTools 文档，使用 sendToParent 发送消息到父窗口
+        utools.sendToParent('setAlwaysOnTop', value);
       }
     }
-    
+
     btnTop.addEventListener('click', () => {
       isAlwaysOnTop = !isAlwaysOnTop;
       btnTop.classList.toggle('active', isAlwaysOnTop);
-      // 更新 title 提示
       btnTop.title = isAlwaysOnTop ? '取消置顶' : '置顶';
-      console.log('置顶按钮点击，新状态:', isAlwaysOnTop);
-      // 设置置顶状态
       setWindowAlwaysOnTop(isAlwaysOnTop);
+      saveFocusModeSetting('alwaysOnTop', isAlwaysOnTop);
     });
 
-    // 返回列表按钮
+    // 返回列表按钮 - 只发消息，让父窗口关闭自己并显示主窗口
     document.getElementById('btn-list').addEventListener('click', () => {
-      // 发送消息给父窗口打开列表
       if (typeof utools !== 'undefined' && utools.sendToParent) {
-        utools.sendToParent({ type: 'openWordList' });
+        // 先保存当前数据状态，确保主窗口能获取最新数据
+        try {
+          // 触发数据库同步，确保数据已保存
+          if (words.length > 0 && currentIndex < words.length) {
+            const currentWord = words[currentIndex];
+            if (currentWord && currentWord._id) {
+              utools.db.put(currentWord);
+            }
+          }
+        } catch (e) {
+          console.error('保存当前单词状态失败:', e);
+        }
+
+        // 发送消息给父窗口，请求打开列表并关闭专注窗口
+        utools.sendToParent('openWordList');
+
+        // 延迟关闭窗口，确保消息已发送
+        setTimeout(() => {
+          window.close();
+        }, 100);
       }
-      // 关闭专注窗口
-      window.close();
     });
 
-    // 键盘快捷键
+    // ========== 透明度设置 ==========
+    let currentOpacity = 1.0;
+    const opacitySlider = document.getElementById('opacity-slider');
+
+    // 当前主题是否为暗黑模式
+    const isDarkMode = document.documentElement.classList.contains('dark-theme');
+
+    function applyOpacity(opacity) {
+      const validOpacity = Math.max(0.3, Math.min(1.0, parseFloat(opacity) || 1.0));
+      currentOpacity = validOpacity;
+
+      // 获取当前实际主题（动态检测）
+      const isDark = document.documentElement.classList.contains('dark-theme') ||
+                     document.body.classList.contains('dark-theme');
+
+      // 使用 rgba 背景实现真正透明（需配合 transparent: true）
+      const bgR = isDark ? 30 : 255;
+      const bgG = isDark ? 30 : 255;
+      const bgB = isDark ? 30 : 255;
+
+      // html 和 body 保持透明，只设置容器背景
+      document.documentElement.style.background = 'transparent';
+      document.body.style.background = 'transparent';
+
+      // 设置 app 容器背景，这是实际显示背景的地方
+      const appContainer = document.getElementById('app');
+      if (appContainer) {
+        appContainer.style.background = `rgba(${bgR}, ${bgG}, ${bgB}, ${validOpacity})`;
+      }
+
+      // 同步滑条
+      if (opacitySlider) {
+        opacitySlider.value = Math.round(validOpacity * 100);
+      }
+
+      console.log('透明度已应用:', validOpacity, '主题:', isDark ? 'dark' : 'light');
+    }
+
+    // 滑条调节透明度
+    if (opacitySlider) {
+      opacitySlider.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value);
+        const opacity = value / 100;
+        applyOpacity(opacity);
+        saveFocusModeSetting('opacity', opacity);
+      });
+    }
+
+    // 通过 Ctrl+滚轮调节透明度
+    document.addEventListener('wheel', (e) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.05 : 0.05;
+        const newOpacity = Math.max(0.3, Math.min(1.0, currentOpacity + delta));
+        applyOpacity(newOpacity);
+        saveFocusModeSetting('opacity', newOpacity);
+        showToast(Math.round(newOpacity * 100) + '%');
+      }
+    }, { passive: false });
+
+    // ========== 贴边隐藏 ==========
+    // 贴边检测和恢复由父窗口（Word.vue）处理
+    // 子窗口仅通过 onMessage 接收状态通知
+    // @ts-ignore
+    if (typeof utools !== 'undefined' && utools.onMessage) {
+      // @ts-ignore
+      utools.onMessage((message) => {
+        if (!message) return;
+        if (message.channel === 'edgeStick') {
+          showToast('已贴边隐藏');
+        }
+      });
+    }
+
+    // ========== Toast 提示 ==========
+    function showToast(message) {
+      let toast = document.getElementById('toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
+          'background:rgba(0,0,0,0.7);color:#fff;padding:4px 12px;border-radius:4px;font-size:12px;' +
+          'z-index:9999;pointer-events:none;opacity:0;transition:opacity 0.3s;-webkit-app-region:no-drag;';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.style.opacity = '1';
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 800);
+    }
+
+    // ========== 保存/读取设置 ==========
+    function saveFocusModeSetting(key, value) {
+      try {
+        if (typeof utools !== 'undefined' && utools.db) {
+          const docs = utools.db.allDocs();
+          const userSetDoc = docs.find(doc => doc._id && doc._id.startsWith('user-set-'));
+          if (userSetDoc) {
+            if (!userSetDoc.focusMode) userSetDoc.focusMode = {};
+            userSetDoc.focusMode[key] = value;
+            utools.db.put(userSetDoc);
+          }
+        }
+      } catch (e) {
+        console.error('保存设置失败:', e);
+      }
+    }
+
+    function loadFocusModeSettings() {
+      try {
+        if (typeof utools !== 'undefined' && utools.db) {
+          const docs = utools.db.allDocs();
+          const userSetDoc = docs.find(doc => doc._id && doc._id.startsWith('user-set-'));
+
+          if (userSetDoc && userSetDoc.focusMode) {
+            const fm = userSetDoc.focusMode;
+
+            // 应用透明度
+            if (fm.opacity !== undefined) {
+              applyOpacity(fm.opacity);
+            }
+
+            // 应用置顶设置
+            if (fm.alwaysOnTop !== undefined) {
+              isAlwaysOnTop = fm.alwaysOnTop;
+              btnTop.classList.toggle('active', isAlwaysOnTop);
+              btnTop.title = isAlwaysOnTop ? '取消置顶' : '置顶';
+              setWindowAlwaysOnTop(isAlwaysOnTop);
+            }
+
+            return fm;
+          }
+        }
+      } catch (e) {
+        console.error('读取专注模式设置失败:', e);
+      }
+      return null;
+    }
+
+    // ========== 键盘快捷键 ==========
     document.addEventListener('keydown', (e) => {
       if (e.shiftKey && e.key === 'R') { e.preventDefault(); markRemembered(); }
       else if (e.shiftKey && e.key === 'F') { e.preventDefault(); markForgot(); }
@@ -451,7 +652,7 @@
       else if (e.key === 'Escape') { e.preventDefault(); window.close(); }
     });
 
-    // 主题适配
+    // ========== 主题 ==========
     function applyTheme(isDark) {
       if (isDark) {
         document.documentElement.classList.add('dark-theme');
@@ -460,9 +661,12 @@
         document.documentElement.classList.remove('dark-theme');
         document.body.classList.remove('dark-theme');
       }
+      // 主题变化后重新应用透明度，确保使用正确的背景色
+      if (currentOpacity !== undefined) {
+        applyOpacity(currentOpacity);
+      }
     }
 
-    // 从 URL 参数获取主题
     function getThemeFromUrl() {
       const urlParams = new URLSearchParams(window.location.search);
       const theme = urlParams.get('theme');
@@ -471,33 +675,26 @@
       return null;
     }
 
-    // 从 uTools 获取主题
     function detectTheme() {
-      // 优先使用 URL 参数
       const urlTheme = getThemeFromUrl();
-      if (urlTheme !== null) {
-        return urlTheme;
-      }
-      
-      // 备用：检测 body/html 是否有 utools-dark 类
+      if (urlTheme !== null) return urlTheme;
+
       let isDark = document.body.classList.contains('utools-dark') ||
                    document.documentElement.classList.contains('utools-dark');
-      
-      // 备用：使用 uTools API
+
       if (!isDark && typeof utools !== 'undefined' && utools.isDark) {
         isDark = utools.isDark();
       }
-      
+
       return isDark;
     }
 
-    // 初始化主题
     const isDark = detectTheme();
     applyTheme(isDark);
-    console.log('专注模式主题:', isDark ? '暗黑' : '亮色');
 
     // 初始化
     loadWords();
+    loadFocusModeSettings();
   </script>
 </body>
 </html>

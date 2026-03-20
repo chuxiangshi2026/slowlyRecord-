@@ -108,51 +108,6 @@
 
     <el-divider/>
 
-    <!--     专注模式模块 -->
-    <h4 class="header">专注模式</h4>
-    <div class="titles">
-      <div class="setting-item">
-        <div class="content">开启专注模式</div>
-        <el-switch class="shorcut-desc"
-                   v-model="wordsStore.focusMode.enabled"
-                   inline-prompt
-                   size="large"
-                   active-text="开"
-                   inactive-text="关"
-                   @change="onFocusModeChange"
-        />
-      </div>
-    </div>
-    <div v-if="wordsStore.focusMode.enabled" class="focus-mode-options">
-      <div class="setting-item">
-        <div class="content">自动贴边</div>
-        <el-switch class="shorcut-desc"
-                   v-model="wordsStore.focusMode.autoStick"
-                   inline-prompt
-                   size="default"
-                   active-text="开"
-                   inactive-text="关"
-                   @change="onFocusModeSettingChange"
-        />
-      </div>
-      <div class="setting-item">
-        <div class="content">窗口置顶</div>
-        <el-switch class="shorcut-desc"
-                   v-model="wordsStore.focusMode.alwaysOnTop"
-                   inline-prompt
-                   size="default"
-                   active-text="开"
-                   inactive-text="关"
-                   @change="onFocusModeSettingChange"
-        />
-      </div>
-      <p class="focus-mode-desc">
-        专注模式下单次只显示一个单词，窗口精简小巧，适合沉浸式学习
-      </p>
-    </div>
-
-    <el-divider/>
-
     <!--     功能模块 -->
     <!--    <h4 class="header">功能</h4>
         <div class="content">
@@ -482,24 +437,7 @@ const onCloseAfterAddSwitchChange = () => {
   wordsStore.setClosePlugin(wordsStore.pluginStatus)
 }
 
-// 专注模式开关变化
-const onFocusModeChange = () => {
-  wordsStore.setFocusMode({
-    enabled: wordsStore.focusMode.enabled,
-    autoStick: wordsStore.focusMode.autoStick,
-    alwaysOnTop: wordsStore.focusMode.alwaysOnTop
-  })
-  ElMessage.success(wordsStore.focusMode.enabled ? '专注模式已开启' : '专注模式已关闭')
-}
 
-// 专注模式详细设置变化
-const onFocusModeSettingChange = () => {
-  wordsStore.setFocusMode({
-    enabled: wordsStore.focusMode.enabled,
-    autoStick: wordsStore.focusMode.autoStick,
-    alwaysOnTop: wordsStore.focusMode.alwaysOnTop
-  })
-}
 
 const kuaijiejian = (type: number) => {
   if (type == 1) {
@@ -629,7 +567,6 @@ const exportConfig = () => {
       translationPlatform: userSet.translationPlatform,
       ocrPlatform: userSet.ocrPlatform,
       memoryFirmness: userSet.memoryFirmness,
-      focusMode: userSet.focusMode || { enabled: false, autoStick: true, alwaysOnTop: true },
       keys: userSet.keys || {},
       ocrKeys: userSet.ocrKeys || {}
     }
@@ -700,9 +637,6 @@ const handleFileImport = (event: Event) => {
         }
         if (settings.memoryFirmness) {
           wordsStore.setMemoryFirmness(settings.memoryFirmness)
-        }
-        if (settings.focusMode) {
-          wordsStore.setFocusMode(settings.focusMode)
         }
 
         // 更新 API Keys
@@ -830,6 +764,32 @@ const handleFileImport = (event: Event) => {
   justify-content: center;
   gap: 16px;
   padding: 16px 0;
+
+  :deep(.el-button--primary) {
+    background-color: var(--utools-primary);
+    border-color: var(--utools-primary);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--utools-primary-hover, var(--utools-primary));
+      border-color: var(--utools-primary-hover, var(--utools-primary));
+    }
+  }
+
+  :deep(.el-button--success) {
+    background-color: var(--utools-success, #67c23a);
+    border-color: var(--utools-success, #67c23a);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--utools-success-hover, #85ce61);
+      border-color: var(--utools-success-hover, #85ce61);
+    }
+  }
+
+  :deep(.el-button .el-icon) {
+    color: inherit;
+  }
 }
 
 .config-hint {
@@ -846,22 +806,7 @@ const handleFileImport = (event: Event) => {
   line-height: 1.5;
 }
 
-/* 专注模式选项样式 */
-.focus-mode-options {
-  padding: 0 20px;
-  margin-top: 8px;
 
-  .setting-item {
-    margin-bottom: 12px;
-  }
-
-  .focus-mode-desc {
-    font-size: 12px;
-    color: var(--utools-text-tertiary);
-    margin: 8px 0 0 0;
-    line-height: 1.5;
-  }
-}
 
 /* 禁用输入框样式 */
 :deep(.el-input.is-disabled .el-input__wrapper) {
