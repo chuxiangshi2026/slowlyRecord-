@@ -332,6 +332,33 @@ const clearFocusModePendingAction = () => {
   });
 };
 
+const consumeLatestFocusModePendingAction = (source = 'db') => {
+  try {
+    const focusMode = getSetDb(true)?.focusMode;
+    const pendingAction = focusMode?.pendingAction;
+    const pendingActionAt = Number(pendingAction?.at || 0);
+
+    if (!pendingAction) {
+      return false;
+    }
+
+    if (pendingActionAt && pendingActionAt <= lastHandledFocusModeActionAt) {
+      return false;
+    }
+
+    if (pendingActionAt && Date.now() - pendingActionAt > FOCUS_MODE_DB_ACTION_TTL) {
+      clearFocusModePendingAction();
+      return false;
+    }
+
+    lastHandledFocusModeActionAt = pendingActionAt || Date.now();
+    return processFocusModePendingAction(pendingAction, source);
+  } catch (e) {
+    console.error(`[focusModeAction] 读取待处理动作失败(${source}):`, e);
+    return false;
+  }
+};
+
 const handleSetAlwaysOnTop = (state: any) => {
 
   const newAlwaysOnTop = state?.alwaysOnTop ?? true;
@@ -494,6 +521,8 @@ const handleRecreateWindow = (state: any) => {
       const recreatedWindow = focusWindow;
       recreatedWindow?.on?.('closed', () => {
         console.log('[handleRecreateWindow] 窗口 closed 事件');
+        consumeLatestFocusModePendingAction('closed');
+
         if (focusWindow === recreatedWindow) {
           focusWindow = null;
           clearFocusModeSync();
@@ -897,6 +926,10 @@ const startFocusModeSync = (initialAlwaysOnTop: boolean, initialEdgeStickEnabled
   lastSyncedEdgeStickEnabled = initialEdgeStickEnabled;
 
   focusModeSyncTimer = setInterval(() => {
+    if (consumeLatestFocusModePendingAction('db')) {
+      return;
+    }
+
     if (!focusWindow || focusWindow.isDestroyed?.()) {
       clearFocusModeSync();
       return;
@@ -904,21 +937,6 @@ const startFocusModeSync = (initialAlwaysOnTop: boolean, initialEdgeStickEnabled
 
     try {
       const focusMode = getSetDb(true)?.focusMode;
-      const pendingAction = focusMode?.pendingAction;
-      const pendingActionAt = Number(pendingAction?.at || 0);
-
-      if (
-        pendingAction &&
-        pendingActionAt > lastHandledFocusModeActionAt &&
-        Date.now() - pendingActionAt <= FOCUS_MODE_DB_ACTION_TTL
-      ) {
-        lastHandledFocusModeActionAt = pendingActionAt;
-        if (processFocusModePendingAction(pendingAction, 'db')) {
-          return;
-        }
-      }
-
-
       const latestAlwaysOnTop = typeof focusMode?.alwaysOnTop === 'boolean'
         ? focusMode.alwaysOnTop
         : initialAlwaysOnTop;
@@ -1229,6 +1247,8 @@ const openFocusMode = () => {
       // 窗口关闭时清理引用
       const createdFocusWindow = focusWindow;
       createdFocusWindow?.on?.('closed', () => {
+        consumeLatestFocusModePendingAction('closed');
+
         if (focusWindow === createdFocusWindow) {
           focusWindow = null;
           clearFocusModeSync();
