@@ -1,0 +1,479 @@
+<template>
+  <div class="text-memory-container">
+    <!-- 头部工具栏 -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="搜索标题或内容..."
+          clearable
+          style="width: 250px"
+        >
+          <template #prefix>
+            <el-icon><Search /></el-icon>
+          </template>
+        </el-input>
+        <el-select
+          v-model="selectedTag"
+          placeholder="选择标签"
+          clearable
+          style="width: 150px; margin-left: 10px"
+        >
+          <el-option
+            v-for="tag in textStore.allTags"
+            :key="tag"
+            :label="tag"
+            :value="tag"
+          />
+        </el-select>
+      </div>
+      <div class="toolbar-right">
+        <el-button type="primary" @click="showAddDialog = true">
+          <el-icon><Plus /></el-icon>
+          添加文本
+        </el-button>
+        <el-button @click="showImportDialog = true">
+          <el-icon><Upload /></el-icon>
+          导入
+        </el-button>
+      </div>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="stats-bar">
+      <el-tag type="info">共 {{ filteredArticles.length }} 篇文章</el-tag>
+      <el-tag type="success" v-if="textStore.allTags.length > 0">
+        {{ textStore.allTags.length }} 个标签
+      </el-tag>
+    </div>
+
+    <!-- 文章列表 -->
+    <div class="articles-list" v-loading="textStore.loading">
+      <el-empty v-if="filteredArticles.length === 0" description="暂无文章，点击添加按钮开始" />
+      
+      <div
+        v-for="article in filteredArticles"
+        :key="article._id"
+        class="article-card"
+        @click="handleArticleClick(article)"
+      >
+        <div class="article-header">
+          <h3 class="article-title">{{ article.title }}</h3>
+          <div class="article-actions" @click.stop>
+            <el-dropdown trigger="click">
+              <el-button link>
+                <el-icon><More /></el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="handleEdit(article)">
+                    <el-icon><Edit /></el-icon> 编辑
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleTypingPractice(article)">
+                    <el-icon><Pointer /></el-icon> 跟打练习
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleFillBlanks(article)">
+                    <el-icon><EditPen /></el-icon> 填空练习
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleChoiceQuestions(article)">
+                    <el-icon><QuestionFilled /></el-icon> 选择题
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleNotes(article)">
+                    <el-icon><Notebook /></el-icon> 笔记
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handlePrompts(article)">
+                    <el-icon><Memo /></el-icon> 提示词
+                  </el-dropdown-item>
+                  <el-dropdown-item divided @click="handleDelete(article)" type="danger">
+                    <el-icon><Delete /></el-icon> 删除
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </div>
+        
+        <div class="article-content-preview">
+          {{ article.content.substring(0, 150) }}{{ article.content.length > 150 ? '...' : '' }}
+        </div>
+        
+        <div class="article-footer">
+          <div class="article-tags">
+            <el-tag
+              v-for="tag in article.tags"
+              :key="tag"
+              size="small"
+              effect="plain"
+            >
+              {{ tag }}
+            </el-tag>
+          </div>
+          <div class="article-meta">
+            <span v-if="article.author" class="meta-item">
+              <el-icon><User /></el-icon> {{ article.author }}
+            </span>
+            <span class="meta-item">
+              <el-icon><Clock /></el-icon> {{ formatDate(article.ctime) }}
+            </span>
+            <span class="meta-item" v-if="article.reviewCount > 0">
+              <el-icon><View /></el-icon> 已复习 {{ article.reviewCount }} 次
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 添加/编辑对话框 -->
+    <TextEditDialog
+      v-model="showAddDialog"
+      @save="handleSaveArticle"
+    />
+
+    <TextEditDialog
+      v-model="showEditDialog"
+      :article="editingArticle"
+      @save="handleUpdateArticle"
+    />
+
+    <!-- 导入对话框 -->
+    <TextImportDialog
+      v-model="showImportDialog"
+      @import="handleImportArticles"
+      @openWordSettings="handleOpenWordSettings"
+    />
+
+    <!-- 填空练习对话框 -->
+    <FillBlanksDialog
+      v-model="showFillBlanksDialog"
+      :article="currentExerciseArticle"
+    />
+
+    <!-- 选择题对话框 -->
+    <ChoiceQuestionsDialog
+      v-model="showChoiceDialog"
+      :article="currentExerciseArticle"
+    />
+
+    <!-- 笔记管理对话框 -->
+    <NotesDialog
+      v-model="showNotesDialog"
+      :article="currentExerciseArticle"
+    />
+
+    <!-- 提示词对话框 -->
+    <PromptsDialog
+      v-model="showPromptsDialog"
+      :article="currentExerciseArticle"
+    />
+
+    <!-- 跟打练习对话框 -->
+    <TypingPracticeDialog
+      v-model="showTypingDialog"
+      :article="currentExerciseArticle"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useTextMemoryStore } from '@/stores/textMemory';
+import type { TextArticle } from '@/types/text-memory';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import {
+  Search, Plus, Upload, More, Edit, Delete,
+  EditPen, QuestionFilled, Notebook, Memo,
+  User, Clock, View, Pointer
+} from '@element-plus/icons-vue';
+
+// 导入子组件
+import TextEditDialog from './components/TextEditDialog.vue';
+import TextImportDialog from './components/TextImportDialog.vue';
+import FillBlanksDialog from './components/FillBlanksDialog.vue';
+import ChoiceQuestionsDialog from './components/ChoiceQuestionsDialog.vue';
+import NotesDialog from './components/NotesDialog.vue';
+import PromptsDialog from './components/PromptsDialog.vue';
+import TypingPracticeDialog from './components/TypingPracticeDialog.vue';
+
+const router = useRouter();
+const textStore = useTextMemoryStore();
+
+// 搜索和筛选
+const searchKeyword = ref('');
+const selectedTag = ref('');
+
+// 对话框显示状态
+const showAddDialog = ref(false);
+const showEditDialog = ref(false);
+const showImportDialog = ref(false);
+const showFillBlanksDialog = ref(false);
+const showChoiceDialog = ref(false);
+const showNotesDialog = ref(false);
+const showPromptsDialog = ref(false);
+const showTypingDialog = ref(false);
+
+// 当前操作的文章
+const editingArticle = ref<TextArticle | undefined>(undefined);
+const currentExerciseArticle = ref<TextArticle | null>(null);
+
+// 过滤后的文章列表
+const filteredArticles = computed(() => {
+  let result = textStore.sortedArticles;
+  
+  // 按关键词搜索
+  if (searchKeyword.value) {
+    const keyword = searchKeyword.value.toLowerCase();
+    result = result.filter(article =>
+      article.title.toLowerCase().includes(keyword) ||
+      article.content.toLowerCase().includes(keyword)
+    );
+  }
+  
+  // 按标签筛选
+  if (selectedTag.value) {
+    result = result.filter(article =>
+      article.tags.includes(selectedTag.value)
+    );
+  }
+  
+  return result;
+});
+
+// 初始化加载
+onMounted(async () => {
+  await textStore.loadArticles();
+});
+
+// 格式化日期
+function formatDate(timestamp: number): string {
+  const date = new Date(timestamp);
+  return date.toLocaleDateString('zh-CN');
+}
+
+// 点击文章卡片
+function handleArticleClick(article: TextArticle) {
+  // 可以展开详情或直接进行练习
+  textStore.setCurrentArticle(article);
+}
+
+// 编辑文章
+function handleEdit(article: TextArticle) {
+  editingArticle.value = article;
+  showEditDialog.value = true;
+}
+
+// 保存新文章
+async function handleSaveArticle(article: Omit<TextArticle, '_id' | '_rev' | 'ctime' | 'utime' | 'reviewCount'>) {
+  const result = await textStore.addArticle(article);
+  if (result.success) {
+    ElMessage.success('添加成功');
+    showAddDialog.value = false;
+  } else {
+    ElMessage.error(result.error || '添加失败');
+  }
+}
+
+// 更新文章
+async function handleUpdateArticle(article: TextArticle) {
+  const result = await textStore.updateArticle(article);
+  if (result.success) {
+    ElMessage.success('更新成功');
+    showEditDialog.value = false;
+    editingArticle.value = undefined;
+  } else {
+    ElMessage.error(result.error || '更新失败');
+  }
+}
+
+// 删除文章
+async function handleDelete(article: TextArticle) {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除文章 "${article.title}" 吗？相关的笔记和提示词也会被删除。`,
+      '确认删除',
+      {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    );
+    
+    const result = await textStore.deleteArticle(article._id);
+    if (result.success) {
+      ElMessage.success('删除成功');
+    } else {
+      ElMessage.error(result.error || '删除失败');
+    }
+  } catch {
+    // 用户取消删除
+  }
+}
+
+// 处理导入
+async function handleImportArticles(articles: Omit<TextArticle, '_id' | '_rev' | 'ctime' | 'utime' | 'reviewCount'>[]) {
+  let successCount = 0;
+  let failCount = 0;
+  
+  for (const article of articles) {
+    const result = await textStore.addArticle(article);
+    if (result.success) {
+      successCount++;
+    } else {
+      failCount++;
+    }
+  }
+  
+  if (successCount > 0) {
+    ElMessage.success(`成功导入 ${successCount} 篇文章`);
+  }
+  if (failCount > 0) {
+    ElMessage.warning(`${failCount} 篇文章导入失败`);
+  }
+  
+  showImportDialog.value = false;
+}
+
+// 打开填空练习
+function handleFillBlanks(article: TextArticle) {
+  currentExerciseArticle.value = article;
+  showFillBlanksDialog.value = true;
+}
+
+// 打开选择题
+function handleChoiceQuestions(article: TextArticle) {
+  currentExerciseArticle.value = article;
+  showChoiceDialog.value = true;
+}
+
+// 打开笔记管理
+function handleNotes(article: TextArticle) {
+  currentExerciseArticle.value = article;
+  showNotesDialog.value = true;
+}
+
+// 打开提示词管理
+function handlePrompts(article: TextArticle) {
+  currentExerciseArticle.value = article;
+  showPromptsDialog.value = true;
+}
+
+// 打开跟打练习
+function handleTypingPractice(article: TextArticle) {
+  currentExerciseArticle.value = article;
+  showTypingDialog.value = true;
+}
+
+// 打开单词列表设置
+function handleOpenWordSettings() {
+  showImportDialog.value = false;
+  // 导航到单词列表页面
+  router.push('/word');
+}
+</script>
+
+<style scoped lang="scss">
+.text-memory-container {
+  padding: 16px;
+  height: 100%;
+  overflow-y: auto;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.stats-bar {
+  margin-bottom: 16px;
+  
+  .el-tag {
+    margin-right: 10px;
+  }
+}
+
+.articles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.article-card {
+  background: var(--utools-bg-secondary);
+  border: 1px solid var(--utools-border-color);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--utools-primary);
+  }
+}
+
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.article-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--utools-text-primary);
+  margin: 0;
+}
+
+.article-actions {
+  .el-button {
+    color: var(--utools-text-secondary);
+    
+    &:hover {
+      color: var(--utools-primary);
+    }
+  }
+}
+
+.article-content-preview {
+  color: var(--utools-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.article-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.article-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.article-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--utools-text-secondary);
+  
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+</style>

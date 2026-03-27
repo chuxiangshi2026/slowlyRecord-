@@ -101,6 +101,18 @@
         },
         "翻译"
       ]
+    },
+    {
+      "code": "textMemory",
+      "explain": "文本记忆",
+      "cmds": [
+        "文本记忆",
+        "wenbenjiyi",
+        "wbjy",
+        "诗词记忆",
+        "scjs",
+        "文章记忆"
+      ]
     }
   ],
   "permissions": {

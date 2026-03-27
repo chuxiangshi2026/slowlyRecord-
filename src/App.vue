@@ -305,6 +305,11 @@ utools.onPluginEnter(async (action) => {
     handlePluginTranslate(action)
   }
 
+  // 文本记忆 - 通过 文本记忆/诗词记忆 关键字进入
+  if (action.code === 'textMemory') {
+    handlePluginTextMemory()
+  }
+
 
 })
 
@@ -680,6 +685,16 @@ function handlePluginTranslate(action: any) {
   } else {
     router.push('/translate')
   }
+}
+
+/**
+ * 处理文本记忆的插件入口
+ */
+function handlePluginTextMemory() {
+  // 显示主窗口
+  window.utools.showMainWindow()
+  // 跳转到文本记忆页面
+  router.push('/text-memory')
 }
 
 /**

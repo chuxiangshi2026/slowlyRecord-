@@ -9,6 +9,7 @@ const NumberMemoryTraining = () => import('@/views/NumberMemory/NumberMemoryTrai
 const MemoryTest = () => import('@/views/MemoryTest/MemoryTest.vue');
 const Dictation = () => import('@/views/Dictation/Dictation.vue');
 const QuickTranslate = () => import('@/views/Translate/QuickTranslate.vue');
+const TextMemory = () => import('@/views/TextMemory/TextMemory.vue');
 // const Exception = () => import('@/views/Exception/Exception.vue');
 // const Apply = () => import('@/views/Apply/Apply.vue');
 // const Check = () => import('@/views/Check/Check.vue');
@@ -107,6 +108,16 @@ const routes: Array<RouteRecordRaw> = [
           menu: true,
           title: '快速翻译',
           icon: 'document-copy',
+        },
+      },
+      {
+        path: 'text-memory',
+        name: 'textMemory',
+        component: TextMemory,
+        meta: {
+          menu: true,
+          title: '文本记忆',
+          icon: 'collection',
         },
       },
      /* {
