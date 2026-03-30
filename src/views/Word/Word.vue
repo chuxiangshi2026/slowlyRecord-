@@ -16,11 +16,13 @@
   <div v-else>
     <div class="words-cards-wrapper" ref="scrollContainer">
       <!--      虚拟滚动,只加载真实dom-->
+      <!--      使用 currentWordBankId 作为 key，切换词库时强制重新渲染 -->
       <RecycleScroller
+          :key="wordsStore.currentWordBankId"
           class="scroller"
           :items="showFilteredWords"
           :item-size="165"
-          key-field="text"
+          key-field="_id"
 
           :min-item-size="165"
           :item-secondary-size="370"
@@ -36,11 +38,7 @@
             v-model="wordsStore.words[getIndexInOriginalList(item)]"
             @delete="deleteWord(getIndexInOriginalList(item))"
             :showExplained="showExplained"
-        >
-          <!--            :hiddenExplain="hiddenExplain"-->
-          <!--            ref="visibleExplained"-->
-          <!--            ref="invisibleExplained"-->
-        </MyListItem>
+        />
         <!--      </div>-->
       </RecycleScroller>
 
@@ -125,10 +123,134 @@
       </div>
     </template>
   </el-dialog>
+
+  <!-- 词库选择对话框 -->
+  <el-dialog
+      v-model="wordBankSelectVisible"
+      title="选择要导入的词库"
+      width="400px"
+      :close-on-click-modal="false"
+  >
+    <div class="wordbank-select-content">
+      <el-radio-group v-model="selectedImportBank" class="wordbank-radio-group">
+        <el-radio
+            v-for="bank in wordBankOptions"
+            :key="bank.value"
+            :label="bank.value"
+            border
+            class="wordbank-radio"
+        >
+          {{ bank.label }}
+          <span v-if="isWordBankCached(bank.value as WordBankType)" class="cached-tag">已缓存</span>
+        </el-radio>
+      </el-radio-group>
+    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="wordBankSelectVisible = false">取消</el-button>
+        <el-button type="primary" @click="confirmImportFromBank" :disabled="!selectedImportBank">
+          确认导入
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <!-- 词库管理对话框 -->
+  <el-dialog
+      v-model="wordBankManagerVisible"
+      title="词库管理"
+      width="500px"
+      :close-on-click-modal="false"
+  >
+    <div class="wordbank-manager-content">
+      <div class="wordbank-list">
+        <div
+            v-for="bank in customWordBanks"
+            :key="bank.id"
+            :class="['wordbank-item', { active: wordsStore.currentWordBankId === bank.id }]"
+        >
+          <div class="wordbank-info" @click="switchToWordBank(bank.id)">
+            <span class="wordbank-name">{{ bank.name }}</span>
+            <span class="wordbank-count">{{ bank.words.length }} 词</span>
+            <el-tag v-if="bank.isDefault" size="small" type="success">默认</el-tag>
+          </div>
+          <div class="wordbank-actions">
+            <el-button
+                v-if="!bank.isDefault"
+                type="danger"
+                link
+                size="small"
+                @click="confirmDeleteWordBank(bank)"
+            >
+              <el-icon><Delete /></el-icon>
+            </el-button>
+          </div>
+        </div>
+      </div>
+      <el-divider />
+      <div class="wordbank-actions-footer">
+        <el-button type="primary" @click="showCreateWordBankDialog">
+          <el-icon><Plus /></el-icon> 新建词库
+        </el-button>
+      </div>
+    </div>
+  </el-dialog>
+
+  <!-- 新建词库对话框 -->
+  <el-dialog
+      v-model="createWordBankVisible"
+      title="新建词库"
+      width="400px"
+      :close-on-click-modal="false"
+  >
+    <div class="create-wordbank-content">
+      <el-form :model="newWordBankForm" label-width="80px">
+        <el-form-item label="词库名称">
+          <el-input
+              v-model="newWordBankForm.name"
+              placeholder="请输入词库名称"
+              maxlength="20"
+              show-word-limit
+          />
+        </el-form-item>
+        <el-form-item label="初始内容">
+          <el-radio-group v-model="newWordBankForm.initType">
+            <el-radio label="empty">空词库</el-radio>
+            <el-radio label="import">从系统词库导入</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item v-if="newWordBankForm.initType === 'import'" label="选择词库">
+          <el-select v-model="newWordBankForm.importBank" placeholder="请选择要导入的词库">
+            <el-option
+                v-for="bank in wordBankOptions"
+                :key="bank.value"
+                :label="bank.label"
+                :value="bank.value"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="createWordBankVisible = false">取消</el-button>
+        <el-button type="primary" @click="confirmCreateWordBank" :disabled="!newWordBankForm.name.trim()">
+          创建
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
   <!--     旧版本的写法 @forget="(childValue)=>forget(item,childValue)"-->
 
   <div class="home_footer">
     <div>
+      <!-- 当前词库名称显示 -->
+      <span class="current-bank-name" @click="openWordBankManager">
+        <i class="iconfont icon-library"></i>
+        {{ wordsStore.currentWordBank?.name || '我的词库' }}
+      </span>
+      <el-divider direction="vertical" />
       <span :class="{ 'remembered-highlight': listMode==0 }" @click="showOnlyForget"> 待复习: {{
           wordsStore.forgetCount
         }} </span>
@@ -172,6 +294,7 @@
           <el-dropdown-menu>
             <el-dropdown-item command="importJson">JSON导入</el-dropdown-item>
             <el-dropdown-item command="importText">TXT/CSV导入</el-dropdown-item>
+            <el-dropdown-item divided command="importFromWordBank">从词库导入</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -204,14 +327,14 @@
 <script setup lang="ts">
 
 
-import {ElMessage} from "element-plus";
+import {ElMessage, ElLoading, ElMessageBox} from "element-plus";
 import {testData} from "@/testData";
 import type {Word} from "@/types/words";
 
 import {useWordsStore} from "@/stores/words.ts";
 import DetailDrawer from "@/views/Word/components/DetailDrawer.vue";
 import MyListItem from "@/views/Word/components/MyListItem.vue";
-import {computed, nextTick, onUnmounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import {
   filterWordsForJsonExport,
   filterWordsForTextExport,
@@ -223,9 +346,23 @@ import {log} from "@/utils/logger.ts";
 import {RecycleScroller} from 'vue-virtual-scroller'
 import {addWord, batchAddWords, batchTranslateAndAddWords} from "@/utils/str-util.ts";
 import {ocrTranslateMultiPlatform} from "@/utils/pic-translate.ts";
-import {Loading, Warning, InfoFilled, VideoPlay, CircleCheck, CircleClose, Trophy} from '@element-plus/icons-vue';
+import {Loading, Warning, InfoFilled, VideoPlay, CircleCheck, CircleClose, Trophy, Delete, Plus} from '@element-plus/icons-vue';
 import {useRouter} from 'vue-router';
 import {getSetDb} from '@/utils/user-set-db-util.ts';
+import {
+  fetchWordBank,
+  WORDBANK_LIST,
+  type WordBankType,
+  isWordBankCached
+} from '@/utils/wordbank-service';
+import {
+  getAllWordBanks,
+  createWordBank as createNewWordBank,
+  deleteWordBank as removeWordBank,
+  type WordBank,
+  importFromBuiltinWordBank,
+  getCurrentWordBankId
+} from '@/utils/wordbank-manager';
 
 const FOCUS_MODE_ACTION_STORAGE_KEY = 'slowly-record-focus-mode-action';
 const FOCUS_MODE_DB_ACTION_TTL = 15000;
@@ -240,9 +377,159 @@ const word = ref('')
 const wordsStore = useWordsStore();
 const router = useRouter();
 
+// 切换词库选项
+const wordBankOptions = [
+  { label: '四级词汇', value: 'cet4' },
+  { label: '六级词汇', value: 'cet6' },
+  { label: '专升本词汇', value: 'zsb' },
+  { label: '考研词汇', value: 'kaoyan' },
+  { label: '考公词汇', value: 'kaogong' },
+  { label: '雅思词汇', value: 'ielts' },
+  { label: '托福词汇', value: 'toefl' },
+  { label: 'GRE词汇', value: 'gre' },
+];
+
 const drawerVisible = ref(false)
 const title = ref('设置')
 const currentId = ref<string | number | undefined>(undefined)
+
+// ========== 词库管理功能 ==========
+const wordBankManagerVisible = ref(false)
+const createWordBankVisible = ref(false)
+const customWordBanks = ref<WordBank[]>([])
+
+// 新建词库表单
+const newWordBankForm = ref({
+  name: '',
+  initType: 'empty' as 'empty' | 'import',
+  importBank: '' as WordBankType | ''
+})
+
+// 加载自定义词库列表
+const loadCustomWordBanks = () => {
+  customWordBanks.value = getAllWordBanks()
+}
+
+// 打开词库管理器
+const openWordBankManager = () => {
+  loadCustomWordBanks()
+  wordBankManagerVisible.value = true
+}
+
+// 切换到指定词库
+const switchToWordBank = async (bankId: string) => {
+  const success = await wordsStore.switchWordBank(bankId)
+  if (success) {
+    ElMessage.success(`已切换到: ${wordsStore.currentWordBank?.name}`)
+    wordBankManagerVisible.value = false
+  } else {
+    ElMessage.error('切换词库失败')
+  }
+}
+
+// 确认删除词库
+const confirmDeleteWordBank = (bank: WordBank) => {
+  if (bank.isDefault) {
+    ElMessage.warning('默认词库不能删除')
+    return
+  }
+  if (bank.words.length > 0) {
+    ElMessageBox.confirm(
+      `词库 "${bank.name}" 包含 ${bank.words.length} 个单词，确定要删除吗？`,
+      '删除确认',
+      {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    ).then(() => {
+      doDeleteWordBank(bank.id)
+    }).catch(() => {
+      // 取消删除
+    })
+  } else {
+    doDeleteWordBank(bank.id)
+  }
+}
+
+// 执行删除词库
+const doDeleteWordBank = async (bankId: string) => {
+  const success = await removeWordBank(bankId)
+  if (success) {
+    ElMessage.success('词库已删除')
+    loadCustomWordBanks()
+    // 如果删除的是当前词库，切换到默认词库并刷新
+    if (wordsStore.currentWordBankId === bankId) {
+      // 获取新的当前词库ID（已切换到默认词库）
+      const newCurrentId = getCurrentWordBankId()
+      wordsStore.currentWordBankId = newCurrentId
+      await wordsStore.listWords()
+    }
+  } else {
+    ElMessage.error('删除失败')
+  }
+}
+
+// 显示创建词库对话框
+const showCreateWordBankDialog = () => {
+  newWordBankForm.value = {
+    name: '',
+    initType: 'empty',
+    importBank: ''
+  }
+  createWordBankVisible.value = true
+}
+
+// 确认创建词库
+const confirmCreateWordBank = async () => {
+  const name = newWordBankForm.value.name.trim()
+  if (!name) {
+    ElMessage.warning('请输入词库名称')
+    return
+  }
+
+  // 检查名称是否重复
+  const existing = customWordBanks.value.find(b => b.name === name)
+  if (existing) {
+    ElMessage.warning('词库名称已存在')
+    return
+  }
+
+  // 创建词库
+  const newBank = await createNewWordBank(name)
+
+  // 如果从系统词库导入
+  if (newWordBankForm.value.initType === 'import' && newWordBankForm.value.importBank) {
+    const loading = ElLoading.service({
+      lock: true,
+      text: '正在导入词库...',
+      background: 'rgba(0, 0, 0, 0.7)',
+    })
+
+    try {
+      const result = await importFromBuiltinWordBank(newBank.id, newWordBankForm.value.importBank)
+      loading.close()
+
+      if (result.success) {
+        ElMessage.success(`成功创建词库 "${name}"，导入 ${result.count} 个单词`)
+      } else {
+        ElMessage.warning(`词库 "${name}" 创建成功，但导入失败`)
+      }
+    } catch (error) {
+      loading.close()
+      console.error('导入失败:', error)
+      ElMessage.error('导入失败')
+    }
+  } else {
+    ElMessage.success(`成功创建空词库 "${name}"`)
+  }
+
+  createWordBankVisible.value = false
+  loadCustomWordBanks()
+  
+  // 切换到新创建的词库
+  switchToWordBank(newBank.id)
+}
 
 // 专注模式窗口实例
 let focusWindow: any = null;
@@ -969,14 +1256,14 @@ const startFocusModeSync = (initialAlwaysOnTop: boolean, initialEdgeStickEnabled
 
 
 // 处理打开单词列表请求
-const handleOpenWordList = () => {
+const handleOpenWordList = async () => {
   console.log('父窗口处理打开列表请求');
   clearFocusModePendingAction();
 
   // 刷新单词列表数据 - 从数据库重新加载
   try {
     console.log('刷新单词列表数据...');
-    wordsStore.listWords();
+    await wordsStore.listWords();
   } catch (e) {
     console.error('刷新单词列表失败:', e);
   }
@@ -1011,9 +1298,9 @@ const handleOpenWordList = () => {
     utools.showMainWindow();
   }
 
-  setTimeout(() => {
+  setTimeout(async () => {
     listMode.value = 0;
-    wordsStore.listWords();
+    await wordsStore.listWords();
     if (typeof utools !== 'undefined' && utools.showMainWindow) {
       utools.showMainWindow();
     }
@@ -1543,7 +1830,28 @@ const handleImportCommand = (command: string) => {
     case 'importText':
       importTextWords();
       break;
+    case 'importFromWordBank':
+      // 打开词库选择对话框
+      wordBankSelectVisible.value = true;
+      break;
   }
+};
+
+// 词库选择对话框
+const wordBankSelectVisible = ref(false);
+const selectedImportBank = ref<WordBankType | ''>('');
+
+/**
+ * 确认从选中词库导入
+ */
+const confirmImportFromBank = () => {
+  if (!selectedImportBank.value) {
+    ElMessage.warning('请选择一个词库');
+    return;
+  }
+  wordBankSelectVisible.value = false;
+  importFromWordBank(selectedImportBank.value);
+  selectedImportBank.value = '';
 };
 
 /**
@@ -1763,6 +2071,67 @@ const importTextWords = () => {
   };
   fileInput.click(); // 触发文件选择
 }
+
+
+/**
+ * 从内置词库导入单词
+ * @param bankType 词库类型
+ */
+const importFromWordBank = async (bankType: WordBankType) => {
+  const info = WORDBANK_LIST.find(wb => wb.id === bankType);
+  const bankName = info?.name || bankType;
+  
+  const loading = ElLoading.service({
+    lock: true,
+    text: `正在加载${bankName}...`,
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
+  
+  try {
+    const words = await fetchWordBank(bankType, true);
+    loading.close();
+    
+    if (words.length === 0) {
+      ElMessage.warning('词库加载失败，请检查网络连接');
+      return;
+    }
+    
+    // 去重：基于word.text属性
+    const uniqueWords = words.filter((importedWord) => {
+      return !wordsStore.words.some((existingWord) => existingWord.text === importedWord.text);
+    });
+    
+    if (uniqueWords.length === 0) {
+      ElMessage.warning('没有新单词需要导入');
+      return;
+    }
+    
+    // 检查是否有需要翻译的单词（没有释义的）
+    const wordsNeedingTranslation = uniqueWords.filter(word => !word.explains);
+    
+    if (wordsNeedingTranslation.length > 0) {
+      ElMessage.info(`检测到${wordsNeedingTranslation.length}个单词需要翻译，正在翻译中...`);
+      
+      // 使用公共的批量翻译和添加方法
+      const wordsToTranslate = wordsNeedingTranslation.map(word => word.text);
+      batchTranslateAndAddWords(wordsToTranslate, (processedCount, totalCount) => {
+        if (totalCount > 0) {
+          ElMessage.info(`正在翻译: ${processedCount}/${totalCount}`);
+        }
+      });
+    } else {
+      // 所有单词都有释义，直接导入
+      wordsStore.addAndUpdateWords(uniqueWords).then(() => {
+        scrollToBottom();
+        ElMessage.success(`成功从${bankName}导入${uniqueWords.length}个单词`);
+      });
+    }
+  } catch (error) {
+    loading.close();
+    console.error('从词库导入失败:', error);
+    ElMessage.error('词库导入失败');
+  }
+};
 
 
 /**
@@ -2041,23 +2410,6 @@ watch(() => wordsStore.lastAddedWordText, (wordText) => {
   }
 }
 
-.words-cards-wrapper {
-  width: 96%;
-  height: calc(100vh - 80px);
-  padding: 16px;
-  background-color: var(--utools-bg-secondary);
-  border-radius: 8px;
-  overflow: hidden;
-
-  .scroller {
-    width: 100% !important;
-    height: 100% !important;
-    grid-template-columns: repeat(2, 1fr);
-    padding: 0;
-    margin: 0;
-  }
-}
-
 // 截图翻译对话框样式
 .ocr-loading,
 .ocr-error,
@@ -2138,6 +2490,156 @@ watch(() => wordsStore.lastAddedWordText, (wordText) => {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.words-cards-wrapper {
+  width: 96%;
+  height: calc(100vh - 80px);
+  padding: 16px;
+  background-color: var(--utools-bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+
+  .scroller {
+    width: 100% !important;
+    height: 100% !important;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0;
+    margin: 0;
+  }
+}
+
+// 词库选择对话框样式
+.wordbank-select-content {
+  padding: 10px 0;
+
+  .wordbank-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+
+    .wordbank-radio {
+      margin: 0;
+      padding: 12px 16px;
+      border-radius: 8px;
+
+      :deep(.el-radio__label) {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .cached-tag {
+        font-size: 12px;
+        color: var(--utools-success);
+        background: var(--utools-success-light);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+// 缓存状态小圆点
+.cached-dot-inline {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--utools-success);
+  margin-left: 4px;
+}
+
+// 当前词库名称样式
+.current-bank-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--utools-primary);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--utools-primary-light);
+  }
+
+  i {
+    font-size: 14px;
+  }
+}
+
+// 词库管理对话框样式
+.wordbank-manager-content {
+  .wordbank-list {
+    max-height: 300px;
+    overflow-y: auto;
+
+    .wordbank-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 8px;
+
+      &:hover {
+        background: var(--utools-bg-secondary);
+      }
+
+      &.active {
+        background: var(--utools-primary-light);
+        border-left: 3px solid var(--utools-primary);
+
+        .wordbank-name {
+          color: var(--utools-primary);
+          font-weight: 500;
+        }
+      }
+
+      .wordbank-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+
+        .wordbank-name {
+          font-size: 15px;
+        }
+
+        .wordbank-count {
+          font-size: 13px;
+          color: var(--utools-text-secondary);
+        }
+      }
+
+      .wordbank-actions {
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      &:hover .wordbank-actions {
+        opacity: 1;
+      }
+    }
+  }
+
+  .wordbank-actions-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+  }
+}
+
+// 新建词库对话框样式
+.create-wordbank-content {
+  padding: 10px 0;
 }
 
 </style>

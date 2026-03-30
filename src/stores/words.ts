@@ -8,6 +8,14 @@ import {log} from "@/utils/logger.ts"
 import type {AxiosResponse} from 'axios'
 import CryptoJS from "crypto-js";
 import {addAndUpdateDbWord, cleanDbWord, listDbWords, removeDbWordById, updateDbWordList} from "@/utils/db-util.ts";
+import {
+  getAllWordBanks,
+  getCurrentWordBankId,
+  setCurrentWordBankId,
+  getWordBank,
+  saveWordBank,
+  type WordBank
+} from "@/utils/wordbank-manager.ts";
 import {APP_KEY, DB_KEY, DB_KEY_USER_SET, DEFAULT_INTERVALS, FROM, KEY, TO} from "@/constants";
 import {truncate} from "lodash";
 import {AppInfo} from "@/config.ts";
@@ -72,6 +80,13 @@ export const useWordsStore =
     defineStore('words',
         () => {
             const words = ref<Word[]>([])
+
+            // 当前词库ID
+            const currentWordBankId = ref<string>(getCurrentWordBankId())
+            // 当前词库信息
+            const currentWordBank = computed<WordBank | null>(() => {
+                return getWordBank(currentWordBankId.value)
+            })
 
             const lastAddedWordText = ref('')    //记录最新添加的单词
             const lastFocusWordText = ref('')    //需光标定位单词
@@ -333,17 +348,50 @@ export const useWordsStore =
             }
 
             /**
+             * 切换当前词库
+             */
+            async function switchWordBank(bankId: string): Promise<boolean> {
+                const bank = getWordBank(bankId)
+                if (!bank) return false
+                
+                currentWordBankId.value = bankId
+                setCurrentWordBankId(bankId)
+                
+                // 重新加载新词库的单词
+                words.value = []
+                pushWords(bank.words)
+                upReview()
+                
+                return true
+            }
+
+            /**
              *获取全部单词
              */
-            function listWords(): Word[] {
-                const dbWords = listDbWords();
-                // console.log('读取的数据库', dbWords)
-                if (!words || words.value.length != dbWords.length) {
-                    console.log('数据库与缓存数据不一致')
+            async function listWords(): Promise<Word[]> {
+                // 从当前词库获取单词
+                const bank = getWordBank(currentWordBankId.value)
+                
+                if (bank) {
+                    // 如果是默认词库且为空，尝试从旧数据库迁移数据
+                    if (bank.isDefault && bank.words.length === 0) {
+                        const dbWords = listDbWords();
+                        if (dbWords.length > 0) {
+                            console.log('检测到默认词库为空，从旧数据库迁移数据:', dbWords.length);
+                            bank.words = [...dbWords]
+                            await saveWordBank(bank)
+                            words.value = []
+                            pushWords(dbWords)
+                        } else {
+                            words.value = []
+                            pushWords(bank.words)
+                        }
+                    } else {
+                        words.value = []
+                        pushWords(bank.words)
+                    }
                 }
-
-                words.value = [];
-                pushWords(dbWords)
+                
                 // 加载单词后重新计算待复习状态
                 upReview()
                 return words.value
@@ -426,38 +474,61 @@ export const useWordsStore =
                 cleanDbWord()
             }
 
-            function deleteWord(index: number): void {
+            async function deleteWord(index: number): Promise<void> {
                 // 防御性检查
                 if (index < 0 || index >= words.value.length) {
                     log.e('删除单词失败：索引越界', index, words.value.length);
                     return;
                 }
                 const word = words.value[index];
-                if (!word || !word._id) {
-                    log.e('删除单词失败：单词或_id不存在', word);
+                if (!word) {
+                    log.e('删除单词失败：单词不存在', word);
                     return;
                 }
-                // 先保存要删除的单词ID
+                
+                // 从当前词库删除
+                const bank = getWordBank(currentWordBankId.value)
+                if (bank) {
+                    const bankIndex = bank.words.findIndex(w => w.text === word.text)
+                    if (bankIndex !== -1) {
+                        bank.words.splice(bankIndex, 1)
+                        await saveWordBank(bank)
+                    }
+                }
+                
+                // 先保存要删除的单词ID（兼容旧数据库）
                 const wordId = word._id;
                 // 删除index索引下的数值,删除长度为1
                 words.value.splice(index, 1)
                 // 按id删除单词
-                removeDbWordById(wordId)
+                if (wordId) {
+                    removeDbWordById(wordId)
+                }
             }
 
             /**
-             * 同步更新数据库
+             * 同步更新当前词库
              * @param payload
              */
             async function addAndUpdateWords(payload: Word[]): Promise<boolean> {
-
                 try {
+                    // 保存到当前词库
+                    const bank = getWordBank(currentWordBankId.value)
+                    if (bank) {
+                        // 去重合并
+                        const existingTexts = new Set(bank.words.map(w => w.text.toLowerCase()))
+                        const newWords = payload.filter(w => !existingTexts.has(w.text.toLowerCase()))
+                        bank.words.push(...newWords)
+                        await saveWordBank(bank)
+                    }
+                    
+                    // 同时兼容旧数据库
                     await updateDbWordList(payload);
                     pushWords(payload);
                     log.i('批量更新成功');
                     return true;
                 } catch (error) {
-                    log.e("更新本地数据库异常", error);
+                    log.e("更新词库异常", error);
                     return false;
                 }
             }
@@ -467,21 +538,31 @@ export const useWordsStore =
              * 更新 单个单词
              * @param word
              */
-            function addAndUpdateWord(word: Word): void {
-                console.log("更新数据库单个词", word)
+            async function addAndUpdateWord(word: Word): Promise<void> {
+                console.log("更新词库单个词", word)
                 const index = words.value.findIndex(w => w.text === word.text);
                 if (index !== -1) {
                     Object.assign(words.value[index], word); // 修改指定元素
                 } else {
                     pushWords([word])
                 }
+                
+                // 保存到当前词库
+                const bank = getWordBank(currentWordBankId.value)
+                if (bank) {
+                    const wordIndex = bank.words.findIndex(w => w.text === word.text)
+                    if (wordIndex !== -1) {
+                        Object.assign(bank.words[wordIndex], word)
+                    } else {
+                        bank.words.push(word)
+                    }
+                    await saveWordBank(bank)
+                }
+                
+                // 同时兼容旧数据库
                 addAndUpdateDbWord(word).then(() => {
                     console.log("添加单个词到数据库", word)
                 })
-
-                let data = listDbWords();
-                // console.log('添加数据库后查看数据库', data)
-                // 更新 数据库 这里要判断 数据库中是否有这个单词
             }
 
 
@@ -507,6 +588,8 @@ export const useWordsStore =
                 forgetCount,
                 shortcutEnabled,
                 focusMode,
+                currentWordBankId,
+                currentWordBank,
                 userApiKeys, // 导出用户API密钥
                 userOcrApiKeys,
                 setLastAddedWordText,
@@ -531,7 +614,8 @@ export const useWordsStore =
                 removeWords,
                 deleteWord,
                 listWords,
-                upReview
+                upReview,
+                switchWordBank
             }
         }, {
             persist: {

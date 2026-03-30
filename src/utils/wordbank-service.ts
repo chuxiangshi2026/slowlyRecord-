@@ -163,7 +163,7 @@ function normalizeWords(data: any[]): Word[] {
     explains: Array.isArray(item.explains)
       ? item.explains.join('; ')
       : (item.translation || item.meaning || item.explains || ''),
-    isReview: false,
+    isReview: true,  // 新导入的词默认为待复习状态
     ctime: new Date(),
     learnDate: new Date(),
     level: 1 as Word['level'],
@@ -177,7 +177,7 @@ function normalizeWords(data: any[]): Word[] {
  * 包含各词库的核心高频词
  */
 function getFallbackWords(type: WordBankType): Word[] {
-  const fallbackData: Record<WordBankType, Array<{word: string; phonetic?: string; explains: string}>> = {
+  const fallbackData: Record<string, Array<{word: string; phonetic?: string; explains: string}>> = {
     cet4: [
       { word: 'abandon', phonetic: '/əˈbændən/', explains: 'v. 放弃；抛弃' },
       { word: 'ability', phonetic: '/əˈbɪləti/', explains: 'n. 能力；才能' },
