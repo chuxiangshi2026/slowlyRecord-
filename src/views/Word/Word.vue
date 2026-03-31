@@ -220,7 +220,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="newWordBankForm.initType === 'import'" label="选择词库">
-          <el-select v-model="newWordBankForm.importBank" placeholder="请选择要导入的词库">
+          <el-select v-model="newWordBankForm.importBank" placeholder="请选择要导入的词库" style="width: 100%" popper-class="wordbank-import-dropdown">
             <el-option
                 v-for="bank in wordBankOptions"
                 :key="bank.value"
@@ -2364,8 +2364,22 @@ watch(() => wordsStore.lastAddedWordText, (wordText) => {
 }, {immediate: true})
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+// 词库导入下拉菜单高度限制 - 全局样式
+.wordbank-import-dropdown {
+  max-height: 200px !important;
 
+  .el-select-dropdown__wrap {
+    max-height: 200px !important;
+  }
+
+  .el-select-dropdown__list {
+    max-height: 200px !important;
+  }
+}
+</style>
+
+<style scoped lang="scss">
 
 .input-above-button {
   position: absolute;

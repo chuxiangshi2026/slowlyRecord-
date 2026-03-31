@@ -26,31 +26,34 @@ export interface WordBankInfo {
   icon?: string;
 }
 
-// 在线词库配置（使用公开CDN或API）
-const WORDBANK_URLS: Record<WordBankType, string> = {
-  // 使用 GitHub Raw 或其他公开CDN
-  cet4: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/cet4.json',
-  cet6: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/cet6.json',
-  kaogong: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/kaogong.json',
-  kaoyan: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/kaoyan.json',
-  ielts: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/ielts.json',
-  toefl: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/toefl.json',
-  gre: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/gre.json',
-  gmat: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/gmat.json',
-  zsb: 'https://cdn.jsdelivr.net/gh/openlanguage/wordbanks@main/cet4.json', // 专升本使用四级词汇作为基础
-};
+// 在线词库配置（多CDN源，自动回退）
+// 国内推荐优先级：
+// 1. npm.elemecdn.com - 饿了么国内CDN，国内访问最快
+// 2. unpkg.zhimg.com - 知乎国内CDN，稳定
+// 3. fastly.jsdelivr.net - Fastly节点
+const CDN_MIRRORS = [
+  'https://npm.elemecdn.com/@wordbanks',           // 饿了么国内CDN
+  'https://unpkg.zhimg.com/@wordbanks',            // 知乎国内CDN
+  'https://fastly.jsdelivr.net/npm/@wordbanks',    // Fastly节点
+  'https://gcore.jsdelivr.net/npm/@wordbanks',     // GCore节点
+  'https://cdn.jsdelivr.net/npm/@wordbanks',       // 默认节点
+];
+
+// 本地词库文件路径（相对于public目录）
+const LOCAL_WORDBANK_PATH = '/wordbanks/';
 
 // 词库信息列表
+// 所有词库均已配置本地文件，无需依赖在线CDN
 export const WORDBANK_LIST: WordBankInfo[] = [
-  { id: 'cet4', name: '四级词汇', description: '大学英语四级核心词汇', wordCount: 4500 },
-  { id: 'cet6', name: '六级词汇', description: '大学英语六级核心词汇', wordCount: 5500 },
-  { id: 'zsb', name: '专升本词汇', description: '专升本英语考试核心词汇', wordCount: 4000 },
-  { id: 'kaogong', name: '考公词汇', description: '公务员考试英语词汇', wordCount: 3000 },
-  { id: 'kaoyan', name: '考研词汇', description: '研究生入学考试核心词汇', wordCount: 5500 },
-  { id: 'ielts', name: '雅思词汇', description: '雅思考试核心词汇', wordCount: 8000 },
-  { id: 'toefl', name: '托福词汇', description: '托福考试核心词汇', wordCount: 8000 },
-  { id: 'gre', name: 'GRE词汇', description: 'GRE考试核心词汇', wordCount: 10000 },
-  { id: 'gmat', name: 'GMAT词汇', description: 'GMAT考试核心词汇', wordCount: 6000 },
+  { id: 'cet4', name: '四级词汇', description: '大学英语四级核心词汇(本地300词)', wordCount: 300 },
+  { id: 'cet6', name: '六级词汇', description: '大学英语六级核心词汇(本地200词)', wordCount: 200 },
+  { id: 'zsb', name: '专升本词汇', description: '专升本英语考试核心词汇(本地300词)', wordCount: 300 },
+  { id: 'kaogong', name: '考公词汇', description: '公务员考试英语词汇(本地300词)', wordCount: 300 },
+  { id: 'kaoyan', name: '考研词汇', description: '研究生入学考试核心词汇(本地300词)', wordCount: 300 },
+  { id: 'ielts', name: '雅思词汇', description: '雅思考试核心词汇(本地300词)', wordCount: 300 },
+  { id: 'toefl', name: '托福词汇', description: '托福考试核心词汇(本地300词)', wordCount: 300 },
+  { id: 'gre', name: 'GRE词汇', description: 'GRE考试核心词汇(本地300词)', wordCount: 300 },
+  { id: 'gmat', name: 'GMAT词汇', description: 'GMAT考试核心词汇(本地300词)', wordCount: 300 },
 ];
 
 // 缓存管理
@@ -103,7 +106,7 @@ function saveToCache(type: WordBankType, words: Word[]): void {
 }
 
 /**
- * 获取在线词库
+ * 获取在线词库（自动尝试多个CDN源）
  * @param type 词库类型
  * @param useCache 是否使用缓存
  * @returns 单词列表
@@ -121,35 +124,67 @@ export async function fetchWordBank(
     }
   }
 
-  // 尝试从在线获取
+  // 首先尝试从本地词库文件获取（最稳定）
   try {
-    const url = WORDBANK_URLS[type];
-    console.log(`[WordBank] 获取在线词库: ${type} from ${url}`);
+    const localUrl = `${LOCAL_WORDBANK_PATH}${type}.json`;
+    console.log(`[WordBank] 尝试本地词库: ${type} from ${localUrl}`);
 
-    const response = await fetch(url, {
+    const response = await fetch(localUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    if (response.ok) {
+      const data = await response.json();
+      const words = normalizeWords(data.words || data);
+
+      // 保存到缓存
+      saveToCache(type, words);
+      console.log(`[WordBank] 成功从本地加载 ${words.length} 个单词`);
+
+      return words;
     }
-
-    const data = await response.json();
-    const words = normalizeWords(data.words || data);
-
-    // 保存到缓存
-    saveToCache(type, words);
-
-    return words;
   } catch (error) {
-    console.warn(`[WordBank] 在线获取失败: ${type}`, error);
-
-    // 如果在线获取失败，使用内置备用词库
-    return getFallbackWords(type);
+    console.warn(`[WordBank] 本地词库不存在或加载失败: ${type}`, error);
+    // 继续尝试在线CDN
   }
+
+  // 本地词库不存在，尝试从多个CDN源获取
+  for (const cdnBase of CDN_MIRRORS) {
+    try {
+      const url = `${cdnBase}/${type}.json`;
+      console.log(`[WordBank] 获取在线词库: ${type} from ${url}`);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const words = normalizeWords(data.words || data);
+
+      // 保存到缓存
+      saveToCache(type, words);
+      console.log(`[WordBank] 成功从 ${cdnBase} 获取 ${words.length} 个单词`);
+
+      return words;
+    } catch (error) {
+      console.warn(`[WordBank] CDN源失败: ${cdnBase}`, error);
+      // 继续尝试下一个CDN源
+    }
+  }
+
+  // 所有CDN源都失败，使用内置备用词库
+  console.warn(`[WordBank] 所有CDN源失败，使用备用词库: ${type}`);
+  return getFallbackWords(type);
 }
 
 /**
