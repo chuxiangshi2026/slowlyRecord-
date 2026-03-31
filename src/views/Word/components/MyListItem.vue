@@ -5,7 +5,16 @@
        ref="itemRef" :data-word="word.text" tabindex="0" @keydown="handleKeyDown" @click="onClick">
 
     <p class="word">
-      {{ word.text }}
+      <!-- 彩色词根词缀显示 -->
+      <span class="word-components" :title="wordComponentsTooltip">
+        <span
+            v-for="(comp, index) in wordComponents"
+            :key="index"
+            :class="getComponentClass(comp.type)"
+        >
+          {{ comp.text }}
+        </span>
+      </span>
       <span class="phonetic">{{ displayPhonetic }}</span>
     </p>
     <div class="level">
@@ -62,6 +71,7 @@
 
 <script setup lang="ts">
 import type {Word} from "@/types/words";
+import { analyzeWord, getComponentClass, generateDetailedTooltip, type WordComponent } from "@/utils/word-analysis";
 
 const itemRef = ref<HTMLElement | null>(null);
 
@@ -109,6 +119,16 @@ const displayPhonetic = computed(() => {
     return '';
   }
   return phonetic;
+});
+
+// 解析单词成分（词根、前缀、后缀等）
+const wordComponents = computed<WordComponent[]>(() => {
+  return analyzeWord(props.word.text);
+});
+
+// 词根词缀详细提示文本
+const wordComponentsTooltip = computed(() => {
+  return generateDetailedTooltip(wordComponents.value);
 });
 onMounted(async () => {
   // 如果是第一个元素，则自动获取焦点
@@ -620,6 +640,43 @@ const deleteWord = () => {
   opacity: 0.5;
   pointer-events: none;
   color: var(--utools-text-disabled);
+}
+
+/* 词根词缀样式 */
+.word-components {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  cursor: help;
+  /* 确保 title 提示能够正常工作 */
+  pointer-events: auto;
+}
+
+/* 词根 - 红色加粗 */
+.word-root {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* 前缀 - 蓝色 */
+.word-prefix {
+  color: #3498db;
+}
+
+/* 后缀 - 绿色 */
+.word-suffix {
+  color: #27ae60;
+}
+
+/* 子单词 - 默认色 */
+.word-subword {
+  color: var(--utools-text);
+}
+
+/* 完整单词 - 默认色 */
+.word-whole {
+  color: var(--utools-text);
 }
 
 /* 为获得焦点的元素添加视觉反馈 */

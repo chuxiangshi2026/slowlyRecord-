@@ -403,3 +403,22 @@ body {
     }
   }
 }
+
+// ===== 词根词缀暗黑主题适配 =====
+html.utools-dark,
+.utools-dark {
+  // 词根 - 亮红色
+  .word-root {
+    color: #ff6b6b;
+  }
+  
+  // 前缀 - 亮蓝色
+  .word-prefix {
+    color: #4dabf7;
+  }
+  
+  // 后缀 - 亮绿色
+  .word-suffix {
+    color: #69db7c;
+  }
+}
