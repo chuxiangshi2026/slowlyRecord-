@@ -223,6 +223,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useNumberMemoryStore } from "@/stores/numberMemory";
+import { useWordsStore } from "@/stores/words";
 import { ElMessage } from "element-plus";
 import { Timer } from "@element-plus/icons-vue";
 
@@ -235,6 +236,7 @@ function isBase64Image(url: string): boolean {
 
 const router = useRouter();
 const store = useNumberMemoryStore();
+const wordsStore = useWordsStore();
 
 // State
 const currentMode = ref<"numberToImage" | "imageToNumber" | null>(null);
@@ -427,6 +429,8 @@ function goBack() {
 // Lifecycle
 onMounted(() => {
   store.loadAssociations();
+  // 记录最后访问的页面
+  wordsStore.setLastVisitedPage('/number-memory/training');
 });
 
 onUnmounted(() => {

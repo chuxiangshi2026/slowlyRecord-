@@ -129,10 +129,13 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useWordsStore } from '@/stores/words';
 
 // 测试模式
 type TestMode = 'number' | 'word' | 'pattern';
 type Difficulty = 'easy' | 'medium' | 'hard';
+
+const wordsStore = useWordsStore();
 
 const currentMode = ref<TestMode>('number');
 const difficulty = ref<Difficulty>('easy');
@@ -375,6 +378,11 @@ function resetTest() {
     timerInterval = null;
   }
 }
+
+onMounted(() => {
+  // 记录最后访问的页面
+  wordsStore.setLastVisitedPage('/memory');
+});
 
 onUnmounted(() => {
   if (timerInterval) {

@@ -305,6 +305,12 @@ utools.onPluginEnter(async (action) => {
     handlePluginTranslate(action)
   }
 
+  // 其他情况（直接点击插件图标）- 尝试恢复上次状态
+  // 排除添加单词相关操作，这些操作已在上面处理并跳转到单词列表
+  const addWordActions = ['over', 'huaci', 'huaduan', 'jietu', 'paste', 'selection']
+  if (!['review', 'jycs', 'numMemory', 'translate', ...addWordActions].includes(action.code)) {
+    handlePluginDefaultEnter()
+  }
 
 })
 
@@ -640,6 +646,9 @@ function handlePluginReview() {
   // 显示主窗口
   window.utools.showMainWindow()
 
+  // 清空最后访问的页面，强制进入单词列表
+  wordsStore.setLastVisitedPage('')
+
   // 跳转到单词列表主界面
   router.push('/word')
 }
@@ -663,6 +672,26 @@ function handlePluginNumMemory() {
   window.utools.showMainWindow()
   // 跳转到数字记忆页面
   router.push('/number-memory')
+}
+
+/**
+ * 处理默认进入插件的情况（恢复上次状态或进入单词列表）
+ */
+function handlePluginDefaultEnter() {
+  // 显示主窗口
+  window.utools.showMainWindow()
+
+  // 检查是否有保存的最后访问页面
+  const lastPage = wordsStore.lastVisitedPage
+
+  // 如果是需要保持状态的特殊页面，则恢复
+  if (lastPage && ['/dictation', '/number-memory', '/number-memory/training', '/memory'].includes(lastPage)) {
+    console.log('[App] 恢复到上次页面:', lastPage)
+    router.push(lastPage)
+  } else {
+    // 默认进入单词列表
+    router.push('/word')
+  }
 }
 
 /**

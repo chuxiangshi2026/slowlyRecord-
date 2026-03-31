@@ -203,6 +203,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useNumberMemoryStore } from "@/stores/numberMemory";
+import { useWordsStore } from "@/stores/words";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Check, Delete, Upload } from "@element-plus/icons-vue";
 import type { UploadFile } from "element-plus";
@@ -212,6 +213,7 @@ import type { TrainingResult } from "@/types/number-memory";
 
 const router = useRouter();
 const store = useNumberMemoryStore();
+const wordsStore = useWordsStore();
 
 // State
 const selectedNumber = ref<string | null>(null);
@@ -437,12 +439,15 @@ async function batchImportPresets() {
 
 onMounted(() => {
   loadTrainingHistory();
-  
+
   // 检查是否是首次使用
   const guideShown = localStorage.getItem("numberMemoryGuideShown");
   if (!guideShown) {
     showGuide.value = true;
   }
+
+  // 记录最后访问的页面
+  wordsStore.setLastVisitedPage('/number-memory');
 });
 </script>
 

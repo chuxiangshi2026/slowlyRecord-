@@ -263,7 +263,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, watch } from 'vue';
+import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElLoading, ElMessageBox } from 'element-plus';
 import { ArrowLeft, VideoPlay, CircleCheck, Right, ArrowRight, RefreshRight, Timer, CircleClose, QuestionFilled } from '@element-plus/icons-vue';
@@ -1062,6 +1062,8 @@ onMounted(() => {
   hasSavedProgress.value = loadSavedProgress();
   // 加载有错题的词库列表
   banksWithWrongWords.value = getWrongWordsBanks();
+  // 记录最后访问的页面
+  wordsStore.setLastVisitedPage('/dictation');
 });
 
 // 监听词库变化，更新进度状态

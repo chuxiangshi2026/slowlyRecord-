@@ -126,6 +126,9 @@ export const useWordsStore =
             const hiddenExplain = ref('');
             // const hiddenExplain = ref('');
 
+            // 最后访问的页面路径（用于插件重新打开时恢复状态）
+            const lastVisitedPage = ref<string>('');
+
             // 总单词数
             const count = computed(() => {
                 return words.value.length;
@@ -262,6 +265,13 @@ export const useWordsStore =
                     userSet.focusMode = focusMode.value;
                 }
                 addAndUpdateSetDb(userSet);
+            }
+
+            /**
+             * 设置最后访问的页面路径
+             */
+            function setLastVisitedPage(path: string) {
+                lastVisitedPage.value = path;
             }
 
             // 设置快捷键开关
@@ -581,6 +591,7 @@ export const useWordsStore =
                 memoryFirmness,
                 lastFocusWordText,
                 hiddenExplain,
+                lastVisitedPage,
                 count,
                 pluginStatus,
                 rememberCount,
@@ -604,6 +615,7 @@ export const useWordsStore =
                 getApiKey, // 导出获取API密钥方法
                 getOcrApiKey, // 导出获取API密钥方法
                 setFocusMode,
+                setLastVisitedPage,
                 findWord,
                 addAndUpdateWord,
                 addAndUpdateWords,
