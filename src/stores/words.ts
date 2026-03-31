@@ -90,6 +90,7 @@ export const useWordsStore =
 
             const lastAddedWordText = ref('')    //记录最新添加的单词
             const lastFocusWordText = ref('')    //需光标定位单词
+            const lastFocusWordIndex = ref(-1)   //需光标定位单词在过滤列表中的索引
 
             const currentTranslationPlatform = ref<TranslationPlatform>('glm'); // 默认使用glm翻译
             const currentOcrPlatform = ref<OcrPlatform>('local'); // 默认使用离线识图
@@ -590,6 +591,7 @@ export const useWordsStore =
                 currentOcrPlatform,
                 memoryFirmness,
                 lastFocusWordText,
+                lastFocusWordIndex,
                 hiddenExplain,
                 lastVisitedPage,
                 count,

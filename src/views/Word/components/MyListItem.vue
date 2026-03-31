@@ -86,10 +86,12 @@ const props = withDefaults(defineProps<{
   disableActions?: number  //0 待复习  1已复习  2 永久记住 3 全部
   showExplained?: number  //-1 显示原逻辑， 1显示全部 0 隐藏全部
   isFirst?: boolean  // 是否是第一个元素
+  wordIndex?: number  // 在过滤后列表中的索引
   // hiddenExplain?: string
 }>(), {
   disableActions: 0,
   showExplained: -1,
+  wordIndex: -1,
   // hiddenExplain: ''
 });
 const wordModel = defineModel<Word>({required: true})
@@ -506,6 +508,10 @@ const remember = () => {
   // 如果disableActions为true，则不执行操作
   if (props.disableActions) return;
 
+  // 保存当前单词文本和索引，以便列表刷新后聚焦到下一个
+  wordsStore.lastFocusWordText = props.word.text;
+  wordsStore.lastFocusWordIndex = props.wordIndex;
+
   //如果 当前时间大于  上次复习时间+当前等级*默认复习间隔 且小于上次复习时间+（当前等级+3）*默认复习间隔  等级+1
   // 当前时间
   const now = new Date().getTime();
@@ -584,6 +590,10 @@ const remembered = () => {
 
   if (props.disableActions) return;
 
+  // 保存当前单词文本和索引，以便列表刷新后聚焦到下一个
+  wordsStore.lastFocusWordText = props.word.text;
+  wordsStore.lastFocusWordIndex = props.wordIndex;
+
   // 更新复习时间
   wordModel.value.learnDate = new Date();
 
@@ -603,6 +613,10 @@ const remembered = () => {
 const forget = () => {
   console.log("忘记方法", wordModel.value)
   // emit('forget', 'childValue');
+
+  // 保存当前单词文本和索引，以便列表刷新后聚焦到下一个
+  wordsStore.lastFocusWordText = props.word.text;
+  wordsStore.lastFocusWordIndex = props.wordIndex;
 
   if (wordModel.value?.level >= 12) {
     console.log("12级单词忘记了")

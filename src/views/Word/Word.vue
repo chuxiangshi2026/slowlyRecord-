@@ -26,7 +26,7 @@
 
           :min-item-size="165"
           :item-secondary-size="370"
-          v-slot="{ item }"
+          v-slot="{ item, index }"
           :dynamic-size="true"
           :max-item-size="175"
           :grid-items="2"
@@ -38,6 +38,7 @@
             v-model="wordsStore.words[getIndexInOriginalList(item)]"
             @delete="deleteWord(getIndexInOriginalList(item))"
             :showExplained="showExplained"
+            :word-index="index"
         />
         <!--      </div>-->
       </RecycleScroller>
@@ -1772,11 +1773,24 @@ watch([() => listMode.value, () => showFilteredWords.value], async () => {
   // 等待虚拟滚动器渲染完成
   setTimeout(() => {
     if (showFilteredWords.value.length > 0) {
-      // 尝试聚焦到第一个元素
-      // 聚焦到指定元素
-      console.log('聚焦单词', wordsStore.lastFocusWordText)
+      console.log('聚焦单词', wordsStore.lastFocusWordText, '操作前索引:', wordsStore.lastFocusWordIndex)
       if (wordsStore.lastFocusWordText.length > 0) {
-        focusElement('[data-word="' + wordsStore.lastFocusWordText + '"]')
+        // 先尝试聚焦到当前单词（如果还在列表中）
+        const element = document.querySelector('[data-word="' + wordsStore.lastFocusWordText + '"]');
+        if (element) {
+          // 单词还在列表中（忘记操作），聚焦到它
+          focusElement('[data-word="' + wordsStore.lastFocusWordText + '"]');
+        } else {
+          // 单词已从列表中移除（如被记住），聚焦到相同索引位置的单词（后面的单词前移了）
+          const targetIndex = Math.min(wordsStore.lastFocusWordIndex, showFilteredWords.value.length - 1);
+          const targetWord = showFilteredWords.value[targetIndex];
+          if (targetWord) {
+            console.log('单词已移除，聚焦到索引', targetIndex, '单词:', targetWord.text);
+            focusElement('[data-word="' + targetWord.text + '"]');
+          }
+        }
+        // 清空保存的索引
+        wordsStore.lastFocusWordIndex = -1;
       } else {
         focusElement('.list-item');
       }
@@ -1810,7 +1824,12 @@ const focusElement = async (selector: string) => {
 
   // 延迟一段时间以确保虚拟滚动器已渲染元素
   setTimeout(() => {
-    const element = document.querySelector(selector);
+    let element = document.querySelector(selector);
+    // 如果通过data-word选择器找不到元素（单词已从列表中移除），尝试聚焦到第一个列表项
+    if (!element && selector.startsWith('[data-word=')) {
+      console.log(`指定单词已不在列表中，尝试聚焦到第一个元素`);
+      element = document.querySelector('.list-item');
+    }
     if (element) {
       console.log(`已聚焦到指定元素: ${selector}`);
       (element as HTMLElement).focus();
