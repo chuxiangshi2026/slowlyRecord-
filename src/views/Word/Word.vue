@@ -2107,7 +2107,7 @@ const importFromWordBank = async (bankType: WordBankType) => {
   });
   
   try {
-    const words = await fetchWordBank(bankType, true);
+    const words = await fetchWordBank(bankType, { priority: 'online', useCache: true });
     loading.close();
     
     if (words.length === 0) {

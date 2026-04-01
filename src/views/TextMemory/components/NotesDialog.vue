@@ -3,7 +3,7 @@
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     title="文本笔记"
-    width="900px"
+    width="750px"
     destroy-on-close
     class="notes-dialog"
   >

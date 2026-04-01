@@ -26,34 +26,52 @@ export interface WordBankInfo {
   icon?: string;
 }
 
-// 在线词库配置（多CDN源，自动回退）
-// 国内推荐优先级：
-// 1. npm.elemecdn.com - 饿了么国内CDN，国内访问最快
-// 2. unpkg.zhimg.com - 知乎国内CDN，稳定
-// 3. fastly.jsdelivr.net - Fastly节点
-const CDN_MIRRORS = [
-  'https://npm.elemecdn.com/@wordbanks',           // 饿了么国内CDN
-  'https://unpkg.zhimg.com/@wordbanks',            // 知乎国内CDN
-  'https://fastly.jsdelivr.net/npm/@wordbanks',    // Fastly节点
-  'https://gcore.jsdelivr.net/npm/@wordbanks',     // GCore节点
-  'https://cdn.jsdelivr.net/npm/@wordbanks',       // 默认节点
+// 在线词库配置（多源备份，自动回退）
+// 稳定词源优先级：
+// 1. GitHub 国内加速镜像
+// 2. 码云 Gitee 镜像
+// 3. jsdelivr CDN（GitHub 加速）
+// 4. 本地文件作为后备
+const ONLINE_SOURCES = [
+  // GitHub 国内加速镜像
+  'https://gh.api.99988866.xyz/https://raw.githubusercontent.com/kajweb/dict/master',  // GitHub代理
+  'https://mirror.ghproxy.com/https://raw.githubusercontent.com/mahavivo/english-wordlists/master', // GHProxy
+  // 码云 Gitee 镜像（国内稳定）
+  'https://gitee.com/chen_qingwei/english-vocabulary/raw/master',  // 码云词库
+  // jsdelivr CDN（GitHub 文件加速）
+  'https://cdn.jsdelivr.net/gh/kajweb/dict',  // jsdelivr GitHub加速
+  'https://fastly.jsdelivr.net/gh/mahavivo/english-wordlists',  // Fastly节点
 ];
 
 // 本地词库文件路径（相对于public目录）
 const LOCAL_WORDBANK_PATH = '/wordbanks/';
 
+// 加载策略配置
+export interface LoadStrategy {
+  priority: 'online' | 'local';  // 优先加载在线还是本地
+  useCache: boolean;             // 是否使用缓存
+  timeout: number;               // 在线加载超时时间(ms)
+}
+
+// 默认加载策略：优先在线，超时后回退本地
+const DEFAULT_STRATEGY: LoadStrategy = {
+  priority: 'online',
+  useCache: true,
+  timeout: 8000,  // 8秒超时
+};
+
 // 词库信息列表
-// 所有词库均已配置本地文件，无需依赖在线CDN
+// 本地词库 + 在线备份源
 export const WORDBANK_LIST: WordBankInfo[] = [
-  { id: 'cet4', name: '四级词汇', description: '大学英语四级核心词汇(本地300词)', wordCount: 300 },
-  { id: 'cet6', name: '六级词汇', description: '大学英语六级核心词汇(本地200词)', wordCount: 200 },
-  { id: 'zsb', name: '专升本词汇', description: '专升本英语考试核心词汇(本地300词)', wordCount: 300 },
-  { id: 'kaogong', name: '考公词汇', description: '公务员考试英语词汇(本地300词)', wordCount: 300 },
-  { id: 'kaoyan', name: '考研词汇', description: '研究生入学考试核心词汇(本地300词)', wordCount: 300 },
-  { id: 'ielts', name: '雅思词汇', description: '雅思考试核心词汇(本地300词)', wordCount: 300 },
-  { id: 'toefl', name: '托福词汇', description: '托福考试核心词汇(本地300词)', wordCount: 300 },
-  { id: 'gre', name: 'GRE词汇', description: 'GRE考试核心词汇(本地300词)', wordCount: 300 },
-  { id: 'gmat', name: 'GMAT词汇', description: 'GMAT考试核心词汇(本地300词)', wordCount: 300 },
+  { id: 'cet4', name: '四级词汇', description: '大学英语四级核心词汇(约350词)', wordCount: 350 },
+  { id: 'cet6', name: '六级词汇', description: '大学英语六级核心词汇(约30词)', wordCount: 30 },
+  { id: 'zsb', name: '专升本词汇', description: '专升本英语考试核心词汇', wordCount: 0 },
+  { id: 'kaogong', name: '考公词汇', description: '公务员考试英语词汇(约315词)', wordCount: 315 },
+  { id: 'kaoyan', name: '考研词汇', description: '研究生入学考试核心词汇(约330词)', wordCount: 330 },
+  { id: 'ielts', name: '雅思词汇', description: '雅思考试核心词汇(约260词)', wordCount: 260 },
+  { id: 'toefl', name: '托福词汇', description: '托福考试核心词汇(约220词)', wordCount: 220 },
+  { id: 'gre', name: 'GRE词汇', description: 'GRE考试核心词汇(约245词)', wordCount: 245 },
+  { id: 'gmat', name: 'GMAT词汇', description: 'GMAT考试核心词汇(约220词)', wordCount: 220 },
 ];
 
 // 缓存管理
@@ -106,25 +124,9 @@ function saveToCache(type: WordBankType, words: Word[]): void {
 }
 
 /**
- * 获取在线词库（自动尝试多个CDN源）
- * @param type 词库类型
- * @param useCache 是否使用缓存
- * @returns 单词列表
+ * 加载本地词库
  */
-export async function fetchWordBank(
-  type: WordBankType,
-  useCache: boolean = true
-): Promise<Word[]> {
-  // 先检查缓存
-  if (useCache) {
-    const cached = getFromCache(type);
-    if (cached) {
-      console.log(`[WordBank] 使用缓存: ${type}`);
-      return cached;
-    }
-  }
-
-  // 首先尝试从本地词库文件获取（最稳定）
+async function loadLocalWordBank(type: WordBankType): Promise<Word[] | null> {
   try {
     const localUrl = `${LOCAL_WORDBANK_PATH}${type}.json`;
     console.log(`[WordBank] 尝试本地词库: ${type} from ${localUrl}`);
@@ -139,30 +141,51 @@ export async function fetchWordBank(
     if (response.ok) {
       const data = await response.json();
       const words = normalizeWords(data.words || data);
-
-      // 保存到缓存
-      saveToCache(type, words);
       console.log(`[WordBank] 成功从本地加载 ${words.length} 个单词`);
-
       return words;
     }
+    return null;
   } catch (error) {
     console.warn(`[WordBank] 本地词库不存在或加载失败: ${type}`, error);
-    // 继续尝试在线CDN
+    return null;
   }
+}
 
-  // 本地词库不存在，尝试从多个CDN源获取
-  for (const cdnBase of CDN_MIRRORS) {
+/**
+ * 加载在线词库（尝试多个CDN源）
+ */
+async function loadOnlineWordBank(type: WordBankType, timeout: number): Promise<Word[] | null> {
+  // 构建在线词库URL映射
+  const onlineUrlMap: Record<string, string> = {
+    'cet4': '/cet4.json',
+    'cet6': '/cet6.json',
+    'kaoyan': '/kaoyan.json',
+    'ielts': '/ielts.json',
+    'toefl': '/toefl.json',
+    'gre': '/gre.json',
+    'gmat': '/gmat.json',
+  };
+
+  const urlSuffix = onlineUrlMap[type] || `/${type}.json`;
+
+  for (const sourceBase of ONLINE_SOURCES) {
     try {
-      const url = `${cdnBase}/${type}.json`;
-      console.log(`[WordBank] 获取在线词库: ${type} from ${url}`);
+      const url = `${sourceBase}${urlSuffix}`;
+      console.log(`[WordBank] 尝试在线词源: ${type} from ${url}`);
+
+      // 使用 AbortController 实现超时（兼容性更好）
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
 
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
         },
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -170,21 +193,69 @@ export async function fetchWordBank(
 
       const data = await response.json();
       const words = normalizeWords(data.words || data);
-
-      // 保存到缓存
-      saveToCache(type, words);
-      console.log(`[WordBank] 成功从 ${cdnBase} 获取 ${words.length} 个单词`);
-
+      console.log(`[WordBank] 成功从在线源获取 ${words.length} 个单词`);
       return words;
     } catch (error) {
-      console.warn(`[WordBank] CDN源失败: ${cdnBase}`, error);
-      // 继续尝试下一个CDN源
+      console.warn(`[WordBank] 在线源失败: ${sourceBase}`, error);
+      // 继续尝试下一个在线源
+    }
+  }
+  return null;
+}
+
+/**
+ * 获取词库（支持在线优先或本地优先策略）
+ * @param type 词库类型
+ * @param strategy 加载策略配置
+ * @returns 单词列表
+ */
+export async function fetchWordBank(
+  type: WordBankType,
+  strategy: Partial<LoadStrategy> = {}
+): Promise<Word[]> {
+  const config = { ...DEFAULT_STRATEGY, ...strategy };
+
+  // 先检查缓存
+  if (config.useCache) {
+    const cached = getFromCache(type);
+    if (cached) {
+      console.log(`[WordBank] 使用缓存: ${type}`);
+      return cached;
     }
   }
 
-  // 所有CDN源都失败，使用内置备用词库
-  console.warn(`[WordBank] 所有CDN源失败，使用备用词库: ${type}`);
-  return getFallbackWords(type);
+  let words: Word[] | null = null;
+
+  if (config.priority === 'online') {
+    // 在线优先：先尝试在线，失败后回退本地
+    words = await loadOnlineWordBank(type, config.timeout);
+
+    if (!words) {
+      console.log(`[WordBank] 在线加载失败，回退到本地词库: ${type}`);
+      words = await loadLocalWordBank(type);
+    }
+  } else {
+    // 本地优先：先尝试本地，失败后回退在线
+    words = await loadLocalWordBank(type);
+
+    if (!words) {
+      console.log(`[WordBank] 本地词库不可用，尝试在线词源: ${type}`);
+      words = await loadOnlineWordBank(type, config.timeout);
+    }
+  }
+
+  // 如果在线和本地都失败，使用内置备用词库
+  if (!words) {
+    console.warn(`[WordBank] 所有词源都失败，使用备用词库: ${type}`);
+    words = getFallbackWords(type);
+  }
+
+  // 保存到缓存
+  if (config.useCache) {
+    saveToCache(type, words);
+  }
+
+  return words;
 }
 
 /**
@@ -414,10 +485,23 @@ export function isWordBankCached(type: WordBankType): boolean {
   return getFromCache(type) !== null;
 }
 
+/**
+ * 获取词库（兼容旧版调用方式）
+ * @deprecated 使用新的策略对象参数
+ */
+export async function fetchWordBankLegacy(
+  type: WordBankType,
+  useCache: boolean = true
+): Promise<Word[]> {
+  return fetchWordBank(type, { useCache });
+}
+
 export default {
   fetchWordBank,
+  fetchWordBankLegacy,
   clearWordBankCache,
   getWordBankInfo,
   isWordBankCached,
   WORDBANK_LIST,
+  DEFAULT_STRATEGY,
 };

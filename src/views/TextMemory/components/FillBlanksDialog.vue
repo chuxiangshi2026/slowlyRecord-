@@ -3,7 +3,7 @@
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     title="填空练习"
-    width="900px"
+    width="750px"
     destroy-on-close
     class="fill-blanks-dialog"
   >
@@ -99,8 +99,11 @@
         <el-button @click="resetExercise" :disabled="!hasBlanks">
           重置练习
         </el-button>
-        <el-button type="success" @click="saveProgress">
+        <el-button type="success" @click="saveProgress" :disabled="!hasBlanks">
           保存进度
+        </el-button>
+        <el-button type="warning" @click="loadProgress" :disabled="!hasSavedProgress">
+          恢复进度
         </el-button>
       </div>
 
@@ -175,9 +178,26 @@ const stats = computed(() => {
 // 监听文章变化
 watch(() => props.article, (newArticle) => {
   if (newArticle) {
-    generateNewExercise();
+    // 尝试加载上次的进度
+    const savedProgress = textStore.getLearningProgress(newArticle._id, 'fillBlanks');
+    if (savedProgress?.progress?.segments) {
+      // 恢复上次的练习
+      exerciseMode.value = savedProgress.progress.mode || 'random';
+      blankCount.value = savedProgress.progress.blankCount || 10;
+      exerciseSegments.value = savedProgress.progress.segments;
+      ElMessage.info('已恢复上次的练习进度');
+    } else {
+      generateNewExercise();
+    }
   }
 }, { immediate: true });
+
+// 是否有保存的进度
+const hasSavedProgress = computed(() => {
+  if (!props.article) return false;
+  const progress = textStore.getLearningProgress(props.article._id, 'fillBlanks');
+  return !!progress?.progress?.segments?.length;
+});
 
 // 监听模式变化
 watch(exerciseMode, () => {
@@ -579,8 +599,42 @@ function resetExercise() {
 }
 
 // 保存进度
-function saveProgress() {
-  ElMessage.success('进度已保存');
+async function saveProgress() {
+  if (!props.article) return;
+  
+  const progress = {
+    mode: exerciseMode.value,
+    blankCount: blankCount.value,
+    segments: exerciseSegments.value,
+    stats: stats.value
+  };
+  
+  const success = await textStore.saveLearningProgress(
+    props.article._id,
+    'fillBlanks',
+    progress
+  );
+  
+  if (success) {
+    ElMessage.success('进度已保存');
+  } else {
+    ElMessage.error('保存进度失败');
+  }
+}
+
+// 加载进度
+function loadProgress() {
+  if (!props.article) return;
+  
+  const savedProgress = textStore.getLearningProgress(props.article._id, 'fillBlanks');
+  if (savedProgress?.progress?.segments) {
+    exerciseMode.value = savedProgress.progress.mode || 'random';
+    blankCount.value = savedProgress.progress.blankCount || 10;
+    exerciseSegments.value = savedProgress.progress.segments;
+    ElMessage.success('进度已恢复');
+  } else {
+    ElMessage.warning('没有找到保存的进度');
+  }
 }
 </script>
 

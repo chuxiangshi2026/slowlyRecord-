@@ -1,32 +1,3437 @@
 [
-  {"word": "abbreviate", "phonetic": "/əˈbriːvieɪt/", "explains": "v. 缩写；缩短"},
-  {"word": "abnormal", "phonetic": "/æbˈnɔːml/", "explains": "adj. 反常的；不规则的"},
-  {"word": "abolish", "phonetic": "/əˈbɒlɪʃ/", "explains": "v. 废除；废止"},
-  {"word": "abrupt", "phonetic": "/əˈbrʌpt/", "explains": "adj. 突然的；唐突的"},
-  {"word": "absence", "phonetic": "/ˈæbsəns/", "explains": "n. 缺席；缺乏"},
-  {"word": "absolute", "phonetic": "/ˈæbsəluːt/", "explains": "adj. 绝对的；完全的"},
-  {"word": "absorb", "phonetic": "/əbˈzɔːb/", "explains": "v. 吸收；吸引"},
-  {"word": "abstract", "phonetic": "/ˈæbstrækt/", "explains": "adj. 抽象的；n. 摘要"},
-  {"word": "absurd", "phonetic": "/əbˈsɜːd/", "explains": "adj. 荒谬的；可笑的"},
-  {"word": "abundant", "phonetic": "/əˈbʌndənt/", "explains": "adj. 丰富的；充裕的"},
-  {"word": "academic", "phonetic": "/ˌækəˈdemɪk/", "explains": "adj. 学术的；学院的"},
-  {"word": "academy", "phonetic": "/əˈkædəmi/", "explains": "n. 学院；研究院"},
-  {"word": "accelerate", "phonetic": "/əkˈseləreɪt/", "explains": "v. 加速；促进"},
-  {"word": "accent", "phonetic": "/ˈæksent/", "explains": "n. 口音；重音"},
-  {"word": "access", "phonetic": "/ˈækses/", "explains": "n. 进入；使用权"},
-  {"word": "accident", "phonetic": "/ˈæksɪdənt/", "explains": "n. 事故；意外"},
-  {"word": "accommodate", "phonetic": "/əˈkɒmədeɪt/", "explains": "v. 容纳；适应"},
-  {"word": "accommodation", "phonetic": "/əˌkɒməˈdeɪʃn/", "explains": "n. 住处；适应"},
-  {"word": "accompany", "phonetic": "/əˈkʌmpəni/", "explains": "v. 陪伴；伴随"},
-  {"word": "accomplish", "phonetic": "/əˈkʌmplɪʃ/", "explains": "v. 完成；实现"},
-  {"word": "accord", "phonetic": "/əˈkɔːd/", "explains": "v. 一致；给予"},
-  {"word": "accordance", "phonetic": "/əˈkɔːdns/", "explains": "n. 一致；按照"},
-  {"word": "accordingly", "phonetic": "/əˈkɔːdɪŋli/", "explains": "adv. 因此；相应地"},
-  {"word": "account", "phonetic": "/əˈkaʊnt/", "explains": "n. 账户；描述"},
-  {"word": "accumulate", "phonetic": "/əˈkjuːmjəleɪt/", "explains": "v. 积累；积聚"},
-  {"word": "accuracy", "phonetic": "/ˈækjərəsi/", "explains": "n. 准确；精确"},
-  {"word": "accurate", "phonetic": "/ˈækjərət/", "explains": "adj. 准确的；精确的"},
-  {"word": "accuse", "phonetic": "/əˈkjuːz/", "explains": "v. 指控；指责"},
-  {"word": "accustomed", "phonetic": "/əˈkʌstəmd/", "explains": "adj. 习惯的；通常的"},
-  {"word": "achieve", "phonetic": "/əˈtʃiːv/", "explains": "v. 达到；完成"}
+  {
+    "word": "abandon",
+    "phonetic": "/əˈbændən/",
+    "explains": "v. 放弃；抛弃"
+  },
+  {
+    "word": "aberrant",
+    "phonetic": "/æbˈerənt/",
+    "explains": "adj. 异常的；偏离正轨的"
+  },
+  {
+    "word": "ability",
+    "phonetic": "/əˈbɪləti/",
+    "explains": "n. 能力；才能"
+  },
+  {
+    "word": "abolish",
+    "phonetic": "/əˈbɒlɪʃ/",
+    "explains": "v. 废除；废止"
+  },
+  {
+    "word": "abridge",
+    "phonetic": "/əˈbrɪdʒ/",
+    "explains": "v. 删节；缩减"
+  },
+  {
+    "word": "absence",
+    "phonetic": "/ˈæbsəns/",
+    "explains": "n. 缺席；缺乏"
+  },
+  {
+    "word": "absolute",
+    "phonetic": "/ˈæbsəluːt/",
+    "explains": "adj. 绝对的；完全的"
+  },
+  {
+    "word": "absorb",
+    "phonetic": "/əbˈzɔːb/",
+    "explains": "v. 吸收；吸引"
+  },
+  {
+    "word": "abstain",
+    "phonetic": "/əbˈsteɪn/",
+    "explains": "v. 戒除；弃权"
+  },
+  {
+    "word": "abstract",
+    "phonetic": "/ˈæbstrækt/",
+    "explains": "adj. 抽象的；n. 摘要"
+  },
+  {
+    "word": "abundant",
+    "phonetic": "/əˈbʌndənt/",
+    "explains": "adj. 丰富的；充裕的"
+  },
+  {
+    "word": "academic",
+    "phonetic": "/ˌækəˈdemɪk/",
+    "explains": "adj. 学术的；学院的"
+  },
+  {
+    "word": "academy",
+    "phonetic": "/əˈkædəmi/",
+    "explains": "n. 学院；研究院"
+  },
+  {
+    "word": "accelerate",
+    "phonetic": "/əkˈseləreɪt/",
+    "explains": "v. 加速；促进"
+  },
+  {
+    "word": "access",
+    "phonetic": "/ˈækses/",
+    "explains": "n. 进入；使用权"
+  },
+  {
+    "word": "accident",
+    "phonetic": "/ˈæksɪdənt/",
+    "explains": "n. 事故；意外"
+  },
+  {
+    "word": "accolade",
+    "phonetic": "/ˈækəleɪd/",
+    "explains": "n. 荣誉；赞扬"
+  },
+  {
+    "word": "accompany",
+    "phonetic": "/əˈkʌmpəni/",
+    "explains": "v. 陪伴；伴随"
+  },
+  {
+    "word": "accomplish",
+    "phonetic": "/əˈkʌmplɪʃ/",
+    "explains": "v. 完成；实现"
+  },
+  {
+    "word": "account",
+    "phonetic": "/əˈkaʊnt/",
+    "explains": "n. 账户；描述"
+  },
+  {
+    "word": "accumulate",
+    "phonetic": "/əˈkjuːmjəleɪt/",
+    "explains": "v. 积累；积聚"
+  },
+  {
+    "word": "accurate",
+    "phonetic": "/ˈækjərət/",
+    "explains": "adj. 准确的；精确的"
+  },
+  {
+    "word": "accuse",
+    "phonetic": "/əˈkjuːz/",
+    "explains": "v. 指控；指责"
+  },
+  {
+    "word": "accustomed",
+    "phonetic": "/əˈkʌstəmd/",
+    "explains": "adj. 习惯的；通常的"
+  },
+  {
+    "word": "ache",
+    "phonetic": "/eɪk/",
+    "explains": "v. 疼痛；渴望"
+  },
+  {
+    "word": "achieve",
+    "phonetic": "/əˈtʃiːv/",
+    "explains": "v. 达到；完成"
+  },
+  {
+    "word": "achievement",
+    "phonetic": "/əˈtʃiːvmənt/",
+    "explains": "n. 成就；完成"
+  },
+  {
+    "word": "acid",
+    "phonetic": "/ˈæsɪd/",
+    "explains": "n. 酸；adj. 酸的"
+  },
+  {
+    "word": "acquaintance",
+    "phonetic": "/əˈkweɪntəns/",
+    "explains": "n. 熟人；了解"
+  },
+  {
+    "word": "acquire",
+    "phonetic": "/əˈkwaɪər/",
+    "explains": "v. 获得；学到"
+  },
+  {
+    "word": "acre",
+    "phonetic": "/ˈeɪkər/",
+    "explains": "n. 英亩"
+  },
+  {
+    "word": "across",
+    "phonetic": "/əˈkrɔːs/",
+    "explains": "prep. 横过；在...对面"
+  },
+  {
+    "word": "action",
+    "phonetic": "/ˈækʃn/",
+    "explains": "n. 行动；行为"
+  },
+  {
+    "word": "active",
+    "phonetic": "/ˈæktɪv/",
+    "explains": "adj. 积极的；活跃的"
+  },
+  {
+    "word": "activity",
+    "phonetic": "/ækˈtɪvəti/",
+    "explains": "n. 活动；行动"
+  },
+  {
+    "word": "actor",
+    "phonetic": "/ˈæktər/",
+    "explains": "n. 演员"
+  },
+  {
+    "word": "actress",
+    "phonetic": "/ˈæktrəs/",
+    "explains": "n. 女演员"
+  },
+  {
+    "word": "actual",
+    "phonetic": "/ˈæktʃuəl/",
+    "explains": "adj. 实际的；真实的"
+  },
+  {
+    "word": "actually",
+    "phonetic": "/ˈæktʃuəli/",
+    "explains": "adv. 实际上；事实上"
+  },
+  {
+    "word": "acumen",
+    "phonetic": "/ˈækjʊmən/",
+    "explains": "n. 敏锐；聪明"
+  },
+  {
+    "word": "acute",
+    "phonetic": "/əˈkjuːt/",
+    "explains": "adj. 敏锐的；急性的"
+  },
+  {
+    "word": "adapt",
+    "phonetic": "/əˈdæpt/",
+    "explains": "v. 使适应；改编"
+  },
+  {
+    "word": "add",
+    "phonetic": "/æd/",
+    "explains": "v. 添加；增加"
+  },
+  {
+    "word": "addition",
+    "phonetic": "/əˈdɪʃn/",
+    "explains": "n. 添加；加法"
+  },
+  {
+    "word": "additional",
+    "phonetic": "/əˈdɪʃənl/",
+    "explains": "adj. 额外的；附加的"
+  },
+  {
+    "word": "address",
+    "phonetic": "/əˈdres/",
+    "explains": "n. 地址；演讲"
+  },
+  {
+    "word": "adequate",
+    "phonetic": "/ˈædɪkwət/",
+    "explains": "adj. 足够的；适当的"
+  },
+  {
+    "word": "adjust",
+    "phonetic": "/əˈdʒʌst/",
+    "explains": "v. 调整；适应"
+  },
+  {
+    "word": "administration",
+    "phonetic": "/ədˌmɪnɪˈstreɪʃn/",
+    "explains": "n. 管理；行政部门"
+  },
+  {
+    "word": "admire",
+    "phonetic": "/ədˈmaɪər/",
+    "explains": "v. 钦佩；赞赏"
+  },
+  {
+    "word": "admission",
+    "phonetic": "/ədˈmɪʃn/",
+    "explains": "n. 进入许可；入场费"
+  },
+  {
+    "word": "admit",
+    "phonetic": "/ədˈmɪt/",
+    "explains": "v. 承认；准许进入"
+  },
+  {
+    "word": "adopt",
+    "phonetic": "/əˈdɒpt/",
+    "explains": "v. 采用；收养"
+  },
+  {
+    "word": "adult",
+    "phonetic": "/ˈædʌlt/",
+    "explains": "n. 成年人；adj. 成年的"
+  },
+  {
+    "word": "adulterate",
+    "phonetic": "/əˈdʌltəreɪt/",
+    "explains": "v. 掺假；掺杂"
+  },
+  {
+    "word": "advance",
+    "phonetic": "/ədˈvɑːns/",
+    "explains": "v. 前进；提前"
+  },
+  {
+    "word": "advanced",
+    "phonetic": "/ədˈvɑːnst/",
+    "explains": "adj. 先进的；高级的"
+  },
+  {
+    "word": "advantage",
+    "phonetic": "/ədˈvɑːntɪdʒ/",
+    "explains": "n. 优势；利益"
+  },
+  {
+    "word": "adventure",
+    "phonetic": "/ədˈventʃər/",
+    "explains": "n. 冒险；奇遇"
+  },
+  {
+    "word": "advertise",
+    "phonetic": "/ˈædvətaɪz/",
+    "explains": "v. 做广告；宣传"
+  },
+  {
+    "word": "advice",
+    "phonetic": "/ədˈvaɪs/",
+    "explains": "n. 建议；忠告"
+  },
+  {
+    "word": "advise",
+    "phonetic": "/ədˈvaɪz/",
+    "explains": "v. 建议；劝告"
+  },
+  {
+    "word": "aesthetic",
+    "phonetic": "/iːsˈθetɪk/",
+    "explains": "adj. 美学的；审美的"
+  },
+  {
+    "word": "affable",
+    "phonetic": "/ˈæfəbl/",
+    "explains": "adj. 和蔼的；友好的"
+  },
+  {
+    "word": "affair",
+    "phonetic": "/əˈfeər/",
+    "explains": "n. 事情；事务"
+  },
+  {
+    "word": "affect",
+    "phonetic": "/əˈfekt/",
+    "explains": "v. 影响；感动"
+  },
+  {
+    "word": "affluent",
+    "phonetic": "/ˈæfluənt/",
+    "explains": "adj. 富裕的；丰富的"
+  },
+  {
+    "word": "afford",
+    "phonetic": "/əˈfɔːd/",
+    "explains": "v. 负担得起；提供"
+  },
+  {
+    "word": "afraid",
+    "phonetic": "/əˈfreɪd/",
+    "explains": "adj. 害怕的；担心的"
+  },
+  {
+    "word": "Africa",
+    "phonetic": "/ˈæfrɪkə/",
+    "explains": "n. 非洲"
+  },
+  {
+    "word": "African",
+    "phonetic": "/ˈæfrɪkən/",
+    "explains": "adj. 非洲的；n. 非洲人"
+  },
+  {
+    "word": "afterward",
+    "phonetic": "/ˈɑːftəwəd/",
+    "explains": "adv. 后来；以后"
+  },
+  {
+    "word": "against",
+    "phonetic": "/əˈɡenst/",
+    "explains": "prep. 反对；靠着"
+  },
+  {
+    "word": "agency",
+    "phonetic": "/ˈeɪdʒənsi/",
+    "explains": "n. 代理；代理处"
+  },
+  {
+    "word": "agent",
+    "phonetic": "/ˈeɪdʒənt/",
+    "explains": "n. 代理人；特工"
+  },
+  {
+    "word": "aggrandize",
+    "phonetic": "/əˈɡrændaɪz/",
+    "explains": "v. 扩大；提高地位"
+  },
+  {
+    "word": "aggressive",
+    "phonetic": "/əˈɡresɪv/",
+    "explains": "adj. 侵略的；进取的"
+  },
+  {
+    "word": "agreement",
+    "phonetic": "/əˈɡriːmənt/",
+    "explains": "n. 协议；同意"
+  },
+  {
+    "word": "agriculture",
+    "phonetic": "/ˈæɡrɪkʌltʃər/",
+    "explains": "n. 农业；农学"
+  },
+  {
+    "word": "ahead",
+    "phonetic": "/əˈhed/",
+    "explains": "adv. 向前；提前"
+  },
+  {
+    "word": "aid",
+    "phonetic": "/eɪd/",
+    "explains": "n. 援助；帮助"
+  },
+  {
+    "word": "aircraft",
+    "phonetic": "/ˈeəkrɑːft/",
+    "explains": "n. 飞机；航空器"
+  },
+  {
+    "word": "airline",
+    "phonetic": "/ˈeəlaɪn/",
+    "explains": "n. 航空公司；航线"
+  },
+  {
+    "word": "airplane",
+    "phonetic": "/ˈeəpleɪn/",
+    "explains": "n. 飞机"
+  },
+  {
+    "word": "airport",
+    "phonetic": "/ˈeəpɔːt/",
+    "explains": "n. 机场"
+  },
+  {
+    "word": "alacrity",
+    "phonetic": "/əˈlækrəti/",
+    "explains": "n. 敏捷；欣然"
+  },
+  {
+    "word": "alarm",
+    "phonetic": "/əˈlɑːm/",
+    "explains": "n. 警报；惊慌"
+  },
+  {
+    "word": "alcohol",
+    "phonetic": "/ˈælkəhɒl/",
+    "explains": "n. 酒精；乙醇"
+  },
+  {
+    "word": "alive",
+    "phonetic": "/əˈlaɪv/",
+    "explains": "adj. 活着的；有活力的"
+  },
+  {
+    "word": "alleviate",
+    "phonetic": "/əˈliːvieɪt/",
+    "explains": "v. 减轻；缓和"
+  },
+  {
+    "word": "alliance",
+    "phonetic": "/əˈlaɪəns/",
+    "explains": "n. 联盟；联合"
+  },
+  {
+    "word": "allow",
+    "phonetic": "/əˈlaʊ/",
+    "explains": "v. 允许；准许"
+  },
+  {
+    "word": "ally",
+    "phonetic": "/ˈælaɪ/",
+    "explains": "n. 同盟国；伙伴"
+  },
+  {
+    "word": "almost",
+    "phonetic": "/ˈɔːlməʊst/",
+    "explains": "adv. 几乎；差不多"
+  },
+  {
+    "word": "alone",
+    "phonetic": "/əˈləʊn/",
+    "explains": "adj. 独自的；单独的"
+  },
+  {
+    "word": "along",
+    "phonetic": "/əˈlɒŋ/",
+    "explains": "prep. 沿着；顺着"
+  },
+  {
+    "word": "alphabet",
+    "phonetic": "/ˈælfəbet/",
+    "explains": "n. 字母表"
+  },
+  {
+    "word": "already",
+    "phonetic": "/ɔːlˈredi/",
+    "explains": "adv. 已经"
+  },
+  {
+    "word": "also",
+    "phonetic": "/ˈɔːlsəʊ/",
+    "explains": "adv. 也；而且"
+  },
+  {
+    "word": "alter",
+    "phonetic": "/ˈɔːltər/",
+    "explains": "v. 改变；变更"
+  },
+  {
+    "word": "alternative",
+    "phonetic": "/ɔːlˈtɜːnətɪv/",
+    "explains": "adj. 可供选择的"
+  },
+  {
+    "word": "although",
+    "phonetic": "/ɔːlˈðəʊ/",
+    "explains": "conj. 虽然；尽管"
+  },
+  {
+    "word": "altogether",
+    "phonetic": "/ˌɔːltəˈɡeðər/",
+    "explains": "adv. 总共；完全地"
+  },
+  {
+    "word": "aluminum",
+    "phonetic": "/əˈluːmɪnəm/",
+    "explains": "n. 铝"
+  },
+  {
+    "word": "always",
+    "phonetic": "/ˈɔːlweɪz/",
+    "explains": "adv. 总是；永远"
+  },
+  {
+    "word": "amalgamate",
+    "phonetic": "/əˈmælɡəmeɪt/",
+    "explains": "v. 混合；合并"
+  },
+  {
+    "word": "amaze",
+    "phonetic": "/əˈmeɪz/",
+    "explains": "v. 使惊奇；使惊愕"
+  },
+  {
+    "word": "ambiguous",
+    "phonetic": "/æmˈbɪɡjuəs/",
+    "explains": "adj. 模棱两可的"
+  },
+  {
+    "word": "ambition",
+    "phonetic": "/æmˈbɪʃn/",
+    "explains": "n. 雄心；抱负"
+  },
+  {
+    "word": "ambivalent",
+    "phonetic": "/æmˈbɪvələnt/",
+    "explains": "adj. 矛盾的"
+  },
+  {
+    "word": "ambulance",
+    "phonetic": "/ˈæmbjələns/",
+    "explains": "n. 救护车"
+  },
+  {
+    "word": "ameliorate",
+    "phonetic": "/əˈmiːliəreɪt/",
+    "explains": "v. 改善；改进"
+  },
+  {
+    "word": "America",
+    "phonetic": "/əˈmerɪkə/",
+    "explains": "n. 美国；美洲"
+  },
+  {
+    "word": "among",
+    "phonetic": "/əˈmʌŋ/",
+    "explains": "prep. 在...之中"
+  },
+  {
+    "word": "amount",
+    "phonetic": "/əˈmaʊnt/",
+    "explains": "n. 数量；总额"
+  },
+  {
+    "word": "amuse",
+    "phonetic": "/əˈmjuːz/",
+    "explains": "v. 使娱乐；使发笑"
+  },
+  {
+    "word": "anachronism",
+    "phonetic": "/əˈnækrənɪzəm/",
+    "explains": "n. 时代错误"
+  },
+  {
+    "word": "analysis",
+    "phonetic": "/əˈnæləsɪs/",
+    "explains": "n. 分析；分解"
+  },
+  {
+    "word": "analyze",
+    "phonetic": "/ˈænəlaɪz/",
+    "explains": "v. 分析；解析"
+  },
+  {
+    "word": "ancestor",
+    "phonetic": "/ˈænsestər/",
+    "explains": "n. 祖先；祖宗"
+  },
+  {
+    "word": "ancient",
+    "phonetic": "/ˈeɪnʃənt/",
+    "explains": "adj. 古代的；古老的"
+  },
+  {
+    "word": "anger",
+    "phonetic": "/ˈæŋɡər/",
+    "explains": "n. 愤怒；怒气"
+  },
+  {
+    "word": "angle",
+    "phonetic": "/ˈæŋɡl/",
+    "explains": "n. 角；角度"
+  },
+  {
+    "word": "angry",
+    "phonetic": "/ˈæŋɡri/",
+    "explains": "adj. 愤怒的；生气的"
+  },
+  {
+    "word": "animal",
+    "phonetic": "/ˈænɪml/",
+    "explains": "n. 动物"
+  },
+  {
+    "word": "announce",
+    "phonetic": "/əˈnaʊns/",
+    "explains": "v. 宣布；宣告"
+  },
+  {
+    "word": "annoy",
+    "phonetic": "/əˈnɔɪ/",
+    "explains": "v. 使恼怒；打扰"
+  },
+  {
+    "word": "annual",
+    "phonetic": "/ˈænjuəl/",
+    "explains": "adj. 每年的；年度的"
+  },
+  {
+    "word": "anomaly",
+    "phonetic": "/əˈnɒməli/",
+    "explains": "n. 异常；反常事物"
+  },
+  {
+    "word": "another",
+    "phonetic": "/əˈnʌðər/",
+    "explains": "pron. 另一个"
+  },
+  {
+    "word": "answer",
+    "phonetic": "/ˈɑːnsər/",
+    "explains": "n. 答案；回答"
+  },
+  {
+    "word": "ant",
+    "phonetic": "/ænt/",
+    "explains": "n. 蚂蚁"
+  },
+  {
+    "word": "antagonistic",
+    "phonetic": "/ænˌtæɡəˈnɪstɪk/",
+    "explains": "adj. 对抗的；敌对的"
+  },
+  {
+    "word": "anticipate",
+    "phonetic": "/ænˈtɪsɪpeɪt/",
+    "explains": "v. 预期；期望"
+  },
+  {
+    "word": "antipathy",
+    "phonetic": "/ænˈtɪpəθi/",
+    "explains": "n. 反感；憎恶"
+  },
+  {
+    "word": "anxiety",
+    "phonetic": "/æŋˈzaɪəti/",
+    "explains": "n. 焦虑；渴望"
+  },
+  {
+    "word": "anxious",
+    "phonetic": "/ˈæŋkʃəs/",
+    "explains": "adj. 焦虑的；担忧的"
+  },
+  {
+    "word": "apart",
+    "phonetic": "/əˈpɑːt/",
+    "explains": "adv. 分开；分离"
+  },
+  {
+    "word": "apartment",
+    "phonetic": "/əˈpɑːtmənt/",
+    "explains": "n. 公寓；房间"
+  },
+  {
+    "word": "apathy",
+    "phonetic": "/ˈæpəθi/",
+    "explains": "n. 冷漠；无动于衷"
+  },
+  {
+    "word": "apologize",
+    "phonetic": "/əˈpɒlədʒaɪz/",
+    "explains": "v. 道歉；谢罪"
+  },
+  {
+    "word": "apparent",
+    "phonetic": "/əˈpærənt/",
+    "explains": "adj. 明显的；表面上的"
+  },
+  {
+    "word": "appeal",
+    "phonetic": "/əˈpiːl/",
+    "explains": "v. 呼吁；吸引"
+  },
+  {
+    "word": "appear",
+    "phonetic": "/əˈpɪər/",
+    "explains": "v. 出现；显得"
+  },
+  {
+    "word": "appearance",
+    "phonetic": "/əˈpɪərəns/",
+    "explains": "n. 外貌；出现"
+  },
+  {
+    "word": "appease",
+    "phonetic": "/əˈpiːz/",
+    "explains": "v. 平息；安抚"
+  },
+  {
+    "word": "appendix",
+    "phonetic": "/əˈpendɪks/",
+    "explains": "n. 附录；阑尾"
+  },
+  {
+    "word": "appetite",
+    "phonetic": "/ˈæpɪtaɪt/",
+    "explains": "n. 食欲；欲望"
+  },
+  {
+    "word": "applaud",
+    "phonetic": "/əˈplɔːd/",
+    "explains": "v. 鼓掌；称赞"
+  },
+  {
+    "word": "apple",
+    "phonetic": "/ˈæpl/",
+    "explains": "n. 苹果"
+  },
+  {
+    "word": "applicant",
+    "phonetic": "/ˈæplɪkənt/",
+    "explains": "n. 申请人"
+  },
+  {
+    "word": "apply",
+    "phonetic": "/əˈplaɪ/",
+    "explains": "v. 申请；应用"
+  },
+  {
+    "word": "appoint",
+    "phonetic": "/əˈpɔɪnt/",
+    "explains": "v. 任命；约定"
+  },
+  {
+    "word": "appointment",
+    "phonetic": "/əˈpɔɪntmənt/",
+    "explains": "n. 约会；任命"
+  },
+  {
+    "word": "appreciate",
+    "phonetic": "/əˈpriːʃieɪt/",
+    "explains": "v. 欣赏；感激"
+  },
+  {
+    "word": "approach",
+    "phonetic": "/əˈprəʊtʃ/",
+    "explains": "v. 接近；n. 方法"
+  },
+  {
+    "word": "appropriate",
+    "phonetic": "/əˈprəʊpriət/",
+    "explains": "adj. 适当的；合适的"
+  },
+  {
+    "word": "approve",
+    "phonetic": "/əˈpruːv/",
+    "explains": "v. 批准；赞成"
+  },
+  {
+    "word": "arbitrary",
+    "phonetic": "/ˈɑːbɪtrəri/",
+    "explains": "adj. 任意的；专断的"
+  },
+  {
+    "word": "arcane",
+    "phonetic": "/ɑːˈkeɪn/",
+    "explains": "adj. 神秘的；晦涩的"
+  },
+  {
+    "word": "architect",
+    "phonetic": "/ˈɑːkɪtekt/",
+    "explains": "n. 建筑师"
+  },
+  {
+    "word": "architecture",
+    "phonetic": "/ˈɑːkɪtektʃər/",
+    "explains": "n. 建筑学；建筑"
+  },
+  {
+    "word": "arduous",
+    "phonetic": "/ˈɑːdjuəs/",
+    "explains": "adj. 艰巨的；费力的"
+  },
+  {
+    "word": "argue",
+    "phonetic": "/ˈɑːɡjuː/",
+    "explains": "v. 争论；辩论"
+  },
+  {
+    "word": "arise",
+    "phonetic": "/əˈraɪz/",
+    "explains": "v. 出现；升起"
+  },
+  {
+    "word": "arithmetic",
+    "phonetic": "/əˈrɪθmətɪk/",
+    "explains": "n. 算术"
+  },
+  {
+    "word": "army",
+    "phonetic": "/ˈɑːmi/",
+    "explains": "n. 军队；陆军"
+  },
+  {
+    "word": "arrange",
+    "phonetic": "/əˈreɪndʒ/",
+    "explains": "v. 安排；整理"
+  },
+  {
+    "word": "arrest",
+    "phonetic": "/əˈrest/",
+    "explains": "v. 逮捕；拘留"
+  },
+  {
+    "word": "arrival",
+    "phonetic": "/əˈraɪvl/",
+    "explains": "n. 到达；到来"
+  },
+  {
+    "word": "arrow",
+    "phonetic": "/ˈærəʊ/",
+    "explains": "n. 箭；箭头"
+  },
+  {
+    "word": "art",
+    "phonetic": "/ɑːt/",
+    "explains": "n. 艺术；美术"
+  },
+  {
+    "word": "article",
+    "phonetic": "/ˈɑːtɪkl/",
+    "explains": "n. 文章；物品"
+  },
+  {
+    "word": "artificial",
+    "phonetic": "/ˌɑːtɪˈfɪʃl/",
+    "explains": "adj. 人造的；虚假的"
+  },
+  {
+    "word": "artist",
+    "phonetic": "/ˈɑːtɪst/",
+    "explains": "n. 艺术家；画家"
+  },
+  {
+    "word": "ascetic",
+    "phonetic": "/əˈsetɪk/",
+    "explains": "adj. 禁欲的；苦行的"
+  },
+  {
+    "word": "ash",
+    "phonetic": "/æʃ/",
+    "explains": "n. 灰；灰烬"
+  },
+  {
+    "word": "ashamed",
+    "phonetic": "/əˈʃeɪmd/",
+    "explains": "adj. 羞愧的；惭愧的"
+  },
+  {
+    "word": "aside",
+    "phonetic": "/əˈsaɪd/",
+    "explains": "adv. 在旁边；到一边"
+  },
+  {
+    "word": "aspect",
+    "phonetic": "/ˈæspekt/",
+    "explains": "n. 方面；外观"
+  },
+  {
+    "word": "assemble",
+    "phonetic": "/əˈsembl/",
+    "explains": "v. 集合；组装"
+  },
+  {
+    "word": "assess",
+    "phonetic": "/əˈses/",
+    "explains": "v. 评估；评价"
+  },
+  {
+    "word": "asset",
+    "phonetic": "/ˈæset/",
+    "explains": "n. 资产；优点"
+  },
+  {
+    "word": "assiduous",
+    "phonetic": "/əˈsɪdjuəs/",
+    "explains": "adj. 勤勉的；刻苦的"
+  },
+  {
+    "word": "assign",
+    "phonetic": "/əˈsaɪn/",
+    "explains": "v. 分配；指派"
+  },
+  {
+    "word": "assist",
+    "phonetic": "/əˈsɪst/",
+    "explains": "v. 协助；帮助"
+  },
+  {
+    "word": "assistance",
+    "phonetic": "/əˈsɪstəns/",
+    "explains": "n. 帮助；援助"
+  },
+  {
+    "word": "assistant",
+    "phonetic": "/əˈsɪstənt/",
+    "explains": "n. 助手；助理"
+  },
+  {
+    "word": "associate",
+    "phonetic": "/əˈsəʊʃieɪt/",
+    "explains": "v. 联系；交往"
+  },
+  {
+    "word": "association",
+    "phonetic": "/əˌsəʊʃiˈeɪʃn/",
+    "explains": "n. 协会；联想"
+  },
+  {
+    "word": "assume",
+    "phonetic": "/əˈsjuːm/",
+    "explains": "v. 假设；承担"
+  },
+  {
+    "word": "assure",
+    "phonetic": "/əˈʃʊər/",
+    "explains": "v. 保证；确信"
+  },
+  {
+    "word": "astonish",
+    "phonetic": "/əˈstɒnɪʃ/",
+    "explains": "v. 使惊讶"
+  },
+  {
+    "word": "athlete",
+    "phonetic": "/ˈæθliːt/",
+    "explains": "n. 运动员"
+  },
+  {
+    "word": "atmosphere",
+    "phonetic": "/ˈætməsfɪər/",
+    "explains": "n. 大气；气氛"
+  },
+  {
+    "word": "atom",
+    "phonetic": "/ˈætəm/",
+    "explains": "n. 原子"
+  },
+  {
+    "word": "attach",
+    "phonetic": "/əˈtætʃ/",
+    "explains": "v. 附上；贴上"
+  },
+  {
+    "word": "attack",
+    "phonetic": "/əˈtæk/",
+    "explains": "v. 攻击；抨击"
+  },
+  {
+    "word": "attain",
+    "phonetic": "/əˈteɪn/",
+    "explains": "v. 达到；获得"
+  },
+  {
+    "word": "attempt",
+    "phonetic": "/əˈtempt/",
+    "explains": "v. 尝试；企图"
+  },
+  {
+    "word": "attend",
+    "phonetic": "/əˈtend/",
+    "explains": "v. 参加；照顾"
+  },
+  {
+    "word": "attention",
+    "phonetic": "/əˈtenʃn/",
+    "explains": "n. 注意；关心"
+  },
+  {
+    "word": "attenuate",
+    "phonetic": "/əˈtenjueɪt/",
+    "explains": "v. 削弱；减弱"
+  },
+  {
+    "word": "attitude",
+    "phonetic": "/ˈætɪtjuːd/",
+    "explains": "n. 态度；看法"
+  },
+  {
+    "word": "attract",
+    "phonetic": "/əˈtrækt/",
+    "explains": "v. 吸引；引起"
+  },
+  {
+    "word": "attraction",
+    "phonetic": "/əˈtrækʃn/",
+    "explains": "n. 吸引；吸引力"
+  },
+  {
+    "word": "attractive",
+    "phonetic": "/əˈtræktɪv/",
+    "explains": "adj. 有吸引力的"
+  },
+  {
+    "word": "attribute",
+    "phonetic": "/əˈtrɪbjuːt/",
+    "explains": "v. 归因于；n. 属性"
+  },
+  {
+    "word": "audacious",
+    "phonetic": "/ɔːˈdeɪʃəs/",
+    "explains": "adj. 大胆的；勇敢的"
+  },
+  {
+    "word": "audience",
+    "phonetic": "/ˈɔːdiəns/",
+    "explains": "n. 观众；听众"
+  },
+  {
+    "word": "austere",
+    "phonetic": "/ɒˈstɪə/",
+    "explains": "adj. 严峻的；简朴的"
+  },
+  {
+    "word": "authority",
+    "phonetic": "/ɔːˈθɒrəti/",
+    "explains": "n. 权威；当局"
+  },
+  {
+    "word": "automatic",
+    "phonetic": "/ˌɔːtəˈmætɪk/",
+    "explains": "adj. 自动的"
+  },
+  {
+    "word": "automobile",
+    "phonetic": "/ˈɔːtəməbiːl/",
+    "explains": "n. 汽车"
+  },
+  {
+    "word": "available",
+    "phonetic": "/əˈveɪləbl/",
+    "explains": "adj. 可用的；有空的"
+  },
+  {
+    "word": "avarice",
+    "phonetic": "/ˈævərɪs/",
+    "explains": "n. 贪婪"
+  },
+  {
+    "word": "avenue",
+    "phonetic": "/ˈævənjuː/",
+    "explains": "n. 大街；途径"
+  },
+  {
+    "word": "average",
+    "phonetic": "/ˈævərɪdʒ/",
+    "explains": "adj. 平均的；普通的"
+  },
+  {
+    "word": "avoid",
+    "phonetic": "/əˈvɔɪd/",
+    "explains": "v. 避免；避开"
+  },
+  {
+    "word": "await",
+    "phonetic": "/əˈweɪt/",
+    "explains": "v. 等待；等候"
+  },
+  {
+    "word": "awake",
+    "phonetic": "/əˈweɪk/",
+    "explains": "adj. 醒着的；v. 唤醒"
+  },
+  {
+    "word": "award",
+    "phonetic": "/əˈwɔːd/",
+    "explains": "n. 奖；奖品"
+  },
+  {
+    "word": "aware",
+    "phonetic": "/əˈweər/",
+    "explains": "adj. 意识到的；知道的"
+  },
+  {
+    "word": "awful",
+    "phonetic": "/ˈɔːfl/",
+    "explains": "adj. 可怕的；极坏的"
+  },
+  {
+    "word": "awkward",
+    "phonetic": "/ˈɔːkwəd/",
+    "explains": "adj. 尴尬的；笨拙的"
+  },
+  {
+    "word": "ax",
+    "phonetic": "/æks/",
+    "explains": "n. 斧子"
+  },
+  {
+    "word": "background",
+    "phonetic": "/ˈbækɡraʊnd/",
+    "explains": "n. 背景；经历"
+  },
+  {
+    "word": "backward",
+    "phonetic": "/ˈbækwəd/",
+    "explains": "adv. 向后；adj. 向后的"
+  },
+  {
+    "word": "bacteria",
+    "phonetic": "/bækˈtɪəriə/",
+    "explains": "n. 细菌"
+  },
+  {
+    "word": "badge",
+    "phonetic": "/bædʒ/",
+    "explains": "n. 徽章；标记"
+  },
+  {
+    "word": "badly",
+    "phonetic": "/ˈbædli/",
+    "explains": "adv. 非常；严重地"
+  },
+  {
+    "word": "baggage",
+    "phonetic": "/ˈbæɡɪdʒ/",
+    "explains": "n. 行李"
+  },
+  {
+    "word": "bake",
+    "phonetic": "/beɪk/",
+    "explains": "v. 烤；烘焙"
+  },
+  {
+    "word": "balance",
+    "phonetic": "/ˈbæləns/",
+    "explains": "n. 平衡；余额"
+  },
+  {
+    "word": "balloon",
+    "phonetic": "/bəˈluːn/",
+    "explains": "n. 气球"
+  },
+  {
+    "word": "ban",
+    "phonetic": "/bæn/",
+    "explains": "v. 禁止；取缔"
+  },
+  {
+    "word": "band",
+    "phonetic": "/bænd/",
+    "explains": "n. 乐队；带"
+  },
+  {
+    "word": "bang",
+    "phonetic": "/bæŋ/",
+    "explains": "n. 巨响；猛击"
+  },
+  {
+    "word": "bankrupt",
+    "phonetic": "/ˈbæŋkrʌpt/",
+    "explains": "adj. 破产的"
+  },
+  {
+    "word": "bar",
+    "phonetic": "/bɑːr/",
+    "explains": "n. 酒吧；条"
+  },
+  {
+    "word": "bare",
+    "phonetic": "/beər/",
+    "explains": "adj. 赤裸的；空的"
+  },
+  {
+    "word": "bargain",
+    "phonetic": "/ˈbɑːɡɪn/",
+    "explains": "n. 交易；便宜货"
+  },
+  {
+    "word": "bark",
+    "phonetic": "/bɑːk/",
+    "explains": "v. 吠叫；n. 树皮"
+  },
+  {
+    "word": "barn",
+    "phonetic": "/bɑːn/",
+    "explains": "n. 谷仓"
+  },
+  {
+    "word": "barrel",
+    "phonetic": "/ˈbærəl/",
+    "explains": "n. 桶；枪管"
+  },
+  {
+    "word": "barrier",
+    "phonetic": "/ˈbæriər/",
+    "explains": "n. 障碍；屏障"
+  },
+  {
+    "word": "base",
+    "phonetic": "/beɪs/",
+    "explains": "n. 基础；基地"
+  },
+  {
+    "word": "basic",
+    "phonetic": "/ˈbeɪsɪk/",
+    "explains": "adj. 基本的；基础的"
+  },
+  {
+    "word": "basis",
+    "phonetic": "/ˈbeɪsɪs/",
+    "explains": "n. 基础；根据"
+  },
+  {
+    "word": "bat",
+    "phonetic": "/bæt/",
+    "explains": "n. 蝙蝠；球拍"
+  },
+  {
+    "word": "bath",
+    "phonetic": "/bɑːθ/",
+    "explains": "n. 洗澡；浴室"
+  },
+  {
+    "word": "bathe",
+    "phonetic": "/beɪð/",
+    "explains": "v. 洗澡；游泳"
+  },
+  {
+    "word": "battery",
+    "phonetic": "/ˈbætri/",
+    "explains": "n. 电池"
+  },
+  {
+    "word": "bay",
+    "phonetic": "/beɪ/",
+    "explains": "n. 海湾；湾"
+  },
+  {
+    "word": "beam",
+    "phonetic": "/biːm/",
+    "explains": "n. 梁；光束"
+  },
+  {
+    "word": "bean",
+    "phonetic": "/biːn/",
+    "explains": "n. 豆子"
+  },
+  {
+    "word": "bear",
+    "phonetic": "/beər/",
+    "explains": "v. 忍受；n. 熊"
+  },
+  {
+    "word": "beard",
+    "phonetic": "/bɪəd/",
+    "explains": "n. 胡须"
+  },
+  {
+    "word": "beast",
+    "phonetic": "/biːst/",
+    "explains": "n. 野兽；畜生"
+  },
+  {
+    "word": "beat",
+    "phonetic": "/biːt/",
+    "explains": "v. 打败；跳动"
+  },
+  {
+    "word": "beg",
+    "phonetic": "/beɡ/",
+    "explains": "v. 乞求；乞讨"
+  },
+  {
+    "word": "behalf",
+    "phonetic": "/bɪˈhɑːf/",
+    "explains": "n. 代表；利益"
+  },
+  {
+    "word": "behave",
+    "phonetic": "/bɪˈheɪv/",
+    "explains": "v. 表现；举止"
+  },
+  {
+    "word": "behavior",
+    "phonetic": "/bɪˈheɪvjər/",
+    "explains": "n. 行为；举止"
+  },
+  {
+    "word": "being",
+    "phonetic": "/ˈbiːɪŋ/",
+    "explains": "n. 存在；生物"
+  },
+  {
+    "word": "belief",
+    "phonetic": "/bɪˈliːf/",
+    "explains": "n. 相信；信念"
+  },
+  {
+    "word": "bell",
+    "phonetic": "/bel/",
+    "explains": "n. 铃；钟"
+  },
+  {
+    "word": "bellicose",
+    "phonetic": "/ˈbelɪkəʊs/",
+    "explains": "adj. 好战的；好斗的"
+  },
+  {
+    "word": "belong",
+    "phonetic": "/bɪˈlɒŋ/",
+    "explains": "v. 属于；归属"
+  },
+  {
+    "word": "beloved",
+    "phonetic": "/bɪˈlʌvɪd/",
+    "explains": "adj. 心爱的；n. 爱人"
+  },
+  {
+    "word": "belt",
+    "phonetic": "/belt/",
+    "explains": "n. 腰带；地带"
+  },
+  {
+    "word": "bench",
+    "phonetic": "/bentʃ/",
+    "explains": "n. 长凳；工作台"
+  },
+  {
+    "word": "bend",
+    "phonetic": "/bend/",
+    "explains": "v. 弯曲；屈服"
+  },
+  {
+    "word": "beneath",
+    "phonetic": "/bɪˈniːθ/",
+    "explains": "prep. 在...下面"
+  },
+  {
+    "word": "beneficial",
+    "phonetic": "/ˌbenɪˈfɪʃl/",
+    "explains": "adj. 有益的；有利的"
+  },
+  {
+    "word": "benefit",
+    "phonetic": "/ˈbenɪfɪt/",
+    "explains": "n. 利益；好处"
+  },
+  {
+    "word": "berry",
+    "phonetic": "/ˈberi/",
+    "explains": "n. 浆果"
+  },
+  {
+    "word": "beside",
+    "phonetic": "/bɪˈsaɪd/",
+    "explains": "prep. 在...旁边"
+  },
+  {
+    "word": "best",
+    "phonetic": "/best/",
+    "explains": "adj. 最好的"
+  },
+  {
+    "word": "bet",
+    "phonetic": "/bet/",
+    "explains": "v. 打赌；n. 赌注"
+  },
+  {
+    "word": "betray",
+    "phonetic": "/bɪˈtreɪ/",
+    "explains": "v. 背叛；出卖"
+  },
+  {
+    "word": "better",
+    "phonetic": "/ˈbetər/",
+    "explains": "adj. 更好的"
+  },
+  {
+    "word": "beyond",
+    "phonetic": "/bɪˈjɒnd/",
+    "explains": "prep. 超过；在...那边"
+  },
+  {
+    "word": "Bible",
+    "phonetic": "/ˈbaɪbl/",
+    "explains": "n. 圣经"
+  },
+  {
+    "word": "bid",
+    "phonetic": "/bɪd/",
+    "explains": "v. 出价；投标"
+  },
+  {
+    "word": "bill",
+    "phonetic": "/bɪl/",
+    "explains": "n. 账单；钞票"
+  },
+  {
+    "word": "billion",
+    "phonetic": "/ˈbɪljən/",
+    "explains": "n. 十亿"
+  },
+  {
+    "word": "bind",
+    "phonetic": "/baɪnd/",
+    "explains": "v. 捆绑；约束"
+  },
+  {
+    "word": "biology",
+    "phonetic": "/baɪˈɒlədʒi/",
+    "explains": "n. 生物学"
+  },
+  {
+    "word": "bird",
+    "phonetic": "/bɜːd/",
+    "explains": "n. 鸟"
+  },
+  {
+    "word": "birth",
+    "phonetic": "/bɜːθ/",
+    "explains": "n. 出生；起源"
+  },
+  {
+    "word": "birthday",
+    "phonetic": "/ˈbɜːθdeɪ/",
+    "explains": "n. 生日"
+  },
+  {
+    "word": "biscuit",
+    "phonetic": "/ˈbɪskɪt/",
+    "explains": "n. 饼干"
+  },
+  {
+    "word": "bite",
+    "phonetic": "/baɪt/",
+    "explains": "v. 咬；叮"
+  },
+  {
+    "word": "bitter",
+    "phonetic": "/ˈbɪtər/",
+    "explains": "adj. 苦的；痛苦的"
+  },
+  {
+    "word": "blade",
+    "phonetic": "/bleɪd/",
+    "explains": "n. 刀片；叶片"
+  },
+  {
+    "word": "blame",
+    "phonetic": "/bleɪm/",
+    "explains": "v. 责备；责怪"
+  },
+  {
+    "word": "blandishment",
+    "phonetic": "/ˈblændɪʃmənt/",
+    "explains": "n. 奉承；哄骗"
+  },
+  {
+    "word": "blank",
+    "phonetic": "/blæŋk/",
+    "explains": "adj. 空白的；茫然的"
+  },
+  {
+    "word": "blanket",
+    "phonetic": "/ˈblæŋkɪt/",
+    "explains": "n. 毛毯；覆盖物"
+  },
+  {
+    "word": "blast",
+    "phonetic": "/blɑːst/",
+    "explains": "n. 爆炸；冲击波"
+  },
+  {
+    "word": "blaze",
+    "phonetic": "/bleɪz/",
+    "explains": "n. 火焰；光辉"
+  },
+  {
+    "word": "bleed",
+    "phonetic": "/bliːd/",
+    "explains": "v. 流血；失血"
+  },
+  {
+    "word": "blend",
+    "phonetic": "/blend/",
+    "explains": "v. 混合；融合"
+  },
+  {
+    "word": "bless",
+    "phonetic": "/bles/",
+    "explains": "v. 祝福；保佑"
+  },
+  {
+    "word": "blind",
+    "phonetic": "/blaɪnd/",
+    "explains": "adj. 瞎的；盲目的"
+  },
+  {
+    "word": "block",
+    "phonetic": "/blɒk/",
+    "explains": "n. 街区；块"
+  },
+  {
+    "word": "bloom",
+    "phonetic": "/bluːm/",
+    "explains": "n. 花；开花期"
+  },
+  {
+    "word": "blossom",
+    "phonetic": "/ˈblɒsəm/",
+    "explains": "n. 花；开花"
+  },
+  {
+    "word": "blow",
+    "phonetic": "/bləʊ/",
+    "explains": "v. 吹；打击"
+  },
+  {
+    "word": "board",
+    "phonetic": "/bɔːd/",
+    "explains": "n. 板；董事会"
+  },
+  {
+    "word": "boast",
+    "phonetic": "/bəʊst/",
+    "explains": "v. 自夸；吹嘘"
+  },
+  {
+    "word": "boat",
+    "phonetic": "/bəʊt/",
+    "explains": "n. 小船"
+  },
+  {
+    "word": "bold",
+    "phonetic": "/bəʊld/",
+    "explains": "adj. 大胆的；粗体的"
+  },
+  {
+    "word": "bolt",
+    "phonetic": "/bəʊlt/",
+    "explains": "n. 螺栓；闪电"
+  },
+  {
+    "word": "bomb",
+    "phonetic": "/bɒm/",
+    "explains": "n. 炸弹"
+  },
+  {
+    "word": "bond",
+    "phonetic": "/bɒnd/",
+    "explains": "n. 纽带；债券"
+  },
+  {
+    "word": "bone",
+    "phonetic": "/bəʊn/",
+    "explains": "n. 骨头"
+  },
+  {
+    "word": "booklet",
+    "phonetic": "/ˈbʊklət/",
+    "explains": "n. 小册子"
+  },
+  {
+    "word": "boom",
+    "phonetic": "/buːm/",
+    "explains": "n. 繁荣；激增"
+  },
+  {
+    "word": "boot",
+    "phonetic": "/buːt/",
+    "explains": "n. 靴子"
+  },
+  {
+    "word": "border",
+    "phonetic": "/ˈbɔːdə/",
+    "explains": "n. 边界；边境"
+  },
+  {
+    "word": "bore",
+    "phonetic": "/bɔːr/",
+    "explains": "v. 使厌烦；钻孔"
+  },
+  {
+    "word": "boring",
+    "phonetic": "/ˈbɔːrɪŋ/",
+    "explains": "adj. 无聊的；乏味的"
+  },
+  {
+    "word": "born",
+    "phonetic": "/bɔːn/",
+    "explains": "adj. 出生的"
+  },
+  {
+    "word": "borrow",
+    "phonetic": "/ˈbɒrəʊ/",
+    "explains": "v. 借；借用"
+  },
+  {
+    "word": "boss",
+    "phonetic": "/bɒs/",
+    "explains": "n. 老板；上司"
+  },
+  {
+    "word": "bother",
+    "phonetic": "/ˈbɒðər/",
+    "explains": "v. 打扰；麻烦"
+  },
+  {
+    "word": "bottle",
+    "phonetic": "/ˈbɒtl/",
+    "explains": "n. 瓶子"
+  },
+  {
+    "word": "bottom",
+    "phonetic": "/ˈbɒtəm/",
+    "explains": "n. 底部；末尾"
+  },
+  {
+    "word": "bounce",
+    "phonetic": "/baʊns/",
+    "explains": "v. 弹跳；反弹"
+  },
+  {
+    "word": "bound",
+    "phonetic": "/baʊnd/",
+    "explains": "adj. 一定的；有义务的"
+  },
+  {
+    "word": "boundary",
+    "phonetic": "/ˈbaʊndri/",
+    "explains": "n. 边界；分界线"
+  },
+  {
+    "word": "bow",
+    "phonetic": "/baʊ/",
+    "explains": "v. 鞠躬；弯腰"
+  },
+  {
+    "word": "bowl",
+    "phonetic": "/bəʊl/",
+    "explains": "n. 碗； Bowl"
+  },
+  {
+    "word": "box",
+    "phonetic": "/bɒks/",
+    "explains": "n. 盒子；箱子"
+  },
+  {
+    "word": "brain",
+    "phonetic": "/breɪn/",
+    "explains": "n. 大脑；头脑"
+  },
+  {
+    "word": "brake",
+    "phonetic": "/breɪk/",
+    "explains": "n. 刹车；制动器"
+  },
+  {
+    "word": "branch",
+    "phonetic": "/brɑːntʃ/",
+    "explains": "n. 分支；树枝"
+  },
+  {
+    "word": "brand",
+    "phonetic": "/brænd/",
+    "explains": "n. 品牌；商标"
+  },
+  {
+    "word": "brass",
+    "phonetic": "/brɑːs/",
+    "explains": "n. 黄铜"
+  },
+  {
+    "word": "brave",
+    "phonetic": "/breɪv/",
+    "explains": "adj. 勇敢的"
+  },
+  {
+    "word": "bread",
+    "phonetic": "/bred/",
+    "explains": "n. 面包"
+  },
+  {
+    "word": "breadth",
+    "phonetic": "/bredθ/",
+    "explains": "n. 宽度；广度"
+  },
+  {
+    "word": "break",
+    "phonetic": "/breɪk/",
+    "explains": "v. 打破；折断"
+  },
+  {
+    "word": "breakfast",
+    "phonetic": "/ˈbrekfəst/",
+    "explains": "n. 早餐"
+  },
+  {
+    "word": "breast",
+    "phonetic": "/brest/",
+    "explains": "n. 乳房；胸部"
+  },
+  {
+    "word": "breath",
+    "phonetic": "/breθ/",
+    "explains": "n. 呼吸"
+  },
+  {
+    "word": "breathe",
+    "phonetic": "/briːð/",
+    "explains": "v. 呼吸"
+  },
+  {
+    "word": "breed",
+    "phonetic": "/briːd/",
+    "explains": "v. 繁殖；饲养"
+  },
+  {
+    "word": "breeze",
+    "phonetic": "/briːz/",
+    "explains": "n. 微风"
+  },
+  {
+    "word": "brick",
+    "phonetic": "/brɪk/",
+    "explains": "n. 砖；砖块"
+  },
+  {
+    "word": "bride",
+    "phonetic": "/braɪd/",
+    "explains": "n. 新娘"
+  },
+  {
+    "word": "bridge",
+    "phonetic": "/brɪdʒ/",
+    "explains": "n. 桥；桥梁"
+  },
+  {
+    "word": "brief",
+    "phonetic": "/briːf/",
+    "explains": "adj. 简短的；简短的"
+  },
+  {
+    "word": "bright",
+    "phonetic": "/braɪt/",
+    "explains": "adj. 明亮的；聪明的"
+  },
+  {
+    "word": "brilliant",
+    "phonetic": "/ˈbrɪliənt/",
+    "explains": "adj. 杰出的；灿烂的"
+  },
+  {
+    "word": "bring",
+    "phonetic": "/brɪŋ/",
+    "explains": "v. 带来；拿来"
+  },
+  {
+    "word": "broad",
+    "phonetic": "/brɔːd/",
+    "explains": "adj. 宽阔的；广泛的"
+  },
+  {
+    "word": "broadcast",
+    "phonetic": "/ˈbrɔːdkɑːst/",
+    "explains": "v. 广播；播送"
+  },
+  {
+    "word": "broom",
+    "phonetic": "/bruːm/",
+    "explains": "n. 扫帚"
+  },
+  {
+    "word": "brow",
+    "phonetic": "/braʊ/",
+    "explains": "n. 眉；眉毛"
+  },
+  {
+    "word": "bubble",
+    "phonetic": "/ˈbʌbl/",
+    "explains": "n. 气泡；泡沫"
+  },
+  {
+    "word": "bucket",
+    "phonetic": "/ˈbʌkɪt/",
+    "explains": "n. 水桶；铲斗"
+  },
+  {
+    "word": "bucolic",
+    "phonetic": "/bjuːˈkɒlɪk/",
+    "explains": "adj. 乡村的；田园的"
+  },
+  {
+    "word": "budget",
+    "phonetic": "/ˈbʌdʒɪt/",
+    "explains": "n. 预算"
+  },
+  {
+    "word": "buffet",
+    "phonetic": "/ˈbʊfeɪ/",
+    "explains": "n. 自助餐"
+  },
+  {
+    "word": "bug",
+    "phonetic": "/bʌɡ/",
+    "explains": "n. 虫子；漏洞"
+  },
+  {
+    "word": "build",
+    "phonetic": "/bɪld/",
+    "explains": "v. 建造；创建"
+  },
+  {
+    "word": "bulb",
+    "phonetic": "/bʌlb/",
+    "explains": "n. 灯泡；球茎"
+  },
+  {
+    "word": "bulk",
+    "phonetic": "/bʌlk/",
+    "explains": "n. 体积；大部分"
+  },
+  {
+    "word": "bull",
+    "phonetic": "/bʊl/",
+    "explains": "n. 公牛"
+  },
+  {
+    "word": "bullet",
+    "phonetic": "/ˈbʊlɪt/",
+    "explains": "n. 子弹"
+  },
+  {
+    "word": "bunch",
+    "phonetic": "/bʌntʃ/",
+    "explains": "n. 束；群"
+  },
+  {
+    "word": "bundle",
+    "phonetic": "/ˈbʌndl/",
+    "explains": "n. 捆；束"
+  },
+  {
+    "word": "burden",
+    "phonetic": "/ˈbɜːdn/",
+    "explains": "n. 负担；责任"
+  },
+  {
+    "word": "bureau",
+    "phonetic": "/ˈbjʊərəʊ/",
+    "explains": "n. 局；办事处"
+  },
+  {
+    "word": "burgeon",
+    "phonetic": "/ˈbɜːdʒən/",
+    "explains": "v. 迅速发展；萌芽"
+  },
+  {
+    "word": "burn",
+    "phonetic": "/bɜːn/",
+    "explains": "v. 燃烧；烧毁"
+  },
+  {
+    "word": "burst",
+    "phonetic": "/bɜːst/",
+    "explains": "v. 爆发；爆裂"
+  },
+  {
+    "word": "bury",
+    "phonetic": "/ˈberi/",
+    "explains": "v. 埋葬；掩埋"
+  },
+  {
+    "word": "bush",
+    "phonetic": "/bʊʃ/",
+    "explains": "n. 灌木；丛林"
+  },
+  {
+    "word": "business",
+    "phonetic": "/ˈbɪznəs/",
+    "explains": "n. 商业；生意"
+  },
+  {
+    "word": "busy",
+    "phonetic": "/ˈbɪzi/",
+    "explains": "adj. 忙碌的；繁忙的"
+  },
+  {
+    "word": "butcher",
+    "phonetic": "/ˈbʊtʃər/",
+    "explains": "n. 屠夫；肉贩"
+  },
+  {
+    "word": "butter",
+    "phonetic": "/ˈbʌtər/",
+    "explains": "n. 黄油"
+  },
+  {
+    "word": "butterfly",
+    "phonetic": "/ˈbʌtəflaɪ/",
+    "explains": "n. 蝴蝶"
+  },
+  {
+    "word": "button",
+    "phonetic": "/ˈbʌtn/",
+    "explains": "n. 按钮；纽扣"
+  },
+  {
+    "word": "buy",
+    "phonetic": "/baɪ/",
+    "explains": "v. 购买；买"
+  },
+  {
+    "word": "cacophony",
+    "phonetic": "/kəˈkɒfəni/",
+    "explains": "n. 刺耳的声音"
+  },
+  {
+    "word": "capricious",
+    "phonetic": "/kəˈprɪʃəs/",
+    "explains": "adj. 反复无常的"
+  },
+  {
+    "word": "castigate",
+    "phonetic": "/ˈkæstɪɡeɪt/",
+    "explains": "v. 严厉批评；惩罚"
+  },
+  {
+    "word": "caustic",
+    "phonetic": "/ˈkɔːstɪk/",
+    "explains": "adj. 腐蚀性的；刻薄的"
+  },
+  {
+    "word": "chicanery",
+    "phonetic": "/ʃɪˈkeɪnəri/",
+    "explains": "n. 欺骗；诡计"
+  },
+  {
+    "word": "circumlocution",
+    "phonetic": "/ˌsɜːkəmləˈkjuːʃn/",
+    "explains": "n. 迂回说法"
+  },
+  {
+    "word": "circumscribe",
+    "phonetic": "/ˈsɜːkəmskraɪb/",
+    "explains": "v. 限制；划定范围"
+  },
+  {
+    "word": "circumvent",
+    "phonetic": "/ˌsɜːkəmˈvent/",
+    "explains": "v. 规避；绕过"
+  },
+  {
+    "word": "clandestine",
+    "phonetic": "/klænˈdestɪn/",
+    "explains": "adj. 秘密的；暗中的"
+  },
+  {
+    "word": "coalesce",
+    "phonetic": "/ˌkəʊəˈles/",
+    "explains": "v. 合并；联合"
+  },
+  {
+    "word": "cogent",
+    "phonetic": "/ˈkəʊdʒənt/",
+    "explains": "adj. 有说服力的"
+  },
+  {
+    "word": "commensurate",
+    "phonetic": "/kəˈmenʃərət/",
+    "explains": "adj. 相称的；成比例的"
+  },
+  {
+    "word": "compendium",
+    "phonetic": "/kəmˈpendiəm/",
+    "explains": "n. 概要；纲要"
+  },
+  {
+    "word": "complaisant",
+    "phonetic": "/kəmˈpleɪznt/",
+    "explains": "adj. 殷勤的；顺从的"
+  },
+  {
+    "word": "concomitant",
+    "phonetic": "/kənˈkɒmɪtənt/",
+    "explains": "adj. 伴随的；同时发生的"
+  },
+  {
+    "word": "condescend",
+    "phonetic": "/ˌkɒndɪˈsend/",
+    "explains": "v. 屈尊；俯就"
+  },
+  {
+    "word": "conflagration",
+    "phonetic": "/ˌkɒnfləˈɡreɪʃn/",
+    "explains": "n. 大火；大火灾"
+  },
+  {
+    "word": "conundrum",
+    "phonetic": "/kəˈnʌndrəm/",
+    "explains": "n. 难题；谜语"
+  },
+  {
+    "word": "converge",
+    "phonetic": "/kənˈvɜːdʒ/",
+    "explains": "v. 汇聚；聚集"
+  },
+  {
+    "word": "convoluted",
+    "phonetic": "/ˈkɒnvəluːtɪd/",
+    "explains": "adj. 复杂的；费解的"
+  },
+  {
+    "word": "corroborate",
+    "phonetic": "/kəˈrɒbəreɪt/",
+    "explains": "v. 证实；确证"
+  },
+  {
+    "word": "credulity",
+    "phonetic": "/krɪˈdjuːləti/",
+    "explains": "n. 轻信；易信"
+  },
+  {
+    "word": "cryptic",
+    "phonetic": "/ˈkrɪptɪk/",
+    "explains": "adj. 神秘的；含义模糊的"
+  },
+  {
+    "word": "culpable",
+    "phonetic": "/ˈkʌlpəbl/",
+    "explains": "adj. 有罪的；该受谴责的"
+  },
+  {
+    "word": "cynical",
+    "phonetic": "/ˈsɪnɪkl/",
+    "explains": "adj. 愤世嫉俗的"
+  },
+  {
+    "word": "debacle",
+    "phonetic": "/deɪˈbɑːkl/",
+    "explains": "n. 崩溃；惨败"
+  },
+  {
+    "word": "debilitate",
+    "phonetic": "/dɪˈbɪlɪteɪt/",
+    "explains": "v. 削弱；使衰弱"
+  },
+  {
+    "word": "decorous",
+    "phonetic": "/ˈdekərəs/",
+    "explains": "adj. 得体的；端庄的"
+  },
+  {
+    "word": "deference",
+    "phonetic": "/ˈdefərəns/",
+    "explains": "n. 尊重；顺从"
+  },
+  {
+    "word": "delineate",
+    "phonetic": "/dɪˈlɪnieɪt/",
+    "explains": "v. 描绘；勾勒"
+  },
+  {
+    "word": "demonstrative",
+    "phonetic": "/dɪˈmɒnstrətɪv/",
+    "explains": "adj. 感情外露的；指示的"
+  },
+  {
+    "word": "denigrate",
+    "phonetic": "/ˈdenɪɡreɪt/",
+    "explains": "v. 诋毁；贬低"
+  },
+  {
+    "word": "depict",
+    "phonetic": "/dɪˈpɪkt/",
+    "explains": "v. 描绘；描述"
+  },
+  {
+    "word": "deprecate",
+    "phonetic": "/ˈdeprəkeɪt/",
+    "explains": "v. 反对；不赞成"
+  },
+  {
+    "word": "deride",
+    "phonetic": "/dɪˈraɪd/",
+    "explains": "v. 嘲笑；嘲弄"
+  },
+  {
+    "word": "derivative",
+    "phonetic": "/dɪˈrɪvətɪv/",
+    "explains": "adj. 衍生的；缺乏创意的"
+  },
+  {
+    "word": "desiccate",
+    "phonetic": "/ˈdesɪkeɪt/",
+    "explains": "v. 使干燥；脱水"
+  },
+  {
+    "word": "desultory",
+    "phonetic": "/ˈdesəltri/",
+    "explains": "adj. 散漫的；不连贯的"
+  },
+  {
+    "word": "dexterous",
+    "phonetic": "/ˈdekstrəs/",
+    "explains": "adj. 灵巧的；敏捷的"
+  },
+  {
+    "word": "didactic",
+    "phonetic": "/daɪˈdæktɪk/",
+    "explains": "adj. 说教的；教诲的"
+  },
+  {
+    "word": "diffident",
+    "phonetic": "/ˈdɪfɪdənt/",
+    "explains": "adj. 缺乏自信的；羞怯的"
+  },
+  {
+    "word": "dilatory",
+    "phonetic": "/ˈdɪlətri/",
+    "explains": "adj. 拖延的；迟缓的"
+  },
+  {
+    "word": "disabuse",
+    "phonetic": "/ˌdɪsəˈbjuːz/",
+    "explains": "v. 纠正错误观念"
+  },
+  {
+    "word": "discordant",
+    "phonetic": "/dɪsˈkɔːdənt/",
+    "explains": "adj. 不和谐的；不一致的"
+  },
+  {
+    "word": "discrete",
+    "phonetic": "/dɪˈskriːt/",
+    "explains": "adj. 分离的；不连续的"
+  },
+  {
+    "word": "disinterested",
+    "phonetic": "/dɪsˈɪntrəstɪd/",
+    "explains": "adj. 公正的；无私的"
+  },
+  {
+    "word": "disparage",
+    "phonetic": "/dɪˈspærɪdʒ/",
+    "explains": "v. 贬低；轻视"
+  },
+  {
+    "word": "disparate",
+    "phonetic": "/ˈdɪspərət/",
+    "explains": "adj. 不同的；不相干的"
+  },
+  {
+    "word": "dispirit",
+    "phonetic": "/dɪˈspɪrɪt/",
+    "explains": "v. 使沮丧；使气馁"
+  },
+  {
+    "word": "dissemble",
+    "phonetic": "/dɪˈsembl/",
+    "explains": "v. 掩饰；假装"
+  },
+  {
+    "word": "dissolution",
+    "phonetic": "/ˌdɪsəˈluːʃn/",
+    "explains": "n. 溶解；解散"
+  },
+  {
+    "word": "dissonance",
+    "phonetic": "/ˈdɪsənəns/",
+    "explains": "n. 不和谐；不一致"
+  },
+  {
+    "word": "dogmatic",
+    "phonetic": "/dɒɡˈmætɪk/",
+    "explains": "adj. 教条的；武断的"
+  },
+  {
+    "word": "dubious",
+    "phonetic": "/ˈdjuːbiəs/",
+    "explains": "adj. 可疑的；不确定的"
+  },
+  {
+    "word": "duplicity",
+    "phonetic": "/djuːˈplɪsəti/",
+    "explains": "n. 欺骗；奸诈"
+  },
+  {
+    "word": "ebullient",
+    "phonetic": "/ɪˈbʌliənt/",
+    "explains": "adj. 热情洋溢的"
+  },
+  {
+    "word": "eclectic",
+    "phonetic": "/ɪˈklektɪk/",
+    "explains": "adj. 折衷的；兼收并蓄的"
+  },
+  {
+    "word": "effervescent",
+    "phonetic": "/ˌefəˈvesnt/",
+    "explains": "adj. 欢腾的；冒泡的"
+  },
+  {
+    "word": "egregious",
+    "phonetic": "/ɪˈɡriːdʒəs/",
+    "explains": "adj. 极坏的；惊人的"
+  },
+  {
+    "word": "elegy",
+    "phonetic": "/ˈelədʒi/",
+    "explains": "n. 挽歌；哀歌"
+  },
+  {
+    "word": "elicit",
+    "phonetic": "/ɪˈlɪsɪt/",
+    "explains": "v. 引出；诱出"
+  },
+  {
+    "word": "elucidate",
+    "phonetic": "/ɪˈluːsɪdeɪt/",
+    "explains": "v. 阐明；解释"
+  },
+  {
+    "word": "elusive",
+    "phonetic": "/ɪˈluːsɪv/",
+    "explains": "adj. 难以捉摸的"
+  },
+  {
+    "word": "emanate",
+    "phonetic": "/ˈeməneɪt/",
+    "explains": "v. 发出；散发"
+  },
+  {
+    "word": "embellish",
+    "phonetic": "/ɪmˈbelɪʃ/",
+    "explains": "v. 装饰；润色"
+  },
+  {
+    "word": "emulate",
+    "phonetic": "/ˈemjuleɪt/",
+    "explains": "v. 模仿；效仿"
+  },
+  {
+    "word": "encomium",
+    "phonetic": "/enˈkəʊmiəm/",
+    "explains": "n. 颂词；赞美"
+  },
+  {
+    "word": "engender",
+    "phonetic": "/ɪnˈdʒendər/",
+    "explains": "v. 产生；引起"
+  },
+  {
+    "word": "enigmatic",
+    "phonetic": "/ˌenɪɡˈmætɪk/",
+    "explains": "adj. 神秘的；谜一般的"
+  },
+  {
+    "word": "ephemeral",
+    "phonetic": "/ɪˈfemərəl/",
+    "explains": "adj. 短暂的；转瞬即逝的"
+  },
+  {
+    "word": "equanimity",
+    "phonetic": "/ˌekwəˈnɪməti/",
+    "explains": "n. 平静；镇定"
+  },
+  {
+    "word": "equivocate",
+    "phonetic": "/ɪˈkwɪvəkeɪt/",
+    "explains": "v. 含糊其辞；支吾"
+  },
+  {
+    "word": "erudite",
+    "phonetic": "/ˈeruːdaɪt/",
+    "explains": "adj. 博学的；有学问的"
+  },
+  {
+    "word": "esoteric",
+    "phonetic": "/ˌesəˈterɪk/",
+    "explains": "adj. 深奥的；秘传的"
+  },
+  {
+    "word": "exacerbate",
+    "phonetic": "/ɪɡˈzæsəbeɪt/",
+    "explains": "v. 使恶化；加剧"
+  },
+  {
+    "word": "exculpate",
+    "phonetic": "/ˈekskʌlpeɪt/",
+    "explains": "v. 开脱；使无罪"
+  },
+  {
+    "word": "exigent",
+    "phonetic": "/ˈeksɪdʒənt/",
+    "explains": "adj. 紧急的；迫切的"
+  },
+  {
+    "word": "extant",
+    "phonetic": "/ekˈstænt/",
+    "explains": "adj. 现存的；尚存的"
+  },
+  {
+    "word": "extemporaneous",
+    "phonetic": "/ɪkˌstempəˈreɪniəs/",
+    "explains": "adj. 即兴的；临时的"
+  },
+  {
+    "word": "extol",
+    "phonetic": "/ɪkˈstəʊl/",
+    "explains": "v. 赞扬；颂扬"
+  },
+  {
+    "word": "extricate",
+    "phonetic": "/ˈekstrɪkeɪt/",
+    "explains": "v. 解救；使摆脱"
+  },
+  {
+    "word": "facetious",
+    "phonetic": "/fəˈsiːʃəs/",
+    "explains": "adj. 滑稽的；爱开玩笑的"
+  },
+  {
+    "word": "fallacious",
+    "phonetic": "/fəˈleɪʃəs/",
+    "explains": "adj. 谬误的；欺骗的"
+  },
+  {
+    "word": "fastidious",
+    "phonetic": "/fæˈstɪdiəs/",
+    "explains": "adj. 挑剔的；讲究的"
+  },
+  {
+    "word": "fatuous",
+    "phonetic": "/ˈfætʃuəs/",
+    "explains": "adj. 愚蠢的；昏庸的"
+  },
+  {
+    "word": "fecund",
+    "phonetic": "/ˈfiːkənd/",
+    "explains": "adj. 肥沃的；多产的"
+  },
+  {
+    "word": "fell",
+    "phonetic": "/fel/",
+    "explains": "adj. 凶猛的；致命的"
+  },
+  {
+    "word": "fiduciary",
+    "phonetic": "/fɪˈdjuːʃəri/",
+    "explains": "adj. 信托的；受托的"
+  },
+  {
+    "word": "filibuster",
+    "phonetic": "/ˈfɪlɪbʌstər/",
+    "explains": "n. 阻碍议事；冗长演说"
+  },
+  {
+    "word": "fledgling",
+    "phonetic": "/ˈfledʒlɪŋ/",
+    "explains": "n. 幼鸟；新手"
+  },
+  {
+    "word": "florid",
+    "phonetic": "/ˈflɒrɪd/",
+    "explains": "adj. 华丽的；红润的"
+  },
+  {
+    "word": "fluctuate",
+    "phonetic": "/ˈflʌktʃueɪt/",
+    "explains": "v. 波动；起伏"
+  },
+  {
+    "word": "foment",
+    "phonetic": "/fəʊˈment/",
+    "explains": "v. 煽动；助长"
+  },
+  {
+    "word": "forestall",
+    "phonetic": "/fɔːˈstɔːl/",
+    "explains": "v. 预先阻止；先发制人"
+  },
+  {
+    "word": "frugal",
+    "phonetic": "/ˈfruːɡl/",
+    "explains": "adj. 节俭的；朴素的"
+  },
+  {
+    "word": "garrulous",
+    "phonetic": "/ˈɡærələs/",
+    "explains": "adj. 饶舌的；话多的"
+  },
+  {
+    "word": "grandiloquent",
+    "phonetic": "/ɡrænˈdɪləkwənt/",
+    "explains": "adj. 夸张的；言过其实的"
+  },
+  {
+    "word": "gregarious",
+    "phonetic": "/ɡrɪˈɡeəriəs/",
+    "explains": "adj. 群居的；爱社交的"
+  },
+  {
+    "word": "hackneyed",
+    "phonetic": "/ˈhæknid/",
+    "explains": "adj. 陈腐的；老套的"
+  },
+  {
+    "word": "harrowing",
+    "phonetic": "/ˈhærəʊɪŋ/",
+    "explains": "adj. 痛苦的；折磨人的"
+  },
+  {
+    "word": "haughty",
+    "phonetic": "/ˈhɔːti/",
+    "explains": "adj. 傲慢的；高傲的"
+  },
+  {
+    "word": "hegemony",
+    "phonetic": "/hɪˈdʒeməni/",
+    "explains": "n. 霸权；统治权"
+  },
+  {
+    "word": "heterogeneous",
+    "phonetic": "/ˌhetərəˈdʒiːniəs/",
+    "explains": "adj. 异质的；各种各样的"
+  },
+  {
+    "word": "iconoclast",
+    "phonetic": "/aɪˈkɒnəklæst/",
+    "explains": "n. 偶像破坏者；反对传统者"
+  },
+  {
+    "word": "idiosyncratic",
+    "phonetic": "/ˌɪdiəsɪŋˈkrætɪk/",
+    "explains": "adj. 特质的；独有的"
+  },
+  {
+    "word": "ignominious",
+    "phonetic": "/ˌɪɡnəˈmɪniəs/",
+    "explains": "adj. 可耻的；屈辱的"
+  },
+  {
+    "word": "illicit",
+    "phonetic": "/ɪˈlɪsɪt/",
+    "explains": "adj. 违法的；不正当的"
+  },
+  {
+    "word": "imminent",
+    "phonetic": "/ˈɪmɪnənt/",
+    "explains": "adj. 迫在眉睫的；即将发生的"
+  },
+  {
+    "word": "immutable",
+    "phonetic": "/ɪˈmjuːtəbl/",
+    "explains": "adj. 不变的；永恒的"
+  },
+  {
+    "word": "impasse",
+    "phonetic": "/ɪmˈpæs/",
+    "explains": "n. 僵局；死路"
+  },
+  {
+    "word": "impeccable",
+    "phonetic": "/ɪmˈpekəbl/",
+    "explains": "adj. 无瑕疵的；完美的"
+  },
+  {
+    "word": "imperturbable",
+    "phonetic": "/ˌɪmpəˈtɜːbəbl/",
+    "explains": "adj. 沉着的；冷静的"
+  },
+  {
+    "word": "impervious",
+    "phonetic": "/ɪmˈpɜːviəs/",
+    "explains": "adj. 不受影响的；无动于衷的"
+  },
+  {
+    "word": "implicate",
+    "phonetic": "/ˈɪmplɪkeɪt/",
+    "explains": "v. 牵连；涉及"
+  },
+  {
+    "word": "importune",
+    "phonetic": "/ˌɪmpɔːˈtjuːn/",
+    "explains": "v. 强求；纠缠"
+  },
+  {
+    "word": "impugn",
+    "phonetic": "/ɪmˈpjuːn/",
+    "explains": "v. 质疑；抨击"
+  },
+  {
+    "word": "inadvertent",
+    "phonetic": "/ˌɪnədˈvɜːtənt/",
+    "explains": "adj. 无意的；不经意的"
+  },
+  {
+    "word": "incisive",
+    "phonetic": "/ɪnˈsaɪsɪv/",
+    "explains": "adj. 深刻的；锐利的"
+  },
+  {
+    "word": "incontrovertible",
+    "phonetic": "/ɪnˌkɒntrəˈvɜːtəbl/",
+    "explains": "adj. 无可争辩的；不可否认的"
+  },
+  {
+    "word": "indigent",
+    "phonetic": "/ˈɪndɪdʒənt/",
+    "explains": "adj. 贫穷的；贫困的"
+  },
+  {
+    "word": "ineffable",
+    "phonetic": "/ɪnˈefəbl/",
+    "explains": "adj. 难以言表的；不可言喻的"
+  },
+  {
+    "word": "innocuous",
+    "phonetic": "/ɪˈnɒkjuəs/",
+    "explains": "adj. 无害的；无毒的"
+  },
+  {
+    "word": "insidious",
+    "phonetic": "/ɪnˈsɪdiəs/",
+    "explains": "adj. 阴险的；潜在的"
+  },
+  {
+    "word": "intractable",
+    "phonetic": "/ɪnˈtræktəbl/",
+    "explains": "adj. 难处理的；棘手的"
+  },
+  {
+    "word": "intransigent",
+    "phonetic": "/ɪnˈtrænzɪdʒənt/",
+    "explains": "adj. 不妥协的；不让步的"
+  },
+  {
+    "word": "inundate",
+    "phonetic": "/ˈɪnʌndeɪt/",
+    "explains": "v. 淹没；泛滥"
+  },
+  {
+    "word": "inveterate",
+    "phonetic": "/ɪnˈvetərət/",
+    "explains": "adj. 根深蒂固的；成瘾的"
+  },
+  {
+    "word": "irascible",
+    "phonetic": "/ɪˈræsəbl/",
+    "explains": "adj. 易怒的；暴躁的"
+  },
+  {
+    "word": "laconic",
+    "phonetic": "/ləˈkɒnɪk/",
+    "explains": "adj. 简洁的；言简意赅的"
+  },
+  {
+    "word": "languid",
+    "phonetic": "/ˈlæŋɡwɪd/",
+    "explains": "adj. 无精打采的；倦怠的"
+  },
+  {
+    "word": "latent",
+    "phonetic": "/ˈleɪtənt/",
+    "explains": "adj. 潜在的；隐藏的"
+  },
+  {
+    "word": "liaison",
+    "phonetic": "/liˈeɪzɒ̃/",
+    "explains": "n. 联络；联络人"
+  },
+  {
+    "word": "limpid",
+    "phonetic": "/ˈlɪmpɪd/",
+    "explains": "adj. 清澈的；透明的"
+  },
+  {
+    "word": "magnanimous",
+    "phonetic": "/mæɡˈnænɪməs/",
+    "explains": "adj. 宽宏大量的；慷慨的"
+  },
+  {
+    "word": "malleable",
+    "phonetic": "/ˈmæliəbl/",
+    "explains": "adj. 可塑的；易改变的"
+  },
+  {
+    "word": "mendacious",
+    "phonetic": "/menˈdeɪʃəs/",
+    "explains": "adj. 虚假的；撒谎的"
+  },
+  {
+    "word": "mercurial",
+    "phonetic": "/mɜːˈkjʊəriəl/",
+    "explains": "adj. 多变的；反复无常的"
+  },
+  {
+    "word": "meticulous",
+    "phonetic": "/məˈtɪkjələs/",
+    "explains": "adj. 一丝不苟的；仔细的"
+  },
+  {
+    "word": "misanthrope",
+    "phonetic": "/ˈmɪsənθrəʊp/",
+    "explains": "n. 愤世嫉俗者；厌世者"
+  },
+  {
+    "word": "mitigate",
+    "phonetic": "/ˈmɪtɪɡeɪt/",
+    "explains": "v. 减轻；缓和"
+  },
+  {
+    "word": "morose",
+    "phonetic": "/məˈrəʊs/",
+    "explains": "adj. 郁闷的；脾气坏的"
+  },
+  {
+    "word": "munificent",
+    "phonetic": "/mjuːˈnɪfɪsnt/",
+    "explains": "adj. 慷慨的；丰厚的"
+  },
+  {
+    "word": "nefarious",
+    "phonetic": "/nɪˈfeəriəs/",
+    "explains": "adj. 邪恶的；罪恶的"
+  },
+  {
+    "word": "neophyte",
+    "phonetic": "/ˈniːəfaɪt/",
+    "explains": "n. 新手；初学者"
+  },
+  {
+    "word": "nonchalant",
+    "phonetic": "/ˈnɒnʃələnt/",
+    "explains": "adj. 漠不关心的；冷淡的"
+  },
+  {
+    "word": "obdurate",
+    "phonetic": "/ˈɒbdjərət/",
+    "explains": "adj. 固执的；顽固的"
+  },
+  {
+    "word": "obfuscate",
+    "phonetic": "/ˈɒbfʌskeɪt/",
+    "explains": "v. 使模糊；使困惑"
+  },
+  {
+    "word": "obsequious",
+    "phonetic": "/əbˈsiːkwiəs/",
+    "explains": "adj. 奉承的；谄媚的"
+  },
+  {
+    "word": "obstinate",
+    "phonetic": "/ˈɒbstɪnət/",
+    "explains": "adj. 固执的；顽固的"
+  },
+  {
+    "word": "ostentatious",
+    "phonetic": "/ˌɒstenˈteɪʃəs/",
+    "explains": "adj. 炫耀的；卖弄的"
+  },
+  {
+    "word": "parsimonious",
+    "phonetic": "/ˌpɑːsɪˈməʊniəs/",
+    "explains": "adj. 吝啬的；过分节俭的"
+  },
+  {
+    "word": "pedantic",
+    "phonetic": "/pɪˈdæntɪk/",
+    "explains": "adj. 学究式的；迂腐的"
+  },
+  {
+    "word": "penchant",
+    "phonetic": "/ˈpɒ̃ʃɒ̃/",
+    "explains": "n. 嗜好；倾向"
+  },
+  {
+    "word": "perfunctory",
+    "phonetic": "/pəˈfʌŋktri/",
+    "explains": "adj. 敷衍的；马虎的"
+  },
+  {
+    "word": "perspicacious",
+    "phonetic": "/ˌpɜːspɪˈkeɪʃəs/",
+    "explains": "adj. 敏锐的；有洞察力的"
+  },
+  {
+    "word": "pertinacious",
+    "phonetic": "/ˌpɜːtɪˈneɪʃəs/",
+    "explains": "adj. 固执的；坚持不懈的"
+  },
+  {
+    "word": "phlegmatic",
+    "phonetic": "/fleɡˈmætɪk/",
+    "explains": "adj. 冷静的；淡漠的"
+  },
+  {
+    "word": "placate",
+    "phonetic": "/pləˈkeɪt/",
+    "explains": "v. 安抚；平息"
+  },
+  {
+    "word": "plaintive",
+    "phonetic": "/ˈpleɪntɪv/",
+    "explains": "adj. 悲伤的；哀怨的"
+  },
+  {
+    "word": "polemic",
+    "phonetic": "/pəˈlemɪk/",
+    "explains": "n. 争论；辩论文章"
+  },
+  {
+    "word": "pragmatic",
+    "phonetic": "/præɡˈmætɪk/",
+    "explains": "adj. 务实的；实用主义的"
+  },
+  {
+    "word": "precarious",
+    "phonetic": "/prɪˈkeəriəs/",
+    "explains": "adj. 危险的；不确定的"
+  },
+  {
+    "word": "precipitate",
+    "phonetic": "/prɪˈsɪpɪteɪt/",
+    "explains": "v. 加速；促成；adj. 仓促的"
+  },
+  {
+    "word": "preclude",
+    "phonetic": "/prɪˈkluːd/",
+    "explains": "v. 排除；阻止"
+  },
+  {
+    "word": "precocious",
+    "phonetic": "/prɪˈkəʊʃəs/",
+    "explains": "adj. 早熟的；早成的"
+  },
+  {
+    "word": "predilection",
+    "phonetic": "/ˌpriːdɪˈlekʃn/",
+    "explains": "n. 偏爱；嗜好"
+  },
+  {
+    "word": "prescient",
+    "phonetic": "/ˈpresiənt/",
+    "explains": "adj. 有先见之明的"
+  },
+  {
+    "word": "presumptuous",
+    "phonetic": "/prɪˈzʌmptʃuəs/",
+    "explains": "adj. 放肆的；冒昧的"
+  },
+  {
+    "word": "pretentious",
+    "phonetic": "/prɪˈtenʃəs/",
+    "explains": "adj. 自负的；做作的"
+  },
+  {
+    "word": "probity",
+    "phonetic": "/ˈprəʊbəti/",
+    "explains": "n. 正直；诚实"
+  },
+  {
+    "word": "proclivity",
+    "phonetic": "/prəˈklɪvəti/",
+    "explains": "n. 倾向；癖好"
+  },
+  {
+    "word": "prodigious",
+    "phonetic": "/prəˈdɪdʒəs/",
+    "explains": "adj. 巨大的；惊人的"
+  },
+  {
+    "word": "profane",
+    "phonetic": "/prəˈfeɪn/",
+    "explains": "adj. 亵渎的；世俗的"
+  },
+  {
+    "word": "profligate",
+    "phonetic": "/ˈprɒflɪɡət/",
+    "explains": "adj. 挥霍的；浪费的"
+  },
+  {
+    "word": "propensity",
+    "phonetic": "/prəˈpensəti/",
+    "explains": "n. 倾向；习性"
+  },
+  {
+    "word": "prophetic",
+    "phonetic": "/prəˈfetɪk/",
+    "explains": "adj. 预言的；先知的"
+  },
+  {
+    "word": "prosaic",
+    "phonetic": "/prəˈzeɪɪk/",
+    "explains": "adj. 平凡的；乏味的"
+  },
+  {
+    "word": "pungent",
+    "phonetic": "/ˈpʌndʒənt/",
+    "explains": "adj. 辛辣的；刺鼻的"
+  },
+  {
+    "word": "querulous",
+    "phonetic": "/ˈkwerələs/",
+    "explains": "adj. 爱抱怨的；抱怨的"
+  },
+  {
+    "word": "quiescent",
+    "phonetic": "/kwiˈesnt/",
+    "explains": "adj. 静止的；休眠的"
+  },
+  {
+    "word": "quotidian",
+    "phonetic": "/kwɒˈtɪdiən/",
+    "explains": "adj. 每日的；平凡的"
+  },
+  {
+    "word": "rancorous",
+    "phonetic": "/ˈræŋkərəs/",
+    "explains": "adj. 怨恨的；怀恨的"
+  },
+  {
+    "word": "recalcitrant",
+    "phonetic": "/rɪˈkælsɪtrənt/",
+    "explains": "adj. 顽抗的；不服从的"
+  },
+  {
+    "word": "recondite",
+    "phonetic": "/ˈrekəndaɪt/",
+    "explains": "adj. 深奥的；难懂的"
+  },
+  {
+    "word": "redoubtable",
+    "phonetic": "/rɪˈdaʊtəbl/",
+    "explains": "adj. 可敬的；令人敬畏的"
+  },
+  {
+    "word": "replete",
+    "phonetic": "/rɪˈpliːt/",
+    "explains": "adj. 充满的；装满的"
+  },
+  {
+    "word": "repudiate",
+    "phonetic": "/rɪˈpjuːdieɪt/",
+    "explains": "v. 否认；拒绝"
+  },
+  {
+    "word": "rescind",
+    "phonetic": "/rɪˈsɪnd/",
+    "explains": "v. 废除；取消"
+  },
+  {
+    "word": "reticent",
+    "phonetic": "/ˈretɪsənt/",
+    "explains": "adj. 沉默寡言的；有保留的"
+  },
+  {
+    "word": "sagacious",
+    "phonetic": "/səˈɡeɪʃəs/",
+    "explains": "adj. 睿智的；明智的"
+  },
+  {
+    "word": "salubrious",
+    "phonetic": "/səˈluːbriəs/",
+    "explains": "adj. 有益健康的"
+  },
+  {
+    "word": "sanguine",
+    "phonetic": "/ˈsæŋɡwɪn/",
+    "explains": "adj. 乐观的；满怀希望的"
+  },
+  {
+    "word": "surreptitious",
+    "phonetic": "/ˌsʌrəpˈtɪʃəs/",
+    "explains": "adj. 秘密的；暗中的"
+  },
+  {
+    "word": "taciturn",
+    "phonetic": "/ˈtæsɪtɜːn/",
+    "explains": "adj. 沉默寡言的"
+  },
+  {
+    "word": "tenacious",
+    "phonetic": "/təˈneɪʃəs/",
+    "explains": "adj. 坚韧的；顽强的"
+  },
+  {
+    "word": "trepidation",
+    "phonetic": "/ˌtrepɪˈdeɪʃn/",
+    "explains": "n. 恐惧；不安"
+  },
+  {
+    "word": "ubiquitous",
+    "phonetic": "/juːˈbɪkwɪtəs/",
+    "explains": "adj. 无处不在的"
+  },
+  {
+    "word": "unwitting",
+    "phonetic": "/ʌnˈwɪtɪŋ/",
+    "explains": "adj. 无意的；不知情的"
+  },
+  {
+    "word": "vacillate",
+    "phonetic": "/ˈvæsɪleɪt/",
+    "explains": "v. 摇摆不定；犹豫"
+  },
+  {
+    "word": "venal",
+    "phonetic": "/ˈviːnl/",
+    "explains": "adj. 贪污的；腐败的"
+  },
+  {
+    "word": "venerate",
+    "phonetic": "/ˈvenəreɪt/",
+    "explains": "v. 尊敬；崇拜"
+  },
+  {
+    "word": "verbose",
+    "phonetic": "/vɜːˈbəʊs/",
+    "explains": "adj. 冗长的；啰嗦的"
+  },
+  {
+    "word": "vicissitude",
+    "phonetic": "/vɪˈsɪsɪtjuːd/",
+    "explains": "n. 变迁；盛衰"
+  },
+  {
+    "word": "vindictive",
+    "phonetic": "/vɪnˈdɪktɪv/",
+    "explains": "adj. 报复性的；怀恨的"
+  },
+  {
+    "word": "vituperate",
+    "phonetic": "/vɪˈtjuːpəreɪt/",
+    "explains": "v. 谩骂；责骂"
+  },
+  {
+    "word": "vociferous",
+    "phonetic": "/vəˈsɪfərəs/",
+    "explains": "adj. 大声疾呼的；喧哗的"
+  },
+  {
+    "word": "voluble",
+    "phonetic": "/ˈvɒljʊbl/",
+    "explains": "adj. 健谈的；流利的"
+  },
+  {
+    "word": "zealous",
+    "phonetic": "/ˈzeləs/",
+    "explains": "adj. 热心的；热情的"
+  },
+  {
+    "word": "wander",
+    "phonetic": "/ˈwɒndər/",
+    "explains": "v. 漫游；徘徊"
+  },
+  {
+    "word": "want",
+    "phonetic": "/wɒnt/",
+    "explains": "v. 想要；n. 需要；短缺"
+  },
+  {
+    "word": "war",
+    "phonetic": "/wɔːr/",
+    "explains": "n. 战争；v. 作战"
+  },
+  {
+    "word": "ward",
+    "phonetic": "/wɔːd/",
+    "explains": "n. 病房；监护；v. 保护"
+  },
+  {
+    "word": "warm",
+    "phonetic": "/wɔːrm/",
+    "explains": "adj. 温暖的；热情的"
+  },
+  {
+    "word": "warn",
+    "phonetic": "/wɔːrn/",
+    "explains": "v. 警告；提醒"
+  },
+  {
+    "word": "warrant",
+    "phonetic": "/ˈwɒrənt/",
+    "explains": "n. 授权令；正当理由；v. 保证"
+  },
+  {
+    "word": "warrior",
+    "phonetic": "/ˈwɒriər/",
+    "explains": "n. 战士；勇士"
+  },
+  {
+    "word": "wash",
+    "phonetic": "/wɒʃ/",
+    "explains": "v. 洗；n. 洗涤"
+  },
+  {
+    "word": "waste",
+    "phonetic": "/weɪst/",
+    "explains": "v. 浪费；n. 废物；adj. 荒芜的"
+  },
+  {
+    "word": "watch",
+    "phonetic": "/wɒtʃ/",
+    "explains": "v. 观看；看守；n. 手表；看守"
+  },
+  {
+    "word": "water",
+    "phonetic": "/ˈwɔːtər/",
+    "explains": "n. 水；v. 浇水"
+  },
+  {
+    "word": "wave",
+    "phonetic": "/weɪv/",
+    "explains": "n. 波浪；v. 挥手；波动"
+  },
+  {
+    "word": "way",
+    "phonetic": "/weɪ/",
+    "explains": "n. 道路；方法；方式"
+  },
+  {
+    "word": "weak",
+    "phonetic": "/wiːk/",
+    "explains": "adj. 虚弱的；薄弱的"
+  },
+  {
+    "word": "wealth",
+    "phonetic": "/welθ/",
+    "explains": "n. 财富；丰富"
+  },
+  {
+    "word": "wealthy",
+    "phonetic": "/ˈwelθi/",
+    "explains": "adj. 富有的"
+  },
+  {
+    "word": "weapon",
+    "phonetic": "/ˈwepən/",
+    "explains": "n. 武器"
+  },
+  {
+    "word": "wear",
+    "phonetic": "/weər/",
+    "explains": "v. 穿戴；磨损"
+  },
+  {
+    "word": "weary",
+    "phonetic": "/ˈwɪəri/",
+    "explains": "adj. 疲倦的；厌倦的"
+  },
+  {
+    "word": "weather",
+    "phonetic": "/ˈweðər/",
+    "explains": "n. 天气；v. 经受住"
+  },
+  {
+    "word": "weave",
+    "phonetic": "/wiːv/",
+    "explains": "v. 编织；编造"
+  },
+  {
+    "word": "web",
+    "phonetic": "/web/",
+    "explains": "n. 网；网络"
+  },
+  {
+    "word": "wedding",
+    "phonetic": "/ˈwedɪŋ/",
+    "explains": "n. 婚礼"
+  },
+  {
+    "word": "wedge",
+    "phonetic": "/wedʒ/",
+    "explains": "n. 楔子；v. 挤入"
+  },
+  {
+    "word": "weed",
+    "phonetic": "/wiːd/",
+    "explains": "n. 杂草；v. 除草"
+  },
+  {
+    "word": "week",
+    "phonetic": "/wiːk/",
+    "explains": "n. 周；星期"
+  },
+  {
+    "word": "weekend",
+    "phonetic": "/ˈwiːkend/",
+    "explains": "n. 周末"
+  },
+  {
+    "word": "weekly",
+    "phonetic": "/ˈwiːkli/",
+    "explains": "adj. 每周的；n. 周刊"
+  },
+  {
+    "word": "weep",
+    "phonetic": "/wiːp/",
+    "explains": "v. 哭泣；流泪"
+  },
+  {
+    "word": "weigh",
+    "phonetic": "/weɪ/",
+    "explains": "v. 称重；权衡"
+  },
+  {
+    "word": "weight",
+    "phonetic": "/weɪt/",
+    "explains": "n. 重量；重要性"
+  },
+  {
+    "word": "weird",
+    "phonetic": "/wɪəd/",
+    "explains": "adj. 奇怪的；怪异的"
+  },
+  {
+    "word": "welcome",
+    "phonetic": "/ˈwelkəm/",
+    "explains": "adj. 受欢迎的；v. 欢迎"
+  },
+  {
+    "word": "weld",
+    "phonetic": "/weld/",
+    "explains": "v. 焊接；n. 焊接点"
+  },
+  {
+    "word": "welfare",
+    "phonetic": "/ˈwelfeər/",
+    "explains": "n. 福利；幸福"
+  },
+  {
+    "word": "well",
+    "phonetic": "/wel/",
+    "explains": "adj. 健康的；adv. 好；n. 井"
+  },
+  {
+    "word": "well-known",
+    "phonetic": "/ˌwelˈnəʊn/",
+    "explains": "adj. 著名的；众所周知的"
+  },
+  {
+    "word": "west",
+    "phonetic": "/west/",
+    "explains": "n. 西方；adj. 西方的；adv. 向西"
+  },
+  {
+    "word": "western",
+    "phonetic": "/ˈwestərn/",
+    "explains": "adj. 西方的；n. 西部电影"
+  },
+  {
+    "word": "wet",
+    "phonetic": "/wet/",
+    "explains": "adj. 湿的；v. 弄湿"
+  },
+  {
+    "word": "whale",
+    "phonetic": "/weɪl/",
+    "explains": "n. 鲸鱼"
+  },
+  {
+    "word": "what",
+    "phonetic": "/wɒt/",
+    "explains": "pron. 什么；adj. 什么样的"
+  },
+  {
+    "word": "whatever",
+    "phonetic": "/wɒtˈevər/",
+    "explains": "adj. 无论什么；pron. 无论什么"
+  },
+  {
+    "word": "whatsoever",
+    "phonetic": "/ˌwɒtsəʊˈevər/",
+    "explains": "adv. 无论；丝毫"
+  },
+  {
+    "word": "wheel",
+    "phonetic": "/wiːl/",
+    "explains": "n. 轮子；v. 推动"
+  },
+  {
+    "word": "when",
+    "phonetic": "/wen/",
+    "explains": "adv. 什么时候；conj. 当...时"
+  },
+  {
+    "word": "whenever",
+    "phonetic": "/wenˈevər/",
+    "explains": "adv. 无论何时；conj. 每当"
+  },
+  {
+    "word": "where",
+    "phonetic": "/weər/",
+    "explains": "adv. 在哪里；conj. 在...的地方"
+  },
+  {
+    "word": "whereas",
+    "phonetic": "/weərˈæz/",
+    "explains": "conj. 然而；鉴于"
+  },
+  {
+    "word": "whereby",
+    "phonetic": "/weəˈbaɪ/",
+    "explains": "adv. 凭此；靠那个"
+  },
+  {
+    "word": "wherever",
+    "phonetic": "/weərˈevər/",
+    "explains": "adv. 无论哪里；conj. 无论在哪里"
+  },
+  {
+    "word": "whether",
+    "phonetic": "/ˈweðər/",
+    "explains": "conj. 是否；无论"
+  },
+  {
+    "word": "which",
+    "phonetic": "/wɪtʃ/",
+    "explains": "pron. 哪一个；adj. 哪一个"
+  },
+  {
+    "word": "whichever",
+    "phonetic": "/wɪtʃˈevər/",
+    "explains": "pron. 无论哪个；adj. 无论哪个"
+  },
+  {
+    "word": "while",
+    "phonetic": "/waɪl/",
+    "explains": "conj. 当...时；n. 一会儿"
+  },
+  {
+    "word": "whip",
+    "phonetic": "/wɪp/",
+    "explains": "n. 鞭子；v. 鞭打"
+  },
+  {
+    "word": "whirl",
+    "phonetic": "/wɜːrl/",
+    "explains": "v. 旋转；眩晕"
+  },
+  {
+    "word": "whisper",
+    "phonetic": "/ˈwɪspər/",
+    "explains": "v. 低语；n. 耳语"
+  },
+  {
+    "word": "whistle",
+    "phonetic": "/ˈwɪsl/",
+    "explains": "v. 吹口哨；n. 哨子"
+  },
+  {
+    "word": "white",
+    "phonetic": "/waɪt/",
+    "explains": "adj. 白色的；n. 白色"
+  },
+  {
+    "word": "who",
+    "phonetic": "/huː/",
+    "explains": "pron. 谁；那个人"
+  },
+  {
+    "word": "whoever",
+    "phonetic": "/huːˈevər/",
+    "explains": "pron. 无论谁"
+  },
+  {
+    "word": "whole",
+    "phonetic": "/həʊl/",
+    "explains": "adj. 整个的；完整的；n. 全部"
+  },
+  {
+    "word": "wholesale",
+    "phonetic": "/ˈhəʊlseɪl/",
+    "explains": "n. 批发；adj. 批发的"
+  },
+  {
+    "word": "wholly",
+    "phonetic": "/ˈhəʊlli/",
+    "explains": "adv. 完全地；全部地"
+  },
+  {
+    "word": "whom",
+    "phonetic": "/huːm/",
+    "explains": "pron. 谁（宾格）"
+  },
+  {
+    "word": "whose",
+    "phonetic": "/huːz/",
+    "explains": "pron. 谁的"
+  },
+  {
+    "word": "why",
+    "phonetic": "/waɪ/",
+    "explains": "adv. 为什么；int. 哎呀"
+  },
+  {
+    "word": "wicked",
+    "phonetic": "/ˈwɪkɪd/",
+    "explains": "adj. 邪恶的；恶劣的"
+  },
+  {
+    "word": "wide",
+    "phonetic": "/waɪd/",
+    "explains": "adj. 宽广的；adv. 广泛地"
+  },
+  {
+    "word": "widen",
+    "phonetic": "/ˈwaɪdn/",
+    "explains": "v. 加宽；扩大"
+  },
+  {
+    "word": "widespread",
+    "phonetic": "/ˈwaɪdspred/",
+    "explains": "adj. 广泛的；普及的"
+  },
+  {
+    "word": "widow",
+    "phonetic": "/ˈwɪdəʊ/",
+    "explains": "n. 寡妇"
+  },
+  {
+    "word": "widower",
+    "phonetic": "/ˈwɪdəʊər/",
+    "explains": "n. 鳏夫"
+  },
+  {
+    "word": "width",
+    "phonetic": "/wɪdθ/",
+    "explains": "n. 宽度"
+  },
+  {
+    "word": "wife",
+    "phonetic": "/waɪf/",
+    "explains": "n. 妻子"
+  },
+  {
+    "word": "wild",
+    "phonetic": "/waɪld/",
+    "explains": "adj. 野生的；荒凉的；狂野的"
+  },
+  {
+    "word": "will",
+    "phonetic": "/wɪl/",
+    "explains": "aux. 将；n. 意志；遗嘱"
+  },
+  {
+    "word": "willing",
+    "phonetic": "/ˈwɪlɪŋ/",
+    "explains": "adj. 愿意的；乐意的"
+  },
+  {
+    "word": "willow",
+    "phonetic": "/ˈwɪləʊ/",
+    "explains": "n. 柳树"
+  },
+  {
+    "word": "win",
+    "phonetic": "/wɪn/",
+    "explains": "v. 赢；获胜；n. 胜利"
+  },
+  {
+    "word": "wind",
+    "phonetic": "/wɪnd/",
+    "explains": "n. 风；v. 缠绕"
+  },
+  {
+    "word": "window",
+    "phonetic": "/ˈwɪndəʊ/",
+    "explains": "n. 窗户"
+  },
+  {
+    "word": "wine",
+    "phonetic": "/waɪn/",
+    "explains": "n. 葡萄酒；酒"
+  },
+  {
+    "word": "wing",
+    "phonetic": "/wɪŋ/",
+    "explains": "n. 翅膀；翼"
+  },
+  {
+    "word": "wink",
+    "phonetic": "/wɪŋk/",
+    "explains": "v. 眨眼；n. 眨眼"
+  },
+  {
+    "word": "winter",
+    "phonetic": "/ˈwɪntər/",
+    "explains": "n. 冬天"
+  },
+  {
+    "word": "wipe",
+    "phonetic": "/waɪp/",
+    "explains": "v. 擦；擦拭"
+  },
+  {
+    "word": "wire",
+    "phonetic": "/ˈwaɪər/",
+    "explains": "n. 电线；金属丝"
+  }
 ]

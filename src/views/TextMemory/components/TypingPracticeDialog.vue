@@ -90,6 +90,9 @@
         <el-button type="success" @click="handleFinish" :disabled="isFinished || userInput.length === 0">
           <el-icon><Check /></el-icon> 完成
         </el-button>
+        <el-button type="warning" @click="loadProgress" :disabled="!hasSavedProgress">
+          恢复进度
+        </el-button>
       </div>
 
       <!-- 结果显示 -->
@@ -114,7 +117,10 @@
 import { ref, computed, watch, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Refresh, VideoPause, VideoPlay, Check } from '@element-plus/icons-vue';
+import { useTextMemoryStore } from '@/stores/textMemory';
 import type { TextArticle } from '@/types/text-memory';
+
+const textStore = useTextMemoryStore();
 
 interface Props {
   modelValue: boolean;
@@ -196,9 +202,34 @@ const resultSubtitle = computed(() => {
 // 监听对话框打开
 watch(() => props.modelValue, (newVal) => {
   if (newVal && props.article) {
-    resetPractice();
+    // 尝试加载上次的进度
+    const savedProgress = textStore.getLearningProgress(props.article._id, 'typing');
+    if (savedProgress?.progress?.userInput && !savedProgress.progress.isFinished) {
+      restoreProgress(savedProgress.progress);
+      ElMessage.info('已恢复上次的练习进度');
+    } else {
+      resetPractice();
+    }
   }
 });
+
+// 是否有保存的进度
+const hasSavedProgress = computed(() => {
+  if (!props.article) return false;
+  const progress = textStore.getLearningProgress(props.article._id, 'typing');
+  return !!progress?.progress?.userInput && !progress?.progress?.isFinished;
+});
+
+// 恢复进度
+function restoreProgress(savedProgress: any) {
+  userInput.value = savedProgress.userInput || '';
+  typedStatus.value = savedProgress.typedStatus || [];
+  currentIndex.value = savedProgress.currentIndex || 0;
+  elapsedTime.value = savedProgress.elapsedTime || 0;
+  wpm.value = savedProgress.wpm || 0;
+  isFinished.value = false;
+  isPaused.value = false;
+}
 
 // 对话框打开后的处理
 function handleOpened() {
@@ -315,7 +346,7 @@ function handleFinish() {
 }
 
 // 保存练习记录
-function savePracticeRecord() {
+async function savePracticeRecord() {
   if (!props.article) return;
   
   const record = {
@@ -335,6 +366,30 @@ function savePracticeRecord() {
     history.pop();
   }
   localStorage.setItem('typing_practice_history', JSON.stringify(history));
+
+  // 保存当前进度到 store
+  const progress = {
+    userInput: userInput.value,
+    typedStatus: typedStatus.value,
+    currentIndex: currentIndex.value,
+    elapsedTime: elapsedTime.value,
+    wpm: wpm.value,
+    isFinished: isFinished.value
+  };
+  await textStore.saveLearningProgress(props.article._id, 'typing', progress);
+}
+
+// 加载进度
+function loadProgress() {
+  if (!props.article) return;
+  
+  const savedProgress = textStore.getLearningProgress(props.article._id, 'typing');
+  if (savedProgress?.progress?.userInput && !savedProgress.progress.isFinished) {
+    restoreProgress(savedProgress.progress);
+    ElMessage.success('进度已恢复');
+  } else {
+    ElMessage.warning('没有找到保存的进度');
+  }
 }
 
 // 重置练习

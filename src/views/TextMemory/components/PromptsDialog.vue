@@ -3,7 +3,7 @@
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     title="提示词管理"
-    width="900px"
+    width="750px"
     destroy-on-close
     class="prompts-dialog"
   >

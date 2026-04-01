@@ -249,7 +249,7 @@ export async function importFromBuiltinWordBank(
 ): Promise<{ success: boolean; count: number }> {
   try {
     const { fetchWordBank } = await import('./wordbank-service');
-    const words = await fetchWordBank(builtinBankType as any, true);
+    const words = await fetchWordBank(builtinBankType as any, { priority: 'online', useCache: true });
     
     if (words.length === 0) {
       return { success: false, count: 0 };

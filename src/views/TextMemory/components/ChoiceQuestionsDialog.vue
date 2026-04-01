@@ -3,7 +3,7 @@
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     title="选择题练习"
-    width="800px"
+    width="750px"
     destroy-on-close
     class="choice-questions-dialog"
   >
@@ -124,6 +124,8 @@
         <div class="actions">
           <el-button @click="resetQuestions">重置</el-button>
           <el-button type="primary" @click="submitAnswers">提交答案</el-button>
+          <el-button type="success" @click="saveProgress">保存进度</el-button>
+          <el-button type="warning" @click="loadProgress" :disabled="!hasSavedProgress">恢复进度</el-button>
         </div>
       </div>
     </div>
@@ -181,9 +183,25 @@ const progressStatus = computed(() => {
 // 监听文章变化
 watch(() => props.article, (newArticle) => {
   if (newArticle) {
-    generateNewQuestions();
+    // 尝试加载上次的进度
+    const savedProgress = textStore.getLearningProgress(newArticle._id, 'choice');
+    if (savedProgress?.progress?.questions) {
+      questionCount.value = savedProgress.progress.questionCount || 5;
+      selectedTypes.value = savedProgress.progress.selectedTypes || ['synonym', 'antonym', 'typo', 'nonsense'];
+      questions.value = savedProgress.progress.questions;
+      ElMessage.info('已恢复上次的练习进度');
+    } else {
+      generateNewQuestions();
+    }
   }
 }, { immediate: true });
+
+// 是否有保存的进度
+const hasSavedProgress = computed(() => {
+  if (!props.article) return false;
+  const progress = textStore.getLearningProgress(props.article._id, 'choice');
+  return !!progress?.progress?.questions?.length;
+});
 
 // 生成新题目
 function generateNewQuestions() {
@@ -256,6 +274,44 @@ function resetQuestions() {
     question.userAnswerIndex = undefined;
   });
   ElMessage.info('已重置所有答案');
+}
+
+// 保存进度
+async function saveProgress() {
+  if (!props.article) return;
+  
+  const progress = {
+    questionCount: questionCount.value,
+    selectedTypes: selectedTypes.value,
+    questions: questions.value
+  };
+  
+  const success = await textStore.saveLearningProgress(
+    props.article._id,
+    'choice',
+    progress
+  );
+  
+  if (success) {
+    ElMessage.success('进度已保存');
+  } else {
+    ElMessage.error('保存进度失败');
+  }
+}
+
+// 加载进度
+function loadProgress() {
+  if (!props.article) return;
+  
+  const savedProgress = textStore.getLearningProgress(props.article._id, 'choice');
+  if (savedProgress?.progress?.questions) {
+    questionCount.value = savedProgress.progress.questionCount || 5;
+    selectedTypes.value = savedProgress.progress.selectedTypes || ['synonym', 'antonym', 'typo', 'nonsense'];
+    questions.value = savedProgress.progress.questions;
+    ElMessage.success('进度已恢复');
+  } else {
+    ElMessage.warning('没有找到保存的进度');
+  }
 }
 
 // 获取题型标签

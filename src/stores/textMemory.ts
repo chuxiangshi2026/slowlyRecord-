@@ -9,17 +9,38 @@ import type {
   TextMemoryState,
   BlankItem
 } from '@/types/text-memory';
+import cloneDeep from 'lodash.clonedeep';
 
-// 数据库名称
-const DB_NAME = 'slowlyrecord-textmemory';
+// 存储键名
+const TEXTMEMORY_DOC_ID = 'slowlyrecord-textmemory-data';
+const TEXTMEMORY_PROGRESS_KEY = 'slowlyrecord-textmemory-progress';
+
+// 文本记忆数据结构
+interface TextMemoryDoc {
+  _id: string;
+  _rev?: string;
+  type: 'textmemory';
+  articles: TextArticle[];
+  notes: TextNote[];
+  prompts: TextPrompt[];
+  updatedAt: number;
+}
+
+// 学习进度数据结构
+interface LearningProgress {
+  articleId: string;
+  exerciseType: 'fillBlanks' | 'choice' | 'typing';
+  progress: any;
+  lastAccessTime: number;
+}
 
 // 获取 uTools db 实例
 function getDb() {
-  if (typeof utools === 'undefined' || !utools.db) {
+  if (typeof window === 'undefined' || !window.utools?.db) {
     console.warn('uTools db 不可用');
     return null;
   }
-  return utools.db;
+  return window.utools.db;
 }
 
 // 生成唯一ID
@@ -85,6 +106,56 @@ export const useTextMemoryStore = defineStore('textMemory', {
   },
 
   actions: {
+    // ============ 数据库操作 ============
+
+    /**
+     * 获取文本记忆文档
+     */
+    async getTextMemoryDoc(): Promise<TextMemoryDoc | null> {
+      try {
+        const db = getDb();
+        if (!db) return null;
+        const doc = await db.promises.get(TEXTMEMORY_DOC_ID) as TextMemoryDoc | null;
+        return doc;
+      } catch (e) {
+        console.error('获取文本记忆文档失败:', e);
+        return null;
+      }
+    },
+
+    /**
+     * 保存文本记忆文档
+     */
+    async saveTextMemoryDoc(data: Partial<TextMemoryDoc>): Promise<boolean> {
+      try {
+        const db = getDb();
+        if (!db) {
+          console.warn('数据库不可用，数据将保存在内存中');
+          return false;
+        }
+
+        const existingDoc = await this.getTextMemoryDoc();
+        const doc: TextMemoryDoc = {
+          _id: TEXTMEMORY_DOC_ID,
+          type: 'textmemory',
+          articles: data.articles ?? existingDoc?.articles ?? [],
+          notes: data.notes ?? existingDoc?.notes ?? [],
+          prompts: data.prompts ?? existingDoc?.prompts ?? [],
+          updatedAt: Date.now()
+        };
+
+        if (existingDoc?._rev) {
+          doc._rev = existingDoc._rev;
+        }
+
+        const result = await db.promises.put(doc);
+        return result.ok;
+      } catch (e) {
+        console.error('保存文本记忆文档失败:', e);
+        return false;
+      }
+    },
+
     // ============ 文章操作 ============
 
     /**
@@ -93,14 +164,12 @@ export const useTextMemoryStore = defineStore('textMemory', {
     async loadArticles() {
       this.loading = true;
       try {
-        const db = getDb();
-        if (!db) {
+        const doc = await this.getTextMemoryDoc();
+        if (doc?.articles && Array.isArray(doc.articles)) {
+          this.articles = cloneDeep(doc.articles);
+        } else {
           this.articles = [];
-          return;
         }
-
-        const docs = db.allDocs(DB_NAME);
-        this.articles = docs.filter((doc: any) => doc._id.startsWith('article_')) as TextArticle[];
       } catch (error) {
         console.error('加载文章失败:', error);
         this.articles = [];
@@ -114,9 +183,6 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async addArticle(article: Omit<TextArticle, '_id' | '_rev' | 'ctime' | 'utime' | 'reviewCount'>) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
-
         const now = Date.now();
         const newArticle: TextArticle = {
           ...article,
@@ -126,12 +192,12 @@ export const useTextMemoryStore = defineStore('textMemory', {
           reviewCount: 0
         };
 
-        const result = db.put({
-          ...newArticle
-        });
+        const doc = await this.getTextMemoryDoc();
+        const articles = doc?.articles ? cloneDeep(doc.articles) : [];
+        articles.push(newArticle);
 
-        if (result.ok) {
-          newArticle._rev = result.rev;
+        const success = await this.saveTextMemoryDoc({ articles });
+        if (success) {
           this.articles.push(newArticle);
           return { success: true, data: newArticle };
         }
@@ -147,23 +213,27 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async updateArticle(article: TextArticle) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
-
         const updatedArticle = {
           ...article,
           utime: Date.now()
         };
 
-        const result = db.put({
-          ...updatedArticle
-        });
+        const doc = await this.getTextMemoryDoc();
+        if (!doc?.articles) {
+          return { success: false, error: '数据不存在' };
+        }
 
-        if (result.ok) {
-          updatedArticle._rev = result.rev;
-          const index = this.articles.findIndex(a => a._id === updatedArticle._id);
-          if (index !== -1) {
-            this.articles[index] = updatedArticle;
+        const articles = cloneDeep(doc.articles);
+        const index = articles.findIndex((a: TextArticle) => a._id === updatedArticle._id);
+        if (index !== -1) {
+          articles[index] = updatedArticle;
+        }
+
+        const success = await this.saveTextMemoryDoc({ articles });
+        if (success) {
+          const localIndex = this.articles.findIndex(a => a._id === updatedArticle._id);
+          if (localIndex !== -1) {
+            this.articles[localIndex] = updatedArticle;
           }
           if (this.currentArticle?._id === updatedArticle._id) {
             this.currentArticle = updatedArticle;
@@ -182,32 +252,37 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async deleteArticle(articleId: string) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
+        const doc = await this.getTextMemoryDoc();
+        if (!doc) return { success: false, error: '数据不存在' };
 
         const article = this.articles.find(a => a._id === articleId);
         if (!article) return { success: false, error: '文章不存在' };
 
         // 删除文章
-        db.remove(article);
-
+        const articles = doc.articles.filter((a: TextArticle) => a._id !== articleId);
+        
         // 删除关联的笔记
-        const notes = db.allDocs(DB_NAME).filter((doc: any) => doc.articleId === articleId);
-        notes.forEach((note: any) => db.remove(note));
-
+        const notes = doc.notes.filter((n: TextNote) => n.articleId !== articleId);
+        
         // 删除关联的提示词
-        const prompts = db.allDocs(DB_NAME).filter((doc: any) => doc.articleId === articleId);
-        prompts.forEach((prompt: any) => db.remove(prompt));
+        const prompts = doc.prompts.filter((p: TextPrompt) => p.articleId !== articleId);
 
-        this.articles = this.articles.filter(a => a._id !== articleId);
-
-        if (this.currentArticle?._id === articleId) {
-          this.currentArticle = null;
-          this.currentNotes = [];
-          this.currentPrompts = [];
+        const success = await this.saveTextMemoryDoc({ articles, notes, prompts });
+        if (success) {
+          this.articles = this.articles.filter(a => a._id !== articleId);
+          
+          if (this.currentArticle?._id === articleId) {
+            this.currentArticle = null;
+            this.currentNotes = [];
+            this.currentPrompts = [];
+          }
+          
+          // 删除该文章的学习进度
+          this.clearLearningProgress(articleId);
+          
+          return { success: true };
         }
-
-        return { success: true };
+        return { success: false, error: '删除失败' };
       } catch (error) {
         console.error('删除文章失败:', error);
         return { success: false, error: String(error) };
@@ -247,16 +322,14 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async loadNotes(articleId: string) {
       try {
-        const db = getDb();
-        if (!db) {
+        const doc = await this.getTextMemoryDoc();
+        if (doc?.notes && Array.isArray(doc.notes)) {
+          this.currentNotes = doc.notes
+            .filter((n: TextNote) => n.articleId === articleId)
+            .sort((a: TextNote, b: TextNote) => b.ctime - a.ctime);
+        } else {
           this.currentNotes = [];
-          return;
         }
-
-        const docs = db.allDocs(DB_NAME);
-        this.currentNotes = (docs
-          .filter((doc: any) => doc._id.startsWith('note_') && doc.articleId === articleId) as TextNote[])
-          .sort((a: TextNote, b: TextNote) => b.ctime - a.ctime);
       } catch (error) {
         console.error('加载笔记失败:', error);
         this.currentNotes = [];
@@ -268,21 +341,18 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async addNote(note: Omit<TextNote, '_id' | '_rev' | 'ctime'>) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
-
         const newNote: TextNote = {
           ...note,
           _id: `note_${generateId()}`,
           ctime: Date.now()
         };
 
-        const result = db.put({
-          ...newNote
-        });
+        const doc = await this.getTextMemoryDoc();
+        const notes = doc?.notes ? cloneDeep(doc.notes) : [];
+        notes.push(newNote);
 
-        if (result.ok) {
-          newNote._rev = result.rev;
+        const success = await this.saveTextMemoryDoc({ notes });
+        if (success) {
           this.currentNotes.unshift(newNote);
           return { success: true, data: newNote };
         }
@@ -298,20 +368,24 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async updateNote(note: TextNote) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
-
         note.utime = Date.now();
 
-        const result = db.put({
-          ...note
-        });
+        const doc = await this.getTextMemoryDoc();
+        if (!doc?.notes) {
+          return { success: false, error: '数据不存在' };
+        }
 
-        if (result.ok) {
-          note._rev = result.rev;
-          const index = this.currentNotes.findIndex(n => n._id === note._id);
-          if (index !== -1) {
-            this.currentNotes[index] = note;
+        const notes = cloneDeep(doc.notes);
+        const index = notes.findIndex((n: TextNote) => n._id === note._id);
+        if (index !== -1) {
+          notes[index] = note;
+        }
+
+        const success = await this.saveTextMemoryDoc({ notes });
+        if (success) {
+          const localIndex = this.currentNotes.findIndex(n => n._id === note._id);
+          if (localIndex !== -1) {
+            this.currentNotes[localIndex] = note;
           }
           return { success: true, data: note };
         }
@@ -327,16 +401,22 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async deleteNote(noteId: string) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
+        const doc = await this.getTextMemoryDoc();
+        if (!doc?.notes) {
+          return { success: false, error: '数据不存在' };
+        }
 
         const note = this.currentNotes.find(n => n._id === noteId);
         if (!note) return { success: false, error: '笔记不存在' };
 
-        db.remove(note);
-        this.currentNotes = this.currentNotes.filter(n => n._id !== noteId);
-
-        return { success: true };
+        const notes = doc.notes.filter((n: TextNote) => n._id !== noteId);
+        const success = await this.saveTextMemoryDoc({ notes });
+        
+        if (success) {
+          this.currentNotes = this.currentNotes.filter(n => n._id !== noteId);
+          return { success: true };
+        }
+        return { success: false, error: '删除失败' };
       } catch (error) {
         console.error('删除笔记失败:', error);
         return { success: false, error: String(error) };
@@ -350,16 +430,14 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async loadPrompts(articleId: string) {
       try {
-        const db = getDb();
-        if (!db) {
+        const doc = await this.getTextMemoryDoc();
+        if (doc?.prompts && Array.isArray(doc.prompts)) {
+          this.currentPrompts = doc.prompts
+            .filter((p: TextPrompt) => p.articleId === articleId)
+            .sort((a: TextPrompt, b: TextPrompt) => a.order - b.order);
+        } else {
           this.currentPrompts = [];
-          return;
         }
-
-        const docs = db.allDocs(DB_NAME);
-        this.currentPrompts = (docs
-          .filter((doc: any) => doc._id.startsWith('prompt_') && doc.articleId === articleId) as TextPrompt[])
-          .sort((a: TextPrompt, b: TextPrompt) => a.order - b.order);
       } catch (error) {
         console.error('加载提示词失败:', error);
         this.currentPrompts = [];
@@ -371,21 +449,18 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async addPrompt(prompt: Omit<TextPrompt, '_id' | '_rev' | 'ctime'>) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
-
         const newPrompt: TextPrompt = {
           ...prompt,
           _id: `prompt_${generateId()}`,
           ctime: Date.now()
         };
 
-        const result = db.put({
-          ...newPrompt
-        });
+        const doc = await this.getTextMemoryDoc();
+        const prompts = doc?.prompts ? cloneDeep(doc.prompts) : [];
+        prompts.push(newPrompt);
 
-        if (result.ok) {
-          newPrompt._rev = result.rev;
+        const success = await this.saveTextMemoryDoc({ prompts });
+        if (success) {
           this.currentPrompts.push(newPrompt);
           this.currentPrompts.sort((a, b) => a.order - b.order);
           return { success: true, data: newPrompt };
@@ -402,18 +477,22 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async updatePrompt(prompt: TextPrompt) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
+        const doc = await this.getTextMemoryDoc();
+        if (!doc?.prompts) {
+          return { success: false, error: '数据不存在' };
+        }
 
-        const result = db.put({
-          ...prompt
-        });
+        const prompts = cloneDeep(doc.prompts);
+        const index = prompts.findIndex((p: TextPrompt) => p._id === prompt._id);
+        if (index !== -1) {
+          prompts[index] = prompt;
+        }
 
-        if (result.ok) {
-          prompt._rev = result.rev;
-          const index = this.currentPrompts.findIndex(p => p._id === prompt._id);
-          if (index !== -1) {
-            this.currentPrompts[index] = prompt;
+        const success = await this.saveTextMemoryDoc({ prompts });
+        if (success) {
+          const localIndex = this.currentPrompts.findIndex(p => p._id === prompt._id);
+          if (localIndex !== -1) {
+            this.currentPrompts[localIndex] = prompt;
           }
           return { success: true, data: prompt };
         }
@@ -429,16 +508,22 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     async deletePrompt(promptId: string) {
       try {
-        const db = getDb();
-        if (!db) throw new Error('数据库不可用');
+        const doc = await this.getTextMemoryDoc();
+        if (!doc?.prompts) {
+          return { success: false, error: '数据不存在' };
+        }
 
         const prompt = this.currentPrompts.find(p => p._id === promptId);
         if (!prompt) return { success: false, error: '提示词不存在' };
 
-        db.remove(prompt);
-        this.currentPrompts = this.currentPrompts.filter(p => p._id !== promptId);
-
-        return { success: true };
+        const prompts = doc.prompts.filter((p: TextPrompt) => p._id !== promptId);
+        const success = await this.saveTextMemoryDoc({ prompts });
+        
+        if (success) {
+          this.currentPrompts = this.currentPrompts.filter(p => p._id !== promptId);
+          return { success: true };
+        }
+        return { success: false, error: '删除失败' };
       } catch (error) {
         console.error('删除提示词失败:', error);
         return { success: false, error: String(error) };
@@ -453,7 +538,15 @@ export const useTextMemoryStore = defineStore('textMemory', {
       // 批量更新顺序
       for (let i = 0; i < prompts.length; i++) {
         prompts[i].order = i;
-        await this.updatePrompt(prompts[i]);
+      }
+      // 保存所有提示词
+      const doc = await this.getTextMemoryDoc();
+      if (doc) {
+        const allPrompts = doc.prompts.filter((p: TextPrompt) => 
+          !this.currentPrompts.some(cp => cp._id === p._id)
+        );
+        allPrompts.push(...cloneDeep(prompts));
+        await this.saveTextMemoryDoc({ prompts: allPrompts });
       }
     },
 
@@ -707,6 +800,97 @@ export const useTextMemoryStore = defineStore('textMemory', {
      */
     resetSettings() {
       this.exerciseSettings = { ...defaultSettings };
+    },
+
+    // ============ 学习进度操作 ============
+
+    /**
+     * 保存学习进度
+     */
+    async saveLearningProgress(
+      articleId: string,
+      exerciseType: 'fillBlanks' | 'choice' | 'typing',
+      progress: any
+    ): Promise<boolean> {
+      try {
+        const progressData: LearningProgress = {
+          articleId,
+          exerciseType,
+          progress,
+          lastAccessTime: Date.now()
+        };
+
+        // 从 localStorage 读取现有进度
+        const progressMap = this.getAllLearningProgress();
+        const key = `${articleId}_${exerciseType}`;
+        progressMap[key] = progressData;
+
+        // 保存到 localStorage
+        localStorage.setItem(TEXTMEMORY_PROGRESS_KEY, JSON.stringify(progressMap));
+        return true;
+      } catch (error) {
+        console.error('保存学习进度失败:', error);
+        return false;
+      }
+    },
+
+    /**
+     * 获取学习进度
+     */
+    getLearningProgress(
+      articleId: string,
+      exerciseType: 'fillBlanks' | 'choice' | 'typing'
+    ): LearningProgress | null {
+      try {
+        const progressMap = this.getAllLearningProgress();
+        const key = `${articleId}_${exerciseType}`;
+        return progressMap[key] || null;
+      } catch (error) {
+        console.error('获取学习进度失败:', error);
+        return null;
+      }
+    },
+
+    /**
+     * 获取所有学习进度
+     */
+    getAllLearningProgress(): Record<string, LearningProgress> {
+      try {
+        const stored = localStorage.getItem(TEXTMEMORY_PROGRESS_KEY);
+        if (stored) {
+          return JSON.parse(stored);
+        }
+      } catch (e) {
+        console.error('解析学习进度失败:', e);
+      }
+      return {};
+    },
+
+    /**
+     * 清除指定文章的学习进度
+     */
+    clearLearningProgress(articleId: string): void {
+      try {
+        const progressMap = this.getAllLearningProgress();
+        const keysToDelete = Object.keys(progressMap).filter(key => 
+          key.startsWith(`${articleId}_`)
+        );
+        keysToDelete.forEach(key => delete progressMap[key]);
+        localStorage.setItem(TEXTMEMORY_PROGRESS_KEY, JSON.stringify(progressMap));
+      } catch (error) {
+        console.error('清除学习进度失败:', error);
+      }
+    },
+
+    /**
+     * 清除所有学习进度
+     */
+    clearAllLearningProgress(): void {
+      try {
+        localStorage.removeItem(TEXTMEMORY_PROGRESS_KEY);
+      } catch (error) {
+        console.error('清除所有学习进度失败:', error);
+      }
     }
   }
 });

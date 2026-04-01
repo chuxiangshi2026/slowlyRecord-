@@ -3,7 +3,7 @@
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     title="导入文本"
-    width="800px"
+    width="750px"
     destroy-on-close
   >
     <el-tabs v-model="activeTab">
