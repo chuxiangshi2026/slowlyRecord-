@@ -7,13 +7,17 @@
           <el-radio-button label="number">数字记忆</el-radio-button>
           <el-radio-button label="word">单词记忆</el-radio-button>
           <el-radio-button label="pattern">图案记忆</el-radio-button>
+          <el-radio-button label="vocabulary">词汇量测试</el-radio-button>
         </el-radio-group>
       </div>
     </div>
 
     <div class="content">
+      <!-- 词汇量测试组件 -->
+      <VocabularyTest v-if="currentMode === 'vocabulary'" />
+
       <!-- 设置区域 -->
-      <div v-if="!isTesting && !showResult" class="settings">
+      <div v-else-if="!isTesting && !showResult" class="settings">
         <div class="setting-item">
           <span>难度选择：</span>
           <el-radio-group v-model="difficulty">
@@ -130,9 +134,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useWordsStore } from '@/stores/words';
+import VocabularyTest from './VocabularyTest.vue';
 
 // 测试模式
-type TestMode = 'number' | 'word' | 'pattern';
+type TestMode = 'number' | 'word' | 'pattern' | 'vocabulary';
 type Difficulty = 'easy' | 'medium' | 'hard';
 
 const wordsStore = useWordsStore();
@@ -177,7 +182,8 @@ const modeText = computed(() => {
   const map: Record<TestMode, string> = {
     number: '数字记忆',
     word: '单词记忆',
-    pattern: '图案记忆'
+    pattern: '图案记忆',
+    vocabulary: '词汇量测试'
   };
   return map[currentMode.value];
 });

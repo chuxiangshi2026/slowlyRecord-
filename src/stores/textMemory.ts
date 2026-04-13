@@ -666,18 +666,24 @@ export const useTextMemoryStore = defineStore('textMemory', {
         let explanation: string;
 
         switch (type) {
-          case 'synonym':
+          case 'synonym': {
             question = `下列哪个是"${keyword}"的近义词？`;
-            options = this.generateSynonymOptions(keyword);
-            correctIndex = 0;
-            explanation = `"${keyword}"的近义词是"${options[0]}"`;
+            const correctAnswer = this.getCorrectSynonym(keyword);
+            const distractors = this.getSynonymDistractors(keyword);
+            options = this.shuffleArray([correctAnswer, ...distractors.slice(0, 3)]);
+            correctIndex = options.indexOf(correctAnswer);
+            explanation = `"${keyword}"的近义词是"${correctAnswer}"`;
             break;
-          case 'antonym':
+          }
+          case 'antonym': {
             question = `下列哪个是"${keyword}"的反义词？`;
-            options = this.generateAntonymOptions(keyword);
-            correctIndex = 0;
-            explanation = `"${keyword}"的反义词是"${options[0]}"`;
+            const correctAnswer = this.getCorrectAntonym(keyword);
+            const distractors = this.getAntonymDistractors(keyword);
+            options = this.shuffleArray([correctAnswer, ...distractors.slice(0, 3)]);
+            correctIndex = options.indexOf(correctAnswer);
+            explanation = `"${keyword}"的反义词是"${correctAnswer}"`;
             break;
+          }
           case 'typo':
             question = `找出句子中的错别字（或错误用词）：${sentence}`;
             const typoResult = this.generateTypoOptions(keyword);
@@ -712,36 +718,313 @@ export const useTextMemoryStore = defineStore('textMemory', {
     },
 
     /**
-     * 生成近义词选项（简化实现）
+     * 语义关联词库 - 扩展版
      */
-    generateSynonymOptions(keyword: string): string[] {
-      // 这里可以使用同义词库，简化实现返回模拟数据
-      const commonSynonyms: Record<string, string[]> = {
-        '美丽': ['漂亮', '丑陋', '普通', '一般'],
-        '高兴': ['快乐', '悲伤', '生气', '平静'],
-        '快速': ['迅速', '缓慢', '慢慢', '迟疑'],
-        '巨大': ['庞大', '微小', '渺小', '细小'],
-        '聪明': ['聪慧', '愚蠢', '笨拙', '迟钝']
+    getSemanticWordBank(): Record<string, { synonym: string[]; antonym: string[] }> {
+      return {
+        // ===== 形容词 =====
+        '美丽': { synonym: ['漂亮', '秀丽', '优美', '动人'], antonym: ['丑陋', '难看', '丑恶'] },
+        '漂亮': { synonym: ['美丽', '秀丽', '好看', '标致'], antonym: ['丑陋', '难看', '寒碜'] },
+        '高兴': { synonym: ['快乐', '开心', '愉快', '欢喜'], antonym: ['悲伤', '难过', '伤心', '沮丧'] },
+        '快乐': { synonym: ['高兴', '开心', '欢乐', '快活'], antonym: ['痛苦', '悲伤', '难过', '忧愁'] },
+        '开心': { synonym: ['高兴', '快乐', '欢喜', '喜悦'], antonym: ['难过', '伤心', '郁闷', '烦恼'] },
+        '快速': { synonym: ['迅速', '飞快', '敏捷', '急速'], antonym: ['缓慢', '迟缓', '慢慢', '徐缓'] },
+        '迅速': { synonym: ['快速', '飞快', '急速', '迅捷'], antonym: ['缓慢', '迟缓', '迟迟', '慢吞吞'] },
+        '巨大': { synonym: ['庞大', '宏大', '硕大', '雄伟'], antonym: ['微小', '渺小', '细小', '娇小'] },
+        '庞大': { synonym: ['巨大', '宏大', '硕大', '浩大'], antonym: ['微小', '渺小', '细小'] },
+        '聪明': { synonym: ['聪慧', '智慧', '聪颖', '机智'], antonym: ['愚蠢', '笨拙', '愚笨', '迟钝'] },
+        '聪慧': { synonym: ['聪明', '聪颖', '伶俐', '慧黠'], antonym: ['愚笨', '愚蠢', '迟钝'] },
+        '温暖': { synonym: ['暖和', '温馨', '和煦', '温热'], antonym: ['寒冷', '冰冷', '凉爽', '严寒'] },
+        '暖和': { synonym: ['温暖', '和煦', '暖烘烘'], antonym: ['寒冷', '冰冷', '凉快'] },
+        '明亮': { synonym: ['光亮', '光明', '灿烂', '辉煌'], antonym: ['黑暗', '昏暗', '阴暗', '暗淡'] },
+        '光亮': { synonym: ['明亮', '光明', '亮堂'], antonym: ['黑暗', '昏暗', '暗淡'] },
+        '安静': { synonym: ['宁静', '寂静', '静谧', '平静'], antonym: ['喧闹', '吵闹', '嘈杂', '喧嚣'] },
+        '宁静': { synonym: ['安静', '寂静', '静谧', '幽静'], antonym: ['喧闹', '嘈杂', '热闹', '喧嚣'] },
+        '认真': { synonym: ['仔细', '用心', '专注', '严谨'], antonym: ['马虎', '草率', '敷衍', '粗心'] },
+        '仔细': { synonym: ['认真', '细致', '细心', '周密'], antonym: ['马虎', '粗心', '大意', '粗略'] },
+        '简单': { synonym: ['容易', '简易', '浅显', '简明'], antonym: ['复杂', '困难', '繁琐', '艰难'] },
+        '容易': { synonym: ['简单', '轻易', '易于'], antonym: ['困难', '艰难', '复杂'] },
+        '丰富': { synonym: ['丰盛', '充裕', '多彩', '富饶'], antonym: ['贫乏', '单调', '匮乏', '稀缺'] },
+        '复杂': { synonym: ['繁杂', '庞杂', '错综'], antonym: ['简单', '单纯', '简易'] },
+        '困难': { synonym: ['艰难', '困苦', '困难'], antonym: ['容易', '简单', '轻易'] },
+        '危险': { synonym: ['危急', '凶险', '风险'], antonym: ['安全', '平安', '保险'] },
+        '安全': { synonym: ['平安', '安稳', '保险'], antonym: ['危险', '危急', '凶险'] },
+        '清楚': { synonym: ['清晰', '明白', '明了'], antonym: ['模糊', '含糊', '朦胧'] },
+        '模糊': { synonym: ['含糊', '朦胧', '隐约'], antonym: ['清楚', '清晰', '明白'] },
+        '熟练': { synonym: ['娴熟', '老练', '精通'], antonym: ['生疏', '生涩', '陌生'] },
+        '生疏': { synonym: ['陌生', '生涩', '不熟悉'], antonym: ['熟练', '娴熟', '精通'] },
+        '熟悉': { synonym: ['了解', '熟知', '熟稔'], antonym: ['陌生', '生疏', '不熟悉'] },
+        '陌生': { synonym: ['生疏', '不熟悉', '生分'], antonym: ['熟悉', '了解', '熟知'] },
+        '优秀': { synonym: ['优异', '杰出', '出色', '卓越'], antonym: ['平庸', '平凡', '差劲', '拙劣'] },
+        '杰出': { synonym: ['优秀', '卓越', '出众'], antonym: ['平庸', '平凡', '普通'] },
+        '普通': { synonym: ['平常', '一般', '平凡'], antonym: ['特别', '特殊', '杰出', '优秀'] },
+        '特别': { synonym: ['特殊', '独特', '格外'], antonym: ['普通', '一般', '平常'] },
+        '重要': { synonym: ['主要', '关键', '重大'], antonym: ['次要', '轻微', '无足轻重'] },
+        '轻微': { synonym: ['略微', '稍微', '少许'], antonym: ['严重', '重大', '剧烈'] },
+        '严重': { synonym: ['严峻', '重大', '危急'], antonym: ['轻微', '微小', '不重要'] },
+        '完整': { synonym: ['完全', '完好', '齐全'], antonym: ['残缺', '破损', '零碎'] },
+        '残缺': { synonym: ['破损', '残缺', '不全'], antonym: ['完整', '完全', '完好'] },
+        '整齐': { synonym: ['整洁', '井然', '齐整'], antonym: ['杂乱', '凌乱', '混乱'] },
+        '杂乱': { synonym: ['凌乱', '混乱', '庞杂'], antonym: ['整齐', '整洁', '井然'] },
+        '干净': { synonym: ['洁净', '清洁', '清爽'], antonym: ['肮脏', '污秽', '脏乱'] },
+        '肮脏': { synonym: ['污秽', '脏乱', '不洁'], antonym: ['干净', '洁净', '清洁'] },
+        '新鲜': { synonym: ['新颖', '鲜嫩', '清新'], antonym: ['陈旧', '腐烂', '变质', '老套'] },
+        '陈旧': { synonym: ['老旧', '过时', '古老'], antonym: ['新鲜', '新颖', '崭新'] },
+        '健康': { synonym: ['健壮', '康健', '安康'], antonym: ['疾病', '虚弱', '病态'] },
+        '虚弱': { synonym: ['衰弱', '柔弱', '无力'], antonym: ['强壮', '健壮', '强健'] },
+        '强壮': { synonym: ['健壮', '强健', '结实'], antonym: ['虚弱', '衰弱', '柔弱'] },
+        '灵活': { synonym: ['灵巧', '敏捷', '机灵'], antonym: ['呆板', '僵硬', '死板'] },
+        '呆板': { synonym: ['死板', '僵硬', '木讷'], antonym: ['灵活', '灵巧', '活泼'] },
+        '活泼': { synonym: ['活跃', '开朗', '生动'], antonym: ['呆板', '沉闷', '死板'] },
+        '温柔': { synonym: ['温和', '柔顺', '体贴'], antonym: ['粗暴', '粗鲁', '凶恶'] },
+        '粗暴': { synonym: ['粗鲁', '暴躁', '野蛮'], antonym: ['温柔', '温和', '文雅'] },
+        '谦虚': { synonym: ['谦逊', '虚心', '谦和'], antonym: ['骄傲', '傲慢', '自负'] },
+        '骄傲': { synonym: ['自豪', '傲慢', '自满'], antonym: ['谦虚', '谦逊', '虚心'] },
+        '诚实': { synonym: ['真诚', '老实', '诚恳'], antonym: ['虚伪', '虚假', '欺骗'] },
+        '虚伪': { synonym: ['虚假', '伪装', '做作'], antonym: ['诚实', '真诚', '真挚'] },
+        '善良': { synonym: ['和善', '仁慈', '好心'], antonym: ['凶恶', '狠毒', '恶毒'] },
+        '凶恶': { synonym: ['凶狠', '恶毒', '残暴'], antonym: ['善良', '和善', '仁慈'] },
+        '勇敢': { synonym: ['英勇', '无畏', '果敢'], antonym: ['胆怯', '懦弱', '胆小'] },
+        '胆怯': { synonym: ['胆小', '害怕', '畏惧'], antonym: ['勇敢', '英勇', '无畏'] },
+        '坚强': { synonym: ['刚强', '坚毅', '顽强'], antonym: ['软弱', '脆弱', '懦弱'] },
+        '软弱': { synonym: ['脆弱', '懦弱', '柔弱'], antonym: ['坚强', '刚强', '坚毅'] },
+        '勤劳': { synonym: ['勤奋', '辛勤', '勤快'], antonym: ['懒惰', '懒散', '怠惰'] },
+        '懒惰': { synonym: ['懒散', '怠惰', '偷懒'], antonym: ['勤劳', '勤奋', '勤快'] },
+        '节俭': { synonym: ['节约', '节省', '俭朴'], antonym: ['浪费', '奢侈', '挥霍'] },
+        '浪费': { synonym: ['挥霍', '奢侈', '糟蹋'], antonym: ['节俭', '节约', '节省'] },
+        // ===== 动词 =====
+        '开始': { synonym: ['开端', '启动', '起始', '着手'], antonym: ['结束', '停止', '终结', '完毕'] },
+        '结束': { synonym: ['终结', '完毕', '完成', '终止'], antonym: ['开始', '启动', '开端', '起始'] },
+        '增加': { synonym: ['增长', '增添', '增多', '加强'], antonym: ['减少', '降低', '减弱', '削减'] },
+        '减少': { synonym: ['削减', '降低', '减弱', '缩小'], antonym: ['增加', '增长', '增添', '加强'] },
+        '成功': { synonym: ['胜利', '达成', '成就', '获胜'], antonym: ['失败', '挫折', '落败', '失手'] },
+        '失败': { synonym: ['失利', '落败', '挫折'], antonym: ['成功', '胜利', '获胜'] },
+        '支持': { synonym: ['赞同', '拥护', '赞成', '支撑'], antonym: ['反对', '抵制', '反驳', '抗拒'] },
+        '反对': { synonym: ['抵制', '反驳', '抗议', '抗拒'], antonym: ['支持', '赞同', '拥护', '赞成'] },
+        '相信': { synonym: ['信任', '信赖', '信服', '笃信'], antonym: ['怀疑', '猜疑', '质疑', '不信'] },
+        '怀疑': { synonym: ['猜疑', '质疑', '疑惑'], antonym: ['相信', '信任', '信赖'] },
+        '前进': { synonym: ['前行', '推进', '迈进', '进步'], antonym: ['后退', '退缩', '倒退', '撤退'] },
+        '后退': { synonym: ['倒退', '退缩', '撤退', '撤回'], antonym: ['前进', '进步', '推进', '迈进'] },
+        '喜欢': { synonym: ['喜爱', '钟爱', '爱好', '倾心'], antonym: ['讨厌', '厌恶', '憎恨', '反感'] },
+        '讨厌': { synonym: ['厌恶', '憎恨', '反感', '厌烦'], antonym: ['喜欢', '喜爱', '钟爱', '爱好'] },
+        '爱护': { synonym: ['保护', '呵护', '爱惜', '维护'], antonym: ['破坏', '损害', '伤害', '摧残'] },
+        '破坏': { synonym: ['损坏', '毁坏', '摧毁', '损害'], antonym: ['保护', '爱护', '维护', '修复'] },
+        '建设': { synonym: ['建造', '建立', '创建', '营造'], antonym: ['破坏', '摧毁', '毁坏', '拆除'] },
+        '创造': { synonym: ['发明', '创新', '创立', '创建'], antonym: ['模仿', '抄袭', '复制', '照搬'] },
+        '接受': { synonym: ['接收', '接纳', '承受', '认可'], antonym: ['拒绝', '推辞', '谢绝', '抗拒'] },
+        '拒绝': { synonym: ['推辞', '谢绝', '回绝', '抗拒'], antonym: ['接受', '接纳', '同意', '答应'] },
+        '同意': { synonym: ['赞成', '答应', '允许', '批准'], antonym: ['反对', '拒绝', '否定', '否决'] },
+        '允许': { synonym: ['准许', '许可', '同意', '批准'], antonym: ['禁止', '阻止', '不准', '不许'] },
+        '禁止': { synonym: ['阻止', '制止', '不准', '严禁'], antonym: ['允许', '准许', '许可', '同意'] },
+        '出现': { synonym: ['显现', '呈现', '浮现', '显露'], antonym: ['消失', '消逝', '隐匿', '隐藏'] },
+        '消失': { synonym: ['消逝', '消散', '隐匿', '灭绝'], antonym: ['出现', '显现', '呈现', '浮现'] },
+        '聚集': { synonym: ['集合', '汇集', '聚拢', '集中'], antonym: ['分散', '散开', '离散', '解散'] },
+        '分散': { synonym: ['散开', '离散', '分布', '分开'], antonym: ['聚集', '集合', '汇集', '集中'] },
+        '提升': { synonym: ['提高', '升高', '上升', '升级'], antonym: ['下降', '降低', '下跌', '减少'] },
+        '下降': { synonym: ['降低', '下跌', '减少', '下落'], antonym: ['上升', '提升', '提高', '升高'] },
+        '表扬': { synonym: ['赞扬', '夸奖', '称赞', '表彰'], antonym: ['批评', '指责', '责备', '训斥'] },
+        '批评': { synonym: ['指责', '责备', '训斥', '批判'], antonym: ['表扬', '赞扬', '夸奖', '称赞'] },
+        '表扬': { synonym: ['赞扬', '夸奖', '称赞', '表彰'], antonym: ['批评', '指责', '责备', '训斥'] },
+        '赞扬': { synonym: ['表扬', '称赞', '颂扬', '讴歌'], antonym: ['批评', '指责', '贬低', '诋毁'] },
+        '帮助': { synonym: ['帮忙', '协助', '援助', '救助'], antonym: ['妨碍', '阻碍', '干扰', '阻挠'] },
+        '妨碍': { synonym: ['阻碍', '干扰', '阻挠', '妨害'], antonym: ['帮助', '协助', '促进', '推动'] },
+        '获得': { synonym: ['得到', '取得', '赢得', '获取'], antonym: ['失去', '丧失', '丢失', '错失'] },
+        '失去': { synonym: ['丧失', '丢失', '错失', '失落'], antonym: ['获得', '得到', '取得', '赢得'] },
+        '加入': { synonym: ['参加', '参与', '加入', '加盟'], antonym: ['退出', '离开', '脱离', '退出的'] },
+        '退出': { synonym: ['离开', '脱离', '退出的', '退场'], antonym: ['加入', '参加', '参与', '进入'] },
+        // ===== 名词 =====
+        '朋友': { synonym: ['友人', '伙伴', '知己', '好友'], antonym: ['敌人', '仇人', '对手', '敌手'] },
+        '敌人': { synonym: ['仇人', '对手', '敌手', '仇敌'], antonym: ['朋友', '友人', '伙伴', '盟友'] },
+        '幸福': { synonym: ['快乐', '美满', '甜蜜', '幸运'], antonym: ['痛苦', '不幸', '悲惨', '苦难'] },
+        '痛苦': { synonym: ['苦难', '痛楚', '折磨', '悲痛'], antonym: ['幸福', '快乐', '甜蜜', '喜悦'] },
+        '优点': { synonym: ['长处', '优势', '亮点', '特长'], antonym: ['缺点', '短处', '劣势', '缺陷'] },
+        '缺点': { synonym: ['短处', '劣势', '缺陷', '毛病'], antonym: ['优点', '长处', '优势', '亮点'] },
+        '天堂': { synonym: ['天国', '仙境', '乐园'], antonym: ['地狱', '深渊', '苦海'] },
+        '地狱': { synonym: ['深渊', '苦海', '炼狱'], antonym: ['天堂', '天国', '乐园'] },
+        '成功': { synonym: ['胜利', '成就', '成果'], antonym: ['失败', '挫折', '失利'] },
+        '胜利': { synonym: ['成功', '获胜', '得胜'], antonym: ['失败', '失利', '落败'] },
+        '白天': { synonym: ['白昼', '日间', '日子'], antonym: ['黑夜', '夜晚', '夜间'] },
+        '黑夜': { synonym: ['夜晚', '夜间', '黑暗'], antonym: ['白天', '白昼', '日间'] },
+        '生命': { synonym: ['性命', '生灵', '生物'], antonym: ['死亡', '毁灭', '灭亡'] },
+        '死亡': { synonym: ['灭亡', '毁灭', '逝世'], antonym: ['生命', '生存', '活着'] },
+        '和平': { synonym: ['太平', '安宁', '祥和'], antonym: ['战争', '战乱', '冲突'] },
+        '战争': { synonym: ['战乱', '冲突', '战斗'], antonym: ['和平', '太平', '安宁'] },
+        '喜悦': { synonym: ['欣喜', '欢乐', '高兴'], antonym: ['悲伤', '忧愁', '痛苦'] },
+        '忧愁': { synonym: ['忧虑', '忧伤', '愁苦'], antonym: ['喜悦', '欢乐', '高兴'] },
+        '希望': { synonym: ['期望', '愿望', '盼望'], antonym: ['绝望', '失望', '无望'] },
+        '绝望': { synonym: ['失望', '无望', '死心'], antonym: ['希望', '期望', '盼望'] },
+        '光明': { synonym: ['光亮', '光芒', '光辉'], antonym: ['黑暗', '阴暗', '昏暗'] },
+        '黑暗': { synonym: ['阴暗', '昏暗', '漆黑'], antonym: ['光明', '光亮', '光芒'] },
+        '知识': { synonym: ['学问', '学识', '见识'], antonym: ['无知', '愚昧', '愚昧无知'] },
+        '无知': { synonym: ['愚昧', '愚昧无知', '不明'], antonym: ['知识', '学问', '学识'] },
+        '力量': { synonym: ['力气', '能量', '威力'], antonym: ['软弱', '虚弱', '无力'] },
+        '智慧': { synonym: ['才智', '聪慧', '智谋'], antonym: ['愚蠢', '愚昧', '愚笨'] },
+        '理智': { synonym: ['理性', '冷静', '清醒'], antonym: ['冲动', '感情用事', '失去理智'] },
+        '自由': { synonym: ['自在', '自主', '无拘无束'], antonym: ['束缚', '拘束', '限制'] },
+        '束缚': { synonym: ['拘束', '限制', '约束'], antonym: ['自由', '自在', '自主'] }
       };
-
-      const options = commonSynonyms[keyword] || [keyword, '相似词A', '相似词B', '相似词C'];
-      return this.shuffleArray([...options]);
     },
 
     /**
-     * 生成反义词选项
+     * 获取近义词正确答案
      */
-    generateAntonymOptions(keyword: string): string[] {
-      const commonAntonyms: Record<string, string[]> = {
-        '美丽': ['丑陋', '漂亮', '好看', '优美'],
-        '高兴': ['悲伤', '快乐', '开心', '愉快'],
-        '快速': ['缓慢', '迅速', '飞快', '极速'],
-        '巨大': ['微小', '庞大', '宏大', '硕大'],
-        '聪明': ['愚蠢', '聪慧', '智慧', '聪颖']
-      };
+    getCorrectSynonym(keyword: string): string {
+      const wordBank = this.getSemanticWordBank();
+      const wordData = wordBank[keyword];
+      
+      if (wordData && wordData.synonym.length > 0) {
+        return wordData.synonym[0];
+      }
+      
+      // 如果词库中没有，返回原词
+      return keyword;
+    },
 
-      const options = commonAntonyms[keyword] || ['反义词A', '反义词B', '反义词C', keyword];
-      return this.shuffleArray([...options]);
+    /**
+     * 获取近义词干扰项
+     */
+    getSynonymDistractors(keyword: string): string[] {
+      const wordBank = this.getSemanticWordBank();
+      const wordData = wordBank[keyword];
+      const distractors: string[] = [];
+      
+      if (wordData) {
+        // 使用词库中的其他近义词作为干扰
+        if (wordData.synonym.length > 1) {
+          distractors.push(...wordData.synonym.slice(1));
+        }
+        // 添加反义词作为干扰
+        if (wordData.antonym.length > 0) {
+          distractors.push(wordData.antonym[0]);
+        }
+      }
+      
+      // 确保有足够的干扰项
+      while (distractors.length < 3) {
+        const fallback = this.generateFallbackDistractor(keyword, distractors);
+        if (fallback) distractors.push(fallback);
+      }
+      
+      return distractors;
+    },
+
+    /**
+     * 获取反义词正确答案
+     */
+    getCorrectAntonym(keyword: string): string {
+      const wordBank = this.getSemanticWordBank();
+      const wordData = wordBank[keyword];
+      
+      if (wordData && wordData.antonym.length > 0) {
+        return wordData.antonym[0];
+      }
+      
+      // 如果词库中没有，返回否定形式
+      return '不' + keyword;
+    },
+
+    /**
+     * 获取反义词干扰项
+     */
+    getAntonymDistractors(keyword: string): string[] {
+      const wordBank = this.getSemanticWordBank();
+      const wordData = wordBank[keyword];
+      const distractors: string[] = [];
+      
+      if (wordData) {
+        // 使用近义词作为干扰（用户可能误选）
+        if (wordData.synonym.length > 0) {
+          distractors.push(...wordData.synonym.slice(0, 2));
+        }
+        // 添加其他反义词
+        if (wordData.antonym.length > 1) {
+          distractors.push(wordData.antonym[1]);
+        }
+      }
+      
+      // 确保有足够的干扰项
+      while (distractors.length < 3) {
+        const fallback = this.generateFallbackDistractor(keyword, distractors, true);
+        if (fallback) distractors.push(fallback);
+      }
+      
+      return distractors;
+    },
+
+    /**
+     * 生成备选干扰项
+     */
+    generateFallbackDistractor(keyword: string, existing: string[], isAntonym = false): string {
+      const wordBank = this.getSemanticWordBank();
+      const allWords = Object.keys(wordBank);
+      
+      // 随机从词库中选一个词
+      for (let i = 0; i < 10; i++) {
+        const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+        if (randomWord !== keyword && !existing.includes(randomWord)) {
+          // 对于近义词题，返回其他词的近义词；对于反义词题，返回其他词的反义词
+          const randomData = wordBank[randomWord];
+          if (randomData) {
+            const candidate = isAntonym 
+              ? (randomData.antonym[0] || randomWord)
+              : (randomData.synonym[0] || randomWord);
+            if (!existing.includes(candidate) && candidate !== keyword) {
+              return candidate;
+            }
+          }
+        }
+      }
+      
+      // 如果找不到，返回随机词
+      return allWords[Math.floor(Math.random() * allWords.length)] || '相关词';
+    },
+
+    /**
+     * 备选方案：基于构词法生成语义选项
+     */
+    generateSemanticOptionsFallback(keyword: string, type: 'synonym' | 'antonym'): string[] {
+      const options: string[] = [];
+      
+      // 常见前缀/后缀用于生成干扰项
+      const positivePrefixes = ['大', '高', '新', '真', '美', '好', '优', '良'];
+      const negativePrefixes = ['不', '非', '无', '未', '假', '丑', '劣', '坏'];
+      
+      if (type === 'synonym') {
+        // 正确答案就是原词本身
+        options.push(keyword);
+        
+        // 生成相似结构的干扰项
+        if (keyword.length === 2) {
+          // 替换第二个字
+          const similarWords = ['美', '丽', '好', '善', '佳', '妙'];
+          for (let i = 0; i < 3; i++) {
+            const prefix = keyword[0];
+            const suffix = similarWords[i] || '好';
+            options.push(prefix + suffix);
+          }
+        } else {
+          // 对于非2字词，添加前缀生成干扰
+          options.push('很' + keyword);
+          options.push('真' + keyword);
+          options.push('太' + keyword);
+        }
+      } else {
+        // 反义词模式
+        // 尝试加否定前缀
+        options.push('不' + keyword);
+        options.push('非' + keyword);
+        
+        // 添加一些对比词
+        const contrastWords = ['相反', '对立', '矛盾', '反面'];
+        options.push(contrastWords[Math.floor(Math.random() * contrastWords.length)]);
+        
+        // 再添加一个词库中可能相关的词
+        const allWords = Object.keys(this.getSemanticWordBank());
+        const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+        options.push(randomWord);
+      }
+      
+      return this.shuffleArray(options);
     },
 
     /**

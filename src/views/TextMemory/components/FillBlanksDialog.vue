@@ -43,6 +43,7 @@
           <el-radio-button label="random">随机填空</el-radio-button>
           <el-radio-button label="keyword">关键词填空</el-radio-button>
           <el-radio-button label="sentence">整句填空</el-radio-button>
+          <el-radio-button label="semantic">语义填空</el-radio-button>
         </el-radio-group>
       </div>
 
@@ -53,29 +54,60 @@
             <span v-if="segment.type === 'text'" class="text-segment">
               {{ segment.content }}
             </span>
-            <span v-else-if="segment.type === 'blank'" class="blank-item">
-              <el-input
-                v-model="segment.userAnswer"
-                :class="{
-                  'is-correct': segment.isChecked && segment.isCorrect,
-                  'is-wrong': segment.isChecked && !segment.isCorrect
-                }"
-                :placeholder="getBlankPlaceholder(segment)"
-                size="small"
-                @keyup.enter="checkAnswer(segment)"
-              >
-                <template #suffix>
-                  <el-icon v-if="segment.isChecked && segment.isCorrect" class="status-icon correct">
-                    <Check />
-                  </el-icon>
-                  <el-icon v-if="segment.isChecked && !segment.isCorrect" class="status-icon wrong">
-                    <Close />
-                  </el-icon>
-                </template>
-              </el-input>
-              <span v-if="showAnswers || (segment.isChecked && !segment.isCorrect)" class="answer-hint">
-                {{ segment.answer }}
-              </span>
+            <span v-else-if="segment.type === 'blank'" class="blank-item" :class="{ 'has-options': segment.options && segment.options.length > 0 }">
+              <!-- 语义填空模式：显示选项 -->
+              <template v-if="segment.options && segment.options.length > 0">
+                <div class="semantic-blank">
+                  <div class="blank-type-tag" :class="segment.questionType">
+                    {{ segment.questionType === 'synonym' ? '近义词' : '反义词' }}
+                  </div>
+                  <div class="options-container">
+                    <el-button
+                      v-for="(option, optIndex) in segment.options"
+                      :key="optIndex"
+                      :type="getOptionButtonType(segment, option, optIndex)"
+                      :class="{
+                        'is-selected': segment.userAnswer === option.content,
+                        'is-correct-answer': segment.isChecked && option.isCorrect,
+                        'is-wrong-answer': segment.isChecked && segment.userAnswer === option.content && !option.isCorrect
+                      }"
+                      size="small"
+                      @click="selectOption(segment, option.content)"
+                      :disabled="segment.isChecked"
+                    >
+                      {{ option.content }}
+                    </el-button>
+                  </div>
+                  <span v-if="showAnswers || (segment.isChecked && !segment.isCorrect)" class="answer-hint">
+                    正确答案：{{ segment.answer }}
+                  </span>
+                </div>
+              </template>
+              <!-- 普通填空模式：输入框 -->
+              <template v-else>
+                <el-input
+                  v-model="segment.userAnswer"
+                  :class="{
+                    'is-correct': segment.isChecked && segment.isCorrect,
+                    'is-wrong': segment.isChecked && !segment.isCorrect
+                  }"
+                  :placeholder="getBlankPlaceholder(segment)"
+                  size="small"
+                  @keyup.enter="checkAnswer(segment)"
+                >
+                  <template #suffix>
+                    <el-icon v-if="segment.isChecked && segment.isCorrect" class="status-icon correct">
+                      <Check />
+                    </el-icon>
+                    <el-icon v-if="segment.isChecked && !segment.isCorrect" class="status-icon wrong">
+                      <Close />
+                    </el-icon>
+                  </template>
+                </el-input>
+                <span v-if="showAnswers || (segment.isChecked && !segment.isCorrect)" class="answer-hint">
+                  {{ segment.answer }}
+                </span>
+              </template>
             </span>
           </template>
         </div>
@@ -110,13 +142,21 @@
       <!-- 提示区域 -->
       <div class="tips-area">
         <el-alert
-          title="练习提示"
+          :title="exerciseMode === 'semantic' ? '语义填空提示' : '练习提示'"
           type="info"
           :closable="false"
         >
-          <p>1. 在输入框中填入缺失的文字</p>
-          <p>2. 按 Enter 键或点击"检查答案"验证</p>
-          <p>3. 错误的答案会显示正确答案</p>
+          <template v-if="exerciseMode === 'semantic'">
+            <p>1. 根据上下文语境，选择正确的近义词或反义词</p>
+            <p>2. <span class="tag-demo synonym">近义词</span> 标签表示需选择意思相近的词</p>
+            <p>3. <span class="tag-demo antonym">反义词</span> 标签表示需选择意思相反的词</p>
+            <p>4. 点击选项后会自动检查答案</p>
+          </template>
+          <template v-else>
+            <p>1. 在输入框中填入缺失的文字</p>
+            <p>2. 按 Enter 键或点击"检查答案"验证</p>
+            <p>3. 错误的答案会显示正确答案</p>
+          </template>
         </el-alert>
       </div>
     </div>
@@ -144,9 +184,16 @@ const textStore = useTextMemoryStore();
 
 // 练习设置
 const blankCount = ref(10);
-const exerciseMode = ref<'random' | 'keyword' | 'sentence'>('random');
+const exerciseMode = ref<'random' | 'keyword' | 'sentence' | 'semantic'>('random');
 const showAnswers = ref(false);
 const generating = ref(false);
+const semanticType = ref<'synonym' | 'antonym'>('synonym'); // 语义填空类型
+
+// 选项
+interface BlankOption {
+  content: string;
+  isCorrect?: boolean;
+}
 
 // 练习段落
 interface ExerciseSegment {
@@ -156,6 +203,10 @@ interface ExerciseSegment {
   answer?: string;
   isChecked?: boolean;
   isCorrect?: boolean;
+  // 语义填空专用
+  options?: BlankOption[];  // 选项列表
+  questionType?: 'synonym' | 'antonym';  // 题目类型
+  context?: string;  // 上下文提示
 }
 
 const exerciseSegments = ref<ExerciseSegment[]>([]);
@@ -207,14 +258,14 @@ watch(exerciseMode, () => {
 // 生成新的练习
 function generateNewExercise() {
   if (!props.article) return;
-  
+
   generating.value = true;
   showAnswers.value = false;
-  
+
   setTimeout(() => {
     const content = props.article!.content;
     const segments: ExerciseSegment[] = [];
-    
+
     switch (exerciseMode.value) {
       case 'random':
         generateRandomBlanks(content, segments);
@@ -225,8 +276,11 @@ function generateNewExercise() {
       case 'sentence':
         generateSentenceBlanks(content, segments);
         break;
+      case 'semantic':
+        generateSemanticBlanks(content, segments);
+        break;
     }
-    
+
     exerciseSegments.value = segments;
     generating.value = false;
   }, 100);
@@ -541,18 +595,306 @@ function getBlankPlaceholder(segment: ExerciseSegment): string {
   return '□'.repeat(segment.answer.length);
 }
 
+// ========== 语义填空逻辑 ==========
+
+// 语义关联词库（可扩展）
+const semanticWordBank: Record<string, { synonym: string[]; antonym: string[] }> = {
+  // 形容词
+  '美丽': { synonym: ['漂亮', '秀丽', '优美', '动人'], antonym: ['丑陋', '难看', '丑恶'] },
+  '高兴': { synonym: ['快乐', '开心', '愉快', '欢喜'], antonym: ['悲伤', '难过', '伤心', '沮丧'] },
+  '快速': { synonym: ['迅速', '飞快', '敏捷', '急速'], antonym: ['缓慢', '迟缓', '慢慢', '徐缓'] },
+  '巨大': { synonym: ['庞大', '宏大', '硕大', '雄伟'], antonym: ['微小', '渺小', '细小', '娇小'] },
+  '聪明': { synonym: ['聪慧', '智慧', '聪颖', '机智'], antonym: ['愚蠢', '笨拙', '愚笨', '迟钝'] },
+  '温暖': { synonym: ['暖和', '温馨', '和煦', '温热'], antonym: ['寒冷', '冰冷', '凉爽', '严寒'] },
+  '明亮': { synonym: ['光亮', '光明', '灿烂', '辉煌'], antonym: ['黑暗', '昏暗', '阴暗', '暗淡'] },
+  '安静': { synonym: ['宁静', '寂静', '静谧', '平静'], antonym: ['喧闹', '吵闹', '嘈杂', '喧嚣'] },
+  '喜欢': { synonym: ['喜爱', '钟爱', '爱好', '倾心'], antonym: ['讨厌', '厌恶', '憎恨', '反感'] },
+  '认真': { synonym: ['仔细', '用心', '专注', '严谨'], antonym: ['马虎', '草率', '敷衍', '粗心'] },
+  '简单': { synonym: ['容易', '简易', '浅显', '简明'], antonym: ['复杂', '困难', '繁琐', '艰难'] },
+  '丰富': { synonym: ['丰盛', '充裕', '多彩', '富饶'], antonym: ['贫乏', '单调', '匮乏', '稀缺'] },
+  // 动词
+  '开始': { synonym: ['开端', '启动', '起始', '着手'], antonym: ['结束', '停止', '终结', '完毕'] },
+  '增加': { synonym: ['增长', '增添', '增多', '加强'], antonym: ['减少', '降低', '减弱', '削减'] },
+  '成功': { synonym: ['胜利', '达成', '成就', '获胜'], antonym: ['失败', '挫折', '落败', '失手'] },
+  '支持': { synonym: ['赞同', '拥护', '赞成', '支撑'], antonym: ['反对', '抵制', '反驳', '抗拒'] },
+  '相信': { synonym: ['信任', '信赖', '信服', '笃信'], antonym: ['怀疑', '猜疑', '质疑', '不信'] },
+  '前进': { synonym: ['前行', '推进', '迈进', '进步'], antonym: ['后退', '退缩', '倒退', '撤退'] },
+  // 名词
+  '朋友': { synonym: ['友人', '伙伴', '知己', '好友'], antonym: ['敌人', '仇人', '对手', '敌手'] },
+  '幸福': { synonym: ['快乐', '美满', '甜蜜', '幸运'], antonym: ['痛苦', '不幸', '悲惨', '苦难'] },
+  '优点': { synonym: ['长处', '优势', '亮点', '特长'], antonym: ['缺点', '短处', '劣势', '缺陷'] },
+  '天堂': { synonym: ['天国', '仙境', '乐园'], antonym: ['地狱', '深渊', '苦海'] }
+};
+
+// 根据上下文智能生成近义词选项
+function generateSynonymOptionsByContext(keyword: string, context: string): string[] {
+  const wordData = semanticWordBank[keyword];
+  const options: string[] = [keyword]; // 正确答案
+
+  if (wordData && wordData.synonym.length > 0) {
+    // 使用词库中的近义词
+    const synonyms = wordData.synonym.slice(0, 3);
+    options.push(...synonyms);
+  } else {
+    // 如果没有词库，从上下文中找相似长度的词作为干扰项
+    const contextWords = extractContextWords(context, keyword.length);
+    options.push(...contextWords.slice(0, 3));
+  }
+
+  // 确保有4个选项
+  while (options.length < 4) {
+    options.push(generateSimilarWord(keyword, options));
+  }
+
+  return shuffleArray(options);
+}
+
+// 根据上下文智能生成反义词选项
+function generateAntonymOptionsByContext(keyword: string, context: string): string[] {
+  const wordData = semanticWordBank[keyword];
+  const options: string[] = [];
+
+  if (wordData && wordData.antonym.length > 0) {
+    // 使用词库中的反义词作为正确答案
+    options.push(wordData.antonym[0]);
+    // 添加一些近义词作为干扰
+    if (wordData.synonym.length > 0) {
+      options.push(...wordData.synonym.slice(0, 2));
+    }
+  } else {
+    // 如果没有词库，随机生成
+    options.push('不' + keyword);
+    options.push(keyword);
+  }
+
+  // 确保有4个选项
+  while (options.length < 4) {
+    options.push(generateSimilarWord(keyword, options));
+  }
+
+  return shuffleArray(options);
+}
+
+// 从上下文中提取相似长度的词
+function extractContextWords(context: string, targetLength: number): string[] {
+  const words: string[] = [];
+  for (let len = targetLength; len <= targetLength + 1; len++) {
+    for (let i = 0; i <= context.length - len; i++) {
+      const word = context.substring(i, i + len);
+      if (/^[\u4e00-\u9fa5]+$/.test(word) && !words.includes(word)) {
+        words.push(word);
+      }
+    }
+  }
+  return words.sort(() => Math.random() - 0.5);
+}
+
+// 生成相似词（作为干扰项）
+function generateSimilarWord(keyword: string, existingOptions: string[]): string {
+  // 简单的干扰项生成
+  const prefixes = ['新', '大', '小', '真', '假', '美', '好', '初', '老'];
+  const suffixes = ['化', '性', '度', '力', '感', '者', '家', '人', '物'];
+
+  let newWord = keyword;
+  if (keyword.length === 2) {
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    newWord = prefix + keyword[1];
+  } else if (keyword.length >= 3) {
+    const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+    newWord = keyword.substring(0, 2) + suffix;
+  }
+
+  if (existingOptions.includes(newWord)) {
+    return '相关词' + Math.floor(Math.random() * 100);
+  }
+  return newWord;
+}
+
+// 打乱数组
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
+// 生成语义填空
+function generateSemanticBlanks(content: string, segments: ExerciseSegment[]) {
+  // 按句子分割
+  const sentences: { text: string; start: number; end: number }[] = [];
+  const regex = /[^。！？；.!?;\n]+[。！？；.!?;]?/g;
+  let match;
+
+  while ((match = regex.exec(content)) !== null) {
+    const text = match[0].trim();
+    if (text.length >= 10) {
+      sentences.push({
+        text,
+        start: match.index,
+        end: match.index + match[0].length
+      });
+    }
+  }
+
+  if (sentences.length === 0) {
+    segments.push({ type: 'text', content });
+    return;
+  }
+
+  // 随机选择要挖空的句子
+  const selectedSentences = sentences
+    .sort(() => Math.random() - 0.5)
+    .slice(0, Math.min(blankCount.value, sentences.length))
+    .sort((a, b) => a.start - b.start);
+
+  // 从每个句子中提取关键词
+  const blankItems: { sentence: typeof sentences[0]; keyword: string; type: 'synonym' | 'antonym' }[] = [];
+
+  for (const sentence of selectedSentences) {
+    // 提取2-4字的关键词
+    const keywords: { word: string; priority: number }[] = [];
+
+    for (let len = 4; len >= 2; len--) {
+      for (let i = 0; i <= sentence.text.length - len; i++) {
+        const word = sentence.text.substring(i, i + len);
+        if (/^[\u4e00-\u9fa5]+$/.test(word)) {
+          // 优先选择词库中有的词
+          const inBank = semanticWordBank[word];
+          keywords.push({
+            word,
+            priority: inBank ? len + 10 : len // 词库中的词优先级更高
+          });
+        }
+      }
+    }
+
+    if (keywords.length === 0) continue;
+
+    // 按优先级排序
+    keywords.sort((a, b) => b.priority - a.priority);
+    const selectedKeyword = keywords[0];
+
+    // 随机决定是近义词还是反义词
+    const type: 'synonym' | 'antonym' = Math.random() > 0.5 ? 'synonym' : 'antonym';
+
+    blankItems.push({
+      sentence,
+      keyword: selectedKeyword.word,
+      type
+    });
+  }
+
+  if (blankItems.length === 0) {
+    segments.push({ type: 'text', content });
+    return;
+  }
+
+  // 构建段落
+  let lastEnd = 0;
+
+  for (const item of blankItems) {
+    const { sentence, keyword, type } = item;
+
+    // 添加句子前的文本
+    if (sentence.start > lastEnd) {
+      segments.push({
+        type: 'text',
+        content: content.substring(lastEnd, sentence.start)
+      });
+    }
+
+    // 在句子中找到关键词的位置
+    const keywordIndex = sentence.text.indexOf(keyword);
+    if (keywordIndex === -1) continue;
+
+    // 添加句子中关键词前的部分
+    if (keywordIndex > 0) {
+      segments.push({
+        type: 'text',
+        content: sentence.text.substring(0, keywordIndex)
+      });
+    }
+
+    // 生成选项
+    let options: string[];
+    if (type === 'synonym') {
+      options = generateSynonymOptionsByContext(keyword, sentence.text);
+    } else {
+      options = generateAntonymOptionsByContext(keyword, sentence.text);
+    }
+
+    // 添加语义填空
+    const correctIndex = options.indexOf(type === 'synonym' ? keyword : semanticWordBank[keyword]?.antonym?.[0] || ('不' + keyword));
+    segments.push({
+      type: 'blank',
+      answer: keyword,
+      userAnswer: '',
+      isChecked: false,
+      isCorrect: false,
+      options: options.map((opt, idx) => ({
+        content: opt,
+        isCorrect: type === 'synonym' ? opt === keyword : idx === (correctIndex >= 0 ? correctIndex : 0)
+      })),
+      questionType: type,
+      context: sentence.text
+    });
+
+    // 添加句子中关键词后的部分（包括标点）
+    const afterKeyword = sentence.text.substring(keywordIndex + keyword.length);
+    segments.push({
+      type: 'text',
+      content: afterKeyword
+    });
+
+    lastEnd = sentence.end;
+  }
+
+  // 添加剩余文本
+  if (lastEnd < content.length) {
+    segments.push({
+      type: 'text',
+      content: content.substring(lastEnd)
+    });
+  }
+}
+
 // 检查单个答案
 function checkAnswer(segment: ExerciseSegment) {
   if (!segment.answer || segment.userAnswer === undefined) return;
-  
+
   segment.isChecked = true;
   segment.isCorrect = segment.userAnswer.trim() === segment.answer;
-  
+
   if (segment.isCorrect) {
     ElMessage.success('回答正确！');
   } else {
     ElMessage.error(`回答错误，正确答案是：${segment.answer}`);
   }
+}
+
+// 选择选项（语义填空）
+function selectOption(segment: ExerciseSegment, optionContent: string) {
+  if (segment.isChecked) return;
+  segment.userAnswer = optionContent;
+  // 自动检查答案
+  checkAnswer(segment);
+}
+
+// 获取选项按钮类型
+function getOptionButtonType(segment: ExerciseSegment, option: BlankOption, index: number): string {
+  if (!segment.isChecked) {
+    return segment.userAnswer === option.content ? 'primary' : 'default';
+  }
+  // 已检查时显示正确答案和错误答案
+  if (option.isCorrect) {
+    return 'success';
+  }
+  if (segment.userAnswer === option.content && !option.isCorrect) {
+    return 'danger';
+  }
+  return 'default';
 }
 
 // 切换显示答案
@@ -753,6 +1095,132 @@ function loadProgress() {
   p {
     margin: 4px 0;
     font-size: 13px;
+  }
+
+  .tag-demo {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+
+    &.synonym {
+      background: #e6f7e6;
+      color: #52c41a;
+      border: 1px solid #b7eb8f;
+    }
+
+    &.antonym {
+      background: #fff2e8;
+      color: #fa8c16;
+      border: 1px solid #ffbb96;
+    }
+  }
+}
+
+// 语义填空样式
+.blank-item.has-options {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 8px 4px;
+  vertical-align: top;
+
+  .semantic-blank {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--utools-bg-primary);
+    border-radius: 8px;
+    border: 1px solid var(--utools-border-color);
+    min-width: 200px;
+
+    .blank-type-tag {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      align-self: flex-start;
+
+      &.synonym {
+        background: #e6f7e6;
+        color: #52c41a;
+        border: 1px solid #b7eb8f;
+      }
+
+      &.antonym {
+        background: #fff2e8;
+        color: #fa8c16;
+        border: 1px solid #ffbb96;
+      }
+    }
+
+    .options-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .el-button {
+        min-width: 80px;
+
+        &.is-selected {
+          border-width: 2px;
+        }
+
+        &.is-correct-answer {
+          border-color: #67c23a;
+          background: #f0f9eb;
+        }
+
+        &.is-wrong-answer {
+          border-color: #f56c6c;
+          background: #fef0f0;
+        }
+      }
+    }
+
+    .answer-hint {
+      margin-left: 0;
+      margin-top: 4px;
+      font-size: 13px;
+      color: #67c23a;
+      font-weight: 500;
+    }
+  }
+}
+
+// 语义填空提示
+.semantic-tips {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--utools-bg-primary);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--utools-text-secondary);
+
+  .tip-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+
+    .tag-demo {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+
+      &.synonym {
+        background: #e6f7e6;
+        color: #52c41a;
+      }
+
+      &.antonym {
+        background: #fff2e8;
+        color: #fa8c16;
+      }
+    }
   }
 }
 </style>

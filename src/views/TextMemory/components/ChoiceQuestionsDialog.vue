@@ -76,7 +76,7 @@
               原文：{{ question.originalText }}
             </div>
             
-            <div class="options-list">
+            <div class="options-list" :class="{ 'semantic-options': isSemanticQuestion(question.type) }">
               <div
                 v-for="(option, optIndex) in question.options"
                 :key="optIndex"
@@ -88,8 +88,15 @@
                 }"
                 @click="selectAnswer(question, optIndex)"
               >
-                <span class="option-label">{{ option.label }}.</span>
-                <span class="option-content">{{ option.content }}</span>
+                <!-- 普通题型显示 ABC -->
+                <template v-if="!isSemanticQuestion(question.type)">
+                  <span class="option-label">{{ option.label }}.</span>
+                  <span class="option-content">{{ option.content }}</span>
+                </template>
+                <!-- 语义题型直接显示词语 -->
+                <template v-else>
+                  <span class="semantic-option-content">{{ option.content }}</span>
+                </template>
                 <el-icon v-if="question.answered && optIndex === question.correctIndex" class="correct-icon">
                   <Check />
                 </el-icon>
@@ -343,6 +350,11 @@ function progressFormat(percentage: number): string {
   const answered = questions.value.filter(q => q.answered).length;
   return `${answered}/${questions.value.length}`;
 }
+
+// 判断是否是语义类题目（近义词/反义词）
+function isSemanticQuestion(type: string): boolean {
+  return type === 'synonym' || type === 'antonym';
+}
 </script>
 
 <style scoped lang="scss">
@@ -476,6 +488,49 @@ function progressFormat(percentage: number): string {
 .option-content {
   flex: 1;
   color: var(--utools-text-primary);
+}
+
+// 语义选项样式（近义词/反义词）
+.options-list.semantic-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  .option-item {
+    justify-content: center;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 500;
+
+    .semantic-option-content {
+      flex: 1;
+      text-align: center;
+      color: var(--utools-text-primary);
+    }
+
+    &:hover {
+      background: var(--utools-bg-hover);
+      transform: translateY(-1px);
+    }
+
+    &.is-selected {
+      border-color: var(--utools-primary);
+      background: var(--utools-primary-light);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &.is-correct-answer {
+      border-color: #67c23a;
+      background: #f0f9eb;
+      color: #67c23a;
+    }
+
+    &.is-wrong-answer {
+      border-color: #f56c6c;
+      background: #fef0f0;
+      color: #f56c6c;
+    }
+  }
 }
 
 .correct-icon {

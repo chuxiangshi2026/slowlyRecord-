@@ -50,7 +50,7 @@
     <!-- 文章列表 -->
     <div class="articles-list" v-loading="textStore.loading">
       <el-empty v-if="filteredArticles.length === 0" description="暂无文章，点击添加按钮开始" />
-      
+
       <div
         v-for="article in filteredArticles"
         :key="article._id"
@@ -75,9 +75,9 @@
                   <el-dropdown-item @click="handleFillBlanks(article)">
                     <el-icon><EditPen /></el-icon> 填空练习
                   </el-dropdown-item>
-                  <el-dropdown-item @click="handleChoiceQuestions(article)">
+<!--                  <el-dropdown-item @click="handleChoiceQuestions(article)">
                     <el-icon><QuestionFilled /></el-icon> 选择题
-                  </el-dropdown-item>
+                  </el-dropdown-item>-->
                   <el-dropdown-item @click="handleNotes(article)">
                     <el-icon><Notebook /></el-icon> 笔记
                   </el-dropdown-item>
@@ -92,11 +92,11 @@
             </el-dropdown>
           </div>
         </div>
-        
+
         <div class="article-content-preview">
           {{ article.content.substring(0, 150) }}{{ article.content.length > 150 ? '...' : '' }}
         </div>
-        
+
         <div class="article-footer">
           <div class="article-tags">
             <el-tag
@@ -219,7 +219,7 @@ const currentExerciseArticle = ref<TextArticle | null>(null);
 // 过滤后的文章列表
 const filteredArticles = computed(() => {
   let result = textStore.sortedArticles;
-  
+
   // 按关键词搜索
   if (searchKeyword.value) {
     const keyword = searchKeyword.value.toLowerCase();
@@ -228,14 +228,14 @@ const filteredArticles = computed(() => {
       article.content.toLowerCase().includes(keyword)
     );
   }
-  
+
   // 按标签筛选
   if (selectedTag.value) {
     result = result.filter(article =>
       article.tags.includes(selectedTag.value)
     );
   }
-  
+
   return result;
 });
 
@@ -297,7 +297,7 @@ async function handleDelete(article: TextArticle) {
         type: 'warning'
       }
     );
-    
+
     const result = await textStore.deleteArticle(article._id);
     if (result.success) {
       ElMessage.success('删除成功');
@@ -313,7 +313,7 @@ async function handleDelete(article: TextArticle) {
 async function handleImportArticles(articles: Omit<TextArticle, '_id' | '_rev' | 'ctime' | 'utime' | 'reviewCount'>[]) {
   let successCount = 0;
   let failCount = 0;
-  
+
   for (const article of articles) {
     const result = await textStore.addArticle(article);
     if (result.success) {
@@ -322,14 +322,14 @@ async function handleImportArticles(articles: Omit<TextArticle, '_id' | '_rev' |
       failCount++;
     }
   }
-  
+
   if (successCount > 0) {
     ElMessage.success(`成功导入 ${successCount} 篇文章`);
   }
   if (failCount > 0) {
     ElMessage.warning(`${failCount} 篇文章导入失败`);
   }
-  
+
   showImportDialog.value = false;
 }
 
@@ -389,7 +389,7 @@ function handleOpenWordSettings() {
 
 .stats-bar {
   margin-bottom: 16px;
-  
+
   .el-tag {
     margin-right: 10px;
   }
@@ -408,7 +408,7 @@ function handleOpenWordSettings() {
   padding: 16px;
   cursor: pointer;
   transition: all 0.3s;
-  
+
   &:hover {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     border-color: var(--utools-primary);
@@ -432,7 +432,7 @@ function handleOpenWordSettings() {
 .article-actions {
   .el-button {
     color: var(--utools-text-secondary);
-    
+
     &:hover {
       color: var(--utools-primary);
     }
@@ -469,7 +469,7 @@ function handleOpenWordSettings() {
   gap: 12px;
   font-size: 12px;
   color: var(--utools-text-secondary);
-  
+
   .meta-item {
     display: flex;
     align-items: center;
