@@ -5,7 +5,7 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [vue()],
   test: {
-    environment: 'jsdom',
+    environment: 'node',
     globals: true,
     include: ['src/**/*.{test,spec}.{js,ts}'],
     coverage: {

@@ -123,12 +123,12 @@ export const validateImportedWords = (words: any[]): any[] => {
             _id: word._id || DB_KEY + uuidv4(), // 添加_id属性
             image: word.image || '', // 补全image属性
             phonetic: word.phonetic || '', // 补全phonetic属性
-            explainedHidden: word.explainedHidden || false, // 补全explainedHidden属性
-            isReview: word.isReview || true, // 补全isReview属性
+            explainedHidden: word.explainedHidden ?? false, // 补全explainedHidden属性
+            isReview: word.isReview ?? true, // 补全isReview属性
             ctime: word.ctime ? new Date(word.ctime) : new Date(), // 确保是Date对象
             learnDate: word.learnDate ? new Date(word.learnDate) : new Date(), // 确保是Date对象
             level: (word.level >= 0 && word.level <= 12 ? word.level : 1) as 0|1|2|3|4|5|6|7|8|9|10|11|12, // 补全level属性
-            remember: word.remember || false, // 补全remember属性
+            remember: word.remember ?? false, // 补全remember属性
             explains: word.explains || '', // 确保有explains属性
             pronunciation: word.pronunciation || '' // 确保有发音属性
         }));
