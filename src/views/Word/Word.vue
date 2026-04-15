@@ -449,6 +449,20 @@ const openWordBankManager = () => {
   wordBankManagerVisible.value = true
 }
 
+// 监听词库管理器可见性变化，当打开时刷新数据
+watch(() => wordBankManagerVisible.value, (visible) => {
+  if (visible) {
+    loadCustomWordBanks()
+  }
+})
+
+// 监听当前词库的单词数量变化，如果词库管理器打开则刷新
+watch(() => wordsStore.currentWordBank?.words.length, () => {
+  if (wordBankManagerVisible.value) {
+    loadCustomWordBanks()
+  }
+})
+
 // 切换到指定词库
 const switchToWordBank = async (bankId: string) => {
   const success = await wordsStore.switchWordBank(bankId)

@@ -517,15 +517,24 @@ export const useWordsStore =
                     return;
                 }
 
-                // 从当前词库删除
-                const bank = await getWordBank(currentWordBankId.value)
-                if (bank) {
-                    const bankIndex = bank.words.findIndex(w => w.text === word.text)
+                // 从当前词库删除 - 直接使用 currentWordBank.value 避免重新加载导致数据不一致
+                if (currentWordBank.value && currentWordBank.value.id === currentWordBankId.value) {
+                    const bankIndex = currentWordBank.value.words.findIndex(w => w.text === word.text)
                     if (bankIndex !== -1) {
-                        bank.words.splice(bankIndex, 1)
-                        await saveWordBank(bank)
+                        currentWordBank.value.words.splice(bankIndex, 1)
+                        await saveWordBank(currentWordBank.value)
                     }
-                    currentWordBank.value = bank
+                } else {
+                    // 如果 currentWordBank.value 不匹配，重新加载
+                    const bank = await getWordBank(currentWordBankId.value)
+                    if (bank) {
+                        const bankIndex = bank.words.findIndex(w => w.text === word.text)
+                        if (bankIndex !== -1) {
+                            bank.words.splice(bankIndex, 1)
+                            await saveWordBank(bank)
+                        }
+                        currentWordBank.value = bank
+                    }
                 }
 
                 // 先保存要删除的单词ID（兼容旧数据库）
@@ -579,20 +588,31 @@ export const useWordsStore =
                 } else {
                     pushWords([word])
                 }
-
-                // 保存到当前词库
-                const bank = await getWordBank(currentWordBankId.value)
-                if (bank) {
-                    const wordIndex = bank.words.findIndex(w => w.text === word.text)
+                
+                // 保存到当前词库 - 直接使用 currentWordBank.value 避免重新加载导致数据不一致
+                if (currentWordBank.value && currentWordBank.value.id === currentWordBankId.value) {
+                    const wordIndex = currentWordBank.value.words.findIndex(w => w.text === word.text)
                     if (wordIndex !== -1) {
-                        Object.assign(bank.words[wordIndex], word)
+                        Object.assign(currentWordBank.value.words[wordIndex], word)
                     } else {
-                        bank.words.push(word)
+                        currentWordBank.value.words.push(word)
                     }
-                    await saveWordBank(bank)
-                    currentWordBank.value = bank
+                    await saveWordBank(currentWordBank.value)
+                } else {
+                    // 如果 currentWordBank.value 不匹配，重新加载
+                    const bank = await getWordBank(currentWordBankId.value)
+                    if (bank) {
+                        const wordIndex = bank.words.findIndex(w => w.text === word.text)
+                        if (wordIndex !== -1) {
+                            Object.assign(bank.words[wordIndex], word)
+                        } else {
+                            bank.words.push(word)
+                        }
+                        await saveWordBank(bank)
+                        currentWordBank.value = bank
+                    }
                 }
-
+                
                 // 同时兼容旧数据库
                 addAndUpdateDbWord(word).then(() => {
                     console.log("添加单个词到数据库", word)
@@ -659,7 +679,7 @@ export const useWordsStore =
             persist: {
                 key: 'words-store',
                 storage: localStorage,
-                paths: [
+                pick: [
                     'currentWordBankId',
                     'lastAddedWordText',
                     'currentTranslationPlatform',
