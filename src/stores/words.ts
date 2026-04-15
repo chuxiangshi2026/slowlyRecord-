@@ -20,7 +20,7 @@ import {APP_KEY, DB_KEY, DB_KEY_USER_SET, DEFAULT_INTERVALS, FROM, KEY, TO} from
 import {truncate} from "lodash";
 import {AppInfo} from "@/config.ts";
 // import {downloadAndStoreAudio} from "@/utils/audio-util.ts";
-// 导入翻译服务
+// 导入翻译服务 abandon
 import {translateWithPlatform as externalTranslateWithPlatform} from "@/utils/translation-api";
 import {addAndUpdateSetDb, getSetDb} from "@/utils/user-set-db-util.ts";
 import {v4 as uuidv4} from "uuid";
@@ -85,7 +85,7 @@ export const useWordsStore =
             const currentWordBankId = ref<string>('')
             // 当前词库信息
             const currentWordBank = ref<WordBank | null>(null)
-            
+
             // 初始化词库信息
             async function initWordBankInfo() {
                 currentWordBankId.value = await getCurrentWordBankId()
@@ -368,16 +368,16 @@ export const useWordsStore =
             async function switchWordBank(bankId: string): Promise<boolean> {
                 const bank = await getWordBank(bankId)
                 if (!bank) return false
-                
+
                 currentWordBankId.value = bankId
                 currentWordBank.value = bank
                 setCurrentWordBankId(bankId)
-                
+
                 // 重新加载新词库的单词
                 words.value = []
                 pushWords(bank.words)
                 upReview()
-                
+
                 return true
             }
 
@@ -389,11 +389,11 @@ export const useWordsStore =
                 if (!currentWordBankId.value) {
                     await initWordBankInfo()
                 }
-                
+
                 // 从当前词库获取单词
                 const bank = await getWordBank(currentWordBankId.value)
                 currentWordBank.value = bank
-                
+
                 if (bank) {
                     // 如果是默认词库且为空，尝试从旧数据库迁移数据
                     if (bank.isDefault && bank.words.length === 0) {
@@ -413,7 +413,7 @@ export const useWordsStore =
                         pushWords(bank.words)
                     }
                 }
-                
+
                 // 加载单词后重新计算待复习状态
                 upReview()
                 return words.value
@@ -440,10 +440,14 @@ export const useWordsStore =
                 log.i('upReview 开始计算，单词总数:', words.value.length)
 
                 words.value.forEach((item) => {
-                    // 确保 learnDate 是 Date 对象
+                    // 确保 learnDate 和 ctime 是 Date 对象
                     let learnDate = item.learnDate;
+                    let ctime = item.ctime;
                     if (typeof learnDate === 'string') {
                         learnDate = new Date(learnDate);
+                    }
+                    if (typeof ctime === 'string') {
+                        ctime = new Date(ctime);
                     }
 
                     // 确保 level 有效
@@ -454,7 +458,11 @@ export const useWordsStore =
                     const now = Date.now();
                     const shouldReview = now > reviewTime;
 
-                    // log.i(`单词 ${item.text}: level=${level}, interval=${interval}分钟, shouldReview=${shouldReview}, isReview=${item.isReview}`);
+                    // 判断单词是否是新添加的（从未被复习过）
+                    // 如果 learnDate 和 ctime 相同或非常接近（5秒内），说明是新建单词，从未被复习过
+                    const isNewWord = Math.abs(learnDate.getTime() - ctime.getTime()) < 5000;
+
+                    // log.i(`单词 ${item.text}: level=${level}, interval=${interval}分钟, shouldReview=${shouldReview}, isReview=${item.isReview}, isNewWord=${isNewWord}`);
 
                     // 到了复习时间，设为待复习
                     if (shouldReview && !item.isReview) {
@@ -463,7 +471,8 @@ export const useWordsStore =
                         log.i('单词设为待复习:', item.text);
                     }
                     // 还没到复习时间且不是新添加的，取消待复习
-                    else if (!shouldReview && item.isReview && (now - learnDate.getTime() > 60000)) {
+                    // 新添加的单词（isNewWord=true）不应该被自动取消待复习状态
+                    else if (!shouldReview && item.isReview && !isNewWord && (now - learnDate.getTime() > 60000)) {
                         item.isReview = false;
                         addAndUpdateDbWord(item);
                         log.i('单词取消待复习（时间未到）:', item.text, '下次复习:', new Date(reviewTime).toLocaleString());
@@ -507,7 +516,7 @@ export const useWordsStore =
                     log.e('删除单词失败：单词不存在', word);
                     return;
                 }
-                
+
                 // 从当前词库删除
                 const bank = await getWordBank(currentWordBankId.value)
                 if (bank) {
@@ -518,7 +527,7 @@ export const useWordsStore =
                     }
                     currentWordBank.value = bank
                 }
-                
+
                 // 先保存要删除的单词ID（兼容旧数据库）
                 const wordId = word._id;
                 // 删除index索引下的数值,删除长度为1
@@ -545,7 +554,7 @@ export const useWordsStore =
                         await saveWordBank(bank)
                         currentWordBank.value = bank
                     }
-                    
+
                     // 同时兼容旧数据库
                     await updateDbWordList(payload);
                     pushWords(payload);
@@ -570,7 +579,7 @@ export const useWordsStore =
                 } else {
                     pushWords([word])
                 }
-                
+
                 // 保存到当前词库
                 const bank = await getWordBank(currentWordBankId.value)
                 if (bank) {
@@ -583,7 +592,7 @@ export const useWordsStore =
                     await saveWordBank(bank)
                     currentWordBank.value = bank
                 }
-                
+
                 // 同时兼容旧数据库
                 addAndUpdateDbWord(word).then(() => {
                     console.log("添加单个词到数据库", word)
