@@ -140,10 +140,20 @@
         <div class="writing-board">
           <div class="board-header">
             <h4>记忆提示板</h4>
-            <el-radio-group v-model="boardLayout" size="small">
-              <el-radio-button label="list">列表</el-radio-button>
-              <el-radio-button label="grid">网格</el-radio-button>
-            </el-radio-group>
+            <div class="board-actions">
+              <el-button
+                type="primary"
+                size="small"
+                @click="showQuickAddInBoard = true"
+              >
+                <el-icon><Plus /></el-icon>
+                添加提示词
+              </el-button>
+              <el-radio-group v-model="boardLayout" size="small">
+                <el-radio-button label="list">列表</el-radio-button>
+                <el-radio-button label="grid">网格</el-radio-button>
+              </el-radio-group>
+            </div>
           </div>
 
           <!-- 临时写字板 -->
@@ -198,6 +208,45 @@
           <el-empty v-if="enabledPrompts.length === 0 && !notepadContent" description="没有启用的提示词" />
         </div>
       </template>
+
+      <!-- 写字板模式快速添加提示词对话框 -->
+      <el-dialog
+        v-model="showQuickAddInBoard"
+        title="添加提示词"
+        width="500px"
+        append-to-body
+      >
+        <el-form label-width="60px">
+          <el-form-item label="标题">
+            <el-input
+              v-model="boardNewPromptForm.title"
+              placeholder="提示词标题（如：首句提示、关键词等）"
+              maxlength="50"
+              show-word-limit
+            />
+          </el-form-item>
+          <el-form-item label="内容">
+            <el-input
+              v-model="boardNewPromptForm.content"
+              type="textarea"
+              :rows="3"
+              placeholder="输入提示词内容..."
+              maxlength="1000"
+              show-word-limit
+            />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="showQuickAddInBoard = false">取消</el-button>
+          <el-button
+            type="primary"
+            @click="addPromptFromBoard"
+            :disabled="!boardNewPromptForm.title.trim() || !boardNewPromptForm.content.trim()"
+          >
+            添加
+          </el-button>
+        </template>
+      </el-dialog>
 
       <!-- 对比原文对话框 -->
       <el-dialog
@@ -316,6 +365,14 @@ const dragIndex = ref<number | null>(null);
 // 快速添加
 const showQuickAdd = ref(false);
 const quickAddType = ref('');
+
+// 写字板模式添加提示词
+const showQuickAddInBoard = ref(false);
+const boardNewPromptForm = ref({
+  title: '',
+  content: '',
+  enabled: true
+});
 
 // 展开的卡片
 const expandedCards = ref<string[]>([]);
@@ -461,7 +518,7 @@ function clearNotepad() {
 // 添加提示词
 async function addPrompt() {
   if (!props.article) return;
-  
+
   const result = await textStore.addPrompt({
     articleId: props.article._id,
     title: newPromptForm.value.title.trim(),
@@ -469,10 +526,31 @@ async function addPrompt() {
     order: textStore.currentPrompts.length,
     enabled: newPromptForm.value.enabled
   });
-  
+
   if (result.success) {
     ElMessage.success('提示词添加成功');
     newPromptForm.value = { title: '', content: '', enabled: true };
+  } else {
+    ElMessage.error(result.error || '添加失败');
+  }
+}
+
+// 从写字板模式添加提示词
+async function addPromptFromBoard() {
+  if (!props.article) return;
+
+  const result = await textStore.addPrompt({
+    articleId: props.article._id,
+    title: boardNewPromptForm.value.title.trim(),
+    content: boardNewPromptForm.value.content.trim(),
+    order: textStore.currentPrompts.length,
+    enabled: true
+  });
+
+  if (result.success) {
+    ElMessage.success('提示词添加成功');
+    boardNewPromptForm.value = { title: '', content: '', enabled: true };
+    showQuickAddInBoard.value = false;
   } else {
     ElMessage.error(result.error || '添加失败');
   }
@@ -871,6 +949,12 @@ function generateComparedHtml(original: string, written: string): string {
     h4 {
       margin: 0;
       color: var(--utools-text-primary);
+    }
+
+    .board-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
   }
 
