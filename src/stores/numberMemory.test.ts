@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useNumberMemoryStore } from './numberMemory'
-import type { NumberImageAssociation } from '@/types/number-memory'
+import type { NumberImageAssociation, NumberMemoryEntry, NumberMemoryNote, NumberMemoryPrompt } from '@/types/number-memory'
 
 // Mock number-memory-db
 vi.mock('@/utils/number-memory-db', () => ({
   getAllAssociations: vi.fn(() => []),
   getAssociationByNumber: vi.fn(() => null),
-  saveAssociation: vi.fn(() => Promise.resolve({ ok: true })),
-  removeAssociation: vi.fn(() => Promise.resolve({ ok: true })),
-  saveTrainingResult: vi.fn(() => Promise.resolve({ ok: true })),
+  saveAssociation: vi.fn(() => Promise.resolve({ ok: true, id: 'test-id' })),
+  removeAssociation: vi.fn(() => Promise.resolve({ ok: true, id: 'test-id' })),
+  saveTrainingResult: vi.fn(() => Promise.resolve({ ok: true, id: 'test-id' })),
   getAllTrainingResults: vi.fn(() => []),
 }))
 
@@ -32,6 +32,23 @@ vi.mock('@/utils/number-memory-preset', () => ({
   }),
 }))
 
+// Mock number-memory-entries-db
+vi.mock('@/utils/number-memory-entries-db', () => ({
+  getAllEntries: vi.fn(() => []),
+  createEntry: vi.fn(() => Promise.resolve({ ok: true, id: 'entry_new', doc: { _id: 'entry_new', type: 'number_memory_entry' as const, title: '新条目', numbers: '123', tags: [], createdAt: 3000, updatedAt: 3000, reviewCount: 0 } })),
+  updateEntry: vi.fn(() => Promise.resolve({ ok: true, id: 'entry_1' })),
+  deleteEntry: vi.fn(() => Promise.resolve({ ok: true, id: 'entry_1' })),
+  getNotesByEntryId: vi.fn(() => []),
+  createNote: vi.fn(() => Promise.resolve({ ok: true, id: 'note_new', doc: { _id: 'note_new', type: 'number_memory_note' as const, entryId: 'entry_1', content: '新笔记', createdAt: 3000 } })),
+  updateNote: vi.fn(() => Promise.resolve({ ok: true, id: 'note_1' })),
+  deleteNote: vi.fn(() => Promise.resolve({ ok: true, id: 'note_1' })),
+  getPromptsByEntryId: vi.fn(() => []),
+  createPrompt: vi.fn(() => Promise.resolve({ ok: true, id: 'prompt_new', doc: { _id: 'prompt_new', type: 'number_memory_prompt' as const, entryId: 'entry_1', title: '新提示', content: '新内容', order: 2, enabled: true, createdAt: 3000 } })),
+  updatePrompt: vi.fn(() => Promise.resolve({ ok: true, id: 'prompt_1' })),
+  deletePrompt: vi.fn(() => Promise.resolve({ ok: true, id: 'prompt_1' })),
+  reorderPrompts: vi.fn(() => Promise.resolve(true)),
+}))
+
 // Mock logger
 vi.mock('@/utils/logger', () => ({
   log: { i: vi.fn(), w: vi.fn(), e: vi.fn() }
@@ -39,6 +56,21 @@ vi.mock('@/utils/logger', () => ({
 
 import { getAllAssociations, saveAssociation, removeAssociation, saveTrainingResult, getAllTrainingResults } from '@/utils/number-memory-db'
 import { getRecommendedImages, getNumberKeyword, getRandomNumbers, shuffleArray } from '@/utils/number-memory-preset'
+import {
+  getAllEntries,
+  createEntry,
+  updateEntry,
+  deleteEntry,
+  getNotesByEntryId,
+  createNote,
+  updateNote,
+  deleteNote,
+  getPromptsByEntryId,
+  createPrompt,
+  updatePrompt,
+  deletePrompt,
+  reorderPrompts
+} from '@/utils/number-memory-entries-db'
 
 const mockAssociations: NumberImageAssociation[] = [
   { number: '0', imageUrl: 'img0', source: 'preset', description: '零' },
@@ -300,6 +332,308 @@ describe('useNumberMemoryStore', () => {
       const store = useNumberMemoryStore()
       store.getRandomPresetNumbers(5)
       expect(getRandomNumbers).toHaveBeenCalledWith(5, 'all')
+    })
+  })
+
+  // ========== 数字记忆条目相关测试 ==========
+  describe('数字记忆条目', () => {
+    const mockEntries: NumberMemoryEntry[] = [
+      { _id: 'entry_1', type: 'number_memory_entry', title: '手机号1', numbers: '13800138000', tags: ['手机'], createdAt: 1000, updatedAt: 1000, reviewCount: 0 },
+      { _id: 'entry_2', type: 'number_memory_entry', title: '身份证号', numbers: '110101199001011234', tags: ['证件'], createdAt: 2000, updatedAt: 2000, reviewCount: 2 },
+      { _id: 'entry_3', type: 'number_memory_entry', title: '银行卡', numbers: '6222021234567890123', tags: ['银行', '金融'], createdAt: 1500, updatedAt: 1500, reviewCount: 1 },
+    ]
+
+    describe('loadEntries', () => {
+      it('应该从数据库加载条目', () => {
+        vi.mocked(getAllEntries).mockReturnValue(mockEntries)
+        const store = useNumberMemoryStore()
+        store.loadEntries()
+        expect(store.entries).toEqual(mockEntries)
+        expect(getAllEntries).toHaveBeenCalled()
+      })
+    })
+
+    describe('sortedEntries', () => {
+      it('应该按创建时间倒序排列', () => {
+        vi.mocked(getAllEntries).mockReturnValue(mockEntries)
+        const store = useNumberMemoryStore()
+        store.loadEntries()
+        const sorted = store.sortedEntries
+        expect(sorted[0]._id).toBe('entry_2')
+        expect(sorted[1]._id).toBe('entry_3')
+        expect(sorted[2]._id).toBe('entry_1')
+      })
+    })
+
+    describe('allTags', () => {
+      it('应该返回所有唯一的标签', () => {
+        vi.mocked(getAllEntries).mockReturnValue(mockEntries)
+        const store = useNumberMemoryStore()
+        store.loadEntries()
+        expect(store.allTags).toContain('手机')
+        expect(store.allTags).toContain('证件')
+        expect(store.allTags).toContain('银行')
+        expect(store.allTags).toContain('金融')
+        expect(store.allTags).toHaveLength(4)
+      })
+    })
+
+    describe('addEntry', () => {
+      it('应该调用 createEntry 并添加到列表', async () => {
+        const newEntry: NumberMemoryEntry = { _id: 'entry_new', type: 'number_memory_entry', title: '新条目', numbers: '123', tags: [], createdAt: 3000, updatedAt: 3000, reviewCount: 0 }
+        vi.mocked(createEntry).mockResolvedValueOnce({ ok: true, id: 'entry_new', doc: newEntry })
+        
+        const store = useNumberMemoryStore()
+        const result = await store.addEntry('新条目', '123', [], '描述')
+        
+        expect(createEntry).toHaveBeenCalledWith('新条目', '123', [], '描述')
+        expect(result.ok).toBe(true)
+        expect(store.entries).toContainEqual(newEntry)
+      })
+
+      it('创建失败时不应添加到列表', async () => {
+        vi.mocked(createEntry).mockResolvedValueOnce({ ok: false, id: '', error: true })
+        
+        const store = useNumberMemoryStore()
+        const result = await store.addEntry('新条目', '123')
+        
+        expect(result.ok).toBe(false)
+        expect(store.entries).toHaveLength(0)
+      })
+    })
+
+    describe('updateEntryItem', () => {
+      it('应该更新列表中的条目', async () => {
+        vi.mocked(getAllEntries).mockReturnValue(mockEntries)
+        vi.mocked(updateEntry).mockResolvedValueOnce({ ok: true, id: 'entry_1' })
+        
+        const store = useNumberMemoryStore()
+        store.loadEntries()
+        
+        const updatedEntry = { ...mockEntries[0], title: '已更新' }
+        const result = await store.updateEntryItem(updatedEntry)
+        
+        expect(updateEntry).toHaveBeenCalledWith(updatedEntry)
+        expect(result.ok).toBe(true)
+        expect(store.entries[0].title).toBe('已更新')
+      })
+    })
+
+    describe('deleteEntryItem', () => {
+      it('应该从列表中删除条目', async () => {
+        vi.mocked(getAllEntries).mockReturnValue(mockEntries)
+        vi.mocked(deleteEntry).mockResolvedValueOnce({ ok: true, id: 'entry_1' })
+        
+        const store = useNumberMemoryStore()
+        store.loadEntries()
+        
+        const result = await store.deleteEntryItem('entry_1')
+        
+        expect(deleteEntry).toHaveBeenCalledWith('entry_1')
+        expect(result.ok).toBe(true)
+        expect(store.entries.some(e => e._id === 'entry_1')).toBe(false)
+      })
+
+      it('删除当前条目时应清空 currentEntry', async () => {
+        vi.mocked(getAllEntries).mockReturnValue(mockEntries)
+        vi.mocked(deleteEntry).mockResolvedValueOnce({ ok: true, id: 'entry_1' })
+        
+        const store = useNumberMemoryStore()
+        store.loadEntries()
+        store.setCurrentEntry(mockEntries[0])
+        
+        await store.deleteEntryItem('entry_1')
+        
+        expect(store.currentEntry).toBeNull()
+      })
+    })
+
+    describe('setCurrentEntry', () => {
+      it('应该设置当前条目', () => {
+        const store = useNumberMemoryStore()
+        const entry = mockEntries[0]
+        store.setCurrentEntry(entry)
+        expect(store.currentEntry).toEqual(entry)
+      })
+
+      it('应该可以清空当前条目', () => {
+        const store = useNumberMemoryStore()
+        store.setCurrentEntry(mockEntries[0])
+        store.setCurrentEntry(null)
+        expect(store.currentEntry).toBeNull()
+      })
+    })
+
+    describe('updateReviewCount', () => {
+      it('应该增加复习次数', async () => {
+        vi.mocked(getAllEntries).mockReturnValue([{ ...mockEntries[0] }])
+        vi.mocked(updateEntry).mockResolvedValueOnce({ ok: true, id: 'entry_1' })
+        
+        const store = useNumberMemoryStore()
+        store.loadEntries()
+        
+        const result = await store.updateReviewCount('entry_1')
+        
+        expect(result.ok).toBe(true)
+        expect(store.entries[0].reviewCount).toBe(1)
+      })
+
+      it('条目不存在时应返回失败', async () => {
+        const store = useNumberMemoryStore()
+        const result = await store.updateReviewCount('nonexistent')
+        expect(result.ok).toBe(false)
+      })
+    })
+  })
+
+  // ========== 笔记相关测试 ==========
+  describe('笔记功能', () => {
+    const mockNotes: NumberMemoryNote[] = [
+      { _id: 'note_1', type: 'number_memory_note', entryId: 'entry_1', content: '第一条笔记', createdAt: 1000 },
+      { _id: 'note_2', type: 'number_memory_note', entryId: 'entry_1', content: '第二条笔记', createdAt: 2000 },
+    ]
+
+    describe('loadNotes', () => {
+      it('应该加载条目的笔记', async () => {
+        vi.mocked(getNotesByEntryId).mockReturnValue(mockNotes)
+        
+        const store = useNumberMemoryStore()
+        await store.loadNotes('entry_1')
+        
+        expect(getNotesByEntryId).toHaveBeenCalledWith('entry_1')
+        expect(store.currentNotes).toEqual(mockNotes)
+      })
+    })
+
+    describe('addNote', () => {
+      it('应该添加笔记到列表', async () => {
+        const newNote = { _id: 'note_new', type: 'number_memory_note' as const, entryId: 'entry_1', content: '新笔记', createdAt: 3000 }
+        vi.mocked(createNote).mockResolvedValueOnce({ ok: true, id: 'note_new', doc: newNote })
+        
+        const store = useNumberMemoryStore()
+        const result = await store.addNote({ entryId: 'entry_1', content: '新笔记' })
+        
+        expect(createNote).toHaveBeenCalledWith('entry_1', '新笔记')
+        expect(result.ok).toBe(true)
+        expect(store.currentNotes).toContainEqual(newNote)
+      })
+    })
+
+    describe('updateNoteItem', () => {
+      it('应该更新笔记', async () => {
+        vi.mocked(getNotesByEntryId).mockReturnValue([...mockNotes])
+        vi.mocked(updateNote).mockResolvedValueOnce({ ok: true, id: 'note_1' })
+        
+        const store = useNumberMemoryStore()
+        await store.loadNotes('entry_1')
+        
+        const updatedNote = { ...mockNotes[0], content: '已更新' }
+        const result = await store.updateNoteItem(updatedNote)
+        
+        expect(updateNote).toHaveBeenCalledWith(updatedNote)
+        expect(result.ok).toBe(true)
+        expect(store.currentNotes[0].content).toBe('已更新')
+      })
+    })
+
+    describe('deleteNoteItem', () => {
+      it('应该删除笔记', async () => {
+        vi.mocked(getNotesByEntryId).mockReturnValue([...mockNotes])
+        vi.mocked(deleteNote).mockResolvedValueOnce({ ok: true, id: 'note_1' })
+        
+        const store = useNumberMemoryStore()
+        await store.loadNotes('entry_1')
+        
+        const result = await store.deleteNoteItem('note_1')
+        
+        expect(deleteNote).toHaveBeenCalledWith('note_1')
+        expect(result.ok).toBe(true)
+        expect(store.currentNotes.some(n => n._id === 'note_1')).toBe(false)
+      })
+    })
+  })
+
+  // ========== 提示词相关测试 ==========
+  describe('提示词功能', () => {
+    const mockPrompts: NumberMemoryPrompt[] = [
+      { _id: 'prompt_1', type: 'number_memory_prompt', entryId: 'entry_1', title: '提示1', content: '内容1', order: 0, enabled: true, createdAt: 1000 },
+      { _id: 'prompt_2', type: 'number_memory_prompt', entryId: 'entry_1', title: '提示2', content: '内容2', order: 1, enabled: false, createdAt: 2000 },
+    ]
+
+    describe('loadPrompts', () => {
+      it('应该加载条目的提示词', async () => {
+        vi.mocked(getPromptsByEntryId).mockReturnValue(mockPrompts)
+        
+        const store = useNumberMemoryStore()
+        await store.loadPrompts('entry_1')
+        
+        expect(getPromptsByEntryId).toHaveBeenCalledWith('entry_1')
+        expect(store.currentPrompts).toEqual(mockPrompts)
+      })
+    })
+
+    describe('addPrompt', () => {
+      it('应该添加提示词到列表', async () => {
+        const newPrompt = { _id: 'prompt_new', type: 'number_memory_prompt' as const, entryId: 'entry_1', title: '新提示', content: '新内容', order: 2, enabled: true, createdAt: 3000 }
+        vi.mocked(createPrompt).mockResolvedValueOnce({ ok: true, id: 'prompt_new', doc: newPrompt })
+        
+        const store = useNumberMemoryStore()
+        const result = await store.addPrompt({ entryId: 'entry_1', title: '新提示', content: '新内容', order: 2, enabled: true })
+        
+        expect(createPrompt).toHaveBeenCalledWith('entry_1', '新提示', '新内容', 2, true)
+        expect(result.ok).toBe(true)
+        expect(store.currentPrompts).toContainEqual(newPrompt)
+      })
+    })
+
+    describe('updatePromptItem', () => {
+      it('应该更新提示词', async () => {
+        vi.mocked(getPromptsByEntryId).mockReturnValue([...mockPrompts])
+        vi.mocked(updatePrompt).mockResolvedValueOnce({ ok: true, id: 'prompt_1' })
+        
+        const store = useNumberMemoryStore()
+        await store.loadPrompts('entry_1')
+        
+        const updatedPrompt = { ...mockPrompts[0], title: '已更新' }
+        const result = await store.updatePromptItem(updatedPrompt)
+        
+        expect(updatePrompt).toHaveBeenCalledWith(updatedPrompt)
+        expect(result.ok).toBe(true)
+        expect(store.currentPrompts[0].title).toBe('已更新')
+      })
+    })
+
+    describe('deletePromptItem', () => {
+      it('应该删除提示词', async () => {
+        vi.mocked(getPromptsByEntryId).mockReturnValue([...mockPrompts])
+        vi.mocked(deletePrompt).mockResolvedValueOnce({ ok: true, id: 'prompt_1' })
+        
+        const store = useNumberMemoryStore()
+        await store.loadPrompts('entry_1')
+        
+        const result = await store.deletePromptItem('prompt_1')
+        
+        expect(deletePrompt).toHaveBeenCalledWith('prompt_1')
+        expect(result.ok).toBe(true)
+        expect(store.currentPrompts.some(p => p._id === 'prompt_1')).toBe(false)
+      })
+    })
+
+    describe('reorderPromptsList', () => {
+      it('应该重新排序提示词', async () => {
+        vi.mocked(getPromptsByEntryId).mockReturnValue([...mockPrompts])
+        vi.mocked(reorderPrompts).mockResolvedValueOnce(true)
+        
+        const store = useNumberMemoryStore()
+        await store.loadPrompts('entry_1')
+        
+        const reordered = [mockPrompts[1], mockPrompts[0]]
+        const result = await store.reorderPromptsList(reordered)
+        
+        expect(reorderPrompts).toHaveBeenCalledWith(reordered)
+        expect(result).toBe(true)
+        expect(store.currentPrompts[0]._id).toBe('prompt_2')
+      })
     })
   })
 })

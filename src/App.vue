@@ -173,11 +173,10 @@ utools.onPluginEnter(async (action) => {
     // 把单词翻译了，添加到 列表中
     // console.log('==================', action)
 
-    await addWord(action.payload).then(result => {
-      if (!result.success) {
-        ElMessage.warning(result.message);
-      }
-    });
+    const result = await addWord(action.payload);
+    if (!result.success) {
+      ElMessage.warning(result.message);
+    }
 
     // 添加单词后跳转到单词列表（避免停留在数字记忆或记忆测试页面）
     router.push('/word')

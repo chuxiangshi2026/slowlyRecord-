@@ -171,6 +171,36 @@ describe('parseFileContent', () => {
     expect(result[0].remember).toBe(false)
   })
 
+  it('应该解析非格式化的 ctime 日期字符串（如 ISO 格式）', () => {
+    const content = 'hello,你好,true,true,2024-06-20T14:30:00.000Z,2024-01-15 10:30:00,2'
+    const result = parseFileContent(content)
+
+    expect(result[0].ctime).toBeInstanceOf(Date)
+    expect(result[0].ctime.getFullYear()).toBe(2024)
+  })
+
+  it('应该解析非格式化的 learnDate 日期字符串（如 ISO 格式）', () => {
+    const content = 'hello,你好,true,true,2024-01-15 10:30:00,2024-06-20T14:30:00.000Z,2'
+    const result = parseFileContent(content)
+
+    expect(result[0].learnDate).toBeInstanceOf(Date)
+    expect(result[0].learnDate.getFullYear()).toBe(2024)
+  })
+
+  it('ctime 为无效日期字符串时应使用当前时间', () => {
+    const content = 'hello,你好,true,true,not-a-date,2024-01-15 10:30:00,2'
+    const result = parseFileContent(content)
+
+    expect(result[0].ctime).toBeInstanceOf(Date)
+  })
+
+  it('learnDate 为无效日期字符串时应使用当前时间', () => {
+    const content = 'hello,你好,true,true,2024-01-15 10:30:00,not-a-date,2'
+    const result = parseFileContent(content)
+
+    expect(result[0].learnDate).toBeInstanceOf(Date)
+  })
+
   it('应该处理只包含空格的行', () => {
     const content = 'hello\n   \nworld'
     const result = parseFileContent(content)
