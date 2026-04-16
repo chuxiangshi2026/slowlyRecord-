@@ -150,21 +150,33 @@
           <div class="temp-notepad-section">
             <div class="notepad-header">
               <span class="notepad-title">📝 临时写字板</span>
-              <el-button
-                link
-                type="danger"
-                size="small"
-                @click="clearNotepad"
-              >
-                <el-icon><Delete /></el-icon>
-                清空
-              </el-button>
+              <div class="notepad-actions">
+                <el-button
+                  v-if="notepadContent"
+                  link
+                  type="primary"
+                  size="small"
+                  @click="showCompareDialog"
+                >
+                  <el-icon><View /></el-icon>
+                  对比原文
+                </el-button>
+                <el-button
+                  link
+                  type="danger"
+                  size="small"
+                  @click="clearNotepad"
+                >
+                  <el-icon><Delete /></el-icon>
+                  清空
+                </el-button>
+              </div>
             </div>
             <el-input
               v-model="notepadContent"
               type="textarea"
               :rows="4"
-              placeholder="在这里临时记录内容...（24小时后自动清空）"
+              placeholder="在这里默写原文..."
               class="notepad-input"
               @input="saveNotepad"
             />
@@ -186,6 +198,43 @@
           <el-empty v-if="enabledPrompts.length === 0 && !notepadContent" description="没有启用的提示词" />
         </div>
       </template>
+
+      <!-- 对比原文对话框 -->
+      <el-dialog
+        v-model="showCompare"
+        title="默写对比"
+        width="800px"
+        append-to-body
+        class="compare-dialog"
+      >
+        <div class="compare-wrapper">
+          <div class="compare-panel">
+            <div class="panel-header">
+              <span class="panel-title">📄 原文</span>
+              <el-tag size="small" type="info">{{ article?.content?.length || 0 }} 字</el-tag>
+            </div>
+            <div class="panel-content original-text">{{ article?.content }}</div>
+          </div>
+          <div class="compare-panel">
+            <div class="panel-header">
+              <span class="panel-title">✏️ 我的默写</span>
+              <el-tag size="small" :type="compareStats.errorCount > 0 ? 'warning' : 'success'">
+                {{ compareStats.errorCount }} 处错误
+              </el-tag>
+            </div>
+            <div class="panel-content compared-text" v-html="comparedHtml"></div>
+          </div>
+        </div>
+        <div class="compare-stats">
+          <el-statistic title="正确率" :value="compareStats.accuracy" suffix="%" />
+          <el-statistic title="字数" :value="compareStats.totalWords" />
+          <el-statistic title="错误" :value="compareStats.errorCount" />
+          <el-statistic title="遗漏" :value="compareStats.missingCount" />
+        </div>
+        <template #footer>
+          <el-button @click="showCompare = false">关闭</el-button>
+        </template>
+      </el-dialog>
 
       <!-- 快速添加对话框 -->
       <el-dialog
@@ -228,7 +277,7 @@ import { ref, computed, watch } from 'vue';
 import { useTextMemoryStore } from '@/stores/textMemory';
 import type { TextArticle, TextPrompt } from '@/types/text-memory';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus, Edit, Delete, Rank, MagicStick } from '@element-plus/icons-vue';
+import { Plus, Edit, Delete, Rank, MagicStick, View } from '@element-plus/icons-vue';
 
 // 写字板存储键
 const NOTEPAD_KEY = 'slowlyrecord-textmemory-notepad';
@@ -273,6 +322,45 @@ const expandedCards = ref<string[]>([]);
 
 // 临时写字板内容
 const notepadContent = ref('');
+
+// 对比对话框
+const showCompare = ref(false);
+
+// 对比统计
+const compareStats = computed(() => {
+  if (!props.article) return { accuracy: 0, totalWords: 0, errorCount: 0, missingCount: 0 };
+  
+  const original = props.article.content || '';
+  const written = notepadContent.value || '';
+  
+  // 计算差异
+  const result = compareText(original, written);
+  
+  const totalWords = original.length;
+  const errorCount = result.errors.length;
+  const missingCount = result.missing.length;
+  
+  const accuracy = totalWords > 0 
+    ? Math.round(((totalWords - errorCount - missingCount) / totalWords) * 100) 
+    : 0;
+  
+  return {
+    accuracy: Math.max(0, accuracy),
+    totalWords,
+    errorCount,
+    missingCount
+  };
+});
+
+// 对比后的HTML
+const comparedHtml = computed(() => {
+  if (!props.article) return '';
+  
+  const original = props.article.content || '';
+  const written = notepadContent.value || '';
+  
+  return generateComparedHtml(original, written);
+});
 
 // 启用的提示词
 const enabledPrompts = computed(() => 
@@ -512,6 +600,131 @@ function toggleCardExpand(promptId: string) {
     expandedCards.value.splice(index, 1);
   }
 }
+
+// 显示对比对话框
+function showCompareDialog() {
+  if (!notepadContent.value.trim()) {
+    ElMessage.warning('请先输入默写内容');
+    return;
+  }
+  showCompare.value = true;
+}
+
+// 文本对比算法 - 智能对齐：使用LCS(最长公共子序列)算法
+interface CompareResult {
+  errors: Array<{ char: string; position: number }>;
+  missing: Array<{ position: number }>;
+  extra: Array<{ char: string; position: number }>;
+}
+
+function compareText(original: string, written: string): CompareResult {
+  const errors: Array<{ char: string; position: number }> = [];
+  const missing: Array<{ position: number }> = [];
+  const extra: Array<{ char: string; position: number }> = [];
+
+  // 使用动态规划计算LCS
+  const m = original.length;
+  const n = written.length;
+  const dp: number[][] = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+
+  // 填充DP表
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (original[i - 1] === written[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1] + 1;
+      } else {
+        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+      }
+    }
+  }
+
+  // 回溯找出差异
+  let i = m, j = n;
+  const matchedOrig = new Set<number>();
+  const matchedWrit = new Set<number>();
+
+  while (i > 0 && j > 0) {
+    if (original[i - 1] === written[j - 1]) {
+      matchedOrig.add(i - 1);
+      matchedWrit.add(j - 1);
+      i--;
+      j--;
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+      i--;
+    } else {
+      j--;
+    }
+  }
+
+  // 找出错误（位置对齐但不匹配）
+  // 找出遗漏和多余
+  let origIdx = 0, writIdx = 0;
+  while (origIdx < m || writIdx < n) {
+    const origMatched = matchedOrig.has(origIdx);
+    const writMatched = matchedWrit.has(writIdx);
+
+    if (origIdx < m && writIdx < n && origMatched && writMatched) {
+      // 正确匹配
+      origIdx++;
+      writIdx++;
+    } else if (origIdx < m && !origMatched && writIdx < n && !writMatched) {
+      // 都不匹配：可能是错误字符
+      errors.push({ char: written[writIdx], position: writIdx });
+      origIdx++;
+      writIdx++;
+    } else if (origIdx < m && !origMatched) {
+      // 原文有，默写没有：遗漏
+      missing.push({ position: origIdx });
+      origIdx++;
+    } else if (writIdx < n && !writMatched) {
+      // 默写有，原文没有：多余
+      extra.push({ char: written[writIdx], position: writIdx });
+      writIdx++;
+    } else {
+      origIdx++;
+      writIdx++;
+    }
+  }
+
+  return { errors, missing, extra };
+}
+
+// 生成对比HTML
+function generateComparedHtml(original: string, written: string): string {
+  if (!written) return '<span class="empty-hint">未输入内容</span>';
+
+  const result = compareText(original, written);
+  let html = '';
+
+  const errorSet = new Set(result.errors.map(e => e.position));
+  const extraSet = new Set(result.extra.map(e => e.position));
+
+  // 构建带高亮的HTML
+  for (let i = 0; i < written.length; i++) {
+    const char = written[i];
+    // 转义HTML特殊字符
+    const escapedChar = char
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+
+    if (errorSet.has(i)) {
+      html += `<span class="char-error" title="错误字符">${escapedChar}</span>`;
+    } else if (extraSet.has(i)) {
+      html += `<span class="char-extra" title="多余字符">${escapedChar}</span>`;
+    } else {
+      html += escapedChar;
+    }
+  }
+
+  // 添加遗漏提示
+  if (result.missing.length > 0) {
+    html += `<div class="missing-hint">遗漏 ${result.missing.length} 个字符</div>`;
+  }
+
+  return html || '<span class="empty-hint">无内容</span>';
+}
 </script>
 
 <style scoped lang="scss">
@@ -679,6 +892,11 @@ function toggleCardExpand(promptId: string) {
         color: #52c41a;
         font-size: 14px;
       }
+
+      .notepad-actions {
+        display: flex;
+        gap: 8px;
+      }
     }
 
     .notepad-input {
@@ -757,16 +975,128 @@ function toggleCardExpand(promptId: string) {
   padding: 12px;
   background: var(--utools-bg-secondary);
   border-radius: 6px;
-  
+
   h5 {
     margin: 0 0 8px 0;
     color: var(--utools-text-primary);
   }
-  
+
   p {
     margin: 4px 0;
     color: var(--utools-text-secondary);
     font-size: 13px;
+  }
+}
+
+// 对比对话框样式
+.compare-dialog {
+  :deep(.el-dialog__body) {
+    padding: 20px;
+    max-width: 760px;
+    box-sizing: border-box;
+  }
+}
+
+.compare-wrapper {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+
+  .compare-panel {
+    flex: 1;
+    width: calc(50% - 8px);
+    min-width: 0;
+    max-width: 360px;
+    border: 1px solid var(--utools-border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--utools-bg-secondary);
+      border-bottom: 1px solid var(--utools-border-color);
+
+      .panel-title {
+        font-weight: 600;
+        color: var(--utools-text-primary);
+      }
+    }
+
+    .panel-content {
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      font-size: 14px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-break: break-all;
+      box-sizing: border-box;
+
+      &.original-text {
+        background: #f6ffed;
+        color: #389e0d;
+      }
+
+      &.compared-text {
+        background: #fff;
+
+        :deep(.char-error) {
+          background: #ff4d4f !important;
+          color: #fff !important;
+          padding: 0 2px;
+          border-radius: 2px;
+          text-decoration: line-through;
+        }
+
+        :deep(.char-extra) {
+          background: #faad14 !important;
+          color: #fff !important;
+          padding: 0 2px;
+          border-radius: 2px;
+        }
+
+        :deep(.missing-hint) {
+          margin-top: 12px;
+          padding: 8px 12px;
+          background: #fff2f0;
+          border: 1px solid #ffccc7;
+          border-radius: 4px;
+          color: #cf1322;
+          font-size: 13px;
+        }
+
+        :deep(.empty-hint) {
+          color: var(--utools-text-secondary);
+          font-style: italic;
+        }
+      }
+    }
+  }
+}
+
+.compare-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 16px;
+  background: var(--utools-bg-secondary);
+  border-radius: 8px;
+
+  :deep(.el-statistic__content) {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--utools-text-primary);
+  }
+
+  :deep(.el-statistic__title) {
+    font-size: 13px;
+    color: var(--utools-text-secondary);
   }
 }
 </style>
