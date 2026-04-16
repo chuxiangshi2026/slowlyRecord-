@@ -1,6 +1,12 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
-import type { NumberImageAssociation, TrainingResult } from "@/types/number-memory";
+import type { 
+  NumberImageAssociation, 
+  TrainingResult, 
+  NumberMemoryEntry, 
+  NumberMemoryNote, 
+  NumberMemoryPrompt 
+} from "@/types/number-memory";
 import {
   getAllAssociations,
   getAssociationByNumber,
@@ -16,11 +22,33 @@ import {
   shuffleArray
 } from "@/utils/number-memory-preset";
 import { log } from "@/utils/logger";
+import {
+  getAllEntries,
+  createEntry,
+  updateEntry,
+  deleteEntry,
+  getNotesByEntryId,
+  createNote,
+  updateNote,
+  deleteNote,
+  getPromptsByEntryId,
+  createPrompt,
+  updatePrompt,
+  deletePrompt,
+  reorderPrompts
+} from "@/utils/number-memory-entries-db";
 
 export const useNumberMemoryStore = defineStore("numberMemory", () => {
   // State
   const associations = ref<NumberImageAssociation[]>([]);
   const isLoading = ref(false);
+  
+  // 数字记忆条目相关
+  const entries = ref<NumberMemoryEntry[]>([]);
+  const currentEntry = ref<NumberMemoryEntry | null>(null);
+  const currentNotes = ref<NumberMemoryNote[]>([]);
+  const currentPrompts = ref<NumberMemoryPrompt[]>([]);
+  const entriesLoading = ref(false);
 
   // Getters
   const associationCount = computed(() => associations.value.length);
@@ -34,6 +62,19 @@ export const useNumberMemoryStore = defineStore("numberMemory", () => {
   const hasAssociation = (number: string) => {
     return associations.value.some(a => a.number === number);
   };
+  
+  // 条目相关 getters
+  const sortedEntries = computed(() => {
+    return [...entries.value].sort((a, b) => b.createdAt - a.createdAt);
+  });
+  
+  const allTags = computed(() => {
+    const tagSet = new Set<string>();
+    entries.value.forEach(entry => {
+      entry.tags.forEach(tag => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  });
 
   // Actions
   /**
@@ -193,6 +234,188 @@ export const useNumberMemoryStore = defineStore("numberMemory", () => {
     return getRandomNumbers(count, range);
   }
 
+  // ========== 数字记忆条目相关 Actions ==========
+  
+  /**
+   * 加载所有条目
+   */
+  async function loadEntries() {
+    entriesLoading.value = true;
+    try {
+      entries.value = getAllEntries();
+      log.i('加载数字记忆条目', entries.value.length);
+    } finally {
+      entriesLoading.value = false;
+    }
+  }
+  
+  /**
+   * 添加条目
+   */
+  async function addEntry(
+    title: string, 
+    numbers: string, 
+    tags: string[] = [], 
+    description?: string
+  ) {
+    const result = await createEntry(title, numbers, tags, description);
+    if (result.ok && result.doc) {
+      entries.value.unshift(result.doc);
+    }
+    return result;
+  }
+  
+  /**
+   * 更新条目
+   */
+  async function updateEntryItem(entry: NumberMemoryEntry) {
+    const result = await updateEntry(entry);
+    if (result.ok) {
+      const index = entries.value.findIndex(e => e._id === entry._id);
+      if (index >= 0) {
+        entries.value[index] = entry;
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * 删除条目
+   */
+  async function deleteEntryItem(id: string) {
+    const result = await deleteEntry(id);
+    if (result.ok) {
+      entries.value = entries.value.filter(e => e._id !== id);
+      if (currentEntry.value?._id === id) {
+        currentEntry.value = null;
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * 设置当前条目
+   */
+  function setCurrentEntry(entry: NumberMemoryEntry | null) {
+    currentEntry.value = entry;
+  }
+  
+  /**
+   * 更新复习次数
+   */
+  async function updateReviewCount(entryId: string) {
+    const entry = entries.value.find(e => e._id === entryId);
+    if (entry) {
+      entry.reviewCount++;
+      entry.lastReviewTime = Date.now();
+      return await updateEntry(entry);
+    }
+    return { ok: false };
+  }
+  
+  /**
+   * 加载条目的笔记
+   */
+  async function loadNotes(entryId: string) {
+    currentNotes.value = getNotesByEntryId(entryId);
+  }
+  
+  /**
+   * 添加笔记
+   */
+  async function addNote(note: Omit<NumberMemoryNote, '_id' | 'type' | 'createdAt'>) {
+    const result = await createNote(note.entryId, note.content);
+    if (result.ok && result.doc) {
+      currentNotes.value.unshift(result.doc);
+    }
+    return result;
+  }
+  
+  /**
+   * 更新笔记
+   */
+  async function updateNoteItem(note: NumberMemoryNote) {
+    const result = await updateNote(note);
+    if (result.ok) {
+      const index = currentNotes.value.findIndex(n => n._id === note._id);
+      if (index >= 0) {
+        currentNotes.value[index] = note;
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * 删除笔记
+   */
+  async function deleteNoteItem(id: string) {
+    const result = await deleteNote(id);
+    if (result.ok) {
+      currentNotes.value = currentNotes.value.filter(n => n._id !== id);
+    }
+    return result;
+  }
+  
+  /**
+   * 加载条目的提示词
+   */
+  async function loadPrompts(entryId: string) {
+    currentPrompts.value = getPromptsByEntryId(entryId);
+  }
+  
+  /**
+   * 添加提示词
+   */
+  async function addPrompt(prompt: Omit<NumberMemoryPrompt, '_id' | 'type' | 'createdAt'>) {
+    const result = await createPrompt(
+      prompt.entryId, 
+      prompt.title, 
+      prompt.content, 
+      prompt.order,
+      prompt.enabled
+    );
+    if (result.ok && result.doc) {
+      currentPrompts.value.push(result.doc);
+    }
+    return result;
+  }
+  
+  /**
+   * 更新提示词
+   */
+  async function updatePromptItem(prompt: NumberMemoryPrompt) {
+    const result = await updatePrompt(prompt);
+    if (result.ok) {
+      const index = currentPrompts.value.findIndex(p => p._id === prompt._id);
+      if (index >= 0) {
+        currentPrompts.value[index] = prompt;
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * 删除提示词
+   */
+  async function deletePromptItem(id: string) {
+    const result = await deletePrompt(id);
+    if (result.ok) {
+      currentPrompts.value = currentPrompts.value.filter(p => p._id !== id);
+    }
+    return result;
+  }
+  
+  /**
+   * 重新排序提示词
+   */
+  async function reorderPromptsList(prompts: NumberMemoryPrompt[]) {
+    const success = await reorderPrompts(prompts);
+    if (success) {
+      currentPrompts.value = [...prompts];
+    }
+    return success;
+  }
+
   // 初始化时加载数据
   loadAssociations();
 
@@ -212,6 +435,31 @@ export const useNumberMemoryStore = defineStore("numberMemory", () => {
     generateImageToNumberQuiz,
     saveResult,
     getTrainingHistory,
-    getRandomPresetNumbers
+    getRandomPresetNumbers,
+    // 条目相关
+    entries,
+    currentEntry,
+    currentNotes,
+    currentPrompts,
+    entriesLoading,
+    sortedEntries,
+    allTags,
+    loadEntries,
+    addEntry,
+    updateEntryItem,
+    deleteEntryItem,
+    setCurrentEntry,
+    updateReviewCount,
+    // 笔记相关
+    loadNotes,
+    addNote,
+    updateNoteItem,
+    deleteNoteItem,
+    // 提示词相关
+    loadPrompts,
+    addPrompt,
+    updatePromptItem,
+    deletePromptItem,
+    reorderPromptsList
   };
 });

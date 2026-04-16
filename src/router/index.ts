@@ -6,6 +6,7 @@ const Sign = () => import('@/views/Sign/Sign.vue');
 const Word = () => import('@/views/Word/Word.vue');
 const NumberMemory = () => import('@/views/NumberMemory/NumberMemory.vue');
 const NumberMemoryTraining = () => import('@/views/NumberMemory/NumberMemoryTraining.vue');
+const NumberMemoryEntries = () => import('@/views/NumberMemory/NumberMemoryEntries.vue');
 const MemoryTest = () => import('@/views/MemoryTest/MemoryTest.vue');
 const Dictation = () => import('@/views/Dictation/Dictation.vue');
 const QuickTranslate = () => import('@/views/Translate/QuickTranslate.vue');
@@ -79,6 +80,15 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           menu: false,
           title: '记忆训练',
+        },
+      },
+      {
+        path: 'number-memory/entries',
+        name: 'numberMemoryEntries',
+        component: NumberMemoryEntries,
+        meta: {
+          menu: false,
+          title: '数字记忆条目',
         },
       },
       {

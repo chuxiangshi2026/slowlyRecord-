@@ -3,8 +3,9 @@
     v-model="visible"
     title="🚀 快速开始"
     width="600px"
-    :close-on-click-modal="false"
-    :show-close="false"
+    :close-on-click-modal="true"
+    :show-close="true"
+    @close="handleClose"
   >
     <el-steps :active="currentStep" finish-status="success" simple>
       <el-step title="选择数字" />
@@ -89,12 +90,20 @@ function finish() {
   emit("finish");
   localStorage.setItem("numberMemoryGuideShown", "true");
 }
+
+function handleClose() {
+  visible.value = false;
+  localStorage.setItem("numberMemoryGuideShown", "true");
+}
 </script>
 
 <style scoped lang="scss">
 .guide-content {
   padding: 30px 20px;
   min-height: 250px;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 
   .step-content {
     text-align: center;

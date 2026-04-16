@@ -49,3 +49,42 @@ export interface PresetImageMap {
     }[];
   };
 }
+
+// 数字记忆条目（用于记忆长串数字）
+export interface NumberMemoryEntry {
+  _id: string;
+  _rev?: string;
+  type: 'number_memory_entry';
+  title: string;            // 标题
+  numbers: string;          // 要记忆的数字串
+  tags: string[];           // 标签
+  description?: string;     // 描述/备注
+  createdAt: number;
+  updatedAt: number;
+  reviewCount: number;      // 复习次数
+  lastReviewTime?: number;  // 最后复习时间
+}
+
+// 数字记忆笔记
+export interface NumberMemoryNote {
+  _id: string;
+  _rev?: string;
+  type: 'number_memory_note';
+  entryId: string;          // 关联的条目ID
+  content: string;          // 笔记内容
+  createdAt: number;
+  updatedAt?: number;
+}
+
+// 数字记忆提示词
+export interface NumberMemoryPrompt {
+  _id: string;
+  _rev?: string;
+  type: 'number_memory_prompt';
+  entryId: string;          // 关联的条目ID
+  title: string;            // 提示词标题
+  content: string;          // 提示词内容
+  order: number;            // 显示顺序
+  enabled: boolean;         // 是否启用
+  createdAt: number;
+}

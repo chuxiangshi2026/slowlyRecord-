@@ -17,6 +17,9 @@
             <el-button type="warning" @click="batchImportPresets">
               ⚡ 一键导入预设
             </el-button>
+            <el-button type="info" @click="goToEntries">
+              📝 数字记忆
+            </el-button>
             <el-button type="primary" @click="goToTraining" :disabled="!store.hasAssociations">
               开始训练
             </el-button>
@@ -356,6 +359,10 @@ function goToTraining() {
   router.push("/number-memory/training");
 }
 
+function goToEntries() {
+  router.push("/number-memory/entries");
+}
+
 // 加载训练历史
 function loadTrainingHistory() {
   trainingHistory.value = store.getTrainingHistory();
@@ -454,8 +461,8 @@ onMounted(() => {
 <style scoped lang="scss">
 .number-memory-page {
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
   min-height: 100vh;
   background-color: var(--utools-bg-secondary);
 
@@ -480,6 +487,7 @@ onMounted(() => {
       display: flex;
       gap: 10px;
       align-items: center;
+      flex-wrap: wrap;
     }
   }
 
