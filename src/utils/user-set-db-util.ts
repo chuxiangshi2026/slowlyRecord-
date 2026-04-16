@@ -7,12 +7,12 @@ import cloneDeep from 'lodash.clonedeep';
  * 获取数据库全部的单词
  * @returns 返回数据库中所有单词的数组
  */
-function getSetDb(silent = false): UserSetType {
+function getSetDb(silent = false): UserSetType | null {
     let allDocs = window.utools.db.allDocs(DB_KEY_USER_SET);
     if (!silent) {
         log.i('获取数据库设置', allDocs);
     }
-    return allDocs[0] as UserSetType;
+    return (allDocs[0] as UserSetType) || null;
 }
 
 
@@ -21,7 +21,10 @@ function getSetDb(silent = false): UserSetType {
  * @returns 无返回值
  * @param userSet
  */
-async function addAndUpdateSetDb(userSet: UserSetType):Promise<DbReturn> {
+async function addAndUpdateSetDb(userSet: UserSetType | null):Promise<DbReturn> {
+    if (!userSet) {
+        return { ok: false, error: true, message: 'UserSet is null' } as DbReturn;
+    }
     log.i('添加设置到数据库', userSet);
     // 转成字符串保存数据库,替换JSON.parse(JSON.stringify(word));
     const cleanedWord = cloneDeep(userSet)

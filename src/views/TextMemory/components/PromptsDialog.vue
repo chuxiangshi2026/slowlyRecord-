@@ -145,7 +145,31 @@
               <el-radio-button label="grid">网格</el-radio-button>
             </el-radio-group>
           </div>
-          
+
+          <!-- 临时写字板 -->
+          <div class="temp-notepad-section">
+            <div class="notepad-header">
+              <span class="notepad-title">📝 临时写字板</span>
+              <el-button
+                link
+                type="danger"
+                size="small"
+                @click="clearNotepad"
+              >
+                <el-icon><Delete /></el-icon>
+                清空
+              </el-button>
+            </div>
+            <el-input
+              v-model="notepadContent"
+              type="textarea"
+              :rows="4"
+              placeholder="在这里临时记录内容...（24小时后自动清空）"
+              class="notepad-input"
+              @input="saveNotepad"
+            />
+          </div>
+
           <div class="board-content" :class="`layout-${boardLayout}`">
             <div
               v-for="prompt in enabledPrompts"
@@ -158,8 +182,8 @@
               <div class="card-body">{{ prompt.content }}</div>
             </div>
           </div>
-          
-          <el-empty v-if="enabledPrompts.length === 0" description="没有启用的提示词" />
+
+          <el-empty v-if="enabledPrompts.length === 0 && !notepadContent" description="没有启用的提示词" />
         </div>
       </template>
 
@@ -206,6 +230,10 @@ import type { TextArticle, TextPrompt } from '@/types/text-memory';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus, Edit, Delete, Rank, MagicStick } from '@element-plus/icons-vue';
 
+// 写字板存储键
+const NOTEPAD_KEY = 'slowlyrecord-textmemory-notepad';
+const NOTEPAD_EXPIRY = 24 * 60 * 60 * 1000; // 24小时
+
 interface Props {
   modelValue: boolean;
   article: TextArticle | null;
@@ -242,6 +270,9 @@ const quickAddType = ref('');
 
 // 展开的卡片
 const expandedCards = ref<string[]>([]);
+
+// 临时写字板内容
+const notepadContent = ref('');
 
 // 启用的提示词
 const enabledPrompts = computed(() => 
@@ -292,8 +323,52 @@ const quickAddPreview = computed(() => {
 watch(() => props.modelValue, async (visible) => {
   if (visible && props.article) {
     await textStore.loadPrompts(props.article._id);
+    loadNotepad();
   }
 });
+
+// 加载写字板内容
+function loadNotepad() {
+  try {
+    const stored = localStorage.getItem(NOTEPAD_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      const now = Date.now();
+      // 检查是否超过24小时
+      if (now - data.timestamp > NOTEPAD_EXPIRY) {
+        notepadContent.value = '';
+        localStorage.removeItem(NOTEPAD_KEY);
+      } else {
+        notepadContent.value = data.content || '';
+      }
+    } else {
+      notepadContent.value = '';
+    }
+  } catch (e) {
+    console.error('加载写字板失败:', e);
+    notepadContent.value = '';
+  }
+}
+
+// 保存写字板内容
+function saveNotepad() {
+  try {
+    const data = {
+      content: notepadContent.value,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(NOTEPAD_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.error('保存写字板失败:', e);
+  }
+}
+
+// 清空写字板
+function clearNotepad() {
+  notepadContent.value = '';
+  localStorage.removeItem(NOTEPAD_KEY);
+  ElMessage.success('写字板已清空');
+}
 
 // 添加提示词
 async function addPrompt() {
@@ -579,10 +654,40 @@ function toggleCardExpand(promptId: string) {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
-    
+
     h4 {
       margin: 0;
       color: var(--utools-text-primary);
+    }
+  }
+
+  .temp-notepad-section {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #f6ffed 0%, #f0f5ff 100%);
+    border: 1px solid #b7eb8f;
+    border-radius: 8px;
+
+    .notepad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .notepad-title {
+        font-weight: 600;
+        color: #52c41a;
+        font-size: 14px;
+      }
+    }
+
+    .notepad-input {
+      :deep(.el-textarea__inner) {
+        background: rgba(255, 255, 255, 0.8);
+        resize: none;
+        font-size: 14px;
+        line-height: 1.6;
+      }
     }
   }
   
