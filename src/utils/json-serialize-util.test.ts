@@ -9,16 +9,16 @@ describe('serializer', () => {
       expect(result).toBe('{"name":"test","value":123}')
     })
 
-    it('Date 对象在对象属性中会被序列化为 ISO 字符串', () => {
+    it('Date 对象在对象属性中会被序列化为带标记的对象', () => {
       const date = new Date('2024-01-15T08:30:00.000Z')
       const data = { name: 'test', createdAt: date }
       const result = serializer.serialize(data)
       const parsed = JSON.parse(result)
       expect(parsed.name).toBe('test')
-      expect(parsed.createdAt).toBe('2024-01-15T08:30:00.000Z')
+      expect(parsed.createdAt).toEqual({ __type__: 'Date', __value__: '2024-01-15T08:30:00.000Z' })
     })
 
-    it('Date 对象在嵌套对象中会被序列化为 ISO 字符串', () => {
+    it('Date 对象在嵌套对象中会被序列化为带标记的对象', () => {
       const date = new Date('2024-06-20T14:30:00.000Z')
       const data = {
         user: {
@@ -29,7 +29,7 @@ describe('serializer', () => {
       }
       const result = serializer.serialize(data)
       const parsed = JSON.parse(result)
-      expect(parsed.user.createdAt).toBe('2024-06-20T14:30:00.000Z')
+      expect(parsed.user.createdAt).toEqual({ __type__: 'Date', __value__: '2024-06-20T14:30:00.000Z' })
     })
 
     it('应该正确序列化数组', () => {
@@ -43,12 +43,12 @@ describe('serializer', () => {
       expect(result).toBe('null')
     })
 
-    it('Date 对象在数组中会被序列化为 ISO 字符串', () => {
+    it('Date 对象在数组中会被序列化为带标记的对象', () => {
       const date = new Date('2024-01-15T08:30:00.000Z')
       const data = [date, 'hello']
       const result = serializer.serialize(data)
       const parsed = JSON.parse(result)
-      expect(parsed[0]).toBe('2024-01-15T08:30:00.000Z')
+      expect(parsed[0]).toEqual({ __type__: 'Date', __value__: '2024-01-15T08:30:00.000Z' })
       expect(parsed[1]).toBe('hello')
     })
 
@@ -77,15 +77,15 @@ describe('serializer', () => {
       expect(serializer.serialize(false)).toBe('false')
     })
 
-    it('多个 Date 对象在对象中都会被序列化为 ISO 字符串', () => {
+    it('多个 Date 对象在对象中都会被序列化为带标记的对象', () => {
       const data = {
         start: new Date('2024-01-01T00:00:00.000Z'),
         end: new Date('2024-12-31T23:59:59.000Z')
       }
       const result = serializer.serialize(data)
       const parsed = JSON.parse(result)
-      expect(parsed.start).toBe('2024-01-01T00:00:00.000Z')
-      expect(parsed.end).toBe('2024-12-31T23:59:59.000Z')
+      expect(parsed.start).toEqual({ __type__: 'Date', __value__: '2024-01-01T00:00:00.000Z' })
+      expect(parsed.end).toEqual({ __type__: 'Date', __value__: '2024-12-31T23:59:59.000Z' })
     })
 
     it('应该正确序列化包含 undefined 值的对象', () => {
@@ -94,7 +94,7 @@ describe('serializer', () => {
       expect(result).toBe('{"name":"test"}')
     })
 
-    it('Date 对象在深层嵌套中会被序列化为 ISO 字符串', () => {
+    it('Date 对象在深层嵌套中会被序列化为带标记的对象', () => {
       const data = {
         level1: {
           level2: {
@@ -106,7 +106,7 @@ describe('serializer', () => {
       }
       const result = serializer.serialize(data)
       const parsed = JSON.parse(result)
-      expect(parsed.level1.level2.level3.date).toBe('2024-06-15T12:00:00.000Z')
+      expect(parsed.level1.level2.level3.date).toEqual({ __type__: 'Date', __value__: '2024-06-15T12:00:00.000Z' })
     })
   })
 
@@ -180,7 +180,7 @@ describe('serializer', () => {
   })
 
   describe('序列化和反序列化的对称性', () => {
-    it('序列化后再解析，Date 会变为 ISO 字符串（非 Date 实例）', () => {
+    it('序列化后再解析，Date 会被正确还原为 Date 实例', () => {
       const original = {
         name: '测试',
         createdAt: new Date('2024-01-15T08:30:00.000Z'),
@@ -191,8 +191,8 @@ describe('serializer', () => {
 
       expect(parsed.name).toBe(original.name)
       expect(parsed.count).toBe(original.count)
-      expect(typeof parsed.createdAt).toBe('string')
-      expect(parsed.createdAt).toBe('2024-01-15T08:30:00.000Z')
+      expect(parsed.createdAt instanceof Date).toBe(true)
+      expect(parsed.createdAt.toISOString()).toBe('2024-01-15T08:30:00.000Z')
     })
 
     it('手动构建的 Date 标记可以被正确解析', () => {
