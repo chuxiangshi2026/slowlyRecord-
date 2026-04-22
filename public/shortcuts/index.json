@@ -1,0 +1,7 @@
+[
+  { "name": "Windows", "file": "windows.json", "icon": "🪟", "description": "Windows 操作系统常用快捷键" },
+  { "name": "VS Code", "file": "vscode.json", "icon": "📝", "description": "Visual Studio Code 编辑器快捷键" },
+  { "name": "Chrome", "file": "chrome.json", "icon": "🌐", "description": "Chrome 浏览器快捷键" },
+  { "name": "IntelliJ IDEA", "file": "idea.json", "icon": "☕", "description": "IntelliJ IDEA 开发工具快捷键" },
+  { "name": "Photoshop", "file": "photoshop.json", "icon": "🎨", "description": "Adobe Photoshop 图像处理快捷键" }
+]

@@ -1,0 +1,22 @@
+[
+  { "id": "vscode-1", "category": "VS Code", "functionName": "命令面板", "description": "打开命令面板，快速执行命令", "keys": ["Ctrl", "Shift", "P"], "platform": "common" },
+  { "id": "vscode-2", "category": "VS Code", "functionName": "快速打开文件", "description": "通过文件名快速打开文件", "keys": ["Ctrl", "P"], "platform": "common" },
+  { "id": "vscode-3", "category": "VS Code", "functionName": "多光标选择", "description": "在下一个匹配处添加光标", "keys": ["Ctrl", "D"], "platform": "common" },
+  { "id": "vscode-4", "category": "VS Code", "functionName": "格式化代码", "description": "格式化当前文档或选中的代码", "keys": ["Shift", "Alt", "F"], "platform": "common" },
+  { "id": "vscode-5", "category": "VS Code", "functionName": "切换注释", "description": "注释或取消注释当前行", "keys": ["Ctrl", "/"], "platform": "common" },
+  { "id": "vscode-6", "category": "VS Code", "functionName": "跳转行", "description": "跳转到指定行号", "keys": ["Ctrl", "G"], "platform": "common" },
+  { "id": "vscode-7", "category": "VS Code", "functionName": "全局搜索", "description": "在工作区所有文件中搜索", "keys": ["Ctrl", "Shift", "F"], "platform": "common" },
+  { "id": "vscode-8", "category": "VS Code", "functionName": "切换侧边栏", "description": "显示或隐藏侧边栏", "keys": ["Ctrl", "B"], "platform": "common" },
+  { "id": "vscode-9", "category": "VS Code", "functionName": "拆分编辑器", "description": "将当前编辑器拆分为两个", "keys": ["Ctrl", "\\"], "platform": "common" },
+  { "id": "vscode-10", "category": "VS Code", "functionName": "关闭编辑器", "description": "关闭当前编辑器标签", "keys": ["Ctrl", "W"], "platform": "common" },
+  { "id": "vscode-11", "category": "VS Code", "functionName": "转到定义", "description": "跳转到符号的定义位置", "keys": ["F12"], "platform": "common" },
+  { "id": "vscode-12", "category": "VS Code", "functionName": "重命名符号", "description": "重构重命名当前符号", "keys": ["F2"], "platform": "common" },
+  { "id": "vscode-13", "category": "VS Code", "functionName": "展开/折叠", "description": "折叠或展开代码块", "keys": ["Ctrl", "Shift", "["], "platform": "common" },
+  { "id": "vscode-14", "category": "VS Code", "functionName": "移动行", "description": "将当前行向上移动", "keys": ["Alt", "Up"], "platform": "common" },
+  { "id": "vscode-15", "category": "VS Code", "functionName": "复制行", "description": "向下复制当前行", "keys": ["Shift", "Alt", "Down"], "platform": "common" },
+  { "id": "vscode-16", "category": "VS Code", "functionName": "终端", "description": "打开或关闭集成终端", "keys": ["Ctrl", "`"], "platform": "common" },
+  { "id": "vscode-17", "category": "VS Code", "functionName": "新建终端", "description": "创建新的终端实例", "keys": ["Ctrl", "Shift", "`"], "platform": "common" },
+  { "id": "vscode-18", "category": "VS Code", "functionName": "转到文件", "description": "快速导航到文件中的符号", "keys": ["Ctrl", "Shift", "O"], "platform": "common" },
+  { "id": "vscode-19", "category": "VS Code", "functionName": "显示问题", "description": "打开问题面板查看错误和警告", "keys": ["Ctrl", "Shift", "M"], "platform": "common" },
+  { "id": "vscode-20", "category": "VS Code", "functionName": "Emmet展开", "description": "展开 Emmet 缩写", "keys": ["Tab"], "platform": "common" }
+]

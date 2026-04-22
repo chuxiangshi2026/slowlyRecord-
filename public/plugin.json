@@ -110,6 +110,15 @@
         "文本记忆",
         "wbjy"
       ]
+    },
+    {
+      "code": "shortcutMemory",
+      "explain": "快捷键记忆",
+      "cmds": [
+        "快捷键记忆",
+        "kjj",
+        "shortcut"
+      ]
     }
 
   ],

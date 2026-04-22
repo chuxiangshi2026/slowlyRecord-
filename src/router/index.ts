@@ -11,6 +11,8 @@ const MemoryTest = () => import('@/views/MemoryTest/MemoryTest.vue');
 const Dictation = () => import('@/views/Dictation/Dictation.vue');
 const QuickTranslate = () => import('@/views/Translate/QuickTranslate.vue');
 const TextMemory = () => import('@/views/TextMemory/TextMemory.vue');
+const ShortcutMemory = () => import('@/views/ShortcutMemory/ShortcutMemory.vue');
+const ShortcutMemoryTraining = () => import('@/views/ShortcutMemory/ShortcutMemoryTraining.vue');
 // const Exception = () => import('@/views/Exception/Exception.vue');
 // const Apply = () => import('@/views/Apply/Apply.vue');
 // const Check = () => import('@/views/Check/Check.vue');
@@ -128,6 +130,25 @@ const routes: Array<RouteRecordRaw> = [
           menu: true,
           title: '文本记忆',
           icon: 'collection',
+        },
+      },
+      {
+        path: 'shortcut-memory',
+        name: 'shortcutMemory',
+        component: ShortcutMemory,
+        meta: {
+          menu: true,
+          title: '快捷键记忆',
+          icon: 'Cpu',
+        },
+      },
+      {
+        path: 'shortcut-memory/training',
+        name: 'shortcutMemoryTraining',
+        component: ShortcutMemoryTraining,
+        meta: {
+          menu: false,
+          title: '快捷键训练',
         },
       },
      /* {

@@ -1,0 +1,22 @@
+[
+  { "id": "chrome-1", "category": "Chrome", "functionName": "新标签页", "description": "打开一个新的浏览器标签页", "keys": ["Ctrl", "T"], "platform": "common" },
+  { "id": "chrome-2", "category": "Chrome", "functionName": "关闭标签页", "description": "关闭当前标签页", "keys": ["Ctrl", "W"], "platform": "common" },
+  { "id": "chrome-3", "category": "Chrome", "functionName": "恢复标签页", "description": "重新打开刚关闭的标签页", "keys": ["Ctrl", "Shift", "T"], "platform": "common" },
+  { "id": "chrome-4", "category": "Chrome", "functionName": "下一个标签页", "description": "切换到右侧的标签页", "keys": ["Ctrl", "Tab"], "platform": "common" },
+  { "id": "chrome-5", "category": "Chrome", "functionName": "上一个标签页", "description": "切换到左侧的标签页", "keys": ["Ctrl", "Shift", "Tab"], "platform": "common" },
+  { "id": "chrome-6", "category": "Chrome", "functionName": "地址栏", "description": "聚焦到地址栏", "keys": ["Ctrl", "L"], "platform": "common" },
+  { "id": "chrome-7", "category": "Chrome", "functionName": "刷新", "description": "刷新当前页面", "keys": ["Ctrl", "R"], "platform": "common" },
+  { "id": "chrome-8", "category": "Chrome", "functionName": "强制刷新", "description": "强制刷新页面并清除缓存", "keys": ["Ctrl", "Shift", "R"], "platform": "common" },
+  { "id": "chrome-9", "category": "Chrome", "functionName": "开发者工具", "description": "打开或关闭开发者工具", "keys": ["F12"], "platform": "common" },
+  { "id": "chrome-10", "category": "Chrome", "functionName": "无痕窗口", "description": "打开新的无痕浏览窗口", "keys": ["Ctrl", "Shift", "N"], "platform": "common" },
+  { "id": "chrome-11", "category": "Chrome", "functionName": "书签", "description": "为当前页面添加书签", "keys": ["Ctrl", "D"], "platform": "common" },
+  { "id": "chrome-12", "category": "Chrome", "functionName": "历史记录", "description": "打开历史记录页面", "keys": ["Ctrl", "H"], "platform": "common" },
+  { "id": "chrome-13", "category": "Chrome", "functionName": "下载内容", "description": "打开下载内容页面", "keys": ["Ctrl", "J"], "platform": "common" },
+  { "id": "chrome-14", "category": "Chrome", "functionName": "查找", "description": "在页面中查找内容", "keys": ["Ctrl", "F"], "platform": "common" },
+  { "id": "chrome-15", "category": "Chrome", "functionName": "全屏", "description": "切换全屏模式", "keys": ["F11"], "platform": "common" },
+  { "id": "chrome-16", "category": "Chrome", "functionName": "放大", "description": "放大页面内容", "keys": ["Ctrl", "+"], "platform": "common" },
+  { "id": "chrome-17", "category": "Chrome", "functionName": "缩小", "description": "缩小页面内容", "keys": ["Ctrl", "-"], "platform": "common" },
+  { "id": "chrome-18", "category": "Chrome", "functionName": "恢复缩放", "description": "将页面缩放恢复为默认", "keys": ["Ctrl", "0"], "platform": "common" },
+  { "id": "chrome-19", "category": "Chrome", "functionName": "另存为", "description": "保存当前网页到本地", "keys": ["Ctrl", "S"], "platform": "common" },
+  { "id": "chrome-20", "category": "Chrome", "functionName": "打印", "description": "打印当前网页", "keys": ["Ctrl", "P"], "platform": "common" }
+]

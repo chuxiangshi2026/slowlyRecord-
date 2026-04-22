@@ -304,10 +304,15 @@ utools.onPluginEnter(async (action) => {
     handlePluginTranslate(action)
   }
 
+  // 快捷键记忆 - 通过 快捷键记忆/kjj 关键字进入
+  if (action.code === 'shortcutMemory') {
+    handlePluginShortcutMemory()
+  }
+
   // 其他情况（直接点击插件图标）- 尝试恢复上次状态
   // 排除添加单词相关操作，这些操作已在上面处理并跳转到单词列表
   const addWordActions = ['over', 'huaci', 'huaduan', 'jietu', 'paste', 'selection']
-  if (!['review', 'jycs', 'numMemory', 'translate', ...addWordActions].includes(action.code)) {
+  if (!['review', 'jycs', 'numMemory', 'translate', 'shortcutMemory', ...addWordActions].includes(action.code)) {
     handlePluginDefaultEnter()
   }
   // 文本记忆 - 通过 文本记忆/诗词记忆 关键字进入
@@ -723,6 +728,16 @@ function handlePluginTextMemory() {
   window.utools.showMainWindow()
   // 跳转到文本记忆页面
   router.push('/text-memory')
+}
+
+/**
+ * 处理快捷键记忆的插件入口
+ */
+function handlePluginShortcutMemory() {
+  // 显示主窗口
+  window.utools.showMainWindow()
+  // 跳转到快捷键记忆页面
+  router.push('/shortcut-memory')
 }
 
 /**
