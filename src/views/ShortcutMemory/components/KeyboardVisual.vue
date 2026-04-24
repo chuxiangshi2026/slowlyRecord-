@@ -197,6 +197,27 @@
           </div>
         </div>
       </div>
+
+      <!-- 数字小键盘 -->
+      <div class="numpad-wrapper">
+        <div class="key numpad-key" style="grid-column: 1; grid-row: 1;" :class="{ active: isKeyActive('numlock'), target: isTargetKey('numlock') }">Num</div>
+        <div class="key numpad-key" style="grid-column: 2; grid-row: 1;" :class="{ active: isKeyActive('numpaddivide'), target: isTargetKey('numpaddivide') }">/</div>
+        <div class="key numpad-key" style="grid-column: 3; grid-row: 1;" :class="{ active: isKeyActive('numpadmultiply'), target: isTargetKey('numpadmultiply') }">*</div>
+        <div class="key numpad-key" style="grid-column: 4; grid-row: 1;" :class="{ active: isKeyActive('numpadsubtract'), target: isTargetKey('numpadsubtract') }">-</div>
+        <div class="key numpad-key" style="grid-column: 1; grid-row: 2;" :class="{ active: isKeyActive('numpad7'), target: isTargetKey('numpad7') }">7</div>
+        <div class="key numpad-key" style="grid-column: 2; grid-row: 2;" :class="{ active: isKeyActive('numpad8'), target: isTargetKey('numpad8') }">8</div>
+        <div class="key numpad-key" style="grid-column: 3; grid-row: 2;" :class="{ active: isKeyActive('numpad9'), target: isTargetKey('numpad9') }">9</div>
+        <div class="key numpad-key" style="grid-column: 4; grid-row: 2 / span 2;" :class="{ active: isKeyActive('numpadadd'), target: isTargetKey('numpadadd') }">+</div>
+        <div class="key numpad-key" style="grid-column: 1; grid-row: 3;" :class="{ active: isKeyActive('numpad4'), target: isTargetKey('numpad4') }">4</div>
+        <div class="key numpad-key" style="grid-column: 2; grid-row: 3;" :class="{ active: isKeyActive('numpad5'), target: isTargetKey('numpad5') }">5</div>
+        <div class="key numpad-key" style="grid-column: 3; grid-row: 3;" :class="{ active: isKeyActive('numpad6'), target: isTargetKey('numpad6') }">6</div>
+        <div class="key numpad-key" style="grid-column: 1; grid-row: 4;" :class="{ active: isKeyActive('numpad1'), target: isTargetKey('numpad1') }">1</div>
+        <div class="key numpad-key" style="grid-column: 2; grid-row: 4;" :class="{ active: isKeyActive('numpad2'), target: isTargetKey('numpad2') }">2</div>
+        <div class="key numpad-key" style="grid-column: 3; grid-row: 4;" :class="{ active: isKeyActive('numpad3'), target: isTargetKey('numpad3') }">3</div>
+        <div class="key numpad-key" style="grid-column: 4; grid-row: 4 / span 2;" :class="{ active: isKeyActive('numpadenter'), target: isTargetKey('numpadenter') }">Ent</div>
+        <div class="key numpad-key" style="grid-column: 1 / span 2; grid-row: 5;" :class="{ active: isKeyActive('numpad0'), target: isTargetKey('numpad0') }">0</div>
+        <div class="key numpad-key" style="grid-column: 3; grid-row: 5;" :class="{ active: isKeyActive('numpaddecimal'), target: isTargetKey('numpaddecimal') }">.</div>
+      </div>
     </div>
   </div>
 </template>
@@ -360,6 +381,19 @@ function isTargetKey(key: string): boolean {
   height: 36px;
 }
 
+.numpad-wrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 36px);
+  grid-template-rows: repeat(5, 36px);
+  gap: 3px;
+}
+
+.numpad-key {
+  width: 36px;
+  height: 36px;
+  font-size: 11px;
+}
+
 @media (max-width: 768px) {
   .keyboard-visual {
     flex-direction: column;
@@ -404,6 +438,17 @@ function isTargetKey(key: string): boolean {
   .arrow-key {
     width: 30px;
     height: 30px;
+  }
+
+  .numpad-wrapper {
+    grid-template-columns: repeat(4, 30px);
+    grid-template-rows: repeat(5, 30px);
+  }
+
+  .numpad-key {
+    width: 30px;
+    height: 30px;
+    font-size: 9px;
   }
 }
 </style>

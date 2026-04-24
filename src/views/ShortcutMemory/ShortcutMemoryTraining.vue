@@ -6,7 +6,7 @@
         返回
       </el-button>
       <span class="training-title">
-        {{ isKeyPressMode ? '🎯 按键训练' : '🧩 功能选择' }}
+        {{ displayTitle }}
         - {{ store.currentCategory }}
       </span>
       <div class="training-stats">
@@ -48,9 +48,9 @@
     <div class="training-body">
       <!-- 题目区域 -->
       <div v-if="!store.isTrainingComplete" class="question-area">
-        <div class="function-display">
-          <div class="function-name">{{ currentQuestion?.functionName }}</div>
-          <div class="function-desc">{{ currentQuestion?.description }}</div>
+        <div class="function-display" :class="{ 'key-practice': isKeyPractice }">
+          <div class="function-name">{{ displayFunctionName }}</div>
+          <div v-if="!isKeyPractice" class="function-desc">{{ currentQuestion?.description }}</div>
         </div>
 
         <!-- 按键训练模式 -->
@@ -183,6 +183,25 @@ const displayPressedKeys = computed(() => {
   return Array.from(store.pressedKeys);
 });
 
+const isKeyPractice = computed(() => {
+  return store.currentCategory === '键位练习' || store.currentCategory === '数字小键盘练习';
+});
+
+const displayTitle = computed(() => {
+  if (isKeyPractice.value) {
+    return isKeyPressMode.value ? '🔤 键位练习' : '🧩 功能选择';
+  }
+  return isKeyPressMode.value ? '🎯 按键训练' : '🧩 功能选择';
+});
+
+const displayFunctionName = computed(() => {
+  if (isKeyPractice.value && currentQuestion.value) {
+    const match = currentQuestion.value.functionName.match(/请按下 (.+) 键/);
+    return match ? match[1] : currentQuestion.value.functionName;
+  }
+  return currentQuestion.value?.functionName || '';
+});
+
 const resultIcon = computed(() => {
   const rate = store.correctCount / store.questions.length;
   if (rate >= 0.8) return 'success';
@@ -246,6 +265,40 @@ function handleKeyDown(event: KeyboardEvent) {
   event.preventDefault();
   event.stopPropagation();
 
+  // 键位练习和数字小键盘练习：简化处理，只关心单个按键
+  if (isKeyPractice.value) {
+    if (store.currentCategory === '数字小键盘练习') {
+      // 数字小键盘练习：使用 event.code 判断
+      const code = event.code.toLowerCase();
+      store.addPressedKey(code);
+    } else {
+      // 键位练习：使用 event.key，避免组合键干扰
+      const key = event.key;
+      if (key === 'Control') store.addPressedKey('ctrl');
+      else if (key === 'Alt') store.addPressedKey('alt');
+      else if (key === 'Shift') store.addPressedKey('shift');
+      else if (key === 'Meta') store.addPressedKey('win');
+      else store.addPressedKey(key);
+    }
+
+    const isCorrect = store.checkKeyPress();
+    if (isCorrect) {
+      if (autoNextTimer) clearTimeout(autoNextTimer);
+      autoNextTimer = setTimeout(() => {
+        nextQuestion();
+      }, 600);
+    } else {
+      const correct = currentQuestion.value;
+      wrongMessage.value = `答案：${correct?.keys.join('+')}`;
+      if (autoNextTimer) clearTimeout(autoNextTimer);
+      autoNextTimer = setTimeout(() => {
+        store.clearPressedKeys();
+        store.trainingPhase = 'showing';
+      }, 1200);
+    }
+    return;
+  }
+
   // 处理修饰键
   if (event.ctrlKey) store.addPressedKey('ctrl');
   if (event.altKey) store.addPressedKey('alt');
@@ -285,6 +338,15 @@ function handleKeyDown(event: KeyboardEvent) {
 
 function handleKeyUp(event: KeyboardEvent) {
   if (!isKeyPressMode.value) return;
+
+  // 数字小键盘练习使用 event.code
+  if (store.currentCategory === '数字小键盘练习') {
+    const code = event.code.toLowerCase();
+    setTimeout(() => {
+      store.removePressedKey(code);
+    }, 200);
+    return;
+  }
 
   const key = event.key;
 
@@ -407,6 +469,16 @@ onUnmounted(() => {
       .function-desc {
         font-size: 14px;
         color: var(--utools-text-secondary);
+      }
+
+      &.key-practice {
+        padding: 32px 16px;
+
+        .function-name {
+          font-size: 72px;
+          letter-spacing: 8px;
+          margin-bottom: 0;
+        }
       }
     }
 

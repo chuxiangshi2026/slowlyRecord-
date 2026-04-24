@@ -2,6 +2,66 @@ import type { ShortcutItem, ShortcutCategory, CustomCategoryDoc } from "@/types/
 import { getAllCustomShortcuts, getAllCustomCategories } from "@/utils/shortcut-memory-db";
 
 /**
+ * 键位显示名称映射
+ */
+const KEY_DISPLAY_MAP: Record<string, string> = {
+  'esc': 'Esc', 'f1': 'F1', 'f2': 'F2', 'f3': 'F3', 'f4': 'F4', 'f5': 'F5',
+  'f6': 'F6', 'f7': 'F7', 'f8': 'F8', 'f9': 'F9', 'f10': 'F10', 'f11': 'F11', 'f12': 'F12',
+  'tab': 'Tab', 'capslock': 'Caps Lock', 'enter': 'Enter', 'shift': 'Shift',
+  'ctrl': 'Ctrl', 'alt': 'Alt', 'win': 'Win', 'space': 'Space',
+  'backspace': 'Backspace', 'ins': 'Ins', 'del': 'Del',
+  'home': 'Home', 'end': 'End', 'pageup': 'PgUp', 'pagedown': 'PgDn',
+  'up': '↑', 'down': '↓', 'left': '←', 'right': '→',
+  'numlock': 'NumLock', 'numpaddivide': '/', 'numpadmultiply': '*',
+  'numpadsubtract': '-', 'numpadadd': '+', 'numpadenter': 'Enter',
+  'numpaddecimal': '.', 'numpad0': '0', 'numpad1': '1', 'numpad2': '2',
+  'numpad3': '3', 'numpad4': '4', 'numpad5': '5', 'numpad6': '6',
+  'numpad7': '7', 'numpad8': '8', 'numpad9': '9',
+};
+
+/**
+ * 键位练习默认键列表（不含数字小键盘键）
+ */
+export const DEFAULT_KEYBOARD_PRACTICE_KEYS = [
+  'esc', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12',
+  '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'backspace',
+  'tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\',
+  'capslock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'enter',
+  'shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
+  'ctrl', 'win', 'alt', 'space',
+  'ins', 'home', 'pageup', 'del', 'end', 'pagedown',
+  'up', 'left', 'down', 'right'
+];
+
+/**
+ * 数字小键盘练习默认键列表
+ */
+export const DEFAULT_NUMPAD_PRACTICE_KEYS = [
+  'numlock', 'numpaddivide', 'numpadmultiply', 'numpadsubtract',
+  'numpad7', 'numpad8', 'numpad9', 'numpadadd',
+  'numpad4', 'numpad5', 'numpad6',
+  'numpad1', 'numpad2', 'numpad3',
+  'numpadenter', 'numpad0', 'numpaddecimal'
+];
+
+/**
+ * 根据默认键列表生成分类练习数据
+ */
+function generatePracticeItems(category: string, keys: string[], prefix: string): ShortcutItem[] {
+  return keys.map((key, index) => {
+    const display = KEY_DISPLAY_MAP[key] || key.toUpperCase();
+    return {
+      id: `${prefix}-${index}`,
+      category,
+      functionName: `请按下 ${display} 键`,
+      description: `认识并按下 ${display} 键`,
+      keys: [key],
+      platform: 'common'
+    };
+  });
+}
+
+/**
  * 内置预设快捷键数据（作为 fallback）
  */
 export const PRESET_SHORTCUTS: ShortcutItem[] = [
@@ -115,6 +175,11 @@ export const PRESET_SHORTCUTS: ShortcutItem[] = [
   { id: 'ps-23', category: 'Photoshop', functionName: '缩小画布', description: '缩小显示画布', keys: ['Ctrl', '-'], platform: 'common' },
   { id: 'ps-24', category: 'Photoshop', functionName: '实际像素', description: '以100%比例显示图像', keys: ['Ctrl', '1'], platform: 'common' },
   { id: 'ps-25', category: 'Photoshop', functionName: '抓手工具', description: '临时切换到抓手工具移动画布', keys: ['Space'], platform: 'common' },
+
+  // 键位练习数据（从默认键列表动态生成）
+  ...generatePracticeItems('键位练习', DEFAULT_KEYBOARD_PRACTICE_KEYS, 'kp'),
+  // 数字小键盘练习数据（从默认键列表动态生成）
+  ...generatePracticeItems('数字小键盘练习', DEFAULT_NUMPAD_PRACTICE_KEYS, 'np'),
 ];
 
 // 运行时缓存，优先从 JSON 文件加载
@@ -289,7 +354,9 @@ function getCategoryDescription(name: string): string {
     'VS Code': 'Visual Studio Code 编辑器快捷键',
     'Chrome': 'Chrome 浏览器快捷键',
     'IntelliJ IDEA': 'IntelliJ IDEA 开发工具快捷键',
-    'Photoshop': 'Adobe Photoshop 图像处理快捷键'
+    'Photoshop': 'Adobe Photoshop 图像处理快捷键',
+    '键位练习': '随机练习键盘上的任意按键',
+    '数字小键盘练习': '专门练习数字小键盘区域按键'
   };
   return descMap[name] || `${name} 快捷键`;
 }
@@ -303,7 +370,9 @@ function getCategoryIcon(name: string): string {
     'VS Code': '📝',
     'Chrome': '🌐',
     'IntelliJ IDEA': '☕',
-    'Photoshop': '🎨'
+    'Photoshop': '🎨',
+    '键位练习': '⌨️',
+    '数字小键盘练习': '🔢'
   };
   return iconMap[name] || '⌨️';
 }

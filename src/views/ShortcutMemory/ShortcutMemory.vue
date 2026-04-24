@@ -333,7 +333,7 @@
           <el-form-item label="数据来源">
             <el-radio-group v-model="categoryForm.sourceType">
               <el-radio-button label="empty">空白分类</el-radio-button>
-              <el-radio-button label="copy">复制现有</el-radio-button>
+              <el-radio-button label="copy">导入现有</el-radio-button>
               <el-radio-button label="import">导入 JSON</el-radio-button>
             </el-radio-group>
           </el-form-item>
@@ -508,7 +508,9 @@ function getCategoryIcon(name: string): string {
     'VS Code': '📝',
     'Chrome': '🌐',
     'IntelliJ IDEA': '☕',
-    'Photoshop': '🎨'
+    'Photoshop': '🎨',
+    '键位练习': '⌨️',
+    '数字小键盘练习': '🔢'
   };
   return icons[name] || '⌨️';
 }
