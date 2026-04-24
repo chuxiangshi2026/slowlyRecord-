@@ -72,7 +72,7 @@
           </div>
           <div
             class="key special-key extra-wide-key"
-            :class="{ active: isKeyActive('shift'), target: isTargetKey('shift') }"
+            :class="{ active: isKeyActive('shift') }"
           >
             Shift
           </div>
@@ -106,7 +106,7 @@
           </div>
           <div
             class="key special-key"
-            :class="{ active: isKeyActive('alt'), target: isTargetKey('alt') }"
+            :class="{ active: isKeyActive('alt') }"
           >
             Alt
           </div>
@@ -118,7 +118,7 @@
           </div>
           <div
             class="key special-key"
-            :class="{ active: isKeyActive('ctrl'), target: isTargetKey('ctrl') }"
+            :class="{ active: isKeyActive('ctrl') }"
           >
             Ctrl
           </div>

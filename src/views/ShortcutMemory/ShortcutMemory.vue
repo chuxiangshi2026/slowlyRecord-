@@ -25,11 +25,7 @@
             class="category-card"
             @click="selectCategory(category.name)"
           >
-            <div
-              v-if="store.isCustomCategory(category.name)"
-              class="category-actions"
-              @click.stop
-            >
+            <div class="category-actions" @click.stop>
               <el-button
                 type="primary"
                 size="small"
@@ -141,7 +137,6 @@
                 记忆
               </el-button>
               <el-button
-                v-if="store.isCustomCategory(row.category) || isCustomItem(row.id)"
                 type="warning"
                 size="small"
                 @click="openEditShortcutDialog(row)"
@@ -652,8 +647,11 @@ async function submitEditShortcut() {
       return;
     }
 
+    // 判断是否为自定义快捷键
+    const isCustom = editShortcutForm.value.id.startsWith('custom-');
+    
     const item: ShortcutItem = {
-      id: editShortcutForm.value.id,
+      id: isCustom ? editShortcutForm.value.id : 'custom-' + Date.now(),
       category: editShortcutForm.value.category,
       functionName: editShortcutForm.value.functionName,
       description: editShortcutForm.value.description,
@@ -661,12 +659,12 @@ async function submitEditShortcut() {
       platform: editShortcutForm.value.platform
     };
 
-    const result = await store.updateCustomShortcutItem(item);
+    const result = await store.addCustomShortcut(item);
     if (result.ok) {
-      ElMessage.success('更新成功');
+      ElMessage.success(isCustom ? '更新成功' : '已创建自定义副本');
       showEditShortcutDialog.value = false;
     } else {
-      ElMessage.error('更新失败');
+      ElMessage.error('保存失败：' + (result.message || '未知错误'));
     }
   });
 }
@@ -708,6 +706,35 @@ async function submitCategory() {
     if (!valid) return;
 
     if (isEditCategory.value) {
+      const isCustom = store.isCustomCategory(editingCategoryOldName.value);
+      
+      // 如果是示例分类（非自定义），先创建为自定义分类
+      if (!isCustom) {
+        // 获取原分类下的所有快捷键
+        const items = getShortcutsByCategory(editingCategoryOldName.value);
+        const sourceItems = items.map(item => ({
+          ...item,
+          id: 'custom-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+          category: categoryForm.value.name
+        }));
+        
+        // 创建自定义分类
+        const result = await store.addCustomCategory(
+          categoryForm.value.name,
+          categoryForm.value.description,
+          categoryForm.value.icon,
+          sourceItems
+        );
+        if (result.ok) {
+          ElMessage.success('已保存为自定义分类');
+          showCategoryDialog.value = false;
+        } else {
+          ElMessage.error('保存失败');
+        }
+        return;
+      }
+      
+      // 如果是自定义分类，执行原有逻辑
       // 如果名称变了，先重命名
       if (categoryForm.value.name !== editingCategoryOldName.value) {
         const renameResult = await store.renameCustomCategory(
@@ -781,13 +808,14 @@ async function submitCategory() {
 }
 
 async function deleteCategory(name: string) {
+  const isCustom = store.isCustomCategory(name);
+  const message = isCustom 
+    ? `确定要删除分类「${name}」吗？该分类下的所有快捷键也将被删除。`
+    : `确定要删除分类「${name}」吗？删除后可以在新增分类时重新导入。`;
+  
   try {
-    await ElMessageBox.confirm(
-      `确定要删除分类「${name}」吗？该分类下的所有快捷键也将被删除。`,
-      '确认删除',
-      { type: 'warning' }
-    );
-    const result = await store.deleteCustomCategory(name);
+    await ElMessageBox.confirm(message, '确认删除', { type: 'warning' });
+    const result = await store.removeCategory(name);
     if (result.ok) {
       ElMessage.success('删除成功');
     } else {

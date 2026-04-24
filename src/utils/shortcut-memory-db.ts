@@ -13,6 +13,7 @@ const RECORD_KEY_PREFIX = DB_KEY_PREFIX + 'record_';
 const PROGRESS_KEY_PREFIX = DB_KEY_PREFIX + 'progress_';
 const CUSTOM_KEY_PREFIX = DB_KEY_PREFIX + 'custom_';
 const CUSTOM_CATEGORY_PREFIX = DB_KEY_PREFIX + 'category_';
+const HIDDEN_CATEGORY_KEY = DB_KEY_PREFIX + 'hidden_categories';
 
 /**
  * 获取所有训练记录
@@ -283,4 +284,49 @@ export function clearAllShortcutMemoryData(): void {
     window.utools.db.remove(doc._id);
   });
   log.i('已清空所有快捷键记忆数据');
+}
+
+/**
+ * 获取隐藏的示例分类列表
+ */
+export function getHiddenCategories(): string[] {
+  const doc = window.utools.db.get(HIDDEN_CATEGORY_KEY);
+  return doc?.categories || [];
+}
+
+/**
+ * 隐藏示例分类
+ */
+export function hideCategory(name: string): void {
+  const hidden = getHiddenCategories();
+  if (!hidden.includes(name)) {
+    hidden.push(name);
+    window.utools.db.put({
+      _id: HIDDEN_CATEGORY_KEY,
+      categories: hidden,
+      updatedAt: Date.now()
+    });
+    log.i('隐藏分类', name);
+  }
+}
+
+/**
+ * 恢复隐藏的示例分类
+ */
+export function unhideCategory(name: string): void {
+  const hidden = getHiddenCategories();
+  const index = hidden.indexOf(name);
+  if (index > -1) {
+    hidden.splice(index, 1);
+    const doc = window.utools.db.get(HIDDEN_CATEGORY_KEY);
+    if (doc) {
+      window.utools.db.put({
+        _id: HIDDEN_CATEGORY_KEY,
+        _rev: doc._rev,
+        categories: hidden,
+        updatedAt: Date.now()
+      });
+    }
+    log.i('恢复隐藏分类', name);
+  }
 }

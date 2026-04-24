@@ -1,5 +1,5 @@
 import type { ShortcutItem, ShortcutCategory, CustomCategoryDoc } from "@/types/shortcut-memory";
-import { getAllCustomShortcuts, getAllCustomCategories } from "@/utils/shortcut-memory-db";
+import { getAllCustomShortcuts, getAllCustomCategories, getHiddenCategories } from "@/utils/shortcut-memory-db";
 
 /**
  * 键位显示名称映射
@@ -303,9 +303,12 @@ export function getAllShortcuts(): ShortcutItem[] {
 }
 
 /**
- * 构建分类列表（内置 + 自定义）
+ * 构建分类列表（内置 + 自定义），过滤隐藏的示例分类
  */
 function buildCategories(): ShortcutCategory[] {
+  // 获取隐藏的示例分类
+  const hiddenCategories = getHiddenCategories();
+  
   // 内置分类
   const builtinMap = new Map<string, ShortcutCategory>();
   const categoryCountMap = new Map<string, number>();
@@ -313,12 +316,15 @@ function buildCategories(): ShortcutCategory[] {
     categoryCountMap.set(item.category, (categoryCountMap.get(item.category) || 0) + 1);
   });
   categoryCountMap.forEach((count, name) => {
-    builtinMap.set(name, {
-      name,
-      count,
-      description: getCategoryDescription(name),
-      icon: getCategoryIcon(name)
-    });
+    // 过滤隐藏的示例分类
+    if (!hiddenCategories.includes(name)) {
+      builtinMap.set(name, {
+        name,
+        count,
+        description: getCategoryDescription(name),
+        icon: getCategoryIcon(name)
+      });
+    }
   });
 
   // 合并自定义分类

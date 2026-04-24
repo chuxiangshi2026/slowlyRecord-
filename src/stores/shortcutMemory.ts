@@ -29,7 +29,9 @@ import {
   removeCustomShortcut,
   saveCustomCategory,
   removeCustomCategory,
-  updateCustomShortcut
+  updateCustomShortcut,
+  hideCategory,
+  unhideCategory
 } from "@/utils/shortcut-memory-db";
 import { log } from "@/utils/logger";
 
@@ -496,6 +498,36 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
     return result;
   }
 
+  /**
+   * 删除分类（支持示例分类和自定义分类）
+   */
+  async function removeCategory(name: string) {
+    const isCustom = isCustomCategory(name);
+    if (isCustom) {
+      // 自定义分类直接删除
+      const result = removeCustomCategory(name);
+      if (result.ok) {
+        await loadAllShortcuts(true);
+        if (currentCategory.value === name) {
+          currentCategory.value = '';
+          currentShortcuts.value = [];
+        }
+        categories.value = getCategories();
+      }
+      return result;
+    } else {
+      // 示例分类隐藏
+      hideCategory(name);
+      await loadAllShortcuts(true);
+      if (currentCategory.value === name) {
+        currentCategory.value = '';
+        currentShortcuts.value = [];
+      }
+      categories.value = getCategories();
+      return { ok: true, error: false, message: '', id: '', rev: '' };
+    }
+  }
+
   // 初始化
   loadCategories();
 
@@ -548,6 +580,7 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
     deleteCustomCategory,
     updateCustomCategory,
     updateCustomShortcutItem,
-    isCustomCategory
+    isCustomCategory,
+    removeCategory
   };
 });

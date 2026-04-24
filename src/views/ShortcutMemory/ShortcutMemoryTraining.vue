@@ -48,9 +48,9 @@
     <div class="training-body">
       <!-- 题目区域 -->
       <div v-if="!store.isTrainingComplete" class="question-area">
-        <div class="function-display" :class="{ 'key-practice': isKeyPractice }">
+        <div v-if="!isKeyPractice" class="function-display">
           <div class="function-name">{{ displayFunctionName }}</div>
-          <div v-if="!isKeyPractice" class="function-desc">{{ currentQuestion?.description }}</div>
+          <div class="function-desc">{{ currentQuestion?.description }}</div>
         </div>
 
         <!-- 按键训练模式 -->
