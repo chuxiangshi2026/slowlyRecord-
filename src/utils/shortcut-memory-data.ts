@@ -199,9 +199,16 @@ interface ShortcutIndexItem {
  * 从 public/shortcuts/ 目录加载所有快捷键 JSON 文件
  * 如果加载失败，使用内置预设数据
  */
-export async function loadAllShortcuts(): Promise<ShortcutItem[]> {
-  if (_jsonLoaded && _cachedShortcuts) {
+export async function loadAllShortcuts(force: boolean = false): Promise<ShortcutItem[]> {
+  if (!force && _jsonLoaded && _cachedShortcuts) {
     return _cachedShortcuts;
+  }
+
+  if (force) {
+    _jsonLoaded = false;
+    _cachedShortcuts = null;
+    _cachedCategories = null;
+    _cachedCustomCategories = null;
   }
 
   let allShortcuts: ShortcutItem[] = [];
@@ -239,6 +246,13 @@ export async function loadAllShortcuts(): Promise<ShortcutItem[]> {
     allShortcuts.push(...customShortcuts);
   } catch (e) {
     console.warn('加载自定义快捷键失败', e);
+  }
+
+  // 合并 JSON 中没有的内置分类数据（如键位练习、数字小键盘练习）
+  const loadedCategories = new Set(allShortcuts.map(s => s.category));
+  const missingBuiltin = PRESET_SHORTCUTS.filter(s => !loadedCategories.has(s.category));
+  if (missingBuiltin.length > 0) {
+    allShortcuts.push(...missingBuiltin);
   }
 
   _cachedShortcuts = allShortcuts;

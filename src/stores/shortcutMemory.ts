@@ -358,7 +358,7 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
     const result = await saveCustomShortcut(item);
     if (result.ok) {
       // 重新加载数据
-      await loadAllShortcuts();
+      await loadAllShortcuts(true);
       // 如果当前正在查看该分类，刷新列表
       if (currentCategory.value) {
         selectCategory(currentCategory.value);
@@ -375,7 +375,7 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
   async function deleteCustomShortcut(id: string) {
     const result = removeCustomShortcut(id);
     if (result.ok) {
-      await loadAllShortcuts();
+      await loadAllShortcuts(true);
       if (currentCategory.value) {
         selectCategory(currentCategory.value);
       }
@@ -408,7 +408,7 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
       }
     }
 
-    await loadAllShortcuts();
+    await loadAllShortcuts(true);
     categories.value = getCategories();
     return result;
   }
@@ -440,7 +440,7 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
       }
     }
 
-    await loadAllShortcuts();
+    await loadAllShortcuts(true);
     if (currentCategory.value === oldName) {
       currentCategory.value = newName;
     }
@@ -455,7 +455,7 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
   async function deleteCustomCategory(name: string) {
     const result = removeCustomCategory(name);
     if (result.ok) {
-      await loadAllShortcuts();
+      await loadAllShortcuts(true);
       if (currentCategory.value === name) {
         currentCategory.value = '';
         currentShortcuts.value = [];
@@ -476,7 +476,7 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
   ) {
     const result = await saveCustomCategory({ _id, name, description, icon });
     if (result.ok) {
-      await loadAllShortcuts();
+      await loadAllShortcuts(true);
       categories.value = getCategories();
     }
     return result;
@@ -488,7 +488,7 @@ export const useShortcutMemoryStore = defineStore("shortcutMemory", () => {
   async function updateCustomShortcutItem(item: ShortcutItem) {
     const result = await updateCustomShortcut(item);
     if (result.ok) {
-      await loadAllShortcuts();
+      await loadAllShortcuts(true);
       if (currentCategory.value) {
         selectCategory(currentCategory.value);
       }

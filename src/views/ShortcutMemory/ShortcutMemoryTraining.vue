@@ -59,6 +59,7 @@
             <KeyboardVisual
               :pressed-keys="store.pressedKeys"
               :target-keys="showKeyboardHint && store.trainingPhase === 'showing' ? currentQuestion?.keys : []"
+              :mode="store.currentCategory === '数字小键盘练习' ? 'numpad' : 'default'"
             />
           </div>
         </template>
