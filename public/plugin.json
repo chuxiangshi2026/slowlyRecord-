@@ -14,9 +14,7 @@
       "explain": "进入单词列表",
       "cmds": [
         "review",
-        "manji",
-        "慢记",
-        "mj"
+        "慢记"
       ]
     },
     {
@@ -95,7 +93,7 @@
       "explain": "快速翻译",
       "cmds": [
         {
-          "type": "fy",
+          "type": "over",
           "label": "翻译",
           "minLength": 1
         },
@@ -107,17 +105,14 @@
       "code": "textMemory",
       "explain": "文本记忆",
       "cmds": [
-        "文本记忆",
-        "wbjy"
+        "文本记忆"
       ]
     },
     {
       "code": "shortcutMemory",
       "explain": "快捷键记忆",
       "cmds": [
-        "快捷键记忆",
-        "kjj",
-        "shortcut"
+        "快捷键记忆"
       ]
     }
 
