@@ -55,20 +55,20 @@
 
         <!-- 系统键提示 -->
         <el-alert
-          v-if="isKeyPressMode && (hasSystemKeyShortcuts || hasSystemEscShortcutInCategory || hasSystemDeleteShortcutInCategory)"
+          v-if="isKeyPressMode && (hasSystemKeyShortcuts || hasSystemEscShortcutInCategory || hasSystemDeleteShortcutInCategory || hasAltF4ShortcutInCategory)"
           type="warning"
           :closable="false"
           show-icon
           class="system-key-hint"
         >
           <template #title>
-            <span>提示：当前分类包含系统键（Win/Ctrl+Shift+Esc/Ctrl+Shift+Delete），请按 ` 键（Tab上方）代替 Win 键，按 Ctrl+Shift+` 代替 Esc/Delete</span>
+            <span>提示：当前分类包含系统键（Win/Ctrl+Shift+Esc/Ctrl+Shift+Delete/Alt+F4），请按 ` 键（Tab上方）代替 Win 键，按 Ctrl+Shift+` 代替 Esc/Delete，单独按 ` 代替 Alt+F4</span>
           </template>
         </el-alert>
 
         <!-- 当前题目包含系统键的说明 -->
         <el-card
-          v-if="isKeyPressMode && (hasWinKeyInCurrentQuestion || hasSystemEscShortcut || hasSystemDeleteShortcut)"
+          v-if="isKeyPressMode && (hasWinKeyInCurrentQuestion || hasSystemEscShortcut || hasSystemDeleteShortcut || hasAltF4Shortcut)"
           class="win-key-notice"
           shadow="hover"
         >
@@ -88,6 +88,10 @@
                 <template v-if="hasSystemDeleteShortcut">
                   Ctrl+Shift+Delete 是系统级快捷键，无法拦截。<br>
                   请使用 <el-tag size="small" type="success">Ctrl+Shift+`</el-tag> 代替 Delete。<br>
+                </template>
+                <template v-if="hasAltF4Shortcut">
+                  Alt+F4 是系统级快捷键，无法拦截，会导致窗口关闭。<br>
+                  请使用 <el-tag size="small" type="success">`</el-tag> 键代替 Alt+F4 进行练习。<br>
                 </template>
                 正确按键：<el-tag
                   v-for="(key, index) in currentQuestion?.keys"
@@ -283,6 +287,21 @@ const hasSystemDeleteShortcutInCategory = computed(() => {
   });
 });
 
+// 判断当前题目是否包含 Alt+F4
+const hasAltF4Shortcut = computed(() => {
+  const keys = currentQuestion.value?.keys ?? [];
+  return keys.some(k => k.toLowerCase() === 'alt') &&
+         keys.some(k => k.toLowerCase() === 'f4');
+});
+
+// 判断当前分类是否包含 Alt+F4 快捷键
+const hasAltF4ShortcutInCategory = computed(() => {
+  return store.questions.some(q => {
+    const keys = q.keys.map(k => k.toLowerCase());
+    return keys.includes('alt') && keys.includes('f4');
+  });
+});
+
 const displayTitle = computed(() => {
   if (isKeyPractice.value) {
     return isKeyPressMode.value ? '🔤 键位练习' : '🧩 功能选择';
@@ -365,7 +384,10 @@ function handleWinKeySkip() {
 
 // 检测并提示系统键
 function showSystemKeyWarning(key: string) {
-  ElMessage.warning(`检测到${key}键被按下。系统键无法拦截，建议在设置中禁用或换用其他组合键`);
+  ElMessage.warning(`检测到${key}系统快捷键，无法拦截，已自动跳过本题`);
+  setTimeout(() => {
+    nextQuestion();
+  }, 600);
 }
 
 // 键盘事件处理
@@ -376,11 +398,13 @@ function handleKeyDown(event: KeyboardEvent) {
   // 检测 Windows/Meta 键（系统级，无法阻止）
   if (event.metaKey || event.key === 'Meta') {
     showSystemKeyWarning('Windows/Command');
+    return;
   }
-  // 检测其他系统键
-  if (event.key === 'Alt' && event.location === 1) {
-    // 左侧 Alt 键，某些系统快捷键会使用
-    // 允许继续，但记录
+  // 检测 Alt+F4（会导致窗口关闭）
+  if (event.key === 'F4' && event.altKey) {
+    event.preventDefault();
+    showSystemKeyWarning('Alt+F4');
+    return;
   }
 
   event.preventDefault();
@@ -410,6 +434,10 @@ function handleKeyDown(event: KeyboardEvent) {
             } else {
               store.addPressedKey('esc');
             }
+          } else if (currentQuestion.value?.keys.some(k => k.toLowerCase() === 'alt') &&
+                     currentQuestion.value?.keys.some(k => k.toLowerCase() === 'f4')) {
+            store.addPressedKey('alt');
+            store.addPressedKey('f4');
           } else {
             store.addPressedKey('win');
           }
@@ -444,7 +472,8 @@ function handleKeyDown(event: KeyboardEvent) {
   if (event.metaKey) store.addPressedKey('win');
   // ` 键映射（Fn/F1 键大多数浏览器无法捕获，使用 ` 作为替代）：
   // 1. 如果是 Ctrl+Shift+`，映射为 Esc 或 Delete（替代 Ctrl+Shift+Esc/Delete）
-  // 2. 否则映射为 win（替代 Win 键）
+  // 2. 如果是当前题目为 Alt+F4，映射为 Alt+F4
+  // 3. 否则映射为 win（替代 Win 键）
   if (key === '`' || key === '~' || key === 'Backquote') {
     if (event.ctrlKey && event.shiftKey) {
       // 检测当前题目需要什么键
@@ -453,6 +482,10 @@ function handleKeyDown(event: KeyboardEvent) {
       } else {
         store.addPressedKey('esc');
       }
+    } else if (currentQuestion.value?.keys.some(k => k.toLowerCase() === 'alt') &&
+               currentQuestion.value?.keys.some(k => k.toLowerCase() === 'f4')) {
+      store.addPressedKey('alt');
+      store.addPressedKey('f4');
     } else {
       store.addPressedKey('win');
     }

@@ -87,14 +87,14 @@
           stripe
           class="shortcut-table"
         >
-          <el-table-column type="index" width="50" align="center" />
-          <el-table-column prop="functionName" label="功能" width="150">
+          <el-table-column type="index" width="45" align="center" />
+          <el-table-column prop="functionName" label="功能" min-width="100" show-overflow-tooltip>
             <template #default="{ row }">
               <el-tag size="small" type="primary">{{ row.functionName }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="description" label="功能描述" min-width="200" />
-          <el-table-column prop="keys" label="快捷键" width="180" align="center">
+          <el-table-column prop="description" label="功能描述" min-width="120" show-overflow-tooltip />
+          <el-table-column prop="keys" label="快捷键" width="160" align="center">
             <template #default="{ row }">
               <div class="keys-display">
                 <el-tag
@@ -109,7 +109,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="状态" width="100" align="center">
+          <el-table-column label="状态" width="80" align="center">
             <template #default="{ row }">
               <el-tag
                 v-if="isMastered(row.id)"
@@ -127,7 +127,7 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="200" align="center">
+          <el-table-column label="操作" width="210" align="center">
             <template #default="{ row }">
               <el-button
                 type="primary"

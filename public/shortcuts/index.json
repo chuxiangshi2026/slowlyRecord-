@@ -3,5 +3,8 @@
   { "name": "VS Code", "file": "vscode.json", "icon": "📝", "description": "Visual Studio Code 编辑器快捷键" },
   { "name": "Chrome", "file": "chrome.json", "icon": "🌐", "description": "Chrome 浏览器快捷键" },
   { "name": "IntelliJ IDEA", "file": "idea.json", "icon": "☕", "description": "IntelliJ IDEA 开发工具快捷键" },
-  { "name": "Photoshop", "file": "photoshop.json", "icon": "🎨", "description": "Adobe Photoshop 图像处理快捷键" }
+  { "name": "Photoshop", "file": "photoshop.json", "icon": "🎨", "description": "Adobe Photoshop 图像处理快捷键" },
+  { "name": "Vim", "file": "vim.json", "icon": "🧙", "description": "Vim 文本编辑器快捷键" },
+  { "name": "Illustrator", "file": "illustrator.json", "icon": "✒️", "description": "Adobe Illustrator 矢量设计快捷键" },
+  { "name": "CAD", "file": "cad.json", "icon": "📐", "description": "AutoCAD 工程制图快捷键" }
 ]
