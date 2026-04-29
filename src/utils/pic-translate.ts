@@ -1068,7 +1068,9 @@ function getPluginDir(): string {
     const href = window.location.href;
     const match = href.match(/file:\/\/\/(.*?)\/index\.html/);
     if (match) {
-        return '/' + match[1];
+        // Windows 路径: C:/Users/... 或 C:\Users\...
+        // 直接返回匹配的路径部分，不添加前导 /
+        return match[1];
     }
     return '';
 }

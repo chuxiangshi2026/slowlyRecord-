@@ -34,6 +34,6 @@ const tmpFile = path.join(os.tmpdir(), 'utools_snap.png')
 
 // 暴露给渲染进程
 window.services = {
-
-
+    fs: require('node:fs'),
+    path: require('node:path')
 }
