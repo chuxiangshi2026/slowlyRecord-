@@ -88,12 +88,16 @@
           class="shortcut-table"
         >
           <el-table-column type="index" width="45" align="center" />
-          <el-table-column prop="functionName" label="功能" min-width="100" show-overflow-tooltip>
+          <el-table-column prop="functionName" label="功能" min-width="80">
             <template #default="{ row }">
-              <el-tag size="small" type="primary">{{ row.functionName }}</el-tag>
+              <el-tag size="small" type="primary" class="wrap-tag">{{ row.functionName }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="description" label="功能描述" min-width="120" show-overflow-tooltip />
+          <el-table-column prop="description" label="功能描述" min-width="100">
+            <template #default="{ row }">
+              <span class="desc-text">{{ row.description }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="keys" label="快捷键" width="160" align="center">
             <template #default="{ row }">
               <div class="keys-display">
@@ -127,7 +131,7 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="210" align="center">
+          <el-table-column label="操作" width="135" align="center">
             <template #default="{ row }">
               <el-button
                 type="primary"
@@ -649,7 +653,7 @@ async function submitEditShortcut() {
 
     // 判断是否为自定义快捷键
     const isCustom = editShortcutForm.value.id.startsWith('custom-');
-    
+
     const item: ShortcutItem = {
       id: isCustom ? editShortcutForm.value.id : 'custom-' + Date.now(),
       category: editShortcutForm.value.category,
@@ -707,7 +711,7 @@ async function submitCategory() {
 
     if (isEditCategory.value) {
       const isCustom = store.isCustomCategory(editingCategoryOldName.value);
-      
+
       // 如果是示例分类（非自定义），先创建为自定义分类
       if (!isCustom) {
         // 获取原分类下的所有快捷键
@@ -717,7 +721,7 @@ async function submitCategory() {
           id: 'custom-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
           category: categoryForm.value.name
         }));
-        
+
         // 创建自定义分类
         const result = await store.addCustomCategory(
           categoryForm.value.name,
@@ -733,7 +737,7 @@ async function submitCategory() {
         }
         return;
       }
-      
+
       // 如果是自定义分类，执行原有逻辑
       // 如果名称变了，先重命名
       if (categoryForm.value.name !== editingCategoryOldName.value) {
@@ -809,10 +813,10 @@ async function submitCategory() {
 
 async function deleteCategory(name: string) {
   const isCustom = store.isCustomCategory(name);
-  const message = isCustom 
+  const message = isCustom
     ? `确定要删除分类「${name}」吗？该分类下的所有快捷键也将被删除。`
     : `确定要删除分类「${name}」吗？删除后可以在新增分类时重新导入。`;
-  
+
   try {
     await ElMessageBox.confirm(message, '确认删除', { type: 'warning' });
     const result = await store.removeCategory(name);
@@ -959,6 +963,21 @@ onMounted(async () => {
         font-family: monospace;
         font-weight: bold;
       }
+    }
+
+    .wrap-tag {
+      white-space: normal;
+      word-break: break-all;
+      line-height: 1.4;
+      height: auto;
+      padding: 2px 6px;
+    }
+
+    .desc-text {
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.4;
+      display: inline-block;
     }
   }
 }
