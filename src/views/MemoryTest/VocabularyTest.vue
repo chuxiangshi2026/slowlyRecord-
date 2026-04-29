@@ -120,107 +120,115 @@
     </div>
 
     <!-- 测试结果 -->
-    <div v-else-if="showResult && testResult" class="result-section">
+    <div v-else-if="showResult" class="result-section">
       <div class="result-header">
         <el-icon :size="64" class="result-icon"><Trophy /></el-icon>
         <h2>测试完成！</h2>
       </div>
 
-      <div class="vocabulary-score">
-        <div class="score-circle">
-          <span class="score-number">{{ testResult.estimatedVocabulary.toLocaleString() }}</span>
-          <span class="score-label">预估词汇量</span>
-        </div>
-      </div>
-
-      <div class="reading-level-card">
-        <h3>
-          <el-icon><Reading /></el-icon>
-          阅读水平：{{ testResult.readingLevel }}
-        </h3>
-        <p class="level-desc">{{ testResult.readingLevelDesc }}</p>
-      </div>
-
-      <div class="level-breakdown">
-        <h3>各等级掌握情况</h3>
-        <div class="breakdown-list">
-          <div 
-            v-for="level in levelBreakdown" 
-            :key="level.id"
-            class="breakdown-item"
-          >
-            <div class="level-info">
-              <span class="level-name">{{ level.name }}</span>
-              <span class="level-range">{{ level.range }}词</span>
-            </div>
-            <div class="level-progress">
-              <el-progress 
-                :percentage="level.accuracy" 
-                :color="getAccuracyColor(level.accuracy)"
-                :stroke-width="12"
-              />
-              <span class="accuracy-text">{{ level.correct }}/{{ level.total }}</span>
-            </div>
+      <!-- 测试结果 -->
+      <template v-if="testResult">
+        <div class="vocabulary-score">
+          <div class="score-circle">
+            <span class="score-number">{{ testResult.estimatedVocabulary.toLocaleString() }}</span>
+            <span class="score-label">预估词汇量</span>
           </div>
         </div>
-      </div>
 
-      <!-- 书籍推荐 -->
-      <div class="recommendations">
-        <h3>
-          <el-icon><Collection /></el-icon>
-          推荐阅读
-        </h3>
-        <div class="book-list">
-          <div v-for="(book, index) in currentRecommendations" :key="index" class="book-card">
-            <div class="book-type" :class="book.type">{{ getBookTypeLabel(book.type) }}</div>
-            <h4 class="book-title">{{ book.title }}</h4>
-            <p class="book-author">{{ book.author }}</p>
-            <p class="book-desc">{{ book.description }}</p>
-            <el-tag size="small" type="info">{{ book.level }}</el-tag>
-          </div>
+        <div class="reading-level-card">
+          <h3>
+            <el-icon><Reading /></el-icon>
+            阅读水平：{{ testResult.readingLevel }}
+          </h3>
+          <p class="level-desc">{{ testResult.readingLevelDesc }}</p>
         </div>
-      </div>
 
-      <!-- 阅读计划 -->
-      <div class="reading-plan" v-if="currentReadingPlan">
-        <h3>
-          <el-icon><Calendar /></el-icon>
-          阅读计划建议
-        </h3>
-        <div class="plan-content">
-          <div class="plan-stats">
-            <div class="plan-stat">
-              <span class="stat-label">建议周期</span>
-              <span class="stat-value">{{ currentReadingPlan.duration }}</span>
-            </div>
-            <div class="plan-stat">
-              <span class="stat-label">每日阅读量</span>
-              <span class="stat-value">{{ currentReadingPlan.dailyPages }} 页</span>
-            </div>
-            <div class="plan-stat">
-              <span class="stat-label">每月目标</span>
-              <span class="stat-value">{{ currentReadingPlan.booksPerMonth }} 本</span>
-            </div>
-          </div>
-          <div class="plan-types">
-            <span class="types-label">推荐类型：</span>
-            <el-tag 
-              v-for="type in currentReadingPlan.suggestedTypes" 
-              :key="type"
-              size="small"
-              class="type-tag"
+        <div class="level-breakdown">
+          <h3>各等级掌握情况</h3>
+          <div class="breakdown-list">
+            <div 
+              v-for="level in levelBreakdown" 
+              :key="level.id"
+              class="breakdown-item"
             >
-              {{ type }}
-            </el-tag>
-          </div>
-          <div class="plan-tips">
-            <h4>学习建议</h4>
-            <ul>
-              <li v-for="(tip, index) in currentReadingPlan.tips" :key="index">{{ tip }}</li>
-            </ul>
+              <div class="level-info">
+                <span class="level-name">{{ level.name }}</span>
+                <span class="level-range">{{ level.range }}词</span>
+              </div>
+              <div class="level-progress">
+                <el-progress 
+                  :percentage="level.accuracy" 
+                  :color="getAccuracyColor(level.accuracy)"
+                  :stroke-width="12"
+                />
+                <span class="accuracy-text">{{ level.correct }}/{{ level.total }}</span>
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- 书籍推荐 -->
+        <div class="recommendations">
+          <h3>
+            <el-icon><Collection /></el-icon>
+            推荐阅读
+          </h3>
+          <div class="book-list">
+            <div v-for="(book, index) in currentRecommendations" :key="index" class="book-card">
+              <div class="book-type" :class="book.type">{{ getBookTypeLabel(book.type) }}</div>
+              <h4 class="book-title">{{ book.title }}</h4>
+              <p class="book-author">{{ book.author }}</p>
+              <p class="book-desc">{{ book.description }}</p>
+              <el-tag size="small" type="info">{{ book.level }}</el-tag>
+            </div>
+          </div>
+        </div>
+
+        <!-- 阅读计划 -->
+        <div class="reading-plan" v-if="currentReadingPlan">
+          <h3>
+            <el-icon><Calendar /></el-icon>
+            阅读计划建议
+          </h3>
+          <div class="plan-content">
+            <div class="plan-stats">
+              <div class="plan-stat">
+                <span class="stat-label">建议周期</span>
+                <span class="stat-value">{{ currentReadingPlan.duration }}</span>
+              </div>
+              <div class="plan-stat">
+                <span class="stat-label">每日阅读量</span>
+                <span class="stat-value">{{ currentReadingPlan.dailyPages }} 页</span>
+              </div>
+              <div class="plan-stat">
+                <span class="stat-label">每月目标</span>
+                <span class="stat-value">{{ currentReadingPlan.booksPerMonth }} 本</span>
+              </div>
+            </div>
+            <div class="plan-types">
+              <span class="types-label">推荐类型：</span>
+              <el-tag 
+                v-for="type in currentReadingPlan.suggestedTypes" 
+                :key="type"
+                size="small"
+                class="type-tag"
+              >
+                {{ type }}
+              </el-tag>
+            </div>
+            <div class="plan-tips">
+              <h4>学习建议</h4>
+              <ul>
+                <li v-for="(tip, index) in currentReadingPlan.tips" :key="index">{{ tip }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- 加载中/无结果提示 -->
+      <div v-else class="result-empty">
+        <el-empty description="正在计算结果..." />
       </div>
 
       <div class="result-actions">
