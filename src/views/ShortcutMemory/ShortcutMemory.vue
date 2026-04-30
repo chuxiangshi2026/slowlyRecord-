@@ -81,8 +81,24 @@
           </div>
         </div>
 
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+          <el-input
+            v-model="searchKeyword"
+            placeholder="搜索功能名称、描述或按键..."
+            clearable
+            :prefix-icon="Search"
+            class="search-input"
+          />
+          <el-radio-group v-model="searchType" size="small">
+            <el-radio-button label="all">全部</el-radio-button>
+            <el-radio-button label="function">功能</el-radio-button>
+            <el-radio-button label="key">按键</el-radio-button>
+          </el-radio-group>
+        </div>
+
         <el-table
-          :data="store.currentShortcuts"
+          :data="filteredShortcuts"
           style="width: 100%"
           stripe
           class="shortcut-table"
@@ -234,11 +250,7 @@
           />
         </el-form-item>
         <el-form-item label="快捷键" prop="keysText">
-          <el-input
-            v-model="addForm.keysText"
-            placeholder="如：Ctrl + C，用 + 分隔"
-          />
-          <div class="form-tip">用 + 分隔各个按键，如：Ctrl + Shift + N</div>
+          <KeyCaptureInput v-model="addForm.keysText" />
         </el-form-item>
         <el-form-item label="平台" prop="platform">
           <el-radio-group v-model="addForm.platform">
@@ -279,8 +291,7 @@
           />
         </el-form-item>
         <el-form-item label="快捷键" prop="keysText">
-          <el-input v-model="editShortcutForm.keysText" />
-          <div class="form-tip">用 + 分隔各个按键，如：Ctrl + Shift + N</div>
+          <KeyCaptureInput v-model="editShortcutForm.keysText" />
         </el-form-item>
         <el-form-item label="平台" prop="platform">
           <el-radio-group v-model="editShortcutForm.platform">
@@ -425,10 +436,11 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useShortcutMemoryStore } from '@/stores/shortcutMemory';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { ArrowLeft } from '@element-plus/icons-vue';
+import { ArrowLeft, Search } from '@element-plus/icons-vue';
 import type { ShortcutItem } from '@/types/shortcut-memory';
 import type { FormInstance, FormRules } from 'element-plus';
 import KeyboardVisual from './components/KeyboardVisual.vue';
+import KeyCaptureInput from './components/KeyCaptureInput.vue';
 import { getShortcutsByCategory } from '@/utils/shortcut-memory-data';
 import { getAllCustomCategories } from '@/utils/shortcut-memory-db';
 
@@ -441,6 +453,28 @@ const currentItem = ref<ShortcutItem | null>(null);
 const showHistory = ref(false);
 const showAddDialog = ref(false);
 const addFormRef = ref<FormInstance>();
+
+// 搜索
+const searchKeyword = ref('');
+const searchType = ref<'all' | 'function' | 'key'>('all');
+
+const filteredShortcuts = computed(() => {
+  const list = store.currentShortcuts;
+  const keyword = searchKeyword.value.trim().toLowerCase();
+  if (!keyword) return list;
+
+  return list.filter(item => {
+    if (searchType.value === 'function' || searchType.value === 'all') {
+      if (item.functionName.toLowerCase().includes(keyword)) return true;
+      if (item.description.toLowerCase().includes(keyword)) return true;
+    }
+    if (searchType.value === 'key' || searchType.value === 'all') {
+      const keysText = item.keys.join(' ').toLowerCase();
+      if (keysText.includes(keyword)) return true;
+    }
+    return false;
+  });
+});
 
 const addForm = ref({
   category: '',
@@ -936,7 +970,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
 
     .list-title {
@@ -949,6 +983,19 @@ onMounted(async () => {
     .list-actions {
       display: flex;
       gap: 10px;
+    }
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
     }
   }
 

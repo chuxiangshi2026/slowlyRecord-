@@ -6,5 +6,9 @@
   { "name": "Photoshop", "file": "photoshop.json", "icon": "🎨", "description": "Adobe Photoshop 图像处理快捷键" },
   { "name": "Vim", "file": "vim.json", "icon": "🧙", "description": "Vim 文本编辑器快捷键" },
   { "name": "Illustrator", "file": "illustrator.json", "icon": "✒️", "description": "Adobe Illustrator 矢量设计快捷键" },
-  { "name": "CAD", "file": "cad.json", "icon": "📐", "description": "AutoCAD 工程制图快捷键" }
+  { "name": "CAD", "file": "cad.json", "icon": "📐", "description": "AutoCAD 工程制图快捷键" },
+  { "name": "Obsidian", "file": "obsidian.json", "icon": "📝", "description": "Obsidian 笔记软件快捷键" },
+  { "name": "Word", "file": "word.json", "icon": "📘", "description": "Microsoft Word 文档编辑快捷键" },
+  { "name": "Excel", "file": "excel.json", "icon": "📗", "description": "Microsoft Excel 表格处理快捷键" },
+  { "name": "PowerPoint", "file": "powerpoint.json", "icon": "📙", "description": "Microsoft PowerPoint 演示文稿快捷键" }
 ]

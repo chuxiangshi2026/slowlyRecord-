@@ -13,6 +13,10 @@ export const CATEGORY_CONFIG: CategoryConfigMap = {
   'Vim': { description: 'Vim 文本编辑器常用快捷键', icon: '🧙' },
   'Illustrator': { description: 'Adobe Illustrator 矢量设计快捷键', icon: '✒️' },
   'CAD': { description: 'AutoCAD 工程制图常用快捷键', icon: '📐' },
+  'Obsidian': { description: 'Obsidian 笔记软件常用快捷键', icon: '📝' },
+  'Word': { description: 'Microsoft Word 文档编辑快捷键', icon: '📘' },
+  'Excel': { description: 'Microsoft Excel 表格处理快捷键', icon: '📗' },
+  'PowerPoint': { description: 'Microsoft PowerPoint 演示文稿快捷键', icon: '📙' },
   '键位练习': { description: '随机练习键盘上的任意按键', icon: '⌨️' },
   '数字小键盘练习': { description: '专门练习数字小键盘区域按键', icon: '🔢' }
 };
