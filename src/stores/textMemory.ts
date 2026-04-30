@@ -10,6 +10,7 @@ import type {
   BlankItem
 } from '@/types/text-memory';
 import cloneDeep from 'lodash.clonedeep';
+import { parseLocation } from '@/utils/poetry-location';
 
 // 存储键名
 const TEXTMEMORY_DOC_ID = 'slowlyrecord-textmemory-data';
@@ -102,6 +103,49 @@ export const useTextMemoryStore = defineStore('textMemory', {
     currentArticleWordCount: (state) => {
       if (!state.currentArticle) return 0;
       return state.currentArticle.content.length;
+    },
+
+    // ============ 地图相关 getters ============
+
+    // 带有地理坐标的文章列表
+    articlesWithGeo: (state) => {
+      return state.articles.filter(a => a.geo && a.geo.lng && a.geo.lat);
+    },
+
+    // 所有作者列表（去重）
+    allAuthors: (state) => {
+      const authors = new Set<string>();
+      state.articles.forEach(a => {
+        if (a.author) authors.add(a.author);
+      });
+      return Array.from(authors);
+    },
+
+    // 所有朝代列表（去重）
+    allDynasties: (state) => {
+      const dynasties = new Set<string>();
+      state.articles.forEach(a => {
+        if (a.dynasty) dynasties.add(a.dynasty);
+      });
+      return Array.from(dynasties);
+    },
+
+    // 按作者分组的文章（用于路线图）
+    articlesByAuthor: (state) => {
+      const grouped: Record<string, TextArticle[]> = {};
+      state.articles.forEach(article => {
+        if (article.author) {
+          if (!grouped[article.author]) {
+            grouped[article.author] = [];
+          }
+          grouped[article.author].push(article);
+        }
+      });
+      // 对每个作者的文章按年份排序
+      for (const author in grouped) {
+        grouped[author].sort((a, b) => (a.year || 0) - (b.year || 0));
+      }
+      return grouped;
     }
   },
 
@@ -166,7 +210,7 @@ export const useTextMemoryStore = defineStore('textMemory', {
       try {
         const doc = await this.getTextMemoryDoc();
         if (doc?.articles && Array.isArray(doc.articles)) {
-          this.articles = cloneDeep(doc.articles);
+          this.articles = cloneDeep(doc.articles).map((a: TextArticle) => this.enrichGeo(a));
         } else {
           this.articles = [];
         }
@@ -179,18 +223,33 @@ export const useTextMemoryStore = defineStore('textMemory', {
     },
 
     /**
+     * 为文章解析地理坐标
+     */
+    enrichGeo(article: TextArticle): TextArticle {
+      if (!article.geo && article.location) {
+        const coord = parseLocation(article.location);
+        if (coord) {
+          article.geo = { lng: coord.lng, lat: coord.lat, name: coord.name };
+        }
+      }
+      return article;
+    },
+
+    /**
      * 添加文章
      */
     async addArticle(article: Omit<TextArticle, '_id' | '_rev' | 'ctime' | 'utime' | 'reviewCount'>) {
       try {
         const now = Date.now();
-        const newArticle: TextArticle = {
+        let newArticle: TextArticle = {
           ...article,
           _id: `article_${generateId()}`,
           ctime: now,
           utime: now,
           reviewCount: 0
         };
+        // 解析地理坐标
+        newArticle = this.enrichGeo(newArticle);
 
         const doc = await this.getTextMemoryDoc();
         const articles = doc?.articles ? cloneDeep(doc.articles) : [];

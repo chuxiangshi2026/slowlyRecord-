@@ -45,10 +45,23 @@
       <el-tag type="success" v-if="textStore.allTags.length > 0">
         {{ textStore.allTags.length }} 个标签
       </el-tag>
+      <el-tag type="warning" v-if="textStore.articlesWithGeo.length > 0">
+        {{ textStore.articlesWithGeo.length }} 个地点
+      </el-tag>
+      <div class="view-toggle">
+        <el-radio-group v-model="currentView" size="small">
+          <el-radio-button label="list">
+            <el-icon><List /></el-icon> 列表
+          </el-radio-button>
+          <el-radio-button label="map">
+            <el-icon><MapLocation /></el-icon> 地图
+          </el-radio-button>
+        </el-radio-group>
+      </div>
     </div>
 
     <!-- 文章列表 -->
-    <div class="articles-list" v-loading="textStore.loading">
+    <div v-show="currentView === 'list'" class="articles-list" v-loading="textStore.loading">
       <el-empty v-if="filteredArticles.length === 0" description="暂无文章，点击添加按钮开始" />
 
       <div
@@ -171,6 +184,16 @@
       v-model="showTypingDialog"
       :article="currentExerciseArticle"
     />
+
+    <!-- 地图视图 -->
+    <div v-show="currentView === 'map'" class="map-view">
+      <PoetryMap
+        :articles="filteredArticles"
+        :authors="textStore.allAuthors"
+        :active="currentView === 'map'"
+        @select="handleMapSelect"
+      />
+    </div>
   </div>
 </template>
 
@@ -183,7 +206,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import {
   Search, Plus, Upload, More, Edit, Delete,
   EditPen, QuestionFilled, Notebook, Memo,
-  User, Clock, View, Pointer
+  User, Clock, View, Pointer, List, MapLocation
 } from '@element-plus/icons-vue';
 
 // 导入子组件
@@ -194,6 +217,7 @@ import ChoiceQuestionsDialog from './components/ChoiceQuestionsDialog.vue';
 import NotesDialog from './components/NotesDialog.vue';
 import PromptsDialog from './components/PromptsDialog.vue';
 import TypingPracticeDialog from './components/TypingPracticeDialog.vue';
+import PoetryMap from './components/PoetryMap.vue';
 
 const router = useRouter();
 const textStore = useTextMemoryStore();
@@ -201,6 +225,9 @@ const textStore = useTextMemoryStore();
 // 搜索和筛选
 const searchKeyword = ref('');
 const selectedTag = ref('');
+
+// 当前视图：list | map
+const currentView = ref<'list' | 'map'>('list');
 
 // 对话框显示状态
 const showAddDialog = ref(false);
@@ -369,6 +396,11 @@ function handleOpenWordSettings() {
   // 导航到单词列表页面
   router.push('/word');
 }
+
+// 地图选中诗词
+function handleMapSelect(article: TextArticle) {
+  textStore.setCurrentArticle(article);
+}
 </script>
 
 <style scoped lang="scss">
@@ -389,9 +421,17 @@ function handleOpenWordSettings() {
 
 .stats-bar {
   margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 
   .el-tag {
     margin-right: 10px;
+  }
+
+  .view-toggle {
+    margin-left: auto;
   }
 }
 
@@ -475,5 +515,13 @@ function handleOpenWordSettings() {
     align-items: center;
     gap: 4px;
   }
+}
+
+.map-view {
+  height: calc(100vh - 220px);
+  min-height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--utools-border-color);
 }
 </style>

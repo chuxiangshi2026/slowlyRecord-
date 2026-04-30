@@ -1158,6 +1158,7 @@ function handleImport() {
             tags: [...poem.tags, ...poetryForm.value.tags],
             author: poem.author,
             source: poem.source || poem.dynasty,
+            dynasty: poem.dynasty,
             location: poem.location // 添加创作地点信息
           }];
         } else {

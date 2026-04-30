@@ -3,6 +3,18 @@
  */
 
 /**
+ * 地理位置坐标
+ */
+export interface GeoLocation {
+  // 经度
+  lng: number;
+  // 纬度
+  lat: number;
+  // 地点名称
+  name: string;
+}
+
+/**
  * 文本文章
  */
 export interface TextArticle {
@@ -16,6 +28,14 @@ export interface TextArticle {
   author?: string;
   // 来源（可选）
   source?: string;
+  // 创作地点（文本描述，如"扬州/瓜洲"）
+  location?: string;
+  // 朝代
+  dynasty?: string;
+  // 地理坐标（解析后的）
+  geo?: GeoLocation;
+  // 创作年份（可选，用于时间线）
+  year?: number;
   // 分类标签
   tags: string[];
   // 创建时间
