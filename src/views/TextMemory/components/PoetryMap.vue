@@ -91,11 +91,13 @@ interface Props {
   articles: TextArticle[];
   authors: string[];
   active?: boolean;
+  focusArticleId?: string;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: 'select', article: TextArticle): void;
+  (e: 'focused'): void;
 }>();
 
 // DOM 引用
@@ -106,6 +108,7 @@ let map: L.Map | null = null;
 let markerLayer: L.LayerGroup | null = null;
 let territoryLayer: L.FeatureGroup | null = null;
 let routeLayer: L.LayerGroup | null = null;
+let markerMap: Map<string, L.Marker> = new Map();
 
 // 状态
 const selectedDynasty = ref('');
@@ -171,6 +174,7 @@ function initMap() {
 function renderMarkers() {
   if (!markerLayer || !map) return;
   markerLayer.clearLayers();
+  markerMap.clear();
 
   const articlesWithGeo = props.articles.filter(a => a.geo);
   if (articlesWithGeo.length === 0) return;
@@ -200,6 +204,11 @@ function renderMarkers() {
     });
 
     const marker = L.marker([first.geo.lat, first.geo.lng], { icon: customIcon });
+
+    // 为每个文章保存标记引用（用于定位）
+    for (const article of group) {
+      markerMap.set(article._id, marker);
+    }
 
     // 弹出内容
     const popupContent = group.map((article, idx) => {
@@ -466,6 +475,20 @@ watch(() => props.active, (isActive) => {
       renderMarkers();
     });
   }
+});
+
+// 监听聚焦文章ID
+watch(() => props.focusArticleId, (id) => {
+  if (!id || !map) return;
+  nextTick(() => {
+    const marker = markerMap.get(id);
+    const article = props.articles.find(a => a._id === id);
+    if (marker && article?.geo) {
+      map!.flyTo([article.geo.lat, article.geo.lng], 10, { duration: 1.5 });
+      marker.openPopup();
+      emit('focused');
+    }
+  });
 });
 
 // ==================== 生命周期 ====================

@@ -39,6 +39,7 @@ export interface PoetryItem {
   annotation?: string;      // 注释
   translation?: string;     // 译文
   appreciation?: string;    // 赏析
+  year?: string | number;   // 创作时间（如 742、"天宝元年"、"公元742年"）
 }
 
 // 朝代信息
@@ -80,7 +81,7 @@ export const DYNASTY_LIST: DynastyInfo[] = [
 ];
 
 // 缓存配置
-const CACHE_KEY_PREFIX = 'poetry_cache_v1_';
+const CACHE_KEY_PREFIX = 'poetry_cache_v2_';
 const CACHE_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30天过期
 const POETRY_INDEX_KEY = 'poetry_index_cache';
 
@@ -242,6 +243,7 @@ function normalizePoetryData(data: any[]): PoetryItem[] {
     source: item.source,
     location: item.location,
     wordCount: item.wordCount || item.content?.length || 0,
+    year: item.year,
   })).filter(p => p.content && p.title);
 }
 

@@ -88,6 +88,9 @@
                   <el-dropdown-item @click="handleFillBlanks(article)">
                     <el-icon><EditPen /></el-icon> 填空练习
                   </el-dropdown-item>
+                  <el-dropdown-item v-if="article.geo" @click="handleLocateOnMap(article)">
+                    <el-icon><MapLocation /></el-icon> 地图定位
+                  </el-dropdown-item>
 <!--                  <el-dropdown-item @click="handleChoiceQuestions(article)">
                     <el-icon><QuestionFilled /></el-icon> 选择题
                   </el-dropdown-item>-->
@@ -191,7 +194,9 @@
         :articles="filteredArticles"
         :authors="textStore.allAuthors"
         :active="currentView === 'map'"
+        :focus-article-id="focusArticleId"
         @select="handleMapSelect"
+        @focused="focusArticleId = ''"
       />
     </div>
   </div>
@@ -242,6 +247,7 @@ const showTypingDialog = ref(false);
 // 当前操作的文章
 const editingArticle = ref<TextArticle | undefined>(undefined);
 const currentExerciseArticle = ref<TextArticle | null>(null);
+const focusArticleId = ref<string>('');
 
 // 过滤后的文章列表
 const filteredArticles = computed(() => {
@@ -388,6 +394,16 @@ function handlePrompts(article: TextArticle) {
 function handleTypingPractice(article: TextArticle) {
   currentExerciseArticle.value = article;
   showTypingDialog.value = true;
+}
+
+// 在地图中定位文章
+function handleLocateOnMap(article: TextArticle) {
+  if (!article.geo) {
+    ElMessage.warning('该文章没有地理位置信息');
+    return;
+  }
+  focusArticleId.value = article._id;
+  currentView.value = 'map';
 }
 
 // 打开单词列表设置
