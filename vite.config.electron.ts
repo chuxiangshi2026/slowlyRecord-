@@ -13,11 +13,11 @@ export default defineConfig({
     electron([
       {
         // 主进程入口
-        entry: 'electron/main.js',
+        entry: 'electron/main.cjs',
       },
       {
         // preload 脚本
-        entry: 'electron/preload.js',
+        entry: 'electron/preload.cjs',
         onstart(args) {
           args.reload()
         },

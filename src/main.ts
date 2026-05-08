@@ -126,13 +126,12 @@ router.afterEach((to) => {
     trackRouterPageView(to.fullPath);
 });
 
-// 初始化数据库适配器（异步，不阻塞渲染）
+// 初始化数据库适配器（必须完成后再挂载应用，避免组件在初始化前调用 getDbAdapter()）
 getDbAdapterAsync().then(() => {
   console.log('[App] 数据库适配器初始化完成');
+  app.mount('#app');
 }).catch((err) => {
   console.error('[App] 数据库适配器初始化失败:', err);
+  // 即使初始化失败也挂载应用，避免白屏
+  app.mount('#app');
 });
-
-    // createApp(App).mount( ... ) // Vue
-    // createRoot( ... ).render(App) // React
-    app.mount('#app')

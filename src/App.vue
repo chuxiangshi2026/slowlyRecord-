@@ -69,7 +69,7 @@ const textContent = ref<string>('');
 const showDebugPanel = ref<boolean>(false);
 const debugPanelRef = ref<InstanceType<typeof DebugPanel> | null>(null);
 
-utools.onPluginEnter(async (action) => {
+;(window as any).utools?.onPluginEnter?.(async (action: any) => {
   // 先同步 设置
   let setDb = getSetDb();
 

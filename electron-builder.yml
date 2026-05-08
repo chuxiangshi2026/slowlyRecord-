@@ -1,0 +1,67 @@
+# electron-builder 配置
+# 文档: https://www.electron.build/configuration/configuration
+
+appId: com.slowlyrecord.app
+productName: SlowlyRecord
+copyright: Copyright © 2025
+
+# 构建目录：vite build 输出目录
+directories:
+  output: release
+  buildResources: build
+
+# 文件收集
+# vite-plugin-electron 会将渲染进程和主进程都输出到 dist-electron/
+#   dist-electron/index.html   ← 渲染进程入口
+#   dist-electron/assets/      ← 渲染进程静态资源
+#   dist-electron/main.js      ← Electron 主进程
+#   dist-electron/preload.js   ← Electron preload
+files:
+  - dist-electron/**/*
+  - "!node_modules"
+
+# Windows 打包配置
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  # icon: build/icon.ico  # 如有图标可取消注释
+
+# NSIS 安装程序配置
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: true
+  shortcutName: ${productName}
+  # installerIcon: build/icon.ico
+  # uninstallerIcon: build/icon.ico
+
+# macOS 打包配置（可选，跨平台开发时备用）
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.icns
+
+# Linux 打包配置（可选）
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  icon: build
+
+# 额外资源：如果有需要打包的额外文件
+# extraResources:
+#   - from: assets
+#     to: assets
+
+# Electron 版本（使用项目已安装的版本）
+# electronVersion: 42.0.0

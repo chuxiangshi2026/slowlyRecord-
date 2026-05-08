@@ -1,5 +1,11 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
-const path = require('path')
+import { app, BrowserWindow, ipcMain, dialog, clipboard } from 'electron'
+import path from 'path'
+import fs from 'fs'
+import { fileURLToPath } from 'url'
+
+// ESM 兼容的 __dirname
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // 保持对窗口对象的全局引用，避免被垃圾回收
 let mainWindow = null
@@ -23,10 +29,13 @@ function createWindow() {
   // 开发环境加载 dev server，生产环境加载打包后的 index.html
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
-    mainWindow.webContents.openDevTools()
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
+    // 生产环境：main.js 与 index.html 都在 dist-electron/ 目录下
+    mainWindow.loadFile(path.join(__dirname, 'index.html'))
   }
+
+  // 临时：打开 DevTools 便于调试白屏问题，调试完毕后删除此行
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -67,13 +76,11 @@ ipcMain.handle('showSaveDialog', async (_event, options) => {
 
 // 读取文件
 ipcMain.handle('readFile', async (_event, filePath) => {
-  const fs = require('fs')
   return fs.readFileSync(filePath, 'utf-8')
 })
 
 // 写入文件
 ipcMain.handle('writeFile', async (_event, filePath, content) => {
-  const fs = require('fs')
   fs.writeFileSync(filePath, content, 'utf-8')
   return true
 })
@@ -85,12 +92,10 @@ ipcMain.handle('getPath', (_event, name) => {
 
 // 剪贴板：读取
 ipcMain.handle('clipboardReadText', () => {
-  const { clipboard } = require('electron')
   return clipboard.readText()
 })
 
 // 剪贴板：写入
 ipcMain.handle('clipboardWriteText', (_event, text) => {
-  const { clipboard } = require('electron')
   clipboard.writeText(text)
 })

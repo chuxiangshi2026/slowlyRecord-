@@ -29,7 +29,7 @@ class UtoolsThemeAdapter implements ThemeAdapter {
 
     // 同时注册 uTools 回调
     try {
-      utools.onThemeChange((type: string) => {
+      ;(window as any).utools?.onThemeChange?.((type: string) => {
         const theme = type === 'dark' || (type === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
           ? 'dark'
           : 'light'

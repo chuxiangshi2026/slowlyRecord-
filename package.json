@@ -17,7 +17,10 @@
     "preview:electron": "vite preview --config vite.config.electron.ts",
     "dev:web": "vite --config vite.config.web.ts",
     "build:web": "vite build --config vite.config.web.ts",
-    "preview:web": "vite preview --config vite.config.web.ts"
+    "preview:web": "vite preview --config vite.config.web.ts",
+    "pack:electron": "npm run build:electron && electron-builder --config electron-builder.yml",
+    "pack:electron:dir": "npm run build:electron && electron-builder --config electron-builder.yml --dir",
+    "postinstall": "node -e \"if(process.env.ELECTRON_MIRROR){require('electron')}\""
   },
   "main": "dist-electron/main.js",
   "dependencies": {

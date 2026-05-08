@@ -12,7 +12,7 @@ export interface ClipboardAdapter {
 
 class UtoolsClipboard implements ClipboardAdapter {
   copyText(text: string): void {
-    utools.copyText(text)
+    ;(window as any).utools?.copyText?.(text)
   }
   async readText(): Promise<string> {
     return navigator.clipboard.readText()

@@ -16,16 +16,16 @@ export interface NotificationAdapter {
 
 class UtoolsNotification implements NotificationAdapter {
   show(title: string, body?: string): void {
-    utools.showNotification(body || title)
+    ;(window as any).utools?.showNotification?.(body || title)
   }
   success(message: string): void {
-    utools.showNotification(message)
+    ;(window as any).utools?.showNotification?.(message)
   }
   warning(message: string): void {
-    utools.showNotification(message)
+    ;(window as any).utools?.showNotification?.(message)
   }
   error(message: string): void {
-    utools.showNotification(message)
+    ;(window as any).utools?.showNotification?.(message)
   }
 }
 

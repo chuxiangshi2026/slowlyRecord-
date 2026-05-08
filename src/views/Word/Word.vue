@@ -2082,7 +2082,7 @@ const importTextWords = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = async (e) => {
-        window.utools?.showMainWindow();
+        ;(window as any).utools?.showMainWindow?.();
         try {
           const content = e.target?.result as string;
           const wordList = parseFileContent(content); // 解析文件内容
