@@ -328,9 +328,13 @@
       </el-tooltip>
 
 
+      <el-tooltip class="box-item" effect="dark" content="多端同步" placement="top" popper-class="small-tooltip">
+        <el-icon :size="18" style="cursor: pointer;" @click="syncDialogVisible = true"><Connection /></el-icon>
+      </el-tooltip>
       <el-tooltip class="box-item" effect="dark" content="设置" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-setting" @click="drawerVisible = true"></i>
       </el-tooltip>
+      <SyncDialog v-model="syncDialogVisible" />
       <!--      </el-tooltip>
                   <a href="#/home/list" style="margin-left: 16px;">
                     &lt;!&ndash;        <i class="iconfont icon-list active"></i>&ndash;&gt;
@@ -352,6 +356,7 @@ import type {Word} from "@/types/words";
 import {useWordsStore} from "@/stores/words.ts";
 import DetailDrawer from "@/views/Word/components/DetailDrawer.vue";
 import MyListItem from "@/views/Word/components/MyListItem.vue";
+import SyncDialog from "@/components/SyncDialog.vue";
 import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import {
   filterWordsForJsonExport,
@@ -373,7 +378,8 @@ import {
   CircleClose,
   Trophy,
   Delete,
-  Plus
+  Plus,
+  Connection
 } from '@element-plus/icons-vue';
 import {useRouter} from 'vue-router';
 import {getSetDb} from '@/utils/user-set-db-util.ts';
@@ -425,6 +431,7 @@ const wordBankOptions = [
 ];
 
 const drawerVisible = ref(false)
+const syncDialogVisible = ref(false)
 const title = ref('设置')
 const currentId = ref<string | number | undefined>(undefined)
 
