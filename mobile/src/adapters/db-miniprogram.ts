@@ -1,10 +1,25 @@
-import type { DbAdapter, DbDoc, DbReturn } from '../../../src/adapters/db'
+import type { DbAdapter, DbDoc, DbReturn } from './db'
 
 const STORAGE_PREFIX = 'slowlyrecord_'
 const CHUNK_SIZE = 900 * 1024
 
 export class MiniProgramDbAdapter implements DbAdapter {
   private prefix: string
+
+  promises = {
+    get: <T extends {} = Record<string, any>>(id: string): Promise<DbDoc<T> | null> => {
+      return Promise.resolve(this.get<T>(id))
+    },
+    put: (doc: DbDoc): Promise<DbReturn> => {
+      return Promise.resolve(this.put(doc))
+    },
+    remove: (doc: string | DbDoc): Promise<DbReturn> => {
+      return Promise.resolve(this.remove(doc))
+    },
+    bulkDocs: (docs: DbDoc[]): Promise<DbReturn[]> => {
+      return Promise.resolve(this.bulkDocs(docs))
+    },
+  }
 
   constructor(prefix: string = STORAGE_PREFIX) {
     this.prefix = prefix
@@ -14,16 +29,16 @@ export class MiniProgramDbAdapter implements DbAdapter {
     return `${this.prefix}${id}`
   }
 
-  private async saveWithChunks<T>(doc: DbDoc<T>): Promise<DbReturn> {
+  private saveWithChunks<T>(doc: DbDoc<T>): DbReturn {
     const key = this.getKey(doc._id)
     const dataStr = JSON.stringify(doc)
-    
+
     if (dataStr.length <= CHUNK_SIZE) {
       try {
         uni.setStorageSync(key, doc)
-        return { _id: doc._id, _rev: doc._rev || '1', ok: true }
+        return { id: doc._id, rev: doc._rev || '1', ok: true }
       } catch (e) {
-        return { _id: doc._id, _rev: doc._rev || '1', ok: false, error: String(e) }
+        return { id: doc._id, rev: doc._rev || '1', ok: false, error: true, message: String(e) }
       }
     }
 
@@ -44,13 +59,13 @@ export class MiniProgramDbAdapter implements DbAdapter {
       chunks.forEach((chunk, index) => {
         uni.setStorageSync(`${key}__chunk__${index}`, chunk)
       })
-      return { _id: doc._id, _rev: chunkInfo._rev, ok: true }
+      return { id: doc._id, rev: chunkInfo._rev, ok: true }
     } catch (e) {
-      return { _id: doc._id, _rev: doc._rev || '1', ok: false, error: String(e) }
+      return { id: doc._id, rev: doc._rev || '1', ok: false, error: true, message: String(e) }
     }
   }
 
-  private async readWithChunks<T>(key: string): Promise<DbDoc<T> | null> {
+  private readWithChunksSync<T>(key: string): DbDoc<T> | null {
     try {
       const data = uni.getStorageSync(key)
       if (!data) return null
@@ -72,20 +87,17 @@ export class MiniProgramDbAdapter implements DbAdapter {
     }
   }
 
-  async get<T>(id: string): Promise<DbDoc<T> | null> {
-    return this.readWithChunks<T>(this.getKey(id))
+  get<T extends {} = Record<string, any>>(id: string): DbDoc<T> | null {
+    return this.readWithChunksSync<T>(this.getKey(id))
   }
 
-  async getAsync<T>(id: string): Promise<DbDoc<T> | null> {
-    return this.get<T>(id)
-  }
-
-  async put<T>(doc: DbDoc<T>): Promise<DbReturn> {
+  put(doc: DbDoc): DbReturn {
     return this.saveWithChunks(doc)
   }
 
-  async remove<T>(doc: DbDoc<T>): Promise<DbReturn> {
-    const key = this.getKey(doc._id)
+  remove(doc: string | DbDoc): DbReturn {
+    const id = typeof doc === 'string' ? doc : doc._id
+    const key = this.getKey(id)
     try {
       const existing = uni.getStorageSync(key)
       if (existing && existing._chunks && existing._chunkKeys) {
@@ -94,21 +106,21 @@ export class MiniProgramDbAdapter implements DbAdapter {
         }
       }
       uni.removeStorageSync(key)
-      return { _id: doc._id, _rev: doc._rev || '1', ok: true }
+      return { id, rev: '1', ok: true }
     } catch (e) {
-      return { _id: doc._id, _rev: doc._rev || '1', ok: false, error: String(e) }
+      return { id, rev: '1', ok: false, error: true, message: String(e) }
     }
   }
 
-  async allDocs<T>(key?: string): Promise<{ items: DbDoc<T>[] }> {
+  allDocs<T extends {} = Record<string, any>>(key?: string): DbDoc<T>[] {
     const items: DbDoc<T>[] = []
     try {
       const res = uni.getStorageInfoSync()
       const keys = res.keys || []
-      
+
       for (const k of keys) {
         if (k.startsWith(this.prefix) && !k.includes('__chunk__')) {
-          const doc = await this.readWithChunks<T>(k)
+          const doc = this.readWithChunksSync<T>(k)
           if (doc && (!key || doc._id.startsWith(key))) {
             items.push(doc)
           }
@@ -117,16 +129,10 @@ export class MiniProgramDbAdapter implements DbAdapter {
     } catch (e) {
       console.error('获取所有文档失败:', e)
     }
-    return { items }
+    return items
   }
 
-  async post<T>(doc: Omit<DbDoc<T>, '_id' | '_rev'> & { _id?: string }): Promise<DbReturn> {
-    const id = doc._id || `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    const newDoc: DbDoc<T> = {
-      ...doc,
-      _id: id,
-      _rev: '1'
-    } as DbDoc<T>
-    return this.put(newDoc)
+  bulkDocs(docs: DbDoc[]): DbReturn[] {
+    return docs.map(doc => this.put(doc))
   }
 }

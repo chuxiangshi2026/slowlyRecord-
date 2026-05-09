@@ -90,43 +90,43 @@ onMounted(async () => {
 })
 
 const goToWords = () => {
-  uni.switchTab({ url: '/src/pages/words/words' })
+  uni.switchTab({ url: '/pages/words/words' })
 }
 
 const goToReview = () => {
-  uni.switchTab({ url: '/src/pages/review/review' })
+  uni.switchTab({ url: '/pages/review/review' })
 }
 
 const goToDictation = () => {
-  uni.navigateTo({ url: '/src/pages/dictation/dictation' })
+  uni.navigateTo({ url: '/pages/dictation/dictation' })
 }
 
 const goToTranslate = () => {
-  uni.navigateTo({ url: '/src/pages/translate/translate' })
+  uni.navigateTo({ url: '/pages/translate/translate' })
 }
 
 const goToSignin = () => {
-  uni.navigateTo({ url: '/src/pages/signin/signin' })
+  uni.navigateTo({ url: '/pages/signin/signin' })
 }
 
 const goToWrongWords = () => {
-  uni.navigateTo({ url: '/src/pages/wrong-words/wrong-words' })
+  uni.navigateTo({ url: '/pages/wrong-words/wrong-words' })
 }
 
 const goToWordbank = () => {
-  uni.navigateTo({ url: '/src/pages/wordbank/wordbank' })
+  uni.navigateTo({ url: '/pages/wordbank/wordbank' })
 }
 
 const goToNumberMemory = () => {
-  uni.navigateTo({ url: '/src/pages/number-memory/number-memory' })
+  uni.navigateTo({ url: '/pages/number-memory/number-memory' })
 }
 
 const goToTextMemory = () => {
-  uni.navigateTo({ url: '/src/pages/text-memory/text-memory' })
+  uni.navigateTo({ url: '/pages/text-memory/text-memory' })
 }
 
 const goToMemoryTest = () => {
-  uni.navigateTo({ url: '/src/pages/memory-test/memory-test' })
+  uni.navigateTo({ url: '/pages/memory-test/memory-test' })
 }
 </script>
 

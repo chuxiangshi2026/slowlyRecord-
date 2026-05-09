@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { getDbAdapter } from '../../../src/adapters/db'
+import { getDbAdapter } from '../adapters/db'
 
 // 默认复习间隔（单位：分钟）与桌面端保持一致
 const DEFAULT_INTERVALS = [
