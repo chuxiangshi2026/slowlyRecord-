@@ -347,6 +347,16 @@ export function resetSyncServer() {
 
 // ==================== 高级 API（含加密） ====================
 
+const EMPTY_RESTORE_RESULT: RestoreResult = {
+  success: false,
+  wordBanksRestored: 0,
+  userSettingsRestored: false,
+  textMemoryRestored: false,
+  numberMemoryRestored: false,
+  shortcutMemoryRestored: false,
+  errors: [],
+}
+
 /**
  * 上传当前设备数据到服务器（自动加密）
  * @returns 同步码（blobId.key），用于在另一台设备下载
@@ -388,15 +398,7 @@ export async function downloadFromServer(syncCode: string, options?: Partial<Res
     // 1. 解析同步码
     const parsed = parseSyncCode(syncCode.trim())
     if (!parsed) {
-      return {
-        success: false,
-        wordBanksRestored: 0,
-        userSettingsRestored: false,
-        textMemoryRestored: false,
-        numberMemoryRestored: false,
-        shortcutMemoryRestored: false,
-        errors: ['同步码格式无效，应为 "blobId.key" 格式'],
-      }
+      return { ...EMPTY_RESTORE_RESULT, errors: ['同步码格式无效，应为 "blobId.key" 格式'] }
     }
 
     const { blobId, keyBase64 } = parsed
@@ -405,15 +407,7 @@ export async function downloadFromServer(syncCode: string, options?: Partial<Res
     const adapter = getSyncServerAdapter()
     const encrypted = await adapter.downloadRaw(blobId)
     if (!encrypted) {
-      return {
-        success: false,
-        wordBanksRestored: 0,
-        userSettingsRestored: false,
-        textMemoryRestored: false,
-        numberMemoryRestored: false,
-        shortcutMemoryRestored: false,
-        errors: ['同步码无效或数据已过期'],
-      }
+      return { ...EMPTY_RESTORE_RESULT, errors: ['同步码无效或数据已过期'] }
     }
 
     // 3. 导入 AES 密钥
@@ -424,15 +418,7 @@ export async function downloadFromServer(syncCode: string, options?: Partial<Res
     try {
       json = await decrypt(encrypted, aesKey)
     } catch {
-      return {
-        success: false,
-        wordBanksRestored: 0,
-        userSettingsRestored: false,
-        textMemoryRestored: false,
-        numberMemoryRestored: false,
-        shortcutMemoryRestored: false,
-        errors: ['解密失败，同步码可能不正确或数据已被篡改'],
-      }
+      return { ...EMPTY_RESTORE_RESULT, errors: ['解密失败，同步码可能不正确或数据已被篡改'] }
     }
 
     // 5. 解析并还原
@@ -441,15 +427,7 @@ export async function downloadFromServer(syncCode: string, options?: Partial<Res
     return restoreSyncData(data, restoreOpts)
   } catch (e) {
     log.e('加密下载还原失败', e)
-    return {
-      success: false,
-      wordBanksRestored: 0,
-      userSettingsRestored: false,
-      textMemoryRestored: false,
-      numberMemoryRestored: false,
-      shortcutMemoryRestored: false,
-      errors: [String(e)],
-    }
+    return { ...EMPTY_RESTORE_RESULT, errors: [String(e)] }
   }
 }
 

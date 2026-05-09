@@ -16,10 +16,10 @@
  *    - 默认监听 3000 端口
  *
  * API：
- *   POST /sync       → 上传加密数据，返回 { code }
- *   GET  /sync/:code → 下载加密数据，返回 { e } 或 404
- *   GET  /ping       → 健康检查
- *   DELETE /sync/:code → 删除数据（阅后即焚时调用）
+ *   POST   /sync       → 上传加密数据，返回 { code }（一次性，阅后即焚）
+ *   GET    /sync/:code → 下载加密数据，返回 { e } 或 404（阅后即焚）
+ *   DELETE /sync/:code → 删除数据
+ *   GET    /ping       → 健康检查
  *
  * 注意：客户端已做 AES-256-GCM 加密，服务端只存密文，无需关心数据内容
  */
@@ -34,14 +34,15 @@ interface SyncRecord {
 /** 内存存储（重启丢失，适合临时同步） */
 const store = new Map<string, SyncRecord>()
 
-/** 数据过期时间（毫秒），默认 2 小时 */
-const TTL = 2 * 60 * 60 * 1000
+/** 数据过期时间（毫秒），默认 24 小时 */
+const TTL = 24 * 60 * 60 * 1000
 
 /** 清理过期数据 */
 function cleanup() {
   const now = Date.now()
   for (const [code, record] of store) {
-    if (now - record.createdAt > TTL) {
+    const age = now - record.createdAt
+    if (age > TTL) {
       store.delete(code)
     }
   }
@@ -56,7 +57,6 @@ function generateCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
   let code = ''
   const arr = new Uint8Array(8)
-  // Node: crypto.getRandomValues 或 crypto.randomBytes
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
     crypto.getRandomValues(arr)
   } else {
@@ -82,19 +82,22 @@ function jsonBody(req: any): Promise<any> {
   })
 }
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
 function jsonResponse(res: any, statusCode: number, data: any) {
   res.writeHead(statusCode, {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    ...CORS_HEADERS,
   })
   res.end(JSON.stringify(data))
 }
 
 /**
  * 处理 HTTP 请求（与框架无关）
- * 可直接用于 CloudBase 云函数的 exports.main / Vercel 的 handler
  */
 export async function handleRequest(method: string, path: string, body?: any): Promise<{ status: number; data: any }> {
   // CORS preflight
@@ -107,7 +110,7 @@ export async function handleRequest(method: string, path: string, body?: any): P
     return { status: 200, data: { ok: true } }
   }
 
-  // POST /sync - 上传
+  // POST /sync - 上传（阅后即焚）
   if (method === 'POST' && path === '/sync') {
     if (!body || !body.e) {
       return { status: 400, data: { error: 'Missing encrypted data' } }
@@ -120,28 +123,29 @@ export async function handleRequest(method: string, path: string, body?: any): P
     return { status: 200, data: { code } }
   }
 
-  // GET /sync/:code - 下载
-  const downloadMatch = path.match(/^\/sync\/([A-Za-z0-9]+)$/)
-  if (method === 'GET' && downloadMatch) {
-    const code = downloadMatch[1]
+  // GET /sync/:code - 下载（阅后即焚）
+  const getMatch = path.match(/^\/sync\/([A-Za-z0-9_-]+)$/)
+  if (method === 'GET' && getMatch) {
+    const code = getMatch[1]
     const record = store.get(code)
 
     if (!record) {
       return { status: 404, data: { error: 'Not found or expired' } }
     }
 
-    // 阅后即焚：下载后删除
+    // 阅后即焚
     store.delete(code)
-
     console.log(`[sync] downloaded and deleted, code=${code}`)
+
     return { status: 200, data: { e: record.e } }
   }
 
   // DELETE /sync/:code - 手动删除
-  const deleteMatch = path.match(/^\/sync\/([A-Za-z0-9]+)$/)
+  const deleteMatch = path.match(/^\/sync\/([A-Za-z0-9_-]+)$/)
   if (method === 'DELETE' && deleteMatch) {
     const code = deleteMatch[1]
     store.delete(code)
+    console.log(`[sync] deleted, code=${code}`)
     return { status: 200, data: { deleted: true } }
   }
 
@@ -186,6 +190,6 @@ const server = createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`[sync] server listening on http://localhost:${PORT}`)
-  console.log(`[sync] TTL = ${TTL / 1000 / 60} minutes`)
+  console.log(`[sync] TTL = ${TTL / 1000 / 60 / 60} hours`)
 })
 */

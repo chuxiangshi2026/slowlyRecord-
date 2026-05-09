@@ -7,6 +7,103 @@
     class="sync-dialog"
   >
     <el-tabs v-model="activeTab" class="sync-tabs">
+      <!-- 服务器同步 Tab -->
+      <el-tab-pane label="服务器同步" name="server">
+        <el-alert
+          title="端到端加密 · 临时传输"
+          type="success"
+          :closable="false"
+          show-icon
+          class="sync-alert"
+        >
+          <template #default>
+            数据在本地 AES-256 加密后才上传，服务器只存密文无法解读。推送后生成同步码，在另一台设备输入即可拉取。
+          </template>
+        </el-alert>
+
+        <!-- 服务器状态 -->
+        <div class="sync-server-status">
+          <span>服务器状态：</span>
+          <el-tag v-if="syncStore.serverAvailable === null" type="info" size="small">未检测</el-tag>
+          <el-tag v-else-if="syncStore.serverAvailable" type="success" size="small">可用</el-tag>
+          <el-tag v-else type="danger" size="small">不可用</el-tag>
+          <el-button link type="primary" size="small" @click="syncStore.checkServer">检测</el-button>
+        </div>
+
+        <!-- 推送区域 -->
+        <div class="sync-section">
+          <h4>推送数据</h4>
+          <p class="sync-desc">将当前设备数据加密上传，生成同步码供另一台设备拉取</p>
+          <el-button
+            type="primary"
+            size="large"
+            :loading="syncStore.status === 'uploading'"
+            :disabled="!syncStore.serverAvailable"
+            @click="handlePush"
+          >
+            <el-icon style="margin-right: 4px;"><Upload /></el-icon>
+            推送
+          </el-button>
+
+          <!-- 同步码 + 二维码展示 -->
+          <div v-if="syncStore.syncCode" class="sync-code-box">
+            <div class="sync-code-text">
+              <span class="sync-code-label">同步码：</span>
+              <code class="sync-code-value">{{ syncStore.syncCode }}</code>
+              <el-button type="primary" link @click="syncStore.copySyncCode">复制</el-button>
+            </div>
+            <div class="sync-qr-wrapper">
+              <canvas ref="qrCanvas" class="sync-qr-canvas"></canvas>
+              <p class="sync-qr-hint">扫码或复制同步码到另一台设备</p>
+            </div>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <!-- 拉取区域 -->
+        <div class="sync-section">
+          <h4>拉取数据</h4>
+          <p class="sync-desc">输入在另一台设备获得的同步码，下载并还原数据</p>
+          <div class="sync-download-row">
+            <el-input
+              v-model="syncStore.inputCode"
+              placeholder="粘贴同步码"
+              clearable
+              class="sync-code-input"
+            />
+            <el-button
+              type="success"
+              size="large"
+              :loading="syncStore.status === 'downloading'"
+              :disabled="!syncStore.inputCode.trim() || !syncStore.serverAvailable"
+              @click="handlePull"
+            >
+              <el-icon style="margin-right: 4px;"><Download /></el-icon>
+              拉取
+            </el-button>
+          </div>
+        </div>
+
+        <el-divider />
+
+        <!-- 自定义服务器 -->
+        <div class="sync-section">
+          <h4>自定义服务器</h4>
+          <p class="sync-desc">默认使用 jsonblob.com 临时存储（数据已加密），也可替换为自建服务器</p>
+          <div class="sync-download-row">
+            <el-input
+              v-model="customServerUrl"
+              placeholder="https://your-server.com"
+              clearable
+              class="sync-code-input"
+            />
+            <el-button @click="handleSetCustomServer">设置</el-button>
+            <el-button @click="handleResetServer">恢复默认</el-button>
+          </div>
+        </div>
+      </el-tab-pane>
+
       <!-- 文件同步 Tab -->
       <el-tab-pane label="文件同步" name="file">
         <div class="sync-section">
@@ -63,93 +160,6 @@
           </div>
         </div>
       </el-tab-pane>
-
-      <!-- 服务器同步 Tab -->
-      <el-tab-pane label="服务器同步" name="server">
-        <el-alert
-          title="端到端加密 · 临时传输"
-          type="success"
-          :closable="false"
-          show-icon
-          class="sync-alert"
-        >
-          <template #default>
-            数据在本地 AES-256 加密后才上传，服务器只存密文无法解读。同步码 = 数据定位 + 解密密钥，请完整复制。
-          </template>
-        </el-alert>
-
-        <!-- 服务器状态 -->
-        <div class="sync-server-status">
-          <span>服务器状态：</span>
-          <el-tag v-if="syncStore.serverAvailable === null" type="info" size="small">未检测</el-tag>
-          <el-tag v-else-if="syncStore.serverAvailable" type="success" size="small">可用</el-tag>
-          <el-tag v-else type="danger" size="small">不可用</el-tag>
-          <el-button link type="primary" size="small" @click="syncStore.checkServer">检测</el-button>
-        </div>
-
-        <!-- 上传区域 -->
-        <div class="sync-section">
-          <h4>上传到服务器</h4>
-          <p class="sync-desc">将当前设备数据上传，获取同步码后在另一台设备输入下载</p>
-          <el-button
-            type="primary"
-            :loading="syncStore.status === 'uploading'"
-            :disabled="!syncStore.serverAvailable"
-            @click="handleServerUpload"
-          >
-            上传数据
-          </el-button>
-
-          <!-- 同步码展示 -->
-          <div v-if="syncStore.syncCode" class="sync-code-box">
-            <span class="sync-code-label">同步码：</span>
-            <code class="sync-code-value">{{ syncStore.syncCode }}</code>
-            <el-button type="primary" link @click="syncStore.copySyncCode">复制</el-button>
-          </div>
-        </div>
-
-        <el-divider />
-
-        <!-- 下载区域 -->
-        <div class="sync-section">
-          <h4>从服务器下载</h4>
-          <p class="sync-desc">输入在另一台设备获得的同步码，下载数据并还原</p>
-          <div class="sync-download-row">
-            <el-input
-              v-model="syncStore.inputCode"
-              placeholder="blobId.key（完整同步码）"
-              clearable
-              class="sync-code-input"
-            />
-            <el-button
-              type="success"
-              :loading="syncStore.status === 'downloading'"
-              :disabled="!syncStore.inputCode.trim() || !syncStore.serverAvailable"
-              @click="handleServerDownload"
-            >
-              下载并还原
-            </el-button>
-          </div>
-        </div>
-
-        <el-divider />
-
-        <!-- 自定义服务器 -->
-        <div class="sync-section">
-          <h4>自定义服务器</h4>
-          <p class="sync-desc">默认使用 jsonblob.com 临时存储（数据已加密），也可替换为自建服务器</p>
-          <div class="sync-download-row">
-            <el-input
-              v-model="customServerUrl"
-              placeholder="https://your-server.com"
-              clearable
-              class="sync-code-input"
-            />
-            <el-button @click="handleSetCustomServer">设置</el-button>
-            <el-button @click="handleResetServer">恢复默认</el-button>
-          </div>
-        </div>
-      </el-tab-pane>
     </el-tabs>
 
     <!-- 结果消息 -->
@@ -170,9 +180,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useSyncStore } from '@/stores/sync'
 import { ElMessage } from 'element-plus'
+import { Upload, Download } from '@element-plus/icons-vue'
+import QRCode from 'qrcode'
 import type { SyncFormat } from '@/types/sync'
 import type { RestoreOptions } from '@/utils/sync-manager'
 import { DEFAULT_RESTORE_OPTIONS } from '@/utils/sync-manager'
@@ -187,9 +199,10 @@ const emit = defineEmits<{
 
 const syncStore = useSyncStore()
 
-const activeTab = ref('file')
-const customServerUrl = ref('')
+const activeTab = ref('server')
+const customServerUrl = ref(syncStore.savedServerUrl)
 const restoreOptions = ref<RestoreOptions>({ ...DEFAULT_RESTORE_OPTIONS })
+const qrCanvas = ref<HTMLCanvasElement | null>(null)
 
 const visible = ref(props.modelValue)
 watch(() => props.modelValue, (val) => { visible.value = val })
@@ -197,16 +210,71 @@ watch(visible, (val) => { emit('update:modelValue', val) })
 
 // 打开时检测服务器
 watch(visible, (val) => {
-  if (val && activeTab.value === 'server') {
+  if (val) {
     syncStore.checkServer()
+    customServerUrl.value = syncStore.savedServerUrl
   }
 })
 
-watch(activeTab, (val) => {
-  if (val === 'server') {
-    syncStore.checkServer()
+// 同步码变化时生成二维码
+watch(() => syncStore.syncCode, async (code) => {
+  if (code) {
+    await nextTick()
+    await generateQR(code)
   }
 })
+
+async function generateQR(text: string) {
+  if (!qrCanvas.value) return
+  try {
+    await QRCode.toCanvas(qrCanvas.value, text, {
+      width: 180,
+      margin: 2,
+      color: { dark: '#000000', light: '#ffffff' },
+    })
+  } catch (e) {
+    console.error('二维码生成失败', e)
+  }
+}
+
+// ===== 服务器同步 =====
+
+async function handlePush() {
+  const result = await syncStore.serverUpload()
+  if (result.success) {
+    ElMessage.success('推送成功，请在另一台设备输入同步码')
+  } else {
+    ElMessage.error(result.error || '推送失败')
+  }
+}
+
+async function handlePull() {
+  const result = await syncStore.serverDownload()
+  if (result.success) {
+    ElMessage.success('拉取成功，部分数据需刷新页面后生效')
+  } else {
+    ElMessage.error(result.errors?.join('; ') || '拉取失败')
+  }
+}
+
+function handleSetCustomServer() {
+  if (!customServerUrl.value.trim()) {
+    ElMessage.warning('请输入服务器地址')
+    return
+  }
+  syncStore.setCustomServer(customServerUrl.value.trim())
+  ElMessage.success('已设置自定义服务器')
+  syncStore.checkServer()
+}
+
+function handleResetServer() {
+  syncStore.setCustomServer('')
+  customServerUrl.value = ''
+  ElMessage.success('已恢复默认服务器')
+  syncStore.checkServer()
+}
+
+// ===== 文件同步 =====
 
 async function handleExport(format: SyncFormat) {
   await syncStore.exportFile(format)
@@ -229,39 +297,6 @@ async function handleConfirmRestore() {
   } else if (syncStore.resultMessage) {
     ElMessage.error(syncStore.resultMessage)
   }
-}
-
-async function handleServerUpload() {
-  const result = await syncStore.serverUpload()
-  if (result.success) {
-    ElMessage.success('上传成功，请将同步码发送到另一台设备')
-  } else {
-    ElMessage.error(result.error || '上传失败')
-  }
-}
-
-async function handleServerDownload() {
-  const result = await syncStore.serverDownload()
-  if (result.success) {
-    ElMessage.success('同步成功，部分数据需刷新页面后生效')
-  } else {
-    ElMessage.error(result.errors?.join('; ') || '同步失败')
-  }
-}
-
-function handleSetCustomServer() {
-  if (!customServerUrl.value.trim()) {
-    ElMessage.warning('请输入服务器地址')
-    return
-  }
-  syncStore.setCustomServer(customServerUrl.value.trim())
-  ElMessage.success('已切换到自定义服务器')
-}
-
-function handleResetServer() {
-  syncStore.setCustomServer('')
-  customServerUrl.value = ''
-  ElMessage.success('已恢复默认服务器')
 }
 </script>
 
@@ -320,25 +355,53 @@ function handleResetServer() {
 }
 
 .sync-code-box {
-  margin-top: 12px;
-  padding: 10px 14px;
+  margin-top: 16px;
+  padding: 16px;
   background: var(--el-fill-color-light);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  border-radius: 8px;
+
+  .sync-code-text {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
 
   .sync-code-label {
     font-size: 13px;
     color: var(--el-text-color-secondary);
+    white-space: nowrap;
+    line-height: 22px;
   }
 
   .sync-code-value {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--el-color-primary);
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     user-select: all;
+    word-break: break-all;
+    flex: 1;
+    line-height: 22px;
+  }
+
+  .sync-qr-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--el-border-color-lighter);
+  }
+
+  .sync-qr-canvas {
+    border-radius: 4px;
+  }
+
+  .sync-qr-hint {
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
+    margin: 0;
   }
 }
 

@@ -5,12 +5,15 @@
  */
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { SyncData, SyncFormat, SyncStatus, ConflictStrategy, SyncServerResult } from '@/types/sync'
+import type { SyncData, SyncFormat, SyncStatus, SyncServerResult } from '@/types/sync'
 import type { RestoreOptions, RestoreResult } from '@/utils/sync-manager'
 import { DEFAULT_RESTORE_OPTIONS } from '@/utils/sync-manager'
 import { downloadSyncFile, pickAndImportSyncFile, importFromFile, getSyncDataSummary } from '@/utils/sync-file'
 import { uploadToServer, downloadFromServer, checkServerAvailable, setSyncServerUrl, resetSyncServer } from '@/utils/sync-server'
 import { log } from '@/utils/logger'
+
+// localStorage keys
+const LS_SERVER_URL = 'sync_server_url'
 
 export const useSyncStore = defineStore('sync', () => {
   // ==================== 状态 ====================
@@ -44,6 +47,9 @@ export const useSyncStore = defineStore('sync', () => {
 
   /** 是否正在操作 */
   const isBusy = computed(() => status.value === 'uploading' || status.value === 'downloading')
+
+  /** 自定义服务器地址（持久化） */
+  const savedServerUrl = ref(localStorage.getItem(LS_SERVER_URL) || '')
 
   // ==================== 文件操作 ====================
 
@@ -158,7 +164,7 @@ export const useSyncStore = defineStore('sync', () => {
   }
 
   /**
-   * 上传数据到服务器
+   * 上传数据到服务器（推送）
    */
   async function serverUpload(): Promise<SyncServerResult> {
     if (isBusy.value) return { success: false, error: '正在操作中' }
@@ -171,13 +177,13 @@ export const useSyncStore = defineStore('sync', () => {
       const result = await uploadToServer()
       if (result.success && result.code) {
         syncCode.value = result.code
-        resultMessage.value = `上传成功，同步码: ${result.code}`
+        resultMessage.value = '推送成功'
       } else {
-        resultMessage.value = `上传失败: ${result.error || '未知错误'}`
+        resultMessage.value = `推送失败: ${result.error || '未知错误'}`
       }
       return result
     } catch (e) {
-      resultMessage.value = `上传失败: ${e}`
+      resultMessage.value = `推送失败: ${e}`
       return { success: false, error: String(e) }
     } finally {
       status.value = 'idle'
@@ -185,32 +191,16 @@ export const useSyncStore = defineStore('sync', () => {
   }
 
   /**
-   * 从服务器下载数据并还原
+   * 从服务器下载数据并还原（拉取）
    */
   async function serverDownload(code?: string, options?: Partial<RestoreOptions>): Promise<RestoreResult> {
     if (isBusy.value) {
-      return {
-        success: false,
-        wordBanksRestored: 0,
-        userSettingsRestored: false,
-        textMemoryRestored: false,
-        numberMemoryRestored: false,
-        shortcutMemoryRestored: false,
-        errors: ['正在操作中'],
-      }
+      return makeEmptyResult('正在操作中')
     }
 
     const syncCodeToUse = code || inputCode.value
     if (!syncCodeToUse.trim()) {
-      return {
-        success: false,
-        wordBanksRestored: 0,
-        userSettingsRestored: false,
-        textMemoryRestored: false,
-        numberMemoryRestored: false,
-        shortcutMemoryRestored: false,
-        errors: ['请输入同步码'],
-      }
+      return makeEmptyResult('请输入同步码')
     }
 
     status.value = 'downloading'
@@ -220,23 +210,15 @@ export const useSyncStore = defineStore('sync', () => {
       const result = await downloadFromServer(syncCodeToUse.trim(), options)
       lastRestoreResult.value = result
       if (result.success) {
-        resultMessage.value = '同步成功'
+        resultMessage.value = '拉取成功'
         inputCode.value = ''
       } else {
-        resultMessage.value = `同步失败: ${result.errors.join('; ')}`
+        resultMessage.value = `拉取失败: ${result.errors.join('; ')}`
       }
       return result
     } catch (e) {
-      const failResult: RestoreResult = {
-        success: false,
-        wordBanksRestored: 0,
-        userSettingsRestored: false,
-        textMemoryRestored: false,
-        numberMemoryRestored: false,
-        shortcutMemoryRestored: false,
-        errors: [String(e)],
-      }
-      resultMessage.value = `同步失败: ${e}`
+      const failResult = makeEmptyResult(String(e))
+      resultMessage.value = `拉取失败: ${e}`
       return failResult
     } finally {
       status.value = 'idle'
@@ -252,7 +234,6 @@ export const useSyncStore = defineStore('sync', () => {
       await navigator.clipboard.writeText(syncCode.value)
       resultMessage.value = '同步码已复制到剪贴板'
     } catch {
-      // 降级方案
       const textarea = document.createElement('textarea')
       textarea.value = syncCode.value
       textarea.style.position = 'fixed'
@@ -271,15 +252,31 @@ export const useSyncStore = defineStore('sync', () => {
   function setCustomServer(url: string) {
     if (url.trim()) {
       setSyncServerUrl(url.trim())
+      savedServerUrl.value = url.trim()
+      localStorage.setItem(LS_SERVER_URL, url.trim())
       resultMessage.value = `已切换到自定义服务器: ${url.trim()}`
     } else {
       resetSyncServer()
+      savedServerUrl.value = ''
+      localStorage.removeItem(LS_SERVER_URL)
       resultMessage.value = '已切换到默认服务器'
     }
     serverAvailable.value = null
   }
 
   // ==================== 辅助 ====================
+
+  function makeEmptyResult(...errors: string[]): RestoreResult {
+    return {
+      success: false,
+      wordBanksRestored: 0,
+      userSettingsRestored: false,
+      textMemoryRestored: false,
+      numberMemoryRestored: false,
+      shortcutMemoryRestored: false,
+      errors,
+    }
+  }
 
   /** 仅选择文件（不触发下载） */
   function pickFileOnly(): Promise<File | null> {
@@ -293,6 +290,11 @@ export const useSyncStore = defineStore('sync', () => {
     })
   }
 
+  // 初始化：如果有保存的服务器地址，设置它
+  if (savedServerUrl.value) {
+    setSyncServerUrl(savedServerUrl.value)
+  }
+
   return {
     // 状态
     status,
@@ -304,6 +306,7 @@ export const useSyncStore = defineStore('sync', () => {
     previewData,
     previewSummary,
     isBusy,
+    savedServerUrl,
     // 文件操作
     exportFile,
     previewFile,
