@@ -73,6 +73,30 @@
       }
     }
   ],
+  "subPackages": [
+    {
+      "root": "subPackages/wordbank-a",
+      "pages": [
+        {
+          "path": "wordbankA",
+          "style": {
+            "navigationBarTitleText": "进阶词库"
+          }
+        }
+      ]
+    },
+    {
+      "root": "subPackages/wordbank-b",
+      "pages": [
+        {
+          "path": "wordbankB",
+          "style": {
+            "navigationBarTitleText": "基础词库"
+          }
+        }
+      ]
+    }
+  ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "慢记",

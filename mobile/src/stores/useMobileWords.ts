@@ -30,6 +30,7 @@ const DB_KEY = 'mobile_words'
 export const useMobileWords = defineStore('mobileWords', () => {
   const words = ref<MobileWord[]>([])
   const isLoading = ref(false)
+  let _loadingPromise: Promise<void> | null = null
 
   const reviewWords = computed(() => {
     const now = Date.now()
@@ -49,6 +50,21 @@ export const useMobileWords = defineStore('mobileWords', () => {
   })
 
   async function loadWords() {
+    // 防重入：如果正在加载中，复用同一个 Promise，避免多个 Tab 并发重复扫描 Storage
+    if (_loadingPromise) return _loadingPromise
+
+    // 如果已加载过且有数据，直接返回（Pinia store 是响应式的，各页面共享同一份状态）
+    if (words.value.length > 0) return
+
+    _loadingPromise = _doLoadWords()
+    try {
+      await _loadingPromise
+    } finally {
+      _loadingPromise = null
+    }
+  }
+
+  async function _doLoadWords() {
     isLoading.value = true
     try {
       const db = getDbAdapter()
@@ -59,7 +75,6 @@ export const useMobileWords = defineStore('mobileWords', () => {
       })) || []
       words.value = loaded
     } catch (e) {
-      console.error('加载单词失败:', e)
       words.value = []
     } finally {
       isLoading.value = false

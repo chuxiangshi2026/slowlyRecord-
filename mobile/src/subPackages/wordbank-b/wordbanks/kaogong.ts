@@ -313,5 +313,4 @@ export default [
   {"word": "dump", "phonetic": "/dʌmp/", "explains": "v. 倾倒；丢弃"},
   {"word": "duration", "phonetic": "/djuˈreɪʃn/", "explains": "n. 持续时间；期间"},
   {"word": "dynamic", "phonetic": "/daɪˈnæmɪk/", "explains": "adj. 动态的；有活力的"}
-]
- as Word[]
+] as Word[]

@@ -128,7 +128,9 @@ export class MiniProgramDbAdapter implements DbAdapter {
   private readWithChunksSync<T>(key: string): DbDoc<T> | null {
     try {
       const data = uni.getStorageSync(key)
-      if (!data) return null
+      if (!data) {
+        return null
+      }
 
       if (data._chunks && data._chunkKeys) {
         let fullData = ''
@@ -142,7 +144,6 @@ export class MiniProgramDbAdapter implements DbAdapter {
 
       return data as DbDoc<T>
     } catch (e) {
-      console.error('读取数据失败:', e)
       return null
     }
   }
@@ -181,13 +182,19 @@ export class MiniProgramDbAdapter implements DbAdapter {
       for (const k of keys) {
         if (k.startsWith(this.prefix) && !k.includes('__chunk__')) {
           const doc = this.readWithChunksSync<T>(k)
-          if (doc && (!key || doc._id.startsWith(key))) {
-            items.push(doc)
+          if (doc) {
+            // 防御性处理：某些情况下 _id 可能丢失
+            if (!doc._id) {
+              doc._id = k.replace(this.prefix, '')
+            }
+            if (!key || doc._id.startsWith(key)) {
+              items.push(doc)
+            }
           }
         }
       }
     } catch (e) {
-      console.error('获取所有文档失败:', e)
+      // 静默处理
     }
     return items
   }

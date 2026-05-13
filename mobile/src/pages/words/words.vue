@@ -136,7 +136,7 @@ const filteredWords = computed(() => {
 })
 
 onMounted(() => {
-  wordsStore.loadWords()
+  // 数据由首页 loadWords 加载，通过 Pinia 响应式共享，无需重复调用
 })
 
 const handleSearch = () => {

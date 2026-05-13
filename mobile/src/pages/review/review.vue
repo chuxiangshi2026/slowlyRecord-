@@ -28,19 +28,17 @@
       </view>
 
       <!-- 卡片（微信小程序用 catchtouch 阻止页面滚动） -->
-      <view
-        class="card-wrapper"
-        @catchtouchstart="handleTouchStart"
-        @catchtouchmove="handleTouchMove"
-        @catchtouchend="handleTouchEnd"
-        @catchlongpress="handleLongPress"
-      >
+      <view class="card-wrapper">
         <!-- 正面 -->
         <view
           v-if="!isFlipped"
           class="review-card card-front"
           :class="{ swiping: isSwiping }"
           :style="cardStyle"
+          @catchtouchstart="handleTouchStart"
+          @catchtouchmove="handleTouchMove"
+          @catchtouchend="handleTouchEnd"
+          @catchlongpress="handleLongPress"
           @tap="onCardTap"
         >
           <view class="word-section">
@@ -72,6 +70,10 @@
           class="review-card card-back"
           :class="{ swiping: isSwiping }"
           :style="cardStyle"
+          @catchtouchstart="handleTouchStart"
+          @catchtouchmove="handleTouchMove"
+          @catchtouchend="handleTouchEnd"
+          @catchlongpress="handleLongPress"
           @tap="onCardTap"
         >
           <view class="word-section">
@@ -172,6 +174,8 @@ const touchStartTime = ref(0)
 const cardOffsetX = ref(0)
 const cardOffsetY = ref(0)
 const cardRotate = ref(0)
+const cardRotateX = ref(0)
+const cardRotateY = ref(0)
 const isAnimating = ref(false)
 const isSwiping = ref(false)
 const swipeDirection = ref<'left' | 'right' | 'down' | ''>('')
@@ -208,23 +212,24 @@ const displayMeaning = computed(() => {
   return offlineDictMeaning.value || currentWord.value.meaning || '暂无释义'
 })
 
-// 卡片样式（手势位移）
+// 卡片样式（手势位移 + 3D 翻转）
 const cardStyle = computed(() => {
+  const baseTransform = `translateX(${cardOffsetX.value}px) translateY(${cardOffsetY.value}px) rotate(${cardRotate.value}deg) rotateX(${cardRotateX.value}deg) rotateY(${cardRotateY.value}deg)`
   if (isAnimating.value) {
     return {
-      transform: `translateX(${cardOffsetX.value}px) translateY(${cardOffsetY.value}px) rotate(${cardRotate.value}deg)`,
+      transform: baseTransform,
       transition: 'transform 0.3s ease-out',
       opacity: Math.max(0.3, 1 - Math.abs(cardOffsetX.value) / 300),
     }
   }
   return {
-    transform: `translateX(${cardOffsetX.value}px) translateY(${cardOffsetY.value}px) rotate(${cardRotate.value}deg)`,
-    transition: cardOffsetX.value === 0 && cardOffsetY.value === 0 ? 'transform 0.3s ease-out' : 'none',
+    transform: baseTransform,
+    transition: cardOffsetX.value === 0 && cardOffsetY.value === 0 && cardRotateX.value === 0 && cardRotateY.value === 0 ? 'transform 0.3s ease-out' : 'none',
   }
 })
 
 onMounted(() => {
-  wordsStore.loadWords()
+  // 数据由首页 loadWords 加载，通过 Pinia 响应式共享，无需重复调用
 })
 
 const startReview = () => {
@@ -283,6 +288,20 @@ const handleTouchMove = (e: any) => {
   cardOffsetX.value = deltaX * 0.6
   cardOffsetY.value = deltaY > 0 ? deltaY * 0.6 : deltaY * 0.3
   cardRotate.value = deltaX * 0.03
+
+  // 3D 翻转：根据划动方向动态旋转
+  if (absX > absY) {
+    // 左右划动：绕 Y 轴翻转
+    cardRotateY.value = deltaX * 0.08
+    cardRotateX.value = 0
+  } else if (deltaY > 0) {
+    // 向下划动：绕 X 轴翻转
+    cardRotateX.value = deltaY * 0.08
+    cardRotateY.value = 0
+  } else {
+    cardRotateX.value = 0
+    cardRotateY.value = 0
+  }
 
   // 实时显示划动方向
   if (absX > absY && absX > 40) {
@@ -364,11 +383,14 @@ const animateCard = (direction: 'left' | 'right' | 'down', callback: () => void)
   if (direction === 'right') {
     cardOffsetX.value = 400
     cardRotate.value = 20
+    cardRotateY.value = 45
   } else if (direction === 'left') {
     cardOffsetX.value = -400
     cardRotate.value = -20
+    cardRotateY.value = -45
   } else if (direction === 'down') {
     cardOffsetY.value = 500
+    cardRotateX.value = 45
   }
 
   setTimeout(() => {
@@ -376,6 +398,8 @@ const animateCard = (direction: 'left' | 'right' | 'down', callback: () => void)
     cardOffsetX.value = 0
     cardOffsetY.value = 0
     cardRotate.value = 0
+    cardRotateX.value = 0
+    cardRotateY.value = 0
     isAnimating.value = false
   }, 300)
 }
@@ -384,6 +408,8 @@ const resetCard = () => {
   cardOffsetX.value = 0
   cardOffsetY.value = 0
   cardRotate.value = 0
+  cardRotateX.value = 0
+  cardRotateY.value = 0
 }
 
 // ==================== 操作处理 ====================
@@ -528,12 +554,11 @@ const finishReview = () => {
 
 /* 卡片容器 */
 .card-wrapper {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20rpx;
-  touch-action: none;
+  perspective: 1200rpx;
 }
 
 .review-card {
@@ -543,9 +568,10 @@ const finishReview = () => {
   max-width: 600rpx;
   min-height: 700rpx;
   position: relative;
-  perspective: 1000px;
   overflow: hidden;
   box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.3);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
 .card-front, .card-back {

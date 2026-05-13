@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useMobileWords } from '@/stores/useMobileWords'
 
 const wordCount = ref(0)
@@ -83,10 +83,17 @@ const todayLearned = ref(12)
 
 const wordsStore = useMobileWords()
 
-onMounted(async () => {
-  await wordsStore.loadWords()
-  wordCount.value = wordsStore.wordCount
-  reviewCount.value = wordsStore.reviewWords.length
+onMounted(() => {
+  // 不 await，避免阻塞首屏渲染；数据加载后通过 watch 自动更新 UI
+  wordsStore.loadWords()
+})
+
+// 数据加载完成后自动更新统计
+watch(() => wordsStore.wordCount, (count) => {
+  wordCount.value = count
+})
+watch(() => wordsStore.reviewWords.length, (count) => {
+  reviewCount.value = count
 })
 
 const goToWords = () => {

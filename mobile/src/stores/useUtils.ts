@@ -666,7 +666,7 @@ function getFromCache(type: WordBankType): Word[] | null {
   }
 }
 
-function saveToCache(type: WordBankType, words: Word[]): void {
+export function saveWordBankCache(type: WordBankType, words: Word[]): void {
   try {
     const cache: CacheData = {
       timestamp: Date.now(),
@@ -689,58 +689,51 @@ export async function loadWordBank(
     }
   }
 
-  // #ifdef MP-WEIXIN
-  // 小程序端：通过 JS 模块加载词库（fs.readFileSync 无法读取代码包 JSON）
   try {
-    let data: Word[]
-    switch (type) {
-      case 'bec': data = (await import('@/wordbanks/bec')).default; break
-      case 'cet4': data = (await import('@/wordbanks/cet4')).default; break
-      case 'cet6': data = (await import('@/wordbanks/cet6')).default; break
-      case 'gmat': data = (await import('@/wordbanks/gmat')).default; break
-      case 'gre': data = (await import('@/wordbanks/gre')).default; break
-      case 'ielts': data = (await import('@/wordbanks/ielts')).default; break
-      case 'kaogong': data = (await import('@/wordbanks/kaogong')).default; break
-      case 'kaoyan': data = (await import('@/wordbanks/kaoyan')).default; break
-      case 'level4': data = (await import('@/wordbanks/level4')).default; break
-      case 'level8': data = (await import('@/wordbanks/level8')).default; break
-      case 'sat': data = (await import('@/wordbanks/sat')).default; break
-      case 'toefl': data = (await import('@/wordbanks/toefl')).default; break
-      case 'zsb': data = (await import('@/wordbanks/zsb')).default; break
-      default: data = []
+    let rawData: any
+    // #ifdef MP-WEIXIN
+    // 微信小程序：词库数据在分包中，主包只从缓存读取
+    // 如果没有缓存，提示用户先在词库管理页面下载
+    const cached = getFromCache(type)
+    if (cached && cached.length > 0) {
+      return cached
     }
-    const words = Array.isArray(data) ? data : []
-    if (strategy.useCache) saveToCache(type, words)
+    throw new Error('请先在"词库管理"页面下载词库')
+    // #endif
+    // #ifndef MP-WEIXIN
+    const importLoaders: Record<string, () => Promise<any>> = {
+      cet4: () => import('@/wordbanks/cet4.ts'),
+      cet6: () => import('@/wordbanks/cet6.ts'),
+      bec: () => import('@/wordbanks/bec.ts'),
+      gre: () => import('@/wordbanks/gre.ts'),
+      gmat: () => import('@/wordbanks/gmat.ts'),
+      ielts: () => import('@/wordbanks/ielts.ts'),
+      kaogong: () => import('@/wordbanks/kaogong.ts'),
+      kaoyan: () => import('@/wordbanks/kaoyan.ts'),
+      level4: () => import('@/wordbanks/level4.ts'),
+      level8: () => import('@/wordbanks/level8.ts'),
+      sat: () => import('@/wordbanks/sat.ts'),
+      toefl: () => import('@/wordbanks/toefl.ts'),
+      zsb: () => import('@/wordbanks/zsb.ts'),
+    }
+    const impLoader = importLoaders[type]
+    if (!impLoader) throw new Error(`未知词库类型: ${type}`)
+    const h5Module = await impLoader()
+    rawData = h5Module.default || h5Module
+    const words = (Array.isArray(rawData) ? rawData : []).map((w: any) => ({
+      word: w.word || '',
+      meaning: w.meaning || w.explains || '',
+      phonetic: w.phonetic,
+      example: w.example,
+    }))
+    if (strategy.useCache) saveWordBankCache(type, words)
     return words
+    // #endif
   } catch (e: any) {
+    const cache = getFromCache(type)
+    if (cache) return cache
     throw new Error(`加载词库失败: ${e.message || '模块加载错误'}`)
   }
-  // #endif
-
-  // #ifndef MP-WEIXIN
-  // H5 / App 端：使用网络请求
-  return new Promise((resolve, reject) => {
-    uni.request({
-      url: `/wordbanks/${type}.json`,
-      method: 'GET',
-      timeout: strategy.timeout,
-      success: (res) => {
-        if (res.statusCode === 200 && res.data) {
-          const words = (Array.isArray(res.data) ? res.data : []) as Word[]
-          if (strategy.useCache) {
-            saveToCache(type, words)
-          }
-          resolve(words)
-        } else {
-          reject(new Error(`加载词库失败: ${res.statusCode}`))
-        }
-      },
-      fail: (err) => {
-        reject(new Error(`加载词库失败: ${err.errMsg || '未知错误'}`))
-      },
-    })
-  })
-  // #endif
 }
 
 export async function getWordBankInfo(type: WordBankType): Promise<WordBankInfo | null> {
@@ -755,16 +748,8 @@ export async function getWordBankInfo(type: WordBankType): Promise<WordBankInfo 
 }
 
 export async function getAllWordBankInfo(): Promise<WordBankInfo[]> {
-  const results: WordBankInfo[] = []
-  for (const info of WORDBANK_LIST) {
-    try {
-      const words = await loadWordBank(info.id, { ...DEFAULT_STRATEGY, useCache: true })
-      results.push({ ...info, wordCount: words.length })
-    } catch {
-      results.push(info)
-    }
-  }
-  return results
+  // 页面初始化时仅返回列表信息，不预加载词库内容（避免串行加载13个文件导致超时）
+  return WORDBANK_LIST.map(info => info)
 }
 
 export function isWordBankCached(type: WordBankType): boolean {
