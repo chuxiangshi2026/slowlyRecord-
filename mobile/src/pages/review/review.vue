@@ -35,10 +35,10 @@
           class="review-card card-front"
           :class="{ swiping: isSwiping }"
           :style="cardStyle"
-          @catchtouchstart="handleTouchStart"
-          @catchtouchmove="handleTouchMove"
-          @catchtouchend="handleTouchEnd"
-          @catchlongpress="handleLongPress"
+          @touchstart.stop="handleTouchStart"
+          @touchmove.stop="handleTouchMove"
+          @touchend.stop="handleTouchEnd"
+          @longpress.stop="handleLongPress"
           @tap="onCardTap"
         >
           <view class="word-section">
@@ -70,10 +70,10 @@
           class="review-card card-back"
           :class="{ swiping: isSwiping }"
           :style="cardStyle"
-          @catchtouchstart="handleTouchStart"
-          @catchtouchmove="handleTouchMove"
-          @catchtouchend="handleTouchEnd"
-          @catchlongpress="handleLongPress"
+          @touchstart.stop="handleTouchStart"
+          @touchmove.stop="handleTouchMove"
+          @touchend.stop="handleTouchEnd"
+          @longpress.stop="handleLongPress"
           @tap="onCardTap"
         >
           <view class="word-section">
