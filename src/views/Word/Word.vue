@@ -1,4 +1,4 @@
-<template>
+  <template>
 
   <!--  <el-button type="primary" @click="clearWord">清空单词</el-button>-->
   <!--  <el-button type="primary" @click="initWord">初始化单词</el-button>-->
