@@ -366,6 +366,7 @@ export const useMobileWords = defineStore('mobileWords', () => {
   async function importWords(data: MobileWord[], targetBankId?: string) {
     const bankId = targetBankId || currentBankId.value
     const db = getDbAdapter()
+    const importedWords: MobileWord[] = []
     for (const word of data) {
       const id = word.id || `${DB_KEY}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       const existing = db.get(id)
@@ -377,7 +378,9 @@ export const useMobileWords = defineStore('mobileWords', () => {
       if (!result.ok) {
         throw new Error(result.message || '导入单词失败')
       }
+      importedWords.push({ ...word, id, bankId })
     }
+    allWords.value.push(...importedWords)
     await loadWords()
   }
 

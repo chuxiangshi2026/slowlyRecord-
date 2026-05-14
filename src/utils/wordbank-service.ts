@@ -1,9 +1,10 @@
-/**
+  /**
  * 本地离线词库服务
  * 直接从本地 wordbanks 目录加载各类考试核心词汇
  */
 
 import type { Word } from '@/types/words';
+import { PREFIXES_DATA, SUFFIXES_DATA, ROOTS_DATA } from './affix-data';
 
 // 词库类型定义
 export type WordBankType =
@@ -19,7 +20,8 @@ export type WordBankType =
   | 'level4'    // 专业四级
   | 'level8'    // 专业八级
   | 'zsb'       // 专升本
-  | 'sat';      // SAT
+  | 'sat'       // SAT
+  | 'roots';    // 词根词缀
 
 // 词库信息配置
 export interface WordBankInfo {
@@ -63,6 +65,7 @@ export const WORDBANK_LIST: WordBankInfo[] = [
   { id: 'sat', name: 'SAT词汇', description: 'SAT考试核心词汇', wordCount: 0 },
   { id: 'toefl', name: '托福词汇', description: '托福考试核心词汇', wordCount: 0 },
   { id: 'zsb', name: '专升本词汇', description: '专升本英语考试核心词汇', wordCount: 0 },
+  { id: 'roots', name: '词根词缀', description: '英语常见词根、前缀、后缀', wordCount: 452 },
 ];
 
 // 缓存管理
@@ -164,6 +167,44 @@ async function loadLocalWordBank(type: WordBankType): Promise<Word[] | null> {
 }
 
 /**
+ * 从 affix-data.ts 加载词根词缀数据并转换为 Word 格式
+ * 不依赖 JSON 文件，直接从 TS 数据源读取（单一数据源原则）
+ */
+function loadRootsFromAffixData(): Word[] {
+  const allAffixes = [
+    ...PREFIXES_DATA.map(a => ({ ...a, category: '前缀' })),
+    ...SUFFIXES_DATA.map(a => ({ ...a, category: '后缀' })),
+    ...ROOTS_DATA.map(a => ({ ...a, category: '词根' })),
+  ];
+
+  const now = new Date();
+  return allAffixes.map((item, index) => {
+    // 构建释义：类别 + 中文释义 + 英文描述
+    const parts: string[] = [];
+    parts.push(`[${item.category}] ${item.meaning}`);
+    if (item.description) {
+      parts.push(`(${item.description})`);
+    }
+    if (item.examples && item.examples.length > 0) {
+      parts.push(`例: ${item.examples.slice(0, 4).join(', ')}`);
+    }
+
+    return {
+      _id: `affix_${index}`,
+      text: item.text,
+      phonetic: '',
+      explains: parts.join(' '),
+      isReview: true,
+      ctime: now,
+      learnDate: now,
+      level: 1 as Word['level'],
+      explainedHidden: false,
+      remember: false,
+    };
+  });
+}
+
+/**
  * 获取词库（仅使用本地词库）
  * @param type 词库类型
  * @param strategy 加载策略配置
@@ -183,6 +224,16 @@ export async function fetchWordBank(
       console.log(`[WordBank] 使用缓存: ${type}, 单词数: ${cached.length}`);
       return cached;
     }
+  }
+
+  // 词根词缀类型：直接从 TypeScript 数据源加载（不依赖 JSON 文件）
+  if (type === 'roots') {
+    const words = loadRootsFromAffixData();
+    console.log(`[WordBank] 从 affix-data 加载词根词缀: ${words.length} 条`);
+    if (config.useCache) {
+      saveToCache(type, words);
+    }
+    return words;
   }
 
   // 仅加载本地词库
@@ -310,6 +361,7 @@ function getFallbackWords(type: WordBankType): Word[] {
     level4: [],
     level8: [],
     sat: [],
+    roots: [],
   };
 
   // 为其他词库复制基础数据

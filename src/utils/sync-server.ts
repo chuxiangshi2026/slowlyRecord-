@@ -473,3 +473,129 @@ export async function checkServerAvailable(): Promise<boolean> {
     return false
   }
 }
+
+// ==================== 移动端兼容推送（供小程序拉取） ====================
+
+import { getAllWordBanks } from '@/utils/wordbank-manager'
+
+function randomString32(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let result = ''
+  for (let i = 0; i < 32; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return result
+}
+
+/** 将字节数组转为字符串（分块避免栈溢出） */
+function bytesToString(bytes: number[]): string {
+  const chunks: string[] = []
+  const chunkSize = 65536
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const slice = bytes.slice(i, i + chunkSize)
+    chunks.push(String.fromCharCode.apply(null, slice as any))
+  }
+  return chunks.join('')
+}
+
+/** 与小程序端完全一致的 XOR 加密 */
+function xorEncrypt(plaintext: string, key: string): string {
+  const textEncoder = new TextEncoder()
+  const textBytes = Array.from(textEncoder.encode(plaintext))
+  const keyBytes = Array.from(new TextEncoder().encode(key))
+  const encrypted = textBytes.map((b, i) => b ^ keyBytes[i % keyBytes.length])
+  const encryptedStr = bytesToString(encrypted)
+  return btoa(encodeURIComponent(encryptedStr))
+}
+
+interface MobileCompatWord {
+  word: string
+  meaning: string
+  phonetic?: string
+  example?: string
+  addTime: number
+  reviewCount: number
+  nextReviewTime: number
+  needsReview: boolean
+  remembered: boolean
+  level: number
+  lastReviewTime: number
+}
+
+interface MobileCompatBank {
+  id: string
+  name: string
+  words: MobileCompatWord[]
+}
+
+interface MobileCompatSyncData {
+  version: number
+  exportedAt: number
+  platform: string
+  /** 词库分组 */
+  banks: MobileCompatBank[]
+}
+
+function convertDesktopWordToMobile(w: any): MobileCompatWord {
+  const learnTime = w.learnDate ? new Date(w.learnDate).getTime() : Date.now()
+  return {
+    word: w.text || '',
+    meaning: w.explains || '',
+    phonetic: w.phonetic || '',
+    example: '',
+    addTime: learnTime,
+    reviewCount: 0,
+    nextReviewTime: Date.now() + 24 * 60 * 60 * 1000,
+    needsReview: !!w.isReview,
+    remembered: !!w.remember,
+    level: typeof w.level === 'number' ? w.level : 0,
+    lastReviewTime: learnTime,
+  }
+}
+
+async function collectMobileCompatData(): Promise<MobileCompatSyncData> {
+  const allBanks = await getAllWordBanks()
+  const banks: MobileCompatBank[] = []
+
+  for (const bank of allBanks) {
+    const bankWords: MobileCompatWord[] = []
+    if (bank.words && Array.isArray(bank.words)) {
+      for (const w of bank.words) {
+        bankWords.push(convertDesktopWordToMobile(w))
+      }
+    }
+    banks.push({
+      id: bank.id,
+      name: bank.name,
+      words: bankWords,
+    })
+  }
+
+  return {
+    version: 1,
+    exportedAt: Date.now(),
+    platform: 'desktop',
+    banks,
+  }
+}
+
+/**
+ * 以移动端兼容格式上传（推送到小程序）
+ * 使用与小程序完全相同的 XOR 加密和数据格式，小程序可直接用现有拉取功能接收
+ */
+export async function uploadToServerMobileCompat(): Promise<SyncServerResult> {
+  try {
+    const data = await collectMobileCompatData()
+    const json = JSON.stringify(data)
+    const key = randomString32()
+    const encrypted = xorEncrypt(json, key)
+    const adapter = getSyncServerAdapter()
+    const blobId = await adapter.uploadRaw(encrypted)
+    const syncCode = `${blobId}.${key}`
+    log.i('移动端兼容推送完成, 同步码长度:', syncCode.length)
+    return { success: true, code: syncCode }
+  } catch (e) {
+    log.e('移动端兼容推送失败', e)
+    return { success: false, error: String(e) }
+  }
+}

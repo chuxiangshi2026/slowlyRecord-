@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "慢记移动端 - UniApp 跨平台应用",
   "scripts": {
-    "dev:mp-weixin": "uni",
+    "dev:mp-weixin": "uni -p mp-weixin",
     "build:mp-weixin": "uni build -p mp-weixin --minify",
     "dev:app": "uni --app",
     "build:app-android": "uni build --app --minify",

@@ -9,7 +9,7 @@ import type { SyncData, SyncFormat, SyncStatus, SyncServerResult } from '@/types
 import type { RestoreOptions, RestoreResult } from '@/utils/sync-manager'
 import { DEFAULT_RESTORE_OPTIONS } from '@/utils/sync-manager'
 import { downloadSyncFile, pickAndImportSyncFile, importFromFile, getSyncDataSummary } from '@/utils/sync-file'
-import { uploadToServer, downloadFromServer, checkServerAvailable, setSyncServerUrl, resetSyncServer } from '@/utils/sync-server'
+import { uploadToServer, downloadFromServer, checkServerAvailable, setSyncServerUrl, resetSyncServer, uploadToServerMobileCompat } from '@/utils/sync-server'
 import { log } from '@/utils/logger'
 
 // localStorage keys
@@ -191,6 +191,33 @@ export const useSyncStore = defineStore('sync', () => {
   }
 
   /**
+   * 上传数据到服务器（移动端兼容格式，供小程序拉取）
+   */
+  async function serverUploadMobileCompat(): Promise<SyncServerResult> {
+    if (isBusy.value) return { success: false, error: '正在操作中' }
+
+    status.value = 'uploading'
+    resultMessage.value = ''
+    syncCode.value = ''
+
+    try {
+      const result = await uploadToServerMobileCompat()
+      if (result.success && result.code) {
+        syncCode.value = result.code
+        resultMessage.value = '推送成功（小程序可拉取）'
+      } else {
+        resultMessage.value = `推送失败: ${result.error || '未知错误'}`
+      }
+      return result
+    } catch (e) {
+      resultMessage.value = `推送失败: ${e}`
+      return { success: false, error: String(e) }
+    } finally {
+      status.value = 'idle'
+    }
+  }
+
+  /**
    * 从服务器下载数据并还原（拉取）
    */
   async function serverDownload(code?: string, options?: Partial<RestoreOptions>): Promise<RestoreResult> {
@@ -316,6 +343,7 @@ export const useSyncStore = defineStore('sync', () => {
     // 服务器操作
     checkServer,
     serverUpload,
+    serverUploadMobileCompat,
     serverDownload,
     copySyncCode,
     setCustomServer,

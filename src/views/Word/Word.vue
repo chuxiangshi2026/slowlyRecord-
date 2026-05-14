@@ -291,9 +291,9 @@
       <el-tooltip class="box-item" effect="dark" content="隐藏释义" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-invisible" @click="invisibleExplained"></i>
       </el-tooltip>
-      <el-tooltip class="box-item" effect="dark" content="截图识别" placement="top" popper-class="small-tooltip">
+<!--      <el-tooltip class="box-item" effect="dark" content="截图识别" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-translate" @click="startScreenCapture" style="font-weight: bold;"></i>
-      </el-tooltip>
+      </el-tooltip>-->
 
       <!--      <i class="iconfont icon-import" @click="importWords"></i>
             <i class="iconfont icon-export" @click="exportWords"></i-->
@@ -328,10 +328,10 @@
         <i class="iconfont icon-card" @click="openFocusMode"></i>
       </el-tooltip>
 
-
+<!--
       <el-tooltip class="box-item" effect="dark" content="多端同步" placement="top" popper-class="small-tooltip">
         <el-icon :size="18" style="cursor: pointer;" @click="syncDialogVisible = true"><Connection /></el-icon>
-      </el-tooltip>
+      </el-tooltip>-->
       <el-tooltip class="box-item" effect="dark" content="设置" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-setting" @click="drawerVisible = true"></i>
       </el-tooltip>
@@ -429,6 +429,7 @@ const wordBankOptions = [
   {label: 'SAT词汇', value: 'sat'},
   {label: '托福词汇', value: 'toefl'},
   {label: '专升本词汇', value: 'zsb'},
+  {label: '词根词缀', value: 'roots'},
 ];
 
 const drawerVisible = ref(false)

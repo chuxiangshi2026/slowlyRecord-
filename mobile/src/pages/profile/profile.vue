@@ -29,6 +29,13 @@
         <text class="menu-text">数据同步</text>
         <text class="menu-arrow">›</text>
       </view>
+      <!-- 同步服务器设置 -->
+      <view class="menu-item" @click="showServerSetting">
+        <text class="menu-icon server">V</text>
+        <text class="menu-text">同步服务器</text>
+        <text class="menu-value">{{ currentServerDisplay }}</text>
+        <text class="menu-arrow">›</text>
+      </view>
       <!-- 翻译设置 -->
       <view class="menu-item" @click="showTranslationSetting">
         <text class="menu-icon">T</text>
@@ -102,7 +109,7 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from 'vue'
 import { useMobileWords } from '@/stores/useMobileWords'
-import { pushToServer, pullFromServer, drawQrCode, getTranslationPlatform, setTranslationPlatform } from '@/stores/useUtils'
+import { pushToServer, pullFromServer, drawQrCode, getTranslationPlatform, setTranslationPlatform, getSyncServerUrl, setSyncServerUrl, checkServerAvailable } from '@/stores/useUtils'
 // #ifdef H5
 import QRCode from 'qrcode'
 // #endif
@@ -125,6 +132,73 @@ const platformNames: Record<string, string> = {
 const currentTranslationPlatform = computed(() => {
   return platformNames[getTranslationPlatform()] || '有道翻译'
 })
+
+// 同步服务器显示（依赖 tick 强制刷新）
+const serverRefreshTick = ref(0)
+const currentServerDisplay = computed(() => {
+  serverRefreshTick.value // 强制依赖
+  const url = getSyncServerUrl()
+  if (url.includes('jsonblob.com')) return '默认服务器'
+  // 提取 IP 或域名简化显示
+  try {
+    const match = url.match(/https?:\/\/([^\/]+)/)
+    return match ? match[1] : '自定义'
+  } catch {
+    return '自定义'
+  }
+})
+
+// 同步服务器设置
+const showServerSetting = () => {
+  const currentUrl = getSyncServerUrl()
+  const isDefault = currentUrl.includes('jsonblob.com')
+
+  uni.showActionSheet({
+    itemList: [
+      isDefault ? '✓ 默认服务器 (jsonblob.com)' : '默认服务器 (jsonblob.com)',
+      '设置自定义服务器',
+      '测试连接'
+    ],
+    success: async (res) => {
+      if (res.tapIndex === 0) {
+        // 恢复默认
+        setSyncServerUrl('')
+        serverRefreshTick.value++
+        uni.showToast({ title: '已恢复默认服务器', icon: 'success' })
+      } else if (res.tapIndex === 1) {
+        // 设置自定义服务器
+        uni.showModal({
+          title: '设置同步服务器',
+          content: '请输入服务器地址，如：http://192.168.1.100:3000',
+          editable: true,
+          placeholderText: 'http://your-server:3000',
+          success: (modalRes) => {
+            if (modalRes.confirm && modalRes.content) {
+              const url = modalRes.content.trim()
+              // 简单验证 URL 格式
+              if (!url.match(/^https?:\/\/[^\s]+/)) {
+                uni.showToast({ title: '地址格式错误', icon: 'none' })
+                return
+              }
+              setSyncServerUrl(url)
+              serverRefreshTick.value++
+              uni.showToast({ title: '已保存', icon: 'success' })
+            }
+          }
+        })
+      } else if (res.tapIndex === 2) {
+        // 测试连接
+        uni.showLoading({ title: '测试中...' })
+        const ok = await checkServerAvailable()
+        uni.hideLoading()
+        uni.showToast({
+          title: ok ? '连接成功' : '连接失败',
+          icon: ok ? 'success' : 'none'
+        })
+      }
+    }
+  })
+}
 
 // 翻译引擎设置
 const showTranslationSetting = () => {
@@ -150,11 +224,16 @@ const showSyncActionSheet = () => {
   })
 }
 
-// 推送
+// 推送（按词库分组上传）
 const handlePush = async () => {
   uni.showLoading({ title: '推送中...' })
   try {
-    const result = await pushToServer(wordsStore.exportAllWords())
+    const banks = wordsStore.bankList.map(bank => ({
+      id: bank.id,
+      name: bank.name,
+      words: wordsStore.allWords.filter(w => w.bankId === bank.id || (!w.bankId && bank.id === 'default')),
+    })).filter(b => b.words.length > 0)
+    const result = await pushToServer(banks)
     uni.hideLoading()
     if (result.success && result.code) {
       syncCode.value = result.code
@@ -170,6 +249,28 @@ const handlePush = async () => {
   }
 }
 
+// 按词库分组导入同步数据
+async function importBanks(banks: any[]) {
+  let total = 0
+  for (const bank of banks) {
+    const bankName = bank.name || '未命名词库'
+    // 查找是否已有同名词库
+    let targetBank = wordsStore.bankList.find(b => b.name === bankName)
+    if (!targetBank) {
+      targetBank = wordsStore.createBank(bankName)
+    }
+    if (bank.words && bank.words.length > 0) {
+      try {
+        await wordsStore.importWords(bank.words, targetBank.id)
+        total += bank.words.length
+      } catch (e) {
+        console.error(`导入词库 ${bankName} 失败:`, e)
+      }
+    }
+  }
+  return total
+}
+
 // 拉取
 const handlePull = async () => {
   if (!inputSyncCode.value.trim()) {
@@ -180,11 +281,11 @@ const handlePull = async () => {
   try {
     const result = await pullFromServer(inputSyncCode.value.trim())
     uni.hideLoading()
-    if (result.success && result.words) {
-      await wordsStore.importWords(result.words)
+    if (result.success && result.banks) {
+      const total = await importBanks(result.banks)
       uni.showModal({
         title: '拉取成功',
-        content: `共 ${result.words.length} 个单词已同步`,
+        content: `共 ${total} 个单词已同步`,
         showCancel: false,
       })
       closePullInput()
@@ -204,17 +305,22 @@ const scanAndPull = () => {
     success: async (res) => {
       if (res.result) {
         uni.showLoading({ title: '拉取中...' })
-        const result = await pullFromServer(res.result)
-        uni.hideLoading()
-        if (result.success && result.words) {
-          await wordsStore.importWords(result.words)
-          uni.showModal({
-            title: '拉取成功',
-            content: `共 ${result.words.length} 个单词已同步`,
-            showCancel: false,
-          })
-        } else {
-          uni.showToast({ title: result.error || '拉取失败', icon: 'none' })
+        try {
+          const result = await pullFromServer(res.result)
+          uni.hideLoading()
+          if (result.success && result.banks) {
+            const total = await importBanks(result.banks)
+            uni.showModal({
+              title: '拉取成功',
+              content: `共 ${total} 个单词已同步`,
+              showCancel: false,
+            })
+          } else {
+            uni.showToast({ title: result.error || '拉取失败', icon: 'none' })
+          }
+        } catch (e) {
+          uni.hideLoading()
+          uni.showToast({ title: '拉取失败', icon: 'none' })
         }
       }
     },
@@ -427,6 +533,11 @@ const showAbout = () => {
 .menu-icon.sync {
   background: #e8f5e9;
   color: #4caf50;
+}
+
+.menu-icon.server {
+  background: #fff3e0;
+  color: #ff9800;
 }
 
 .menu-icon.danger {

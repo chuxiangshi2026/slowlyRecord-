@@ -38,6 +38,7 @@
             <el-radio-button label="sat">SAT词汇</el-radio-button>
             <el-radio-button label="toefl">托福词汇</el-radio-button>
             <el-radio-button label="zsb">专升本词汇</el-radio-button>
+            <el-radio-button label="roots">词根词缀</el-radio-button>
           </el-radio-group>
           <div v-if="wordBank !== 'current' && wordBank !== 'wrong-words'" class="wordbank-info">
             <el-tag size="small" type="info">
@@ -477,6 +478,7 @@ async function startDictation() {
     case 'sat':
     case 'toefl':
     case 'zsb':
+    case 'roots':
       const bankType = wordBank.value as WordBankType;
       const info = getWordBankInfo(bankType);
 

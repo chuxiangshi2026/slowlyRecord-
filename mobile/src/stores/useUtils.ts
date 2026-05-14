@@ -379,7 +379,47 @@ export function getOfflineDictSize(): number {
 
 import { JSEncrypt } from 'jsencrypt'
 
-const DEFAULT_SERVER_BASE = 'https://jsonblob.com/api/jsonBlob'
+// 动态服务器地址配置
+const STORAGE_KEY_SERVER_URL = 'slowly_sync_server_url'
+
+function getServerBase(): string {
+  // 优先从本地存储读取用户配置的地址
+  const customUrl = uni.getStorageSync(STORAGE_KEY_SERVER_URL)
+  if (customUrl) {
+    // 去除末尾的斜杠，统一处理
+    return customUrl.replace(/\/$/, '')
+  }
+  // 默认使用 jsonblob.com
+  return 'https://jsonblob.com/api/jsonBlob'
+}
+
+/**
+ * 设置自定义同步服务器地址
+ * @param url 服务器地址，如 'http://192.168.1.100:3000' 或 'https://sync.example.com'
+ */
+export function setSyncServerUrl(url: string): void {
+  if (url && url.trim()) {
+    const trimmedUrl = url.trim().replace(/\/$/, '')
+    uni.setStorageSync(STORAGE_KEY_SERVER_URL, trimmedUrl)
+  } else {
+    // 清空则恢复默认
+    uni.removeStorageSync(STORAGE_KEY_SERVER_URL)
+  }
+}
+
+/**
+ * 获取当前同步服务器地址
+ */
+export function getSyncServerUrl(): string {
+  return getServerBase()
+}
+
+/**
+ * 清除自定义服务器配置，恢复默认
+ */
+export function resetSyncServer(): void {
+  uni.removeStorageSync(STORAGE_KEY_SERVER_URL)
+}
 
 function randomString(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -394,30 +434,34 @@ function generateAesKey(): string {
   return randomString(32)
 }
 
-function aesEncrypt(plaintext: string, key: string): string {
-  const textBytes = Array.from(plaintext).map(c => c.charCodeAt(0))
-  const keyBytes = Array.from(key).map(c => c.charCodeAt(0))
-  const encrypted = textBytes.map((b, i) => b ^ keyBytes[i % keyBytes.length])
-  const encryptedStr = String.fromCharCode(...encrypted)
-  try {
-    return btoa(encryptedStr)
-  } catch {
-    return btoa(encodeURIComponent(encryptedStr))
+function bytesToString(bytes: number[]): string {
+  const chunks: string[] = []
+  const chunkSize = 65536
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const slice = bytes.slice(i, i + chunkSize)
+    chunks.push(String.fromCharCode.apply(null, slice as any))
   }
+  return chunks.join('')
+}
+
+function aesEncrypt(plaintext: string, key: string): string {
+  // 统一转为 UTF-8 字节数组处理，避免中文乱码
+  const textEncoder = new TextEncoder()
+  const textBytes = Array.from(textEncoder.encode(plaintext))
+  const keyBytes = Array.from(new TextEncoder().encode(key))
+  const encrypted = textBytes.map((b, i) => b ^ keyBytes[i % keyBytes.length])
+  // 分块处理避免 Maximum call stack size exceeded
+  const encryptedStr = bytesToString(encrypted)
+  return btoa(encodeURIComponent(encryptedStr))
 }
 
 function aesDecrypt(ciphertext: string, key: string): string {
   try {
-    let encryptedStr: string
-    try {
-      encryptedStr = atob(ciphertext)
-    } catch {
-      encryptedStr = decodeURIComponent(atob(ciphertext))
-    }
+    const encryptedStr = decodeURIComponent(atob(ciphertext))
     const encryptedBytes = Array.from(encryptedStr).map(c => c.charCodeAt(0))
-    const keyBytes = Array.from(key).map(c => c.charCodeAt(0))
+    const keyBytes = Array.from(new TextEncoder().encode(key))
     const decrypted = encryptedBytes.map((b, i) => b ^ keyBytes[i % keyBytes.length])
-    return String.fromCharCode(...decrypted)
+    return new TextDecoder().decode(new Uint8Array(decrypted))
   } catch (e) {
     throw new Error('解密失败，同步码可能不正确')
   }
@@ -439,12 +483,19 @@ function parseSyncCode(syncCode: string): { blobId: string; aesKey: string } | n
 function uploadRaw(encryptedPayload: string): Promise<string> {
   return new Promise((resolve, reject) => {
     uni.request({
-      url: DEFAULT_SERVER_BASE,
+      url: `${getServerBase()}/sync`,
       method: 'POST',
       header: { 'Content-Type': 'application/json' },
       data: { e: encryptedPayload },
       success: (res) => {
         if (res.statusCode === 201 || res.statusCode === 200) {
+          // 优先从 JSON body 读取（自定义服务器返回 { code: 'xxx' }）
+          const data = res.data as any
+          if (data && (data.code || data.id || data.key)) {
+            resolve(data.code || data.id || data.key)
+            return
+          }
+          // 兼容 jsonblob.com（从 Location header 提取）
           const location = (res.header?.Location || res.header?.location || '') as string
           const blobId = location.split('/').pop() || location
           if (blobId) {
@@ -466,7 +517,7 @@ function uploadRaw(encryptedPayload: string): Promise<string> {
 function downloadRaw(blobId: string): Promise<string | null> {
   return new Promise((resolve, reject) => {
     uni.request({
-      url: `${DEFAULT_SERVER_BASE}/${blobId}`,
+      url: `${getServerBase()}/sync/${blobId}`,
       method: 'GET',
       header: { 'Accept': 'application/json' },
       success: (res) => {
@@ -493,10 +544,10 @@ function downloadRaw(blobId: string): Promise<string | null> {
 export function checkServerAvailable(): Promise<boolean> {
   return new Promise((resolve) => {
     uni.request({
-      url: `${DEFAULT_SERVER_BASE}/ping-test`,
+      url: `${getServerBase()}/ping`,
       method: 'GET',
       success: (res) => {
-        resolve(res.statusCode === 404 || res.statusCode === 200)
+        resolve(res.statusCode === 200)
       },
       fail: () => {
         resolve(false)
@@ -505,11 +556,17 @@ export function checkServerAvailable(): Promise<boolean> {
   })
 }
 
+export interface MobileSyncBank {
+  id: string
+  name: string
+  words: any[]
+}
+
 export interface MobileSyncData {
   version: number
   exportedAt: number
   platform: string
-  words: any[]
+  banks: MobileSyncBank[]
 }
 
 export interface SyncResult {
@@ -520,34 +577,22 @@ export interface SyncResult {
 
 export interface RestoreResult {
   success: boolean
-  words?: any[]
+  banks?: MobileSyncBank[]
   error?: string
 }
 
-function collectSyncData(words: any[]): MobileSyncData {
+function collectSyncData(banks: MobileSyncBank[]): MobileSyncData {
   return {
     version: 1,
     exportedAt: Date.now(),
     platform: 'mobile',
-    words: words.map(w => ({
-      word: w.word,
-      meaning: w.meaning,
-      phonetic: w.phonetic,
-      example: w.example,
-      addTime: w.addTime,
-      reviewCount: w.reviewCount,
-      nextReviewTime: w.nextReviewTime,
-      needsReview: w.needsReview,
-      remembered: w.remembered,
-      level: w.level,
-      lastReviewTime: w.lastReviewTime,
-    })),
+    banks,
   }
 }
 
-export async function pushToServer(words: any[]): Promise<SyncResult> {
+export async function pushToServer(banks: MobileSyncBank[]): Promise<SyncResult> {
   try {
-    const data = collectSyncData(words)
+    const data = collectSyncData(banks)
     const json = JSON.stringify(data)
     const aesKey = generateAesKey()
     const encrypted = aesEncrypt(json, aesKey)
@@ -577,7 +622,7 @@ export async function pullFromServer(syncCode: string): Promise<RestoreResult> {
       return { success: false, error: '解密失败，同步码可能不正确' }
     }
     const data: MobileSyncData = JSON.parse(json)
-    return { success: true, words: data.words }
+    return { success: true, banks: data.banks }
   } catch (e) {
     return { success: false, error: String(e) }
   }

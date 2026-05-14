@@ -34,16 +34,28 @@
         <div class="sync-section">
           <h4>推送数据</h4>
           <p class="sync-desc">将当前设备数据加密上传，生成同步码供另一台设备拉取</p>
-          <el-button
-            type="primary"
-            size="large"
-            :loading="syncStore.status === 'uploading'"
-            :disabled="!syncStore.serverAvailable"
-            @click="handlePush"
-          >
-            <el-icon style="margin-right: 4px;"><Upload /></el-icon>
-            推送
-          </el-button>
+          <div class="sync-actions">
+            <el-button
+              type="primary"
+              size="large"
+              :loading="syncStore.status === 'uploading'"
+              :disabled="!syncStore.serverAvailable"
+              @click="handlePush"
+            >
+              <el-icon style="margin-right: 4px;"><Upload /></el-icon>
+              推送到桌面端
+            </el-button>
+            <el-button
+              type="warning"
+              size="large"
+              :loading="syncStore.status === 'uploading'"
+              :disabled="!syncStore.serverAvailable"
+              @click="handlePushMobile"
+            >
+              <el-icon style="margin-right: 4px;"><Upload /></el-icon>
+              推送到移动端
+            </el-button>
+          </div>
 
           <!-- 同步码 + 二维码展示 -->
           <div v-if="syncStore.syncCode" class="sync-code-box">
@@ -243,6 +255,15 @@ async function handlePush() {
   const result = await syncStore.serverUpload()
   if (result.success) {
     ElMessage.success('推送成功，请在另一台设备输入同步码')
+  } else {
+    ElMessage.error(result.error || '推送失败')
+  }
+}
+
+async function handlePushMobile() {
+  const result = await syncStore.serverUploadMobileCompat()
+  if (result.success) {
+    ElMessage.success('推送成功，移动端可直接拉取')
   } else {
     ElMessage.error(result.error || '推送失败')
   }
