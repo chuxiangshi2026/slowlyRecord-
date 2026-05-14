@@ -14,6 +14,14 @@
 
   <div v-if="showWords">暂无数据,请在主界面输入框添加单词</div>
   <div v-else>
+    <!-- 筛选排序面板 -->
+    <WordFilter
+        ref="wordFilterRef"
+        :visible="filterPanelVisible"
+        :match-count="showFilteredWords.length"
+        @change="onFilterChange"
+        @reset="onFilterReset"
+    />
     <div class="words-cards-wrapper" ref="scrollContainer">
       <!--      虚拟滚动,只加载真实dom-->
       <!--      使用 currentWordBankId 作为 key，切换词库时强制重新渲染 -->
@@ -291,6 +299,9 @@
       <el-tooltip class="box-item" effect="dark" content="隐藏释义" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-invisible" @click="invisibleExplained"></i>
       </el-tooltip>
+      <el-tooltip class="box-item" effect="dark" content="筛选排序" placement="top" popper-class="small-tooltip">
+        <el-icon :size="18" style="cursor: pointer;" :class="{ 'filter-active': filterPanelVisible }" @click="toggleFilterPanel"><Operation /></el-icon>
+      </el-tooltip>
 <!--      <el-tooltip class="box-item" effect="dark" content="截图识别" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-translate" @click="startScreenCapture" style="font-weight: bold;"></i>
       </el-tooltip>-->
@@ -357,8 +368,10 @@ import type {Word} from "@/types/words";
 import {useWordsStore} from "@/stores/words.ts";
 import DetailDrawer from "@/views/Word/components/DetailDrawer.vue";
 import MyListItem from "@/views/Word/components/MyListItem.vue";
+import WordFilter from "@/views/Word/components/WordFilter.vue";
+import type { FilterState } from "@/views/Word/components/WordFilter.vue";
 import SyncDialog from "@/components/SyncDialog.vue";
-import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, onUnmounted, ref, watch, shallowRef} from "vue";
 import {
   filterWordsForJsonExport,
   filterWordsForTextExport,
@@ -367,6 +380,7 @@ import {
 } from "@/utils/word-util.ts";
 
 import {log} from "@/utils/logger.ts";
+import {analyzeWord} from "@/utils/word-analysis.ts";
 import {RecycleScroller} from 'vue-virtual-scroller'
 import {addWord, batchAddWords, batchTranslateAndAddWords} from "@/utils/str-util.ts";
 import {ocrTranslateMultiPlatform} from "@/utils/pic-translate.ts";
@@ -380,7 +394,8 @@ import {
   Trophy,
   Delete,
   Plus,
-  Connection
+  Connection,
+  Operation
 } from '@element-plus/icons-vue';
 import {useRouter} from 'vue-router';
 import {getSetDb} from '@/utils/user-set-db-util.ts';
@@ -1666,19 +1681,131 @@ const showAll = () => {
   listMode.value = listMode.value != 3 ? 3 : 0;
 }
 
+// ========== 筛选排序功能 ==========
+const filterPanelVisible = ref(false)
+const wordFilterRef = ref<InstanceType<typeof WordFilter> | null>(null)
+const currentFilter = shallowRef<FilterState>({
+  minLength: 0,
+  maxLength: 0,
+  pattern: '',
+  affix: '',
+  phonetic: '',
+  sortBy: '',
+  sortAsc: true
+})
+
+const toggleFilterPanel = () => {
+  filterPanelVisible.value = !filterPanelVisible.value
+}
+
+const onFilterChange = (state: FilterState) => {
+  currentFilter.value = { ...state }
+}
+
+const onFilterReset = () => {
+  currentFilter.value = {
+    minLength: 0,
+    maxLength: 0,
+    pattern: '',
+    affix: '',
+    phonetic: '',
+    sortBy: '',
+    sortAsc: true
+  }
+}
+
+/** 将通配符模式转为正则
+ * 无通配符 tion → /tion/i (包含匹配)
+ * 有通配符 a*b → /^a.*b$/i, *tion → /^.*tion$/i
+ */
+const patternToRegex = (pattern: string): RegExp | null => {
+  if (!pattern.trim()) return null
+  const trimmed = pattern.trim()
+  try {
+    if (trimmed.includes('*')) {
+      const escaped = trimmed.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')
+      return new RegExp(`^${escaped}$`, 'i')
+    }
+    // 无通配符：包含匹配
+    const escaped = trimmed.replace(/[.+^${}()|[\]\\]/g, '\\$&')
+    return new RegExp(escaped, 'i')
+  } catch {
+    return null
+  }
+}
+
+/** 检查单词是否包含指定词根/词缀 */
+const matchesAffix = (wordText: string, affix: string): boolean => {
+  if (!affix.trim()) return true
+  const lower = affix.toLowerCase().trim()
+  const components = analyzeWord(wordText)
+  return components.some(c =>
+    c.type !== 'whole' && c.text.toLowerCase().includes(lower)
+  )
+}
 
 // 计算过滤后的单词列表
 const showFilteredWords = computed(() => {
-  // console.log('过滤后的词',wordsStore.words)
+  let list: Word[]
   if (listMode.value == 2) {
-    return wordsStore.words.filter(item => item.remember)
+    list = wordsStore.words.filter(item => item.remember)
   } else if (listMode.value == 1) {
-    return wordsStore.words.filter(item => !item.isReview)
+    list = wordsStore.words.filter(item => !item.isReview)
   } else if (listMode.value == 3) {
-    return wordsStore.words
+    list = [...wordsStore.words]
   } else {
-    return wordsStore.words.filter(item => item.isReview)
+    list = wordsStore.words.filter(item => item.isReview)
   }
+
+  const f = currentFilter.value
+
+  // 筛选：单词长度
+  if (f.minLength > 0 || f.maxLength > 0) {
+    list = list.filter(item => {
+      const len = item.text.replace(/\s+/g, '').length
+      if (f.minLength > 0 && len < f.minLength) return false
+      if (f.maxLength > 0 && len > f.maxLength) return false
+      return true
+    })
+  }
+
+  // 筛选：字母组合通配符
+  const patternRegex = patternToRegex(f.pattern)
+  if (patternRegex) {
+    list = list.filter(item => patternRegex.test(item.text.replace(/\s+/g, '')))
+  }
+
+  // 筛选：词根词缀
+  if (f.affix.trim()) {
+    list = list.filter(item => matchesAffix(item.text, f.affix))
+  }
+
+  // 筛选：音标
+  if (f.phonetic.trim()) {
+    const ph = f.phonetic.trim().toLowerCase()
+    list = list.filter(item => item.phonetic && item.phonetic.toLowerCase().includes(ph))
+  }
+
+  // 排序
+  if (f.sortBy) {
+    const dir = f.sortAsc ? 1 : -1
+    list = [...list].sort((a, b) => {
+      switch (f.sortBy) {
+        case 'alpha':
+          return dir * a.text.localeCompare(b.text, 'en')
+        case 'length':
+          return dir * (a.text.length - b.text.length)
+        case 'time':
+          return dir * (new Date(a.ctime).getTime() - new Date(b.ctime).getTime())
+        case 'level':
+          return dir * (a.level - b.level)
+        default:
+          return 0
+      }
+    })
+  }
+
+  return list
 })
 
 // 获取在原始列表中的索引
@@ -2566,6 +2693,12 @@ watch(() => wordsStore.lastAddedWordText, (wordText) => {
       background-color: var(--utools-bg-hover);
       transform: scale(1.1);
     }
+  }
+
+  .filter-active {
+    color: var(--utools-primary);
+    background-color: var(--utools-bg-hover);
+    border-radius: 6px;
   }
 
   .remembered-highlight {
