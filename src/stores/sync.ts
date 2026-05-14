@@ -301,6 +301,7 @@ export const useSyncStore = defineStore('sync', () => {
       textMemoryRestored: false,
       numberMemoryRestored: false,
       shortcutMemoryRestored: false,
+      letterMemoryRestored: false,
       errors,
     }
   }

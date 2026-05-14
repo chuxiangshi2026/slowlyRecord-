@@ -8,6 +8,7 @@
 import type { Word } from './words'
 import type { TextArticle, TextNote, TextPrompt } from './text-memory'
 import type { NumberMemoryEntry, NumberMemoryNote, NumberMemoryPrompt, NumberImageAssociation, TrainingResult } from './number-memory'
+import type { LetterImageAssociation, LetterTrainingResult } from './letter-memory'
 
 /** 同步数据版本号，用于兼容性检查 */
 export const SYNC_VERSION = 1
@@ -64,6 +65,12 @@ export interface SyncShortcutMemory {
   learningProgress: any
 }
 
+/** 字母映射同步数据 */
+export interface SyncLetterMemory {
+  associations: LetterImageAssociation[]
+  trainingResults: LetterTrainingResult[]
+}
+
 /** 完整的同步数据包 */
 export interface SyncData {
   /** 数据格式版本 */
@@ -84,6 +91,8 @@ export interface SyncData {
   numberMemory: SyncNumberMemory | null
   /** 快捷键记忆 */
   shortcutMemory: SyncShortcutMemory | null
+  /** 字母映射 */
+  letterMemory: SyncLetterMemory | null
 }
 
 /** 服务器同步状态 */

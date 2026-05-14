@@ -699,7 +699,7 @@ function handlePluginDefaultEnter() {
   const lastPage = wordsStore.lastVisitedPage
 
   // 如果是需要保持状态的特殊页面，则恢复
-  if (lastPage && ['/dictation', '/number-memory', '/number-memory/training', '/memory'].includes(lastPage)) {
+  if (lastPage && ['/dictation', '/number-memory', '/number-memory/training', '/memory', '/letter-memory'].includes(lastPage)) {
     console.log('[App] 恢复到上次页面:', lastPage)
     router.push(lastPage)
   } else {

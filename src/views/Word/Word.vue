@@ -335,6 +335,9 @@
       <el-tooltip class="box-item" effect="dark" content="听写练习" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-list" @click="goToDictation" style="font-weight: bold;"></i>
       </el-tooltip>
+      <el-tooltip class="box-item" effect="dark" content="字母映射" placement="top" popper-class="small-tooltip">
+        <el-icon :size="18" style="cursor: pointer;" @click="goToLetterMemory"><Tickets /></el-icon>
+      </el-tooltip>
       <el-tooltip class="box-item" effect="dark" content="专注模式" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-card" @click="openFocusMode"></i>
       </el-tooltip>
@@ -362,6 +365,7 @@
 
 
 import {ElMessage, ElLoading, ElMessageBox} from "element-plus";
+import { Tickets } from '@element-plus/icons-vue';
 import {testData} from "@/testData";
 import type {Word} from "@/types/words";
 
@@ -2598,6 +2602,10 @@ const confirmAddOcrWords = async () => {
  */
 function goToDictation() {
   router.push('/dictation')
+}
+
+function goToLetterMemory() {
+  router.push('/letter-memory')
 }
 
 

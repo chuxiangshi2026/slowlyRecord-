@@ -4,16 +4,17 @@
  * 负责从各 Store / DB 收集数据、合并还原、冲突处理。
  * 同步数据以 SyncData 为统一格式，可导出为 JSON 或二进制文件，也可上传到临时服务器。
  */
-import type { SyncData, SyncWordBank, SyncUserSettings, SyncTextMemory, SyncNumberMemory, SyncShortcutMemory, ConflictStrategy } from '@/types/sync'
+import type { SyncData, SyncWordBank, SyncUserSettings, SyncTextMemory, SyncNumberMemory, SyncShortcutMemory, SyncLetterMemory, ConflictStrategy } from '@/types/sync'
 import { SYNC_VERSION } from '@/types/sync'
 import { getAllWordBanks, saveWordBank, getCurrentWordBankId, setCurrentWordBankId, createWordBank, type WordBank } from '@/utils/wordbank-manager'
 import type { Word } from '@/types/words'
 import type { MemoryFirmnessTpye } from '@/types/words'
 import type { NumberMemoryEntry, NumberMemoryNote, NumberMemoryPrompt, NumberImageAssociation, TrainingResult } from '@/types/number-memory'
+import type { LetterImageAssociation, LetterTrainingResult } from '@/types/letter-memory'
 import { getDbAdapter } from '@/adapters/db'
 import { getPlatform } from '@/adapters/platform'
 import { getSetDb, addAndUpdateSetDb } from '@/utils/user-set-db-util'
-import { DB_KEY_USER_SET, DB_KEY_NUMBER_MEMORY, DB_KEY_SHORTCUT_MEMORY } from '@/constants'
+import { DB_KEY_USER_SET, DB_KEY_NUMBER_MEMORY, DB_KEY_SHORTCUT_MEMORY, DB_KEY_LETTER_MEMORY } from '@/constants'
 import { log } from '@/utils/logger'
 import cloneDeep from 'lodash.clonedeep'
 
@@ -64,6 +65,9 @@ export async function collectSyncData(): Promise<SyncData> {
   // 6. 快捷键记忆
   const shortcutMemory = await collectShortcutMemory()
 
+  // 7. 字母映射
+  const letterMemory = await collectLetterMemory()
+
   return {
     version: SYNC_VERSION,
     exportedAt: Date.now(),
@@ -74,6 +78,7 @@ export async function collectSyncData(): Promise<SyncData> {
     textMemory,
     numberMemory,
     shortcutMemory,
+    letterMemory,
   }
 }
 
@@ -159,6 +164,29 @@ async function collectShortcutMemory(): Promise<SyncShortcutMemory | null> {
   }
 }
 
+async function collectLetterMemory(): Promise<SyncLetterMemory | null> {
+  try {
+    const db = getDbAdapter()
+    const prefix = DB_KEY_LETTER_MEMORY
+
+    // 训练文档（包含 associations）
+    const trainingDoc = db.allDocs(prefix).find((d: any) => d.type === 'letter_memory_training') as any
+
+    // 训练结果
+    const trainingResults = db.allDocs(prefix + 'result_')
+      .filter((d: any) => d.type === 'letter_memory_result')
+
+    if (!trainingDoc && trainingResults.length === 0) return null
+
+    return {
+      associations: (trainingDoc?.associations || []) as LetterImageAssociation[],
+      trainingResults: (trainingResults || []) as LetterTrainingResult[],
+    }
+  } catch {
+    return null
+  }
+}
+
 // ==================== 数据还原 ====================
 
 export interface RestoreOptions {
@@ -174,6 +202,8 @@ export interface RestoreOptions {
   restoreNumberMemory: boolean
   /** 是否还原快捷键记忆 */
   restoreShortcutMemory: boolean
+  /** 是否还原字母映射 */
+  restoreLetterMemory: boolean
 }
 
 export const DEFAULT_RESTORE_OPTIONS: RestoreOptions = {
@@ -183,6 +213,7 @@ export const DEFAULT_RESTORE_OPTIONS: RestoreOptions = {
   restoreTextMemory: true,
   restoreNumberMemory: true,
   restoreShortcutMemory: true,
+  restoreLetterMemory: true,
 }
 
 export interface RestoreResult {
@@ -192,6 +223,7 @@ export interface RestoreResult {
   textMemoryRestored: boolean
   numberMemoryRestored: boolean
   shortcutMemoryRestored: boolean
+  letterMemoryRestored: boolean
   errors: string[]
 }
 
@@ -206,6 +238,7 @@ export async function restoreSyncData(data: SyncData, options: RestoreOptions = 
     textMemoryRestored: false,
     numberMemoryRestored: false,
     shortcutMemoryRestored: false,
+    letterMemoryRestored: false,
     errors: [],
   }
 
@@ -245,6 +278,12 @@ export async function restoreSyncData(data: SyncData, options: RestoreOptions = 
     if (options.restoreShortcutMemory && data.shortcutMemory) {
       await restoreShortcutMemoryData(data.shortcutMemory)
       result.shortcutMemoryRestored = true
+    }
+
+    // 6. 还原字母映射
+    if (options.restoreLetterMemory && data.letterMemory) {
+      await restoreLetterMemoryData(data.letterMemory)
+      result.letterMemoryRestored = true
     }
   } catch (e) {
     result.errors.push(String(e))
@@ -424,37 +463,73 @@ async function restoreNumberMemoryData(data: SyncNumberMemory) {
 
   // 还原条目
   if (data.entries?.length) {
+    let successCount = 0
+    let failCount = 0
     for (const entry of data.entries) {
       try {
         await db.promises.put(cloneDeep(entry))
-      } catch { /* skip */ }
+        successCount++
+      } catch (e) {
+        failCount++
+        log.w('还原数字记忆条目失败:', entry._id, e)
+      }
+    }
+    if (failCount > 0) {
+      log.w(`数字记忆条目还原完成: ${successCount} 成功, ${failCount} 失败`)
     }
   }
 
   // 还原笔记
   if (data.notes?.length) {
+    let successCount = 0
+    let failCount = 0
     for (const note of data.notes) {
       try {
         await db.promises.put(cloneDeep(note))
-      } catch { /* skip */ }
+        successCount++
+      } catch (e) {
+        failCount++
+        log.w('还原数字记忆笔记失败:', note._id, e)
+      }
+    }
+    if (failCount > 0) {
+      log.w(`数字记忆笔记还原完成: ${successCount} 成功, ${failCount} 失败`)
     }
   }
 
   // 还原提示词
   if (data.prompts?.length) {
+    let successCount = 0
+    let failCount = 0
     for (const prompt of data.prompts) {
       try {
         await db.promises.put(cloneDeep(prompt))
-      } catch { /* skip */ }
+        successCount++
+      } catch (e) {
+        failCount++
+        log.w('还原数字记忆提示词失败:', prompt._id, e)
+      }
+    }
+    if (failCount > 0) {
+      log.w(`数字记忆提示词还原完成: ${successCount} 成功, ${failCount} 失败`)
     }
   }
 
   // 还原训练结果
   if (data.trainingResults?.length) {
+    let successCount = 0
+    let failCount = 0
     for (const result of data.trainingResults) {
       try {
         await db.promises.put(cloneDeep(result))
-      } catch { /* skip */ }
+        successCount++
+      } catch (e) {
+        failCount++
+        log.w('还原数字记忆训练结果失败:', result._id, e)
+      }
+    }
+    if (failCount > 0) {
+      log.w(`数字记忆训练结果还原完成: ${successCount} 成功, ${failCount} 失败`)
     }
   }
 
@@ -494,4 +569,45 @@ async function restoreShortcutMemoryData(data: SyncShortcutMemory) {
   }
 
   log.i('快捷键记忆数据已还原')
+}
+
+async function restoreLetterMemoryData(data: SyncLetterMemory) {
+  const db = getDbAdapter()
+  const prefix = DB_KEY_LETTER_MEMORY
+
+  // 还原训练文档（包含 associations）
+  if (data.associations?.length) {
+    // 查找或创建训练文档
+    const existingTraining = db.allDocs(prefix).find((d: any) => d.type === 'letter_memory_training') as any
+    if (existingTraining) {
+      // 合并 associations
+      const existingMap = new Map((existingTraining.associations || []).map((a: any) => [a.letter, a]))
+      for (const assoc of data.associations) {
+        existingMap.set(assoc.letter, assoc)
+      }
+      existingTraining.associations = Array.from(existingMap.values())
+      existingTraining.updatedAt = Date.now()
+      await db.promises.put(cloneDeep(existingTraining))
+    } else {
+      const now = Date.now()
+      await db.promises.put(cloneDeep({
+        _id: prefix + 'training_' + now,
+        type: 'letter_memory_training',
+        associations: data.associations,
+        createdAt: now,
+        updatedAt: now,
+      }))
+    }
+  }
+
+  // 还原训练结果
+  if (data.trainingResults?.length) {
+    for (const result of data.trainingResults) {
+      try {
+        await db.promises.put(cloneDeep(result))
+      } catch { /* skip */ }
+    }
+  }
+
+  log.i('字母映射数据已还原')
 }

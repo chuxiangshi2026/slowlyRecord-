@@ -161,6 +161,7 @@
               <el-checkbox v-model="restoreOptions.restoreTextMemory">还原文本记忆</el-checkbox>
               <el-checkbox v-model="restoreOptions.restoreNumberMemory">还原数字记忆</el-checkbox>
               <el-checkbox v-model="restoreOptions.restoreShortcutMemory">还原快捷键记忆</el-checkbox>
+              <el-checkbox v-model="restoreOptions.restoreLetterMemory">还原字母映射</el-checkbox>
             </div>
 
             <div class="sync-actions">

@@ -164,6 +164,7 @@ export async function pickAndImportSyncFile(options?: Partial<RestoreOptions>): 
       textMemoryRestored: false,
       numberMemoryRestored: false,
       shortcutMemoryRestored: false,
+      letterMemoryRestored: false,
       errors: ['未选择文件'],
     }
   }
@@ -180,8 +181,11 @@ function triggerDownload(blob: Blob, filename: string) {
   const a = document.createElement('a')
   a.href = url
   a.download = filename
+  document.body.appendChild(a)
   a.click()
-  URL.revokeObjectURL(url)
+  document.body.removeChild(a)
+  // 延迟释放 URL 对象，确保下载开始
+  setTimeout(() => URL.revokeObjectURL(url), 100)
 }
 
 function pickFile(): Promise<File | null> {

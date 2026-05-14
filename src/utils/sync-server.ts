@@ -385,6 +385,7 @@ const EMPTY_RESTORE_RESULT: RestoreResult = {
   textMemoryRestored: false,
   numberMemoryRestored: false,
   shortcutMemoryRestored: false,
+  letterMemoryRestored: false,
   errors: [],
 }
 
@@ -475,8 +476,6 @@ export async function checkServerAvailable(): Promise<boolean> {
 }
 
 // ==================== 移动端兼容推送（供小程序拉取） ====================
-
-import { getAllWordBanks } from '@/utils/wordbank-manager'
 
 function randomString32(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
