@@ -373,12 +373,13 @@ export const useMobileWords = defineStore('mobileWords', () => {
     return allWords.value
   }
 
-  async function importWords(data: MobileWord[], targetBankId?: string, onProgress?: (done: number, total: number) => void) {
+  async function importWords(data: MobileWord[], targetBankId?: string, onProgress?: (done: number, total: number) => void): Promise<MobileWord[]> {
     const bankId = targetBankId || currentBankId.value
     const db = getDbAdapter()
 
     // 构建文档（跳过逐条 db.get——同步导入场景无需 _rev）
     const docs: DbDoc[] = []
+    const importedWords: MobileWord[] = []
 
     for (const word of data) {
       const id = word.id || `${DB_KEY}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -386,6 +387,7 @@ export const useMobileWords = defineStore('mobileWords', () => {
         _id: id,
         data: { ...word, id, bankId }
       })
+      importedWords.push({ ...word, id, bankId })
     }
 
     // 异步批量写入存储，每批之间让出主线程
@@ -397,7 +399,20 @@ export const useMobileWords = defineStore('mobileWords', () => {
       onProgress?.(Math.min(i + BATCH_SIZE, total), total)
       await new Promise<void>(r => setTimeout(r, 20))
     }
-    // 注意：不在此更新 allWords，由调用方统一刷新
+
+    return importedWords
+  }
+
+  /** 分批追加单词到内存，带进度回调，避免主线程卡死 */
+  async function appendWordsToMemory(newWords: MobileWord[], onProgress?: (done: number, total: number) => void) {
+    const BATCH = 200
+    const total = newWords.length
+    for (let i = 0; i < total; i += BATCH) {
+      const batch = newWords.slice(i, i + BATCH)
+      allWords.value.push(...batch)
+      onProgress?.(Math.min(i + BATCH, total), total)
+      await new Promise<void>(r => setTimeout(r, 10))
+    }
   }
 
   async function clearAllWords() {
@@ -468,6 +483,7 @@ export const useMobileWords = defineStore('mobileWords', () => {
     exportWords,
     exportAllWords,
     importWords,
+    appendWordsToMemory,
     clearAllWords,
     // 词库管理方法
     createBank,
