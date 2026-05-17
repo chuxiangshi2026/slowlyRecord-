@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, shallowRef, triggerRef } from 'vue'
 import { defineStore } from 'pinia'
 import { getDbAdapter, type DbDoc } from '@/adapters/index'
 
@@ -44,13 +44,56 @@ const CURRENT_BANK_KEY = 'mobile_current_bank'
 const DEFAULT_BANK_ID = 'default'
 
 export const useMobileWords = defineStore('mobileWords', () => {
-  const allWords = ref<MobileWord[]>([])
+  const allWords = shallowRef<MobileWord[]>([])
   const isLoading = ref(false)
   let _loadingPromise: Promise<void> | null = null
 
   // ========== 词库管理 ==========
   const bankList = ref<WordBankMeta[]>([])
   const currentBankId = ref<string>(DEFAULT_BANK_ID)
+
+  // ========== 防抖持久化 ==========
+  const _dirtyBanks = new Set<string>()
+  let _persistTimer: ReturnType<typeof setTimeout> | null = null
+
+  function markBankDirty(bankId: string) {
+    _dirtyBanks.add(bankId)
+    if (!_persistTimer) {
+      _persistTimer = setTimeout(() => {
+        _persistTimer = null
+        flushDirtyBanks()
+      }, 3000)
+    }
+  }
+
+  /** 立即将所有脏词库写入存储 */
+  async function flushDirtyBanks() {
+    if (_persistTimer) {
+      clearTimeout(_persistTimer)
+      _persistTimer = null
+    }
+    const banks = [..._dirtyBanks]
+    _dirtyBanks.clear()
+    for (const bankId of banks) {
+      await persistBankWords(bankId)
+    }
+  }
+
+  /** 将一个词库的全部单词写入 storage（一条记录） */
+  async function persistBankWords(bankId: string) {
+    const bankWords = allWords.value.filter(w =>
+      w.bankId === bankId || (!w.bankId && bankId === DEFAULT_BANK_ID)
+    )
+    const db = getDbAdapter()
+    try {
+      await db.promises.asyncPut({
+        _id: `bank_${bankId}_words`,
+        data: bankWords
+      })
+    } catch (e) {
+      console.error(`持久化词库 ${bankId} 失败:`, e)
+    }
+  }
 
   // 当前词库的单词
   const words = computed(() => {
@@ -101,17 +144,30 @@ export const useMobileWords = defineStore('mobileWords', () => {
   async function _doLoadWords() {
     isLoading.value = true
     try {
-      // 加载词库列表
       _loadBankList()
-      // 加载所有单词
       const db = getDbAdapter()
-      const allDocs = db.allDocs(DB_KEY)
-      const loaded = allDocs.map((item: any) => ({
-        ...item.data,
-        id: item._id
-      })) || []
-      // 让出主线程，确保 loading 状态能渲染
-      await new Promise<void>(r => setTimeout(r, 0))
+      const loaded: MobileWord[] = []
+      let hasBankLevelData = false
+
+      // 1. 读取词库级记录（新格式，每库一条）
+      for (const bank of bankList.value) {
+        const doc = db.get(`bank_${bank.id}_words`)
+        if (doc && Array.isArray(doc.data)) {
+          loaded.push(...doc.data)
+          hasBankLevelData = true
+        }
+      }
+
+      // 2. 如果没有词库级记录，回退到逐条记录（旧格式，兼容）
+      if (!hasBankLevelData) {
+        const allDocs = db.allDocs(DB_KEY)
+        const oldWords = allDocs.map((item: any) => ({
+          ...item.data,
+          id: item._id
+        })) || []
+        loaded.push(...oldWords)
+      }
+
       allWords.value = loaded
     } catch (e) {
       allWords.value = []
@@ -126,7 +182,6 @@ export const useMobileWords = defineStore('mobileWords', () => {
       if (data && Array.isArray(data)) {
         bankList.value = data
       } else {
-        // 初始化默认词库
         bankList.value = [{
           id: DEFAULT_BANK_ID,
           name: '我的词库',
@@ -145,7 +200,6 @@ export const useMobileWords = defineStore('mobileWords', () => {
         isDefault: true
       }]
     }
-    // 加载当前词库
     try {
       const saved = uni.getStorageSync(CURRENT_BANK_KEY)
       if (saved && bankList.value.some(b => b.id === saved)) {
@@ -174,29 +228,6 @@ export const useMobileWords = defineStore('mobileWords', () => {
     }
   }
 
-  async function _migrateOldWords() {
-    let needMigrate = false
-    for (const w of allWords.value) {
-      if (!w.bankId) {
-        w.bankId = DEFAULT_BANK_ID
-        needMigrate = true
-      }
-    }
-    if (needMigrate) {
-      const db = getDbAdapter()
-      for (const w of allWords.value) {
-        const existing = db.get(w.id)
-        if (existing) {
-          await db.promises.put({
-            _id: w.id,
-            _rev: existing._rev,
-            data: w
-          })
-        }
-      }
-    }
-  }
-
   // ========== 词库 CRUD ==========
 
   function createBank(name: string): WordBankMeta {
@@ -217,20 +248,11 @@ export const useMobileWords = defineStore('mobileWords', () => {
     if (bankId === DEFAULT_BANK_ID) {
       throw new Error('默认词库不能删除')
     }
-    // 删除词库下所有单词
-    const bankWords = allWords.value.filter(w => w.bankId === bankId)
-    const db = getDbAdapter()
-    for (const w of bankWords) {
-      const existing = db.get(w.id)
-      if (existing?._rev) {
-        await db.promises.remove({ _id: w.id, _rev: existing._rev })
-      }
-    }
     allWords.value = allWords.value.filter(w => w.bankId !== bankId)
-    // 从列表移除
+    const db = getDbAdapter()
+    db.remove(`bank_${bankId}_words`)
     bankList.value = bankList.value.filter(b => b.id !== bankId)
     _saveBankList()
-    // 如果删除的是当前词库，切回默认
     if (currentBankId.value === bankId) {
       switchBank(DEFAULT_BANK_ID)
     }
@@ -273,17 +295,10 @@ export const useMobileWords = defineStore('mobileWords', () => {
       lastReviewTime: word.lastReviewTime ?? 0
     }
 
-    const db = getDbAdapter()
-    const result = db.put({
-      _id: id,
-      data: newWord
-    })
-    if (!result.ok) {
-      throw new Error(result.message || '保存单词失败')
-    }
-
     allWords.value.push(newWord)
-    // 更新词库的 updatedAt
+    triggerRef(allWords)
+    markBankDirty(newWord.bankId || DEFAULT_BANK_ID)
+
     const bank = bankList.value.find(b => b.id === newWord.bankId)
     if (bank) {
       bank.updatedAt = Date.now()
@@ -293,15 +308,11 @@ export const useMobileWords = defineStore('mobileWords', () => {
   }
 
   async function deleteWord(id: string) {
-    const db = getDbAdapter()
-    const existing = db.get(id)
-    if (existing?._rev) {
-      const result = await db.promises.remove({ _id: id, _rev: existing._rev })
-      if (!result.ok) {
-        throw new Error(result.message || '删除单词失败')
-      }
-    }
+    const word = allWords.value.find(w => w.id === id)
+    if (!word) return
+    const bankId = word.bankId || DEFAULT_BANK_ID
     allWords.value = allWords.value.filter(w => w.id !== id)
+    markBankDirty(bankId)
   }
 
   async function updateWord(id: string, updates: Partial<MobileWord>) {
@@ -309,17 +320,9 @@ export const useMobileWords = defineStore('mobileWords', () => {
     if (index === -1) return
 
     const updated = { ...allWords.value[index], ...updates }
-    const db = getDbAdapter()
-    const existing = db.get(id)
-    const result = await db.promises.put({
-      _id: id,
-      _rev: existing?._rev,
-      data: updated
-    })
-    if (!result.ok) {
-      throw new Error(result.message || '更新单词失败')
-    }
     allWords.value[index] = updated
+    triggerRef(allWords)
+    markBankDirty(updated.bankId || DEFAULT_BANK_ID)
   }
 
   function updateWordLevel(id: string, newLevel: number) {
@@ -352,17 +355,8 @@ export const useMobileWords = defineStore('mobileWords', () => {
     word.needsReview = true
     word.level = 1
     word.nextReviewTime = Date.now() + 10 * 60 * 1000
-
-    const db = getDbAdapter()
-    const existing = db.get(id)
-    const result = await db.promises.put({
-      _id: id,
-      _rev: existing?._rev,
-      data: word
-    })
-    if (!result.ok) {
-      throw new Error(result.message || '更新单词失败')
-    }
+    triggerRef(allWords)
+    markBankDirty(word.bankId || DEFAULT_BANK_ID)
   }
 
   function exportWords() {
@@ -373,80 +367,56 @@ export const useMobileWords = defineStore('mobileWords', () => {
     return allWords.value
   }
 
-  async function importWords(data: MobileWord[], targetBankId?: string, onProgress?: (done: number, total: number) => void): Promise<MobileWord[]> {
+  /**
+   * 批量导入单词：整个词库写为一条 storage 记录
+   * 从内存合并已有单词后一次性写入，16k 词 → 1 条记录
+   */
+  async function importWords(data: MobileWord[], targetBankId?: string): Promise<MobileWord[]> {
     const bankId = targetBankId || currentBankId.value
-    const db = getDbAdapter()
 
-    // 构建文档（跳过逐条 db.get——同步导入场景无需 _rev）
-    const docs: DbDoc[] = []
     const importedWords: MobileWord[] = []
-
     for (const word of data) {
       const id = word.id || `${DB_KEY}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      docs.push({
-        _id: id,
-        data: { ...word, id, bankId }
-      })
       importedWords.push({ ...word, id, bankId })
     }
 
-    // 异步批量写入存储，每批之间让出主线程
-    const BATCH_SIZE = 50
-    const total = docs.length
-    for (let i = 0; i < docs.length; i += BATCH_SIZE) {
-      const batch = docs.slice(i, i + BATCH_SIZE)
-      await db.promises.asyncBulkDocs(batch)
-      onProgress?.(Math.min(i + BATCH_SIZE, total), total)
-      await new Promise<void>(r => setTimeout(r, 20))
-    }
+    // 从内存中读取该词库已有单词，合并后写入
+    const existingWords = allWords.value.filter(w =>
+      w.bankId === bankId || (!w.bankId && bankId === DEFAULT_BANK_ID)
+    )
+    const existingIds = new Set(existingWords.map(w => w.id))
+    const newOnly = importedWords.filter(w => !existingIds.has(w.id))
+    const mergedWords = [...existingWords, ...newOnly]
+
+    const db = getDbAdapter()
+    await db.promises.asyncPut({
+      _id: `bank_${bankId}_words`,
+      data: mergedWords
+    })
 
     return importedWords
   }
 
-  /** 分批追加单词到内存，带进度回调，避免主线程卡死 */
-  async function appendWordsToMemory(newWords: MobileWord[], onProgress?: (done: number, total: number) => void) {
-    const BATCH = 200
-    const total = newWords.length
-    for (let i = 0; i < total; i += BATCH) {
-      const batch = newWords.slice(i, i + BATCH)
-      allWords.value.push(...batch)
-      onProgress?.(Math.min(i + BATCH, total), total)
-      await new Promise<void>(r => setTimeout(r, 10))
-    }
+  /** 一次性追加单词到内存（shallowRef 赋值本身很快） */
+  function appendWordsToMemory(newWords: MobileWord[]) {
+    allWords.value = [...allWords.value, ...newWords]
   }
 
   async function clearAllWords() {
-    const db = getDbAdapter()
-    // 只清除当前词库的单词
     const targetBankId = currentBankId.value
-    const bankWords = allWords.value.filter(w =>
-      w.bankId === targetBankId || (!w.bankId && targetBankId === DEFAULT_BANK_ID)
-    )
-    for (const word of bankWords) {
-      const existing = db.get(word.id)
-      if (existing?._rev) {
-        await db.promises.remove({ _id: word.id, _rev: existing._rev })
-      }
-    }
     allWords.value = allWords.value.filter(w =>
       w.bankId !== targetBankId && !(!w.bankId && targetBankId === DEFAULT_BANK_ID)
     )
+    const db = getDbAdapter()
+    db.remove(`bank_${targetBankId}_words`)
   }
 
   async function clearBankWords(bankId: string) {
-    const db = getDbAdapter()
-    const bankWords = allWords.value.filter(w =>
-      w.bankId === bankId || (!w.bankId && bankId === DEFAULT_BANK_ID)
-    )
-    for (const word of bankWords) {
-      const existing = db.get(word.id)
-      if (existing?._rev) {
-        await db.promises.remove({ _id: word.id, _rev: existing._rev })
-      }
-    }
     allWords.value = allWords.value.filter(w =>
       w.bankId !== bankId && !(!w.bankId && bankId === DEFAULT_BANK_ID)
     )
+    const db = getDbAdapter()
+    db.remove(`bank_${bankId}_words`)
     const bank = bankList.value.find(b => b.id === bankId)
     if (bank) {
       bank.updatedAt = Date.now()
@@ -454,7 +424,6 @@ export const useMobileWords = defineStore('mobileWords', () => {
     }
   }
 
-  // 将单词移动到另一个词库
   async function moveWordToBank(wordId: string, targetBankId: string) {
     await updateWord(wordId, { bankId: targetBankId })
   }
@@ -485,6 +454,7 @@ export const useMobileWords = defineStore('mobileWords', () => {
     importWords,
     appendWordsToMemory,
     clearAllWords,
+    flushDirtyBanks,
     // 词库管理方法
     createBank,
     deleteBank,

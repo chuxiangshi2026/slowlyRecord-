@@ -251,20 +251,15 @@ const handlePush = async () => {
 
 // 按词库分组导入同步数据
 async function importBanks(banks: any[]) {
-  // 计算总词数（跨所有词库，兼容 words 为数组或对象的情况）
-  let totalWords = 0
-  for (const bank of banks) {
-    const wordCount = Array.isArray(bank.words) ? bank.words.length : 0
-    totalWords += wordCount
-  }
-  // 如果总词数为 0 但有 bank 数据，用实际导入结果来统计
-  if (totalWords === 0) totalWords = banks.length
-
-  // 阶段1：写入存储
-  let doneWords = 0
   const allImportedWords: any[] = []
+  let doneBanks = 0
+  const totalBanks = banks.length
+
   for (const bank of banks) {
     const bankName = bank.name || '未命名词库'
+    const pct = Math.round(doneBanks / totalBanks * 100)
+    uni.showLoading({ title: `导入 ${pct}%` })
+
     let targetBank = wordsStore.bankList.find(b => b.name === bankName)
     if (!targetBank) {
       targetBank = wordsStore.createBank(bankName)
@@ -272,28 +267,21 @@ async function importBanks(banks: any[]) {
     const wordsArr = Array.isArray(bank.words) ? bank.words : []
     if (wordsArr.length > 0) {
       try {
-        const imported = await wordsStore.importWords(wordsArr, targetBank.id, (done) => {
-          uni.showLoading({ title: `写入 ${doneWords + done}/${totalWords}` })
-        })
+        const imported = await wordsStore.importWords(wordsArr, targetBank.id)
         for (const w of imported) allImportedWords.push(w)
-        doneWords += wordsArr.length
       } catch (e) {
         console.error(`导入词库 ${bankName} 失败:`, e)
       }
     }
+    doneBanks++
   }
 
-  // 用实际导入数更新总词数（防止初始计算不准）
-  totalWords = Math.max(totalWords, doneWords)
-
-  // 阶段2：追加到内存（带进度）
+  // 一次性追加到内存
   if (allImportedWords.length > 0) {
-    await wordsStore.appendWordsToMemory(allImportedWords, (done, total) => {
-      uni.showLoading({ title: `加载 ${done}/${total}` })
-    })
+    wordsStore.appendWordsToMemory(allImportedWords)
   }
 
-  return doneWords
+  return allImportedWords.length
 }
 
 // 拉取

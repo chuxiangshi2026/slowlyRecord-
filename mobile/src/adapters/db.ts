@@ -29,6 +29,7 @@ export interface DbAdapter {
   promises: {
     get<T extends {} = Record<string, any>>(id: string): Promise<DbDoc<T> | null>
     put(doc: DbDoc): Promise<DbReturn>
+    asyncPut(doc: DbDoc): Promise<DbReturn>
     remove(doc: string | DbDoc): Promise<DbReturn>
     bulkDocs(docs: DbDoc[]): Promise<DbReturn[]>
     asyncBulkDocs(docs: DbDoc[]): Promise<DbReturn[]>

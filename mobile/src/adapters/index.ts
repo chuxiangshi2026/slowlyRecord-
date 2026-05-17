@@ -28,6 +28,7 @@ export interface DbAdapter {
   promises: {
     get<T extends {} = Record<string, any>>(id: string): Promise<DbDoc<T> | null>
     put(doc: DbDoc): Promise<DbReturn>
+    asyncPut(doc: DbDoc): Promise<DbReturn>
     remove(doc: string | DbDoc): Promise<DbReturn>
     bulkDocs(docs: DbDoc[]): Promise<DbReturn[]>
     asyncBulkDocs(docs: DbDoc[]): Promise<DbReturn[]>
@@ -73,6 +74,9 @@ export class MiniProgramDbAdapter implements DbAdapter {
     },
     put: (doc: DbDoc): Promise<DbReturn> => {
       return Promise.resolve(this.put(doc))
+    },
+    asyncPut: (doc: DbDoc): Promise<DbReturn> => {
+      return this.asyncPut(doc)
     },
     remove: (doc: string | DbDoc): Promise<DbReturn> => {
       return Promise.resolve(this.remove(doc))
@@ -219,26 +223,23 @@ export class MiniProgramDbAdapter implements DbAdapter {
     return results
   }
 
-  /** 异步写入单条文档 */
+  /** 异步写入单条文档，预检大小避免无效 setStorage 调用 */
   private async asyncPut(doc: DbDoc): Promise<DbReturn> {
     const key = this.getKey(doc._id)
+    const dataStr = JSON.stringify(doc)
 
-    // 先尝试直接写入（大部分单词数据很小，不需要分块）
+    // 大数据直接走分块写入，跳过必然失败的 setStorage
+    if (dataStr.length > CHUNK_SIZE) {
+      return this.asyncPutWithChunks(doc, key, dataStr)
+    }
+
     try {
       return await new Promise<DbReturn>((resolve, reject) => {
         uni.setStorage({
           key,
           data: doc,
           success: () => resolve({ id: doc._id, rev: doc._rev || '1', ok: true }),
-          fail: (e: any) => {
-            // 判断是否因数据过大需要分块
-            const dataStr = JSON.stringify(doc)
-            if (dataStr.length > CHUNK_SIZE) {
-              this.asyncPutWithChunks(doc, key, dataStr).then(resolve, resolve)
-            } else {
-              reject(e)
-            }
-          },
+          fail: reject,
         })
       })
     } catch (e) {
