@@ -154,11 +154,11 @@ export async function handleRequest(method: string, path: string, body?: any): P
 
 // ============ CloudBase 云函数入口 ============
 
-// exports.main = async (event: any) => {
-//   const { method, path, body } = event
-//   const result = await handleRequest(method || 'GET', path || '/', body)
-//   return result.data
-// }
+exports.main = async (event: any) => {
+  const { method, path, body } = event
+  const result = await handleRequest(method || 'GET', path || '/', body)
+  return result.data
+}
 
 // ============ Vercel Serverless 入口 ============
 

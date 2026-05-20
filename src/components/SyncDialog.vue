@@ -102,7 +102,7 @@
         <!-- 自定义服务器 -->
         <div class="sync-section">
           <h4>自定义服务器</h4>
-          <p class="sync-desc">默认使用 jsonblob.com 临时存储（数据已加密），也可替换为自建服务器</p>
+          <p class="sync-desc">数据已加密传输，也可替换为自建服务器</p>
           <div class="sync-download-row">
             <el-input
               v-model="customServerUrl"

@@ -22,8 +22,8 @@ import { log } from '@/utils/logger'
 import { getAllWordBanks } from '@/utils/wordbank-manager'
 import pako from 'pako'
 
-/** 默认同步服务器地址（jsonblob.com 是免费的临时 JSON 存储） */
-const DEFAULT_SERVER_BASE = 'https://jsonblob.com/api/jsonBlob'
+/** 默认同步服务器地址（腾讯云 CloudBase 云函数） */
+const DEFAULT_SERVER_BASE = 'https://1258475269-6fkx3oixct.ap-guangzhou.tencentscf.com'
 
 // ==================== 客户端加密 ====================
 
@@ -171,108 +171,72 @@ export interface SyncServerAdapter {
 }
 
 /**
- * JsonBlob 适配器（默认）
+ * 默认服务器适配器（腾讯云 CloudBase 云函数）
  *
- * jsonblob.com 提供免费的临时 JSON 存储：
- * - POST 创建 blob，返回 blob ID
- * - GET 读取 blob
- * - 无需鉴权，数据无 TTL 但可手动删除
- * - 上传的是加密后的密文，服务器无法解读
+ * API 格式：
+ * - POST /sync     → 上传加密数据，返回 { code: string }
+ * - GET  /sync/:code → 下载加密数据，返回 { e: string }（阅后即焚）
+ * - GET  /ping     → 健康检查
  */
-class JsonBlobAdapter implements SyncServerAdapter {
+class DefaultServerAdapter implements SyncServerAdapter {
   private baseUrl = DEFAULT_SERVER_BASE
 
   async uploadRaw(encryptedPayload: string): Promise<string> {
-    const maxRetries = 5
+    const response = await fetch(`${this.baseUrl}/sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ e: encryptedPayload }),
+    })
 
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const response = await fetch(this.baseUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // 服务器看到的只是无法解读的密文 + 元信息
-        body: JSON.stringify({ e: encryptedPayload }),
-      })
-
-      if (response.ok) {
-        const location = response.headers.get('Location') || response.headers.get('location')
-        if (!location) {
-          throw new Error('服务器未返回数据标识')
-        }
-
-        const blobId = location.split('/').pop() || location
-        log.i('加密数据已上传, blobId:', blobId)
-        return blobId
-      }
-
-      // 429 限流：自动指数退避重试
-      if (response.status === 429 && attempt < maxRetries - 1) {
-        const retryAfter = response.headers.get('Retry-After')
-        const delayMs = retryAfter
-          ? parseInt(retryAfter, 10) * 1000
-          : 3000 + attempt * 3000 // 3s, 6s, 9s, 12s
-        log.w(`服务器限流(429), ${delayMs}ms 后第 ${attempt + 2} 次尝试...`)
-        await new Promise(resolve => setTimeout(resolve, delayMs))
-        continue
-      }
-
+    if (!response.ok) {
       throw new Error(`上传失败: ${response.status} ${response.statusText}`)
     }
 
-    throw new Error('上传失败: 服务器限流，请 1~2 分钟后重试')
+    const result = await response.json()
+    const code = result.code || result.id || result.key
+    if (!code) {
+      throw new Error('服务器未返回有效的同步码')
+    }
+    log.i('加密数据已上传, code:', code)
+    return code
   }
 
   async downloadRaw(blobId: string): Promise<string | null> {
-    const maxRetries = 5
+    try {
+      const response = await fetch(`${this.baseUrl}/sync/${blobId}`, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+      })
 
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      try {
-        const response = await fetch(`${this.baseUrl}/${blobId}`, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' },
-        })
-
-        if (response.ok) {
-          const json = await response.json()
-          if (json && json.e) {
-            log.i('加密数据已下载')
-            return json.e as string
-          }
-          log.e('服务器返回数据格式异常')
-          return null
+      if (response.ok) {
+        const json = await response.json()
+        if (json && json.e) {
+          log.i('加密数据已下载')
+          return json.e as string
         }
-
-        if (response.status === 404) {
-          log.w('同步数据不存在或已过期')
-          return null
-        }
-
-        // 429 限流：自动指数退避重试
-        if (response.status === 429 && attempt < maxRetries - 1) {
-          const retryAfter = response.headers.get('Retry-After')
-          const delayMs = retryAfter
-            ? parseInt(retryAfter, 10) * 1000
-            : 3000 + attempt * 3000
-          log.w(`下载限流(429), ${delayMs}ms 后第 ${attempt + 2} 次尝试...`)
-          await new Promise(resolve => setTimeout(resolve, delayMs))
-          continue
-        }
-
-        throw new Error(`下载失败: ${response.status} ${response.statusText}`)
-      } catch (e) {
-        // 网络层异常（非 HTTP 错误）不重试，直接失败
-        log.e('下载加密数据失败', e)
+        log.e('服务器返回数据格式异常')
         return null
       }
-    }
 
-    log.e('下载失败: 服务器限流，请 1~2 分钟后重试')
-    return null
+      if (response.status === 404) {
+        log.w('同步数据不存在或已过期')
+        return null
+      }
+
+      throw new Error(`下载失败: ${response.status} ${response.statusText}`)
+    } catch (e) {
+      log.e('下载加密数据失败', e)
+      return null
+    }
   }
 
   async ping(): Promise<boolean> {
-    // jsonblob.com 对探测请求会返回 ERR_ABORTED/404，反而在控制台制造噪音。
-    // 直接视为可用，真实可用性由上传/下载时自然验证。
-    return true
+    try {
+      const response = await fetch(`${this.baseUrl}/ping`, { method: 'GET' })
+      return response.ok
+    } catch {
+      return false
+    }
   }
 }
 
@@ -360,7 +324,7 @@ let _adapter: SyncServerAdapter | null = null
  */
 export function getSyncServerAdapter(): SyncServerAdapter {
   if (_adapter) return _adapter
-  _adapter = new JsonBlobAdapter()
+  _adapter = new DefaultServerAdapter()
   return _adapter
 }
 
@@ -375,7 +339,7 @@ export function setSyncServerUrl(url: string) {
  * 重置为默认服务器
  */
 export function resetSyncServer() {
-  _adapter = new JsonBlobAdapter()
+  _adapter = new DefaultServerAdapter()
 }
 
 // ==================== 高级 API（含加密） ====================
@@ -429,6 +393,8 @@ export async function uploadToServer(): Promise<SyncServerResult> {
     const encrypted = await encrypt(compressedPayload, aesKey, iv)
 
     // 4. 上传密文
+    const uploadPayload = JSON.stringify({ e: encrypted })
+    log.i(`桌面端上传: JSON ${(new TextEncoder().encode(json).length / 1024).toFixed(1)}KB, 上传payload ${(uploadPayload.length / 1024).toFixed(1)}KB (${(uploadPayload.length / 1024 / 1024).toFixed(2)}MB)`)
     const adapter = getSyncServerAdapter()
     const blobId = await adapter.uploadRaw(encrypted)
 
@@ -624,6 +590,8 @@ export async function uploadToServerMobileCompat(): Promise<SyncServerResult> {
 
     // 3. base64 编码 + 上传
     const encryptedBase64 = uint8ArrayToBase64(encrypted)
+    const uploadPayload = JSON.stringify({ e: encryptedBase64 })
+    log.i(`数据大小: 原始JSON ${(jsonBytes.length / 1024).toFixed(1)}KB, 压缩后 ${(compressed.length / 1024).toFixed(1)}KB, 上传payload ${(uploadPayload.length / 1024).toFixed(1)}KB (${(uploadPayload.length / 1024 / 1024).toFixed(2)}MB)`)
     const adapter = getSyncServerAdapter()
     const blobId = await adapter.uploadRaw(encryptedBase64)
     const syncCode = `${blobId}.${key}`

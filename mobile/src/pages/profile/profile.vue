@@ -138,7 +138,7 @@ const serverRefreshTick = ref(0)
 const currentServerDisplay = computed(() => {
   serverRefreshTick.value // 强制依赖
   const url = getSyncServerUrl()
-  if (url.includes('jsonblob.com')) return '默认服务器'
+  if (url.includes('tencentscf.com')) return '默认服务器'
   // 提取 IP 或域名简化显示
   try {
     const match = url.match(/https?:\/\/([^\/]+)/)
@@ -151,11 +151,11 @@ const currentServerDisplay = computed(() => {
 // 同步服务器设置
 const showServerSetting = () => {
   const currentUrl = getSyncServerUrl()
-  const isDefault = currentUrl.includes('jsonblob.com')
+  const isDefault = currentUrl.includes('tencentscf.com')
 
   uni.showActionSheet({
     itemList: [
-      isDefault ? '✓ 默认服务器 (jsonblob.com)' : '默认服务器 (jsonblob.com)',
+      isDefault ? '✓ 默认服务器' : '默认服务器',
       '设置自定义服务器',
       '测试连接'
     ],

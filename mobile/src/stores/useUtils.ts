@@ -390,8 +390,8 @@ function getServerBase(): string {
     // 去除末尾的斜杠，统一处理
     return customUrl.replace(/\/$/, '')
   }
-  // 默认使用 jsonblob.com
-  return 'https://jsonblob.com/api/jsonBlob'
+  // 默认使用腾讯云 CloudBase 云函数
+  return 'https://1258475269-6fkx3oixct.ap-guangzhou.tencentscf.com'
 }
 
 /**
@@ -435,30 +435,126 @@ function generateAesKey(): string {
   return randomString(32)
 }
 
-/** 将 Uint8Array 转为 base64（分块避免栈溢出） */
-function uint8ArrayToBase64(bytes: Uint8Array): string {
-  const CHUNK = 0x8000
-  const chunks: string[] = []
-  for (let i = 0; i < bytes.length; i += CHUNK) {
-    const slice = bytes.subarray(i, Math.min(i + CHUNK, bytes.length))
-    chunks.push(String.fromCharCode.apply(null, Array.from(slice)))
+/** UTF-8 字符串 → Uint8Array（兼容小程序真机） */
+function utf8ToBytes(str: string): Uint8Array {
+  try {
+    if (typeof TextEncoder !== 'undefined') {
+      return new TextEncoder().encode(str)
+    }
+  } catch { /* 小程序真机 TextEncoder 不可用 */ }
+  // 手动 UTF-8 编码
+  const bytes: number[] = []
+  for (let i = 0; i < str.length; i++) {
+    let code = str.charCodeAt(i)
+    if (code < 0x80) {
+      bytes.push(code)
+    } else if (code < 0x800) {
+      bytes.push(0xc0 | (code >> 6), 0x80 | (code & 0x3f))
+    } else if (code >= 0xd800 && code <= 0xdbff) {
+      // surrogate pair
+      code = 0x10000 + ((code & 0x3ff) << 10) | (str.charCodeAt(++i) & 0x3ff)
+      bytes.push(0xf0 | (code >> 18), 0x80 | ((code >> 12) & 0x3f), 0x80 | ((code >> 6) & 0x3f), 0x80 | (code & 0x3f))
+    } else {
+      bytes.push(0xe0 | (code >> 12), 0x80 | ((code >> 6) & 0x3f), 0x80 | (code & 0x3f))
+    }
   }
-  return btoa(chunks.join(''))
+  return new Uint8Array(bytes)
+}
+
+/** Uint8Array → UTF-8 字符串（兼容小程序真机） */
+function bytesToUtf8(bytes: Uint8Array): string {
+  try {
+    if (typeof TextDecoder !== 'undefined') {
+      return new TextDecoder().decode(bytes)
+    }
+  } catch { /* 小程序真机 TextDecoder 不可用 */ }
+  // 手动 UTF-8 解码
+  let str = ''
+  let i = 0
+  while (i < bytes.length) {
+    const b1 = bytes[i++]
+    if (b1 < 0x80) {
+      str += String.fromCharCode(b1)
+    } else if (b1 < 0xe0) {
+      str += String.fromCharCode(((b1 & 0x1f) << 6) | (bytes[i++] & 0x3f))
+    } else if (b1 < 0xf0) {
+      str += String.fromCharCode(((b1 & 0x0f) << 12) | ((bytes[i++] & 0x3f) << 6) | (bytes[i++] & 0x3f))
+    } else {
+      const cp = ((b1 & 0x07) << 18) | ((bytes[i++] & 0x3f) << 12) | ((bytes[i++] & 0x3f) << 6) | (bytes[i++] & 0x3f)
+      str += String.fromCharCode(0xd800 | ((cp - 0x10000) >> 10), 0xdc00 | (cp & 0x3ff))
+    }
+  }
+  return str
+}
+
+/** 将 Uint8Array 转为 base64 */
+function uint8ArrayToBase64(bytes: Uint8Array): string {
+  // 小程序真机没有 btoa，使用 wx API
+  try {
+    if (typeof wx !== 'undefined' && wx.arrayBufferToBase64) {
+      return wx.arrayBufferToBase64(bytes.buffer as ArrayBuffer)
+    }
+  } catch { /* wx API 不可用 */ }
+  // 降级方案（模拟器等环境）
+  try {
+    const CHUNK = 0x8000
+    const chunks: string[] = []
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+      const slice = bytes.subarray(i, Math.min(i + CHUNK, bytes.length))
+      chunks.push(String.fromCharCode.apply(null, Array.from(slice)))
+    }
+    return btoa(chunks.join(''))
+  } catch { /* btoa 不可用，手动编码 */ }
+  // 最终降级：手动 base64 编码
+  const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+  let result = ''
+  for (let i = 0; i < bytes.length; i += 3) {
+    const b1 = bytes[i], b2 = bytes[i + 1], b3 = bytes[i + 2]
+    result += base64Chars[b1 >> 2]
+    result += base64Chars[((b1 & 3) << 4) | ((b2 || 0) >> 4)]
+    result += (i + 1 < bytes.length) ? base64Chars[((b2 & 15) << 2) | ((b3 || 0) >> 6)] : '='
+    result += (i + 2 < bytes.length) ? base64Chars[(b3 || 0) & 63] : '='
+  }
+  return result
 }
 
 /** 将 base64 转为 Uint8Array */
 function base64ToUint8Array(base64: string): Uint8Array {
-  const binary = atob(base64)
-  const bytes = new Uint8Array(binary.length)
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i)
+  // 小程序真机没有 atob，使用 wx API
+  try {
+    if (typeof wx !== 'undefined' && wx.base64ToArrayBuffer) {
+      return new Uint8Array(wx.base64ToArrayBuffer(base64))
+    }
+  } catch { /* wx API 不可用 */ }
+  // 降级方案（模拟器等环境）
+  try {
+    const binary = atob(base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i)
+    }
+    return bytes
+  } catch { /* atob 不可用，手动解码 */ }
+  // 最终降级：手动 base64 解码
+  const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+  const lookup = new Uint8Array(256)
+  for (let i = 0; i < base64Chars.length; i++) lookup[base64Chars.charCodeAt(i)] = i
+  const cleaned = base64.replace(/=+$/, '')
+  const bytes = new Uint8Array(Math.floor(cleaned.length * 3 / 4))
+  let pos = 0
+  for (let i = 0; i < cleaned.length; i += 4) {
+    const a = lookup[cleaned.charCodeAt(i)], b = lookup[cleaned.charCodeAt(i + 1)]
+    const c = lookup[cleaned.charCodeAt(i + 2)], d = lookup[cleaned.charCodeAt(i + 3)]
+    bytes[pos++] = (a << 2) | (b >> 4)
+    if (pos < bytes.length) bytes[pos++] = ((b & 15) << 4) | ((c >> 2) & 15)
+    if (pos < bytes.length) bytes[pos++] = ((c & 3) << 6) | (d & 63)
   }
   return bytes
 }
 
 /** XOR 加密/解密 Uint8Array（对称操作） */
 function xorCrypt(data: Uint8Array, key: string): Uint8Array {
-  const keyBytes = new TextEncoder().encode(key)
+  const keyBytes = utf8ToBytes(key)
   const keyLen = keyBytes.length
   const result = new Uint8Array(data.length)
   for (let i = 0; i < data.length; i++) {
@@ -495,7 +591,7 @@ function uploadRaw(encryptedPayload: string): Promise<string> {
             resolve(data.code || data.id || data.key)
             return
           }
-          // 兼容 jsonblob.com（从 Location header 提取）
+          // 兼容旧版 jsonblob.com（从 Location header 提取）
           const location = (res.header?.Location || res.header?.location || '') as string
           const blobId = location.split('/').pop() || location
           if (blobId) {
@@ -600,7 +696,7 @@ export async function pushToServer(banks: MobileSyncBank[]): Promise<SyncResult>
     const json = JSON.stringify(data)
 
     // 1. pako 压缩
-    const jsonBytes = new TextEncoder().encode(json)
+    const jsonBytes = utf8ToBytes(json)
     const compressed = pako.deflate(jsonBytes)
 
     // 2. XOR 加密
@@ -639,7 +735,7 @@ export async function pullFromServer(syncCode: string): Promise<RestoreResult> {
 
     // 2. pako 解压
     const jsonBytes = pako.inflate(compressed)
-    const json = new TextDecoder().decode(jsonBytes)
+    const json = bytesToUtf8(jsonBytes)
 
     // 3. 解析 JSON
     try {
