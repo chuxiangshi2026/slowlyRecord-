@@ -23,7 +23,7 @@
   { "id": "excel-22", "category": "Excel", "functionName": "隐藏行", "description": "隐藏选中的行", "keys": ["Ctrl", "9"], "platform": "common" },
   { "id": "excel-23", "category": "Excel", "functionName": "取消隐藏行", "description": "取消隐藏行", "keys": ["Ctrl", "Shift", "9"], "platform": "common" },
   { "id": "excel-24", "category": "Excel", "functionName": "隐藏列", "description": "隐藏选中的列", "keys": ["Ctrl", "0"], "platform": "common" },
-  { "id": "excel-25", "category": "Excel", "functionName": "取消隐藏列", "description": "取消隐藏列", "keys": ["Ctrl", "Shift", "0"], "platform": "common" },
+  { "id": "excel-25", "category": "Excel", "functionName": "取消隐藏列", "description": "取消隐藏列（Ctrl+Shift+0在Win10+可能被输入法占用）", "keys": ["Ctrl", "Shift", "0"], "platform": "common" },
   { "id": "excel-26", "category": "Excel", "functionName": "自动求和", "description": "对选中单元格自动求和", "keys": ["Alt", "="], "platform": "common" },
   { "id": "excel-27", "category": "Excel", "functionName": "插入函数", "description": "打开插入函数对话框", "keys": ["Shift", "F3"], "platform": "common" },
   { "id": "excel-28", "category": "Excel", "functionName": "计算工作表", "description": "重新计算整个工作表", "keys": ["F9"], "platform": "common" },

@@ -45,8 +45,7 @@
   { "id": "word-44", "category": "Word", "functionName": "草稿视图", "description": "切换到草稿视图", "keys": ["Alt", "Ctrl", "N"], "platform": "common" },
   { "id": "word-45", "category": "Word", "functionName": "页面视图", "description": "切换到页面视图", "keys": ["Alt", "Ctrl", "P"], "platform": "common" },
   { "id": "word-46", "category": "Word", "functionName": "阅读视图", "description": "切换到阅读视图", "keys": ["Alt", "W", "F"], "platform": "common" },
-  { "id": "word-47", "category": "Word", "functionName": "导航窗格", "description": "显示或隐藏导航窗格", "keys": ["Ctrl", "F"], "platform": "common" },
-  { "id": "word-48", "category": "Word", "functionName": "标尺", "description": "显示或隐藏标尺", "keys": ["Alt", "V", "S"], "platform": "common" },
-  { "id": "word-49", "category": "Word", "functionName": "全屏显示", "description": "切换到全屏显示模式", "keys": ["F11"], "platform": "common" },
-  { "id": "word-50", "category": "Word", "functionName": "帮助", "description": "打开Word帮助", "keys": ["F1"], "platform": "common" }
+  { "id": "word-47", "category": "Word", "functionName": "标尺", "description": "显示或隐藏标尺", "keys": ["Alt", "V", "S"], "platform": "common" },
+  { "id": "word-48", "category": "Word", "functionName": "全屏显示", "description": "切换到全屏显示模式", "keys": ["F11"], "platform": "common" },
+  { "id": "word-49", "category": "Word", "functionName": "帮助", "description": "打开Word帮助", "keys": ["F1"], "platform": "common" }
 ]

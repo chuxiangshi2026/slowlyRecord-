@@ -22,6 +22,11 @@
   { "id": "idea-21", "category": "IntelliJ IDEA", "functionName": "扩展选择", "description": "扩大当前选中的代码范围", "keys": ["Ctrl", "W"], "platform": "common" },
   { "id": "idea-22", "category": "IntelliJ IDEA", "functionName": "缩小选择", "description": "缩小当前选中的代码范围", "keys": ["Ctrl", "Shift", "W"], "platform": "common" },
   { "id": "idea-23", "category": "IntelliJ IDEA", "functionName": "查找动作", "description": "通过名称查找并执行动作", "keys": ["Ctrl", "Shift", "A"], "platform": "common" },
-  { "id": "idea-24", "category": "IntelliJ IDEA", "functionName": "跳转声明", "description": "跳转到符号的声明处", "keys": ["Ctrl", "B"], "platform": "common" },
-  { "id": "idea-25", "category": "IntelliJ IDEA", "functionName": "复制路径", "description": "复制当前文件的完整路径", "keys": ["Ctrl", "Shift", "C"], "platform": "common" }
+  { "id": "idea-24", "category": "IntelliJ IDEA", "functionName": "文件结构", "description": "弹出当前文件结构（类/方法列表）", "keys": ["Ctrl", "F12"], "platform": "common" },
+  { "id": "idea-25", "category": "IntelliJ IDEA", "functionName": "复制路径", "description": "复制当前文件的完整路径", "keys": ["Ctrl", "Shift", "C"], "platform": "common" },
+  { "id": "idea-26", "category": "IntelliJ IDEA", "functionName": "查找用法", "description": "查找符号在项目中的所有使用位置", "keys": ["Alt", "F7"], "platform": "common" },
+  { "id": "idea-27", "category": "IntelliJ IDEA", "functionName": "全局搜索", "description": "Search Everywhere 全局搜索一切", "keys": ["Shift", "Shift"], "platform": "common" },
+  { "id": "idea-28", "category": "IntelliJ IDEA", "functionName": "补全语句", "description": "补全当前语句（自动加分号/括号）", "keys": ["Ctrl", "Shift", "Enter"], "platform": "common" },
+  { "id": "idea-29", "category": "IntelliJ IDEA", "functionName": "下方新行", "description": "从当前行任意位置在下方开始新行", "keys": ["Shift", "Enter"], "platform": "common" },
+  { "id": "idea-30", "category": "IntelliJ IDEA", "functionName": "最大化编辑器", "description": "切换编辑器最大化（隐藏工具窗口）", "keys": ["Ctrl", "Shift", "F12"], "platform": "common" }
 ]

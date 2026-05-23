@@ -8,7 +8,15 @@
   { "name": "Illustrator", "file": "illustrator.json", "icon": "✒️", "description": "Adobe Illustrator 矢量设计快捷键" },
   { "name": "CAD", "file": "cad.json", "icon": "📐", "description": "AutoCAD 工程制图快捷键" },
   { "name": "Obsidian", "file": "obsidian.json", "icon": "📝", "description": "Obsidian 笔记软件快捷键" },
+  { "name": "思源笔记", "file": "siyuan.json", "icon": "📔", "description": "思源笔记本地块级笔记快捷键" },
   { "name": "Word", "file": "word.json", "icon": "📘", "description": "Microsoft Word 文档编辑快捷键" },
   { "name": "Excel", "file": "excel.json", "icon": "📗", "description": "Microsoft Excel 表格处理快捷键" },
-  { "name": "PowerPoint", "file": "powerpoint.json", "icon": "📙", "description": "Microsoft PowerPoint 演示文稿快捷键" }
+  { "name": "PowerPoint", "file": "powerpoint.json", "icon": "📙", "description": "Microsoft PowerPoint 演示文稿快捷键" },
+  { "name": "Outlook", "file": "outlook.json", "icon": "📧", "description": "Microsoft Outlook 邮件与日程快捷键" },
+  { "name": "五笔86版", "file": "wubi86.json", "icon": "🖊️", "description": "五笔输入法86版字根键位练习（逐个字根）" },
+  { "name": "五笔98版", "file": "wubi98.json", "icon": "✒️", "description": "五笔输入法98版字根键位练习（逐个字根）" },
+  { "name": "双拼 · 小鹤", "file": "shuangpin-xiaohe.json", "icon": "🕊️", "description": "小鹤双拼声韵母键位练习" },
+  { "name": "双拼 · 自然码", "file": "shuangpin-ziranma.json", "icon": "🌿", "description": "自然码双拼声韵母键位练习" },
+  { "name": "双拼 · 微软", "file": "shuangpin-weiruan.json", "icon": "🪟", "description": "微软双拼声韵母键位练习" },
+  { "name": "双拼 · 搜狗", "file": "shuangpin-sogou.json", "icon": "🐾", "description": "搜狗双拼声韵母键位练习" }
 ]
