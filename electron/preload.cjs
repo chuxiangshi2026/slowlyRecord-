@@ -20,6 +20,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 平台信息
   platform: process.platform,
 
+  // 窗口透明度
+  getWindowOpacity: () => ipcRenderer.invoke('getWindowOpacity'),
+  setWindowOpacity: (opacity) => ipcRenderer.invoke('setWindowOpacity', opacity),
+
   // 全局快捷键监听
   onGlobalShortcut: (callback) => {
     ipcRenderer.on('global-shortcut', (_event, action) => callback(action))

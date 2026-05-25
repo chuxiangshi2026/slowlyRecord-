@@ -25,6 +25,7 @@ import {translateWithPlatform as externalTranslateWithPlatform} from "@/utils/tr
 import {addAndUpdateSetDb, getSetDb} from "@/utils/user-set-db-util.ts";
 import {v4 as uuidv4} from "uuid";
 import type {UserSetType, FocusModeSettings} from "@/types/user-set";
+import {isUtools} from "@/adapters/platform";
 
 // 默认专注模式设置
 const defaultFocusMode: FocusModeSettings = {
@@ -124,6 +125,10 @@ export const useWordsStore =
             const pluginStatus = ref(false);
             // 默认关闭快捷键
             const shortcutEnabled = ref(false);
+            // 主窗口透明度 (0.3 - 1.0)，仅 Electron 有效
+            const mainWindowOpacity = ref(1.0);
+            // 选中单词时自动发音
+            const autoSpeak = ref(false);
             // 专注模式设置
             const focusMode = ref<FocusModeSettings>({...defaultFocusMode});
 
@@ -251,6 +256,8 @@ export const useWordsStore =
                     "keys": {},
                     "ocrKeys": {},
                     "focusMode": {...defaultFocusMode},
+                    "mainWindowOpacity": 1.0,
+                    "autoSpeak": false,
                 };
                 return userSet;
             }
@@ -289,6 +296,109 @@ export const useWordsStore =
                 } else {
                     userSet = initUserSet();
                     userSet.shortcutEnabled = enabled;
+                }
+                addAndUpdateSetDb(userSet);
+            }
+
+            /**
+             * 设置主窗口透明度
+             * - Electron：原生窗口 API（窗口级透明）
+             * - Web：rgba 背景透明（body/#app 透明，内容可读）
+             * - uTools：iframe 背景无法通过 CSS 修改，仅保存值
+             * @param opacity 透明度值 (0.3 - 1.0)
+             */
+            async function setMainWindowOpacity(opacity: number) {
+                const validOpacity = Math.max(0.3, Math.min(1.0, opacity));
+                mainWindowOpacity.value = validOpacity;
+
+                // Electron 环境：调用主进程设置原生窗口透明度
+                if (typeof window !== 'undefined' && window.electronAPI) {
+                    console.log('[透明度] 调用 electronAPI.setWindowOpacity:', validOpacity);
+                    try {
+                        const result = await window.electronAPI.setWindowOpacity(validOpacity);
+                        console.log('[透明度] Electron 窗口透明度已设置为:', result);
+                    } catch (e: any) {
+                        console.error('[透明度] 设置窗口透明度失败:', e);
+                    }
+                } else if (typeof document !== 'undefined' && !isUtools()) {
+                    // Web 环境：rgba 背景方案
+                    applyRgbaOpacity(validOpacity);
+                }
+                // uTools 端：主窗口 iframe 背景不受内部 CSS 控制，跳过 applyRgbaOpacity
+
+                // 持久化保存
+                try {
+                    let userSet = getSetDb();
+                    if (userSet) {
+                        userSet.mainWindowOpacity = validOpacity;
+                    } else {
+                        userSet = initUserSet();
+                        userSet.mainWindowOpacity = validOpacity;
+                    }
+                    const result = await addAndUpdateSetDb(userSet);
+                    if (result.ok) {
+                        console.log('[透明度] 保存设置成功:', validOpacity);
+                    } else {
+                        console.error('[透明度] 保存设置失败:', result.message);
+                    }
+                } catch (e) {
+                    console.error('[透明度] 保存设置到数据库失败:', e);
+                }
+            }
+
+            /**
+             * 通过 rgba 背景实现透明效果（uTools/Web 端）
+             * html/body 设为 transparent，#app 用 rgba 保留内容可读性
+             */
+            function applyRgbaOpacity(opacity: number) {
+                try {
+                    const validOpacity = Math.max(0.3, Math.min(1.0, parseFloat(String(opacity))));
+
+                    // html/body 背景透明，让 uTools 容器背景透上来
+                    // 使用 !important 确保覆盖 reset.scss 等外部样式
+                    document.documentElement.style.setProperty('background', 'transparent', 'important');
+                    document.body.style.setProperty('background', 'transparent', 'important');
+                    document.body.style.setProperty('background-color', 'transparent', 'important');
+
+                    // 检测暗色主题（uTools 可能加到 body 或 html 上）
+                    const isDark = document.body.classList.contains('utools-dark') ||
+                        document.documentElement.classList.contains('utools-dark') ||
+                        document.documentElement.classList.contains('dark');
+
+                    // #app 使用 rgba 背景，内容保持清晰
+                    const appEl = document.getElementById('app');
+                    if (appEl) {
+                        if (validOpacity >= 1.0) {
+                            // 完全不透明时恢复默认背景
+                            appEl.style.removeProperty('background');
+                            appEl.style.removeProperty('background-color');
+                        } else {
+                            const r = isDark ? 30 : 255;
+                            const g = isDark ? 30 : 255;
+                            const b = isDark ? 30 : 255;
+                            const bg = `rgba(${r}, ${g}, ${b}, ${validOpacity})`;
+                            appEl.style.setProperty('background', bg, 'important');
+                            appEl.style.setProperty('background-color', bg, 'important');
+                        }
+                    }
+                    console.log('[透明度] rgba 背景方案已应用:', validOpacity, '暗色:', isDark, 'app存在:', !!appEl);
+                } catch (e) {
+                    console.error('[透明度] rgba 背景应用失败:', e);
+                }
+            }
+
+            /**
+             * 设置自动发音开关
+             */
+            function setAutoSpeak(enabled: boolean) {
+                autoSpeak.value = enabled;
+
+                let userSet = getSetDb()
+                if (userSet) {
+                    userSet.autoSpeak = enabled;
+                } else {
+                    userSet = initUserSet();
+                    userSet.autoSpeak = enabled;
                 }
                 addAndUpdateSetDb(userSet);
             }
@@ -669,6 +779,8 @@ export const useWordsStore =
                 reviewCount,
                 forgetCount,
                 shortcutEnabled,
+                mainWindowOpacity,
+                autoSpeak,
                 focusMode,
                 currentWordBankId,
                 currentWordBank,
@@ -681,6 +793,9 @@ export const useWordsStore =
                 setMemoryFirmness,
                 setUserApiKeys,
                 setShortcutEnabled,
+                setMainWindowOpacity,
+                applyRgbaOpacity,
+                setAutoSpeak,
                 setApiKey, // 导出设置API密钥方法
                 setOcrApiKey,
                 getApiKey, // 导出获取API密钥方法
@@ -713,6 +828,8 @@ export const useWordsStore =
                     'memoryFirmness',
                     'pluginStatus',
                     'shortcutEnabled',
+                    'mainWindowOpacity',
+                    'autoSpeak',
                     'focusMode',
                     'userApiKeys',
                     'userOcrApiKeys',

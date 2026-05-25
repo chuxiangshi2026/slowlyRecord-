@@ -441,6 +441,62 @@
     let showExplains = false;
     const FOCUS_MODE_ACTION_STORAGE_KEY = 'slowly-record-focus-mode-action';
 
+    // 词库分片相关常量
+    const WORDBANK_CHUNK_PREFIX = 'slowly-record-wordbank-chunk-v2:';
+    const CURRENT_WORDBANK_KEY = 'slowly-record-current-wordbank';
+
+    // 当前词库ID（从URL参数获取）
+    let currentBankId = '';
+
+    function getWordBankChunkId(bankId, chunkIndex) {
+      return WORDBANK_CHUNK_PREFIX + bankId + ':' + chunkIndex;
+    }
+
+    // 从词库分片读取所有单词
+    function getWordBankWords(bankId) {
+      const allWords = [];
+      if (typeof utools === 'undefined' || !utools.db) return allWords;
+      try {
+        for (let i = 0; i < 100; i++) {
+          const docId = getWordBankChunkId(bankId, i);
+          const doc = utools.db.get(docId);
+          if (doc && doc.type === 'wordbank-chunk' && doc.bankId === bankId) {
+            allWords.push(...(doc.words || []));
+          } else {
+            break;
+          }
+        }
+      } catch (e) {
+        console.error('[专注模式] 读取词库分片失败:', e);
+      }
+      return allWords;
+    }
+
+    // 更新词库中的单个单词
+    function updateWordInBank(bankId, word) {
+      if (typeof utools === 'undefined' || !utools.db) return false;
+      try {
+        for (let i = 0; i < 100; i++) {
+          const docId = getWordBankChunkId(bankId, i);
+          const doc = utools.db.get(docId);
+          if (!doc || doc.type !== 'wordbank-chunk' || doc.bankId !== bankId) {
+            break;
+          }
+          const wordIndex = doc.words.findIndex(function(w) { return w._id === word._id; });
+          if (wordIndex !== -1) {
+            doc.words[wordIndex] = word;
+            doc.updatedAt = Date.now();
+            utools.db.put(doc);
+            console.log('[专注模式] 词库分片已更新:', word.text, 'chunk:', i);
+            return true;
+          }
+        }
+      } catch (e) {
+        console.error('[专注模式] 更新词库分片失败:', e);
+      }
+      return false;
+    }
+
     // DOM 元素
     const elWord = document.getElementById('word');
     const elExplains = document.getElementById('explains');
@@ -458,13 +514,31 @@
     async function loadWords() {
       try {
         if (typeof utools !== 'undefined') {
-          let allDocs = [];
-          try {
-            allDocs = utools.db.allDocs(DB_KEY);
-          } catch (e) {
-            allDocs = utools.db.allDocs();
+          // 优先从当前词库分片加载单词
+          if (currentBankId) {
+            console.log('[专注模式] 从词库分片加载:', currentBankId);
+            const bankWords = getWordBankWords(currentBankId);
+            if (bankWords.length > 0) {
+              // 应用筛选条件后显示
+              words = applyFilters(bankWords);
+              console.log('[专注模式] 词库共', bankWords.length, '个单词，筛选后:', words.length);
+            }
           }
-          words = allDocs.filter(w => w.isReview === true);
+
+          // 如果词库为空或没有 bankId，回退到旧数据库方式加载
+          if (words.length === 0 && currentBankId) {
+            // 词库存在但筛选后为空
+            console.log('[专注模式] 词库存在但筛选后无匹配单词');
+          } else if (words.length === 0) {
+            console.log('[专注模式] 词库为空或未设置，回退到旧数据库加载');
+            let allDocs = [];
+            try {
+              allDocs = utools.db.allDocs('words-list');
+            } catch (e) {
+              allDocs = utools.db.allDocs();
+            }
+            words = applyFilters(allDocs);
+          }
         }
 
         if (words.length === 0) {
@@ -503,6 +577,12 @@
 
       elBtnPrev.classList.toggle('disabled', currentIndex <= 0);
       elBtnNext.classList.toggle('disabled', currentIndex >= words.length - 1);
+
+      // 自动发音：切换到新单词时自动播放（避免同一单词重复播放）
+      if (autoSpeakEnabled && word.text !== lastAutoSpeakWord) {
+        lastAutoSpeakWord = word.text;
+        playAudio();
+      }
     }
 
     // 播放发音
@@ -518,9 +598,42 @@
       }
     }
 
+    // 通知主窗口单词发生了变化
+    function postWordChanged(word) {
+      // 通过 storage 事件通知主窗口
+      try {
+        var action = {
+          type: 'wordChanged',
+          payload: { word: JSON.parse(JSON.stringify(word)) },
+          at: Date.now()
+        };
+        localStorage.setItem(FOCUS_MODE_ACTION_STORAGE_KEY, JSON.stringify(action));
+      } catch (e) {
+        console.error('[专注模式] 发送单词变更通知失败:', e);
+      }
+
+      // 通过 utools 直接通信
+      if (typeof utools !== 'undefined' && utools.sendToParent) {
+        try {
+          utools.sendToParent('wordChanged', { word: JSON.parse(JSON.stringify(word)) });
+        } catch (e) {
+          console.error('[专注模式] 通过 utools 发送通知失败:', e);
+        }
+      }
+    }
+
+    // 判断当前单词是否应该保留在当前列表模式中
+    // listMode 与主窗口一致: 0=待复习(isReview), 1=已复习(!isReview,含已记住), 2=已记住(remember), 3=全部
+    function shouldKeepInList(word) {
+      if (currentListMode === 3) return true;
+      if (currentListMode === 2) return !!word.remember;
+      if (currentListMode === 1) return !word.isReview;
+      return !!word.isReview;  // 默认0：待复习
+    }
+
     // 标记记得
     function markRemembered() {
-      const word = words[currentIndex];
+      var word = words[currentIndex];
       if (!word) return;
 
       word.level = Math.min(7, (word.level || 1) + 1);
@@ -528,9 +641,19 @@
       if (word.level >= 7) word.remember = true;
       word.learnDate = new Date();
 
+      // 保存到旧数据库（兼容）
       if (typeof utools !== 'undefined') utools.db.put(word);
 
-      if (!word.isReview) {
+      // 同步更新到词库分片
+      if (currentBankId) {
+        updateWordInBank(currentBankId, word);
+      }
+
+      // 通知主窗口同步
+      postWordChanged(word);
+
+      // 如果单词不再符合当前列表模式筛选条件，从列表中移除
+      if (!shouldKeepInList(word)) {
         words.splice(currentIndex, 1);
         if (currentIndex >= words.length) currentIndex = Math.max(0, words.length - 1);
       }
@@ -538,23 +661,39 @@
       updateDisplay();
 
       if (currentIndex < words.length - 1) {
-        setTimeout(() => { currentIndex++; updateDisplay(); }, 200);
+        setTimeout(function() { currentIndex++; updateDisplay(); }, 200);
       }
     }
 
     // 标记忘记
     function markForgot() {
-      const word = words[currentIndex];
+      var word = words[currentIndex];
       if (!word) return;
 
       word.level = Math.max(1, (word.level || 1) - 1);
       word.isReview = true;
 
+      // 保存到旧数据库（兼容）
       if (typeof utools !== 'undefined') utools.db.put(word);
+
+      // 同步更新到词库分片
+      if (currentBankId) {
+        updateWordInBank(currentBankId, word);
+      }
+
+      // 通知主窗口同步
+      postWordChanged(word);
+
+      // 如果单词不再符合当前列表模式筛选条件，从列表中移除（例如：在"已记住"模式下标记忘记）
+      if (!shouldKeepInList(word)) {
+        words.splice(currentIndex, 1);
+        if (currentIndex >= words.length) currentIndex = Math.max(0, words.length - 1);
+      }
+
       updateDisplay();
 
       if (currentIndex < words.length - 1) {
-        setTimeout(() => { currentIndex++; updateDisplay(); }, 200);
+        setTimeout(function() { currentIndex++; updateDisplay(); }, 200);
       }
     }
 
@@ -695,12 +834,16 @@
 
     // 返回列表按钮 - 优先通知父窗口，同时直接唤起主窗口作为兜底
     document.getElementById('btn-list').addEventListener('click', () => {
-      // 先保存当前数据状态，确保主窗口能获取最新数据
+      // 先保存当前数据状态到词库和旧数据库，确保主窗口能获取最新数据
       try {
         if (words.length > 0 && currentIndex < words.length) {
           const currentWord = words[currentIndex];
           if (currentWord && currentWord._id) {
             utools.db.put(currentWord);
+            // 同时保存到词库分片
+            if (currentBankId) {
+              updateWordInBank(currentBankId, currentWord);
+            }
           }
         }
       } catch (e) {
@@ -1071,6 +1214,19 @@
       const alwaysOnTop = alwaysOnTopParam === 'false' ? false : true;
       const edgeStickEnabledParam = urlParams.get('edgeStickEnabled');
       const edgeStickEnabled = edgeStickEnabledParam === 'false' ? false : true;
+      const bankId = urlParams.get('bankId') || '';
+
+      // 筛选参数
+      const listMode = parseInt(urlParams.get('listMode') || '0');
+      const pattern = urlParams.get('pattern') || '';
+      const minLen = parseInt(urlParams.get('minLen') || '0');
+      const maxLen = parseInt(urlParams.get('maxLen') || '0');
+      const sortBy = urlParams.get('sortBy') || '';
+      const sortAsc = urlParams.get('sortAsc') !== '0';
+
+      // 自动发音设置
+      const autoSpeakParam = urlParams.get('autoSpeak');
+      const autoSpeak = autoSpeakParam === '1' ? true : (autoSpeakParam === '0' ? false : false);
 
       return {
         currentIndex: isNaN(index) ? 0 : index,
@@ -1078,7 +1234,104 @@
         opacity: isNaN(opacity) ? 1.0 : opacity,
         alwaysOnTop: alwaysOnTop,
         edgeStickEnabled: edgeStickEnabled,
+        bankId: bankId,
+        listMode: listMode,
+        pattern: pattern,
+        minLen: isNaN(minLen) ? 0 : minLen,
+        maxLen: isNaN(maxLen) ? 0 : maxLen,
+        sortBy: sortBy,
+        sortAsc: sortAsc,
+        autoSpeak: autoSpeak,
       };
+    }
+
+    // 筛选状态（从URL参数初始化）
+    let currentListMode = 0;
+    let currentPattern = '';
+    let currentMinLen = 0;
+    let currentMaxLen = 0;
+    let currentSortBy = '';
+    let currentSortAsc = true;
+
+    // 自动发音开关
+    let autoSpeakEnabled = false;
+    let lastAutoSpeakWord = '';  // 记录上次自动发音的单词，避免重复播放
+
+    // 通配符模式转正则
+    function patternToRegex(pattern) {
+      if (!pattern || !pattern.trim()) return null;
+      var trimmed = pattern.trim();
+      try {
+        if (trimmed.indexOf('*') !== -1) {
+          var escaped = trimmed.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+          return new RegExp('^' + escaped + '$', 'i');
+        }
+        return new RegExp(escapedPattern(trimmed), 'i');
+      } catch (e) {
+        console.error('[专注模式] 正则转换失败:', e);
+        return null;
+      }
+    }
+
+    function escapedPattern(text) {
+      return text.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // 对单词列表应用筛选
+    function applyFilters(wordList) {
+      var list = wordList.slice();
+
+      // 1. listMode 筛选（与主窗口 showFilteredWords 一致）
+      // 0=待复习(isReview), 1=已复习(!isReview,含已记住), 2=已记住(remember), 3=全部
+      if (currentListMode === 2) {
+        list = list.filter(function(w) { return w.remember; });
+      } else if (currentListMode === 1) {
+        list = list.filter(function(w) { return !w.isReview; });
+      } else if (currentListMode === 3) {
+        // 全部显示
+      } else {
+        // 默认0：待复习
+        list = list.filter(function(w) { return w.isReview; });
+      }
+
+      // 2. 长度筛选
+      if (currentMinLen > 0 || currentMaxLen > 0) {
+        list = list.filter(function(item) {
+          var len = (item.text || '').replace(/\s+/g, '').length;
+          if (currentMinLen > 0 && len < currentMinLen) return false;
+          if (currentMaxLen > 0 && len > currentMaxLen) return false;
+          return true;
+        });
+      }
+
+      // 3. 通配符模式筛选
+      var regex = patternToRegex(currentPattern);
+      if (regex) {
+        list = list.filter(function(item) {
+          return regex.test((item.text || '').replace(/\s+/g, ''));
+        });
+      }
+
+      // 4. 排序
+      if (currentSortBy) {
+        var dir = currentSortAsc ? 1 : -1;
+        list = list.sort(function(a, b) {
+          switch (currentSortBy) {
+            case 'alpha':
+              return dir * (a.text || '').localeCompare(b.text || '', 'en');
+            case 'length':
+              return dir * ((a.text || '').length - (b.text || '').length);
+            case 'time':
+              return dir * (new Date(a.ctime || 0).getTime() - new Date(b.ctime || 0).getTime());
+            case 'level':
+              return dir * ((a.level || 0) - (b.level || 0));
+            default:
+              return 0;
+          }
+        });
+      }
+
+      return list;
     }
 
     // 初始化
@@ -1091,6 +1344,16 @@
     currentOpacity = initialState.opacity;
     isAlwaysOnTop = initialState.alwaysOnTop;
     isEdgeStickEnabled = initialState.edgeStickEnabled;
+    currentBankId = initialState.bankId;
+    currentListMode = initialState.listMode;
+    currentPattern = initialState.pattern;
+    currentMinLen = initialState.minLen;
+    currentMaxLen = initialState.maxLen;
+    currentSortBy = initialState.sortBy;
+    currentSortAsc = initialState.sortAsc;
+    autoSpeakEnabled = initialState.autoSpeak;
+    console.log('[专注模式] 当前词库ID:', currentBankId || '(未设置，将使用旧数据库)');
+    console.log('[专注模式] 筛选参数: listMode=' + currentListMode + ', pattern=' + currentPattern + ', minLen=' + currentMinLen + ', maxLen=' + currentMaxLen + ', sortBy=' + currentSortBy + ', autoSpeak=' + autoSpeakEnabled);
 
     updateTopButton();
     updateEdgeStickButton();

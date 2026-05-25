@@ -5,6 +5,20 @@ interface Window {
     // 把utoolsApits声明加入到全局对象,否则无法正常提示
     utools: UToolsApi
     posthog: any
+    /** Electron preload 暴露的 API */
+    electronAPI?: {
+        showOpenDialog: (options: any) => Promise<any>
+        showSaveDialog: (options: any) => Promise<any>
+        readFile: (filePath: string) => Promise<string>
+        writeFile: (filePath: string, content: string) => Promise<boolean>
+        getPath: (name: string) => Promise<string>
+        clipboardReadText: () => Promise<string>
+        clipboardWriteText: (text: string) => Promise<void>
+        platform: string
+        onGlobalShortcut: (callback: (action: string) => void) => void
+        setWindowOpacity: (opacity: number) => Promise<void>
+        getWindowOpacity: () => Promise<number>
+    }
     services: {
         constanst: {
             audioBaseUrl: string

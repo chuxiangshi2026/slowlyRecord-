@@ -56,6 +56,10 @@ export type UserSetType = DbDoc<{
     keys: KeyType;
     ocrKeys: OcrKeyType;
     focusMode: FocusModeSettings;
+    /** 主窗口透明度 (0.3 - 1.0)，仅 Electron 有效 */
+    mainWindowOpacity: number;
+    /** 选中单词时自动发音 */
+    autoSpeak: boolean;
 }>;
 
 

@@ -92,6 +92,25 @@ const debugPanelRef = ref<InstanceType<typeof DebugPanel> | null>(null);
       };
     }
 
+    // 同步主窗口透明度
+    if (setDb.mainWindowOpacity !== undefined) {
+      wordsStore.mainWindowOpacity = setDb.mainWindowOpacity;
+      console.log('[onPluginEnter] 同步主窗口透明度:', setDb.mainWindowOpacity, 'isUtools:', checkIsUtools());
+      // Web 端：同步后立即应用透明度（onMounted 时数据库可能尚未就绪）
+      // uTools 端 iframe 背景不受内部 CSS 控制，跳过 applyRgbaOpacity
+      if (!window.electronAPI && !checkIsUtools() && setDb.mainWindowOpacity < 1.0) {
+        setTimeout(() => {
+          console.log('[onPluginEnter] 延迟应用透明度:', setDb.mainWindowOpacity);
+          wordsStore.applyRgbaOpacity(setDb.mainWindowOpacity);
+        }, 150);
+      }
+    }
+
+    // 同步自动发音设置
+    if (setDb.autoSpeak !== undefined) {
+      wordsStore.autoSpeak = setDb.autoSpeak;
+    }
+
     // 安全地同步API密钥，提供默认值以防undefined
     if (setDb.keys) {
       // 为每个翻译平台提供默认空值
@@ -568,7 +587,7 @@ function closeTextPanel() {
   textContent.value = '';
 }
 
-onMounted(() => {
+onMounted(async () => {
 
   // 首页刷新时触发   自动更新需要复习的单词
   // 延迟调用，避免初始化时重复计算
@@ -578,11 +597,47 @@ onMounted(() => {
 
   // 预加载本地 OCR Worker（如果用户选择了本地 OCR）
   const wordsStore = useWordsStore();
-const router = useRouter();
+  const router = useRouter();
   if (wordsStore.currentOcrPlatform === 'local') {
     setTimeout(() => {
       preloadWorker();
     }, 1000); // 延迟1秒，让页面先完成渲染
+  }
+
+  // 非 uTools 环境：从数据库加载设置
+  if (!checkIsUtools()) {
+    try {
+      const setDb = getSetDb();
+      if (setDb) {
+        wordsStore.pluginStatus = setDb.pluginStatus;
+        wordsStore.shortcutEnabled = setDb.shortcutEnabled;
+        if (setDb.translationPlatform) wordsStore.currentTranslationPlatform = setDb.translationPlatform;
+        if (setDb.ocrPlatform) wordsStore.currentOcrPlatform = setDb.ocrPlatform;
+        if (setDb.memoryFirmness) wordsStore.memoryFirmness = setDb.memoryFirmness;
+        if (setDb.mainWindowOpacity !== undefined) wordsStore.mainWindowOpacity = setDb.mainWindowOpacity;
+        if (setDb.autoSpeak !== undefined) wordsStore.autoSpeak = setDb.autoSpeak;
+      }
+    } catch (e) {
+      console.error('加载用户设置失败:', e);
+    }
+  }
+
+  // 启动时应用保存的窗口透明度
+  if (wordsStore.mainWindowOpacity < 1.0) {
+    if (window.electronAPI) {
+      // Electron：原生窗口 API
+      setTimeout(() => {
+        window.electronAPI!.setWindowOpacity(wordsStore.mainWindowOpacity).catch((e: Error) => {
+          console.error('应用窗口透明度失败:', e);
+        });
+      }, 200);
+    } else if (!checkIsUtools()) {
+      // Web：rgba 背景方案
+      setTimeout(() => {
+        wordsStore.applyRgbaOpacity(wordsStore.mainWindowOpacity);
+      }, 100);
+    }
+    // uTools 端：主窗口 iframe 背景不受内部 CSS 控制，跳过 applyRgbaOpacity
   }
 
   // 添加调试面板快捷键 Ctrl+Shift+D

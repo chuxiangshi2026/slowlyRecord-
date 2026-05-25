@@ -216,6 +216,10 @@ const onClick = () => {
   if (wordsStore.shortcutEnabled && itemRef.value) {
     itemRef.value.focus();
   }
+  // 自动发音：选中单词时自动播放
+  if (wordsStore.autoSpeak) {
+    play();
+  }
 };
 // 获得焦点时的处理
 const onFocus = () => {

@@ -855,7 +855,13 @@ const handleRecreateWindow = (state: any) => {
     console.log('[handleRecreateWindow] 延迟后创建新窗口');
     try {
       // @ts-ignore
-      focusWindow = (window as any).utools?.createBrowserWindow(`focus.html?theme=${themeParam}&index=${focusWindowState.currentIndex}&showExplains=${focusWindowState.showExplains}&opacity=${focusWindowState.opacity}&alwaysOnTop=${newAlwaysOnTop}&edgeStickEnabled=${newEdgeStickEnabled}`, {
+      const currentBankId = encodeURIComponent(wordsStore.currentWordBankId || '');
+      const filterPattern = encodeURIComponent(currentFilter.value.pattern || '');
+      const filterMinLen = currentFilter.value.minLength > 0 ? currentFilter.value.minLength : '';
+      const filterMaxLen = currentFilter.value.maxLength > 0 ? currentFilter.value.maxLength : '';
+      const filterSortBy = encodeURIComponent(currentFilter.value.sortBy || '');
+      const filterSortAsc = currentFilter.value.sortAsc ? '1' : '0';
+      focusWindow = (window as any).utools?.createBrowserWindow(`focus.html?theme=${themeParam}&index=${focusWindowState.currentIndex}&showExplains=${focusWindowState.showExplains}&opacity=${focusWindowState.opacity}&alwaysOnTop=${newAlwaysOnTop}&edgeStickEnabled=${newEdgeStickEnabled}&bankId=${currentBankId}&listMode=${listMode.value}&pattern=${filterPattern}&minLen=${filterMinLen}&maxLen=${filterMaxLen}&sortBy=${filterSortBy}&sortAsc=${filterSortAsc}&autoSpeak=${wordsStore.autoSpeak ? '1' : '0'}`, {
 
         width: 320,
         height: 100,
@@ -1384,6 +1390,29 @@ const handleOpenWordList = async () => {
 };
 
 
+/**
+ * 处理专注模式中的单词变更通知
+ * 专注模式修改了单词状态（记住/忘记/等级变化/释义切换），主窗口同步更新
+ */
+const handleWordChanged = async (payload: any) => {
+  if (!payload || !payload.word) {
+    console.log('[handleWordChanged] payload 无效:', payload);
+    return;
+  }
+
+  const changedWord: Word = payload.word;
+  console.log('[handleWordChanged] 专注模式单词变更:', changedWord.text, 'level:', changedWord.level, 'isReview:', changedWord.isReview);
+
+  // 通过 store 同步更新单词（自动更新词库 + 旧数据库）
+  await wordsStore.addAndUpdateWord(changedWord);
+
+  // 重新计算待复习状态
+  wordsStore.upReview();
+
+  console.log('[handleWordChanged] 单词状态已同步:', changedWord.text);
+};
+
+
 const processFocusModePendingAction = (action: any, source = 'unknown') => {
   if (!action || typeof action !== 'object') {
     return false;
@@ -1497,6 +1526,9 @@ const handleChildMessage = (message: any) => {
   } else if (channel === 'recreateWindow') {
     console.log('[handleChildMessage] 处理 recreateWindow，payload:', payload);
     handleRecreateWindow(payload);
+  } else if (channel === 'wordChanged') {
+    console.log('[handleChildMessage] 处理 wordChanged，payload:', payload);
+    handleWordChanged(payload);
   } else {
     console.log('[handleChildMessage] 未知通道:', channel);
   }
@@ -1576,7 +1608,14 @@ const openFocusMode = () => {
       const themeParam = isDark ? 'dark' : 'light';
       console.log('[openFocusMode] 调用 createBrowserWindow');
       // @ts-ignore
-      focusWindow = (window as any).utools.createBrowserWindow(`focus.html?theme=${themeParam}&alwaysOnTop=${initAlwaysOnTop}&edgeStickEnabled=${initEdgeStickEnabled}`, {
+      const currentBankId = encodeURIComponent(wordsStore.currentWordBankId || '');
+      // 传递当前筛选状态，使专注模式与单词列表筛选一致
+      const filterPattern = encodeURIComponent(currentFilter.value.pattern || '');
+      const filterMinLen = currentFilter.value.minLength > 0 ? currentFilter.value.minLength : '';
+      const filterMaxLen = currentFilter.value.maxLength > 0 ? currentFilter.value.maxLength : '';
+      const filterSortBy = encodeURIComponent(currentFilter.value.sortBy || '');
+      const filterSortAsc = currentFilter.value.sortAsc ? '1' : '0';
+      focusWindow = (window as any).utools.createBrowserWindow(`focus.html?theme=${themeParam}&alwaysOnTop=${initAlwaysOnTop}&edgeStickEnabled=${initEdgeStickEnabled}&bankId=${currentBankId}&listMode=${listMode.value}&pattern=${filterPattern}&minLen=${filterMinLen}&maxLen=${filterMaxLen}&sortBy=${filterSortBy}&sortAsc=${filterSortAsc}&autoSpeak=${wordsStore.autoSpeak ? '1' : '0'}`, {
 
         width: 320,
         height: 100,

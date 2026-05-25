@@ -232,3 +232,23 @@ ipcMain.handle('clipboardReadText', () => {
 ipcMain.handle('clipboardWriteText', (_event, text) => {
   clipboard.writeText(text)
 })
+
+// 窗口透明度：获取
+ipcMain.handle('getWindowOpacity', () => {
+  const opacity = mainWindow ? mainWindow.getOpacity() : 1.0
+  console.log('[Electron] getWindowOpacity:', opacity)
+  return opacity
+})
+
+// 窗口透明度：设置
+ipcMain.handle('setWindowOpacity', (_event, opacity) => {
+  console.log('[Electron] setWindowOpacity 收到请求:', opacity)
+  if (mainWindow) {
+    const validOpacity = Math.max(0.3, Math.min(1.0, Number(opacity) || 1.0))
+    mainWindow.setOpacity(validOpacity)
+    console.log('[Electron] 窗口透明度已应用:', validOpacity)
+    return validOpacity
+  }
+  console.warn('[Electron] setWindowOpacity: mainWindow 不存在')
+  return 1.0
+})

@@ -90,6 +90,40 @@
       </div>
     </div>
 
+    <div>
+      <div class="setting-item">
+        <div class="content">选中单词自动发音</div>
+        <el-switch class="shorcut-desc"
+                   v-model="wordsStore.autoSpeak"
+                   inline-prompt
+                   size="large"
+                   active-text="开"
+                   inactive-text="关"
+                   @change="onAutoSpeakChange"
+        />
+      </div>
+    </div>
+
+    <div v-if="!isUtools()">
+      <div class="setting-item" style="flex-direction: column; align-items: flex-start;">
+        <div class="content" style="margin-bottom: 8px;">
+          主窗口透明度
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+          <el-slider
+            v-model="opacityPercent"
+            :min="30"
+            :max="100"
+            :step="5"
+            :show-tooltip="false"
+            style="flex: 1;"
+            @change="onOpacityChange"
+          />
+          <span class="shorcut-desc" style="margin-top: 0; min-width: 40px; text-align: right;">{{ opacityPercent }}%</span>
+        </div>
+      </div>
+    </div>
+
 
     <div class="titles">
       <div class="setting-item">
@@ -442,6 +476,22 @@ const onCloseAfterAddSwitchChange = () => {
   wordsStore.setClosePlugin(wordsStore.pluginStatus)
 }
 
+// 主窗口透明度百分比（显示用）
+const opacityPercent = computed({
+  get: () => Math.round(wordsStore.mainWindowOpacity * 100),
+  set: (val: number) => {
+    wordsStore.setMainWindowOpacity(val / 100)
+  }
+})
+
+const onOpacityChange = (val: number) => {
+  wordsStore.setMainWindowOpacity(val / 100)
+}
+
+const onAutoSpeakChange = () => {
+  wordsStore.setAutoSpeak(wordsStore.autoSpeak)
+}
+
 
 
 const kuaijiejian = (type: number) => {
@@ -582,6 +632,8 @@ const exportConfig = () => {
       translationPlatform: userSet.translationPlatform,
       ocrPlatform: userSet.ocrPlatform,
       memoryFirmness: userSet.memoryFirmness,
+      mainWindowOpacity: userSet.mainWindowOpacity ?? 1.0,
+      autoSpeak: userSet.autoSpeak ?? false,
       keys: userSet.keys || {},
       ocrKeys: userSet.ocrKeys || {}
     }
@@ -652,6 +704,12 @@ const handleFileImport = (event: Event) => {
         }
         if (settings.memoryFirmness) {
           wordsStore.setMemoryFirmness(settings.memoryFirmness)
+        }
+        if (settings.mainWindowOpacity !== undefined) {
+          wordsStore.setMainWindowOpacity(settings.mainWindowOpacity)
+        }
+        if (settings.autoSpeak !== undefined) {
+          wordsStore.setAutoSpeak(settings.autoSpeak)
         }
 
         // 更新 API Keys
