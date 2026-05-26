@@ -254,6 +254,21 @@
       animation: spell-pulse 1.2s ease-in-out infinite;
     }
 
+    .btn-dictation {
+      position: absolute;
+      top: 2px;
+      right: 106px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      padding: 2px;
+      transition: color 0.3s ease;
+      -webkit-app-region: no-drag;
+    }
+
+    .btn-dictation:hover {
+      color: var(--primary-color);
+    }
+
     @keyframes spell-pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
@@ -323,6 +338,7 @@
     .focus-container.edge-hidden .btn-edge,
     .focus-container.edge-hidden .btn-list,
     .focus-container.edge-hidden .btn-spell,
+    .focus-container.edge-hidden .btn-dictation,
     .focus-container.edge-hidden .opacity-bar,
     .focus-container.edge-hidden .counter,
     .focus-container.edge-hidden .spell-hint {
@@ -338,6 +354,7 @@
     .focus-container.edge-preview .btn-edge,
     .focus-container.edge-preview .btn-list,
     .focus-container.edge-preview .btn-spell,
+    .focus-container.edge-preview .btn-dictation,
     .focus-container.edge-preview .opacity-bar,
     .focus-container.edge-preview .counter,
     .focus-container.edge-preview .spell-hint {
@@ -476,6 +493,10 @@
     <!-- 贴边隐藏 -->
     <span class="icon btn-edge" id="btn-edge" title="关闭贴边隐藏">
       <svg viewBox="0 0 24 24"><path d="M5 5h2v14H5V5zm4 1h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm1 2v8h8V8h-8z"/></svg>
+    </span>
+    <!-- 听写练习 -->
+    <span class="icon btn-dictation" id="btn-dictation" title="听写练习">
+      <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
     </span>
     <!-- 拼写模式 -->
     <span class="icon btn-spell" id="btn-spell" title="拼写模式">
@@ -889,6 +910,21 @@
     document.getElementById('btn-remember').addEventListener('click', markRemembered);
     document.getElementById('btn-forgot').addEventListener('click', markForgot);
     document.getElementById('btn-close').addEventListener('click', () => window.close());
+
+    // 听写练习按钮
+    document.getElementById('btn-dictation').addEventListener('click', () => {
+      postFocusModeAction('openDictation', undefined, { persistPendingAction: true });
+      try {
+        if (typeof utools !== 'undefined' && utools.showMainWindow) {
+          utools.showMainWindow();
+        }
+      } catch (e) {
+        console.error('[专注模式] 显示主窗口失败:', e);
+      }
+      setTimeout(() => {
+        window.close();
+      }, 100);
+    });
 
     // 置顶/贴边隐藏按钮
     let isAlwaysOnTop = true;

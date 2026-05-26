@@ -270,7 +270,7 @@
       <!-- 当前词库名称显示 -->
       <span class="current-bank-name" @click="openWordBankManager">
         <i class="iconfont icon-library"></i>
-        {{ wordsStore.currentWordBank?.name || '我的词库' }}
+        {{ wordsStore.currentWordBank?.name || '基础词库' }}
       </span>
       <el-divider direction="vertical"/>
       <span :class="{ 'remembered-highlight': listMode==0 }" @click="showOnlyForget"> 待复习: {{
@@ -300,7 +300,7 @@
         <i class="iconfont icon-invisible" @click="invisibleExplained"></i>
       </el-tooltip>
       <el-tooltip class="box-item" effect="dark" content="筛选排序" placement="top" popper-class="small-tooltip">
-        <el-icon :size="18" style="cursor: pointer;" :class="{ 'filter-active': filterPanelVisible }" @click="toggleFilterPanel"><Operation /></el-icon>
+        <i class="iconfont icon-level" :class="{ 'filter-active': filterPanelVisible }" style="cursor: pointer; font-size: 18px;" @click="toggleFilterPanel"></i>
       </el-tooltip>
 <!--      <el-tooltip class="box-item" effect="dark" content="截图识别" placement="top" popper-class="small-tooltip">
         <i class="iconfont icon-translate" @click="startScreenCapture" style="font-weight: bold;"></i>
@@ -397,10 +397,9 @@ import {
   Trophy,
   Delete,
   Plus,
-  Connection,
-  Operation
+  Connection
 } from '@element-plus/icons-vue';
-import {useRouter} from 'vue-router';
+import {useRouter, useRoute} from 'vue-router';
 import {getSetDb} from '@/utils/user-set-db-util.ts';
 import {getDbAdapter} from '@/adapters/db';
 import {isUtools} from '@/adapters/platform';
@@ -431,6 +430,19 @@ const EDGE_DRAG_OUT_THRESHOLD = 24;
 const word = ref('')
 const wordsStore = useWordsStore();
 const router = useRouter();
+const route = useRoute();
+
+// 如果 URL 携带 openFocus=1 参数（从听写等其他页面跳转过来），自动打开专注模式
+if (route.query.openFocus === '1') {
+  // 延迟确保单词列表加载完毕
+  nextTick(() => {
+    setTimeout(() => {
+      openFocusMode();
+      // 清理 query 参数，防止重复触发
+      router.replace({ query: { ...route.query, openFocus: undefined } });
+    }, 300);
+  });
+}
 
 // 切换词库选项
 const wordBankOptions = [
@@ -1413,6 +1425,35 @@ const handleWordChanged = async (payload: any) => {
 };
 
 
+/**
+ * 处理从专注模式跳转到听写练习的请求
+ */
+const handleOpenDictation = () => {
+  console.log('专注模式请求跳转到听写练习');
+
+  // 关闭专注窗口
+  if (focusWindow && !focusWindow.isDestroyed?.()) {
+    try {
+      focusWindow.close();
+    } catch (e) {
+      console.error('关闭专注窗口失败:', e);
+    }
+    focusWindow = null;
+  }
+
+  // 清理相关资源
+  clearFocusModeSync();
+  clearEdgeStickResources();
+  isEdgeHidden = false;
+  savedBounds = null;
+  edgeHiddenSide = null;
+  edgeRestoreSuspendedUntil = 0;
+  isExpandedFromEdge = false;
+
+  // 跳转到听写页面
+  router.push('/dictation');
+};
+
 const processFocusModePendingAction = (action: any, source = 'unknown') => {
   if (!action || typeof action !== 'object') {
     return false;
@@ -1529,6 +1570,9 @@ const handleChildMessage = (message: any) => {
   } else if (channel === 'wordChanged') {
     console.log('[handleChildMessage] 处理 wordChanged，payload:', payload);
     handleWordChanged(payload);
+  } else if (channel === 'openDictation') {
+    console.log('[handleChildMessage] 处理 openDictation');
+    handleOpenDictation();
   } else {
     console.log('[handleChildMessage] 未知通道:', channel);
   }
@@ -2656,10 +2700,15 @@ const confirmAddOcrWords = async () => {
 // ========== 听写练习功能 ==========
 
 /**
- * 跳转到听写练习页面
+ * 跳转到听写练习页面（携带筛选参数同步）
  */
 function goToDictation() {
-  router.push('/dictation')
+  const filterPattern = encodeURIComponent(currentFilter.value.pattern || '');
+  const filterMinLen = currentFilter.value.minLength > 0 ? currentFilter.value.minLength : '';
+  const filterMaxLen = currentFilter.value.maxLength > 0 ? currentFilter.value.maxLength : '';
+  const filterSortBy = encodeURIComponent(currentFilter.value.sortBy || '');
+  const filterSortAsc = currentFilter.value.sortAsc ? '1' : '0';
+  router.push(`/dictation?listMode=${listMode.value}&pattern=${filterPattern}&minLen=${filterMinLen}&maxLen=${filterMaxLen}&sortBy=${filterSortBy}&sortAsc=${filterSortAsc}`);
 }
 
 function goToLetterMemory() {
