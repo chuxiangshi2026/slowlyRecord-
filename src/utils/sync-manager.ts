@@ -399,6 +399,8 @@ async function restoreUserSettings(settings: SyncUserSettings) {
       keys: {},
       ocrKeys: {},
       focusMode: { alwaysOnTop: true, opacity: 1.0, edgeStickEnabled: true },
+      mainWindowOpacity: 1.0,
+      autoSpeak: false,
     }
   }
 

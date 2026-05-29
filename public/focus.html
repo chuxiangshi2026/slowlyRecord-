@@ -164,6 +164,67 @@
       animation: spell-shake 0.3s ease;
     }
 
+    /* 听写模式：逐字母占位符 */
+    .dictation-slots {
+      display: none;
+      justify-content: center;
+      gap: 3px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+      -webkit-app-region: no-drag;
+      cursor: text;
+      transition: color 0.3s ease;
+    }
+
+    .dictation-slot {
+      width: 16px;
+      height: 24px;
+      border-bottom: 2px solid var(--text-quaternary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: border-color 0.15s, color 0.3s ease;
+    }
+
+    .dictation-slot.current {
+      border-bottom-color: var(--primary-color);
+      border-bottom-width: 3px;
+    }
+
+    .dictation-slot.filled {
+      border-bottom-color: var(--success-color);
+      color: var(--success-color);
+    }
+
+    .dictation-slots.correct .dictation-slot {
+      border-bottom-color: var(--success-color);
+      color: var(--success-color);
+    }
+
+    .dictation-slots.wrong .dictation-slot {
+      border-bottom-color: var(--danger-color);
+      color: var(--danger-color);
+      animation: spell-shake 0.3s ease;
+    }
+
+    /* 听写模式隐藏输入框 */
+    .dictation-input.dictation-slot-mode,
+    .dictation-input.dictation-slot-mode:focus {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      border: none !important;
+      outline: none !important;
+      padding: 0;
+      margin: 0;
+      caret-color: transparent;
+    }
+
     .explains {
       font-size: 11px;
       color: var(--text-secondary);
@@ -353,6 +414,7 @@
 
     .focus-container.edge-hidden .word,
     .focus-container.edge-hidden .dictation-input,
+    .focus-container.edge-hidden .dictation-slots,
     .focus-container.edge-hidden .explains,
     .focus-container.edge-hidden .actions,
     .focus-container.edge-hidden .btn-close,
@@ -370,6 +432,7 @@
 
     .focus-container.edge-preview .word,
     .focus-container.edge-preview .dictation-input,
+    .focus-container.edge-preview .dictation-slots,
     .focus-container.edge-preview .explains,
     .focus-container.edge-preview .actions,
     .focus-container.edge-preview .btn-close,
@@ -489,6 +552,7 @@
   <div class="focus-container" id="app">
     <div class="word" id="word">加载中...</div>
     <input class="dictation-input" id="dictation-input" type="text" placeholder="输入单词..." style="display:none" autocomplete="off" spellcheck="false">
+    <div class="dictation-slots" id="dictation-slots"></div>
     <div class="spell-hint" id="spell-hint" style="display:none">键盘输入字母拼写</div>
     <div class="explains" id="explains"></div>
 
@@ -636,36 +700,68 @@
     // 数据库 key
     const DB_KEY = 'words-list';
 
+    // 复习间隔（分钟）——与主窗口 DEFAULT_INTERVALS 一致
+    var REVIEW_INTERVALS = [1, 5, 30, 6*60, 12*60, 24*60, 2*24*60, 4*24*60, 7*24*60, 15*24*60,
+      30*24*60, 3*30*24*60, 6*30*24*60, 12*30*24*60];
+
+    // 根据复习间隔重新计算 isReview 状态（与 store.upReview 一致）
+    function upReview(wordList) {
+      var now = Date.now();
+      wordList.forEach(function(item) {
+        if (!item) return;
+        var learnDate = item.learnDate;
+        var ctime = item.ctime;
+        if (typeof learnDate === 'string') learnDate = new Date(learnDate);
+        if (typeof ctime === 'string') ctime = new Date(ctime);
+        if (!learnDate || !ctime) return;
+
+        var level = Number(item.level) || 1;
+        var interval = REVIEW_INTERVALS[level] || REVIEW_INTERVALS[1];
+        var reviewTime = learnDate.getTime() + interval * 60 * 1000;
+        var shouldReview = now > reviewTime;
+        var isNewWord = Math.abs(learnDate.getTime() - ctime.getTime()) < 5000;
+
+        if (shouldReview && !item.isReview) {
+          item.isReview = true;
+        } else if (!shouldReview && item.isReview && !isNewWord && (now - learnDate.getTime() > 60000)) {
+          item.isReview = false;
+        }
+      });
+    }
+
     // 加载数据
     async function loadWords() {
       try {
+        var allLoadedWords = [];
         if (typeof utools !== 'undefined') {
           // 优先从当前词库分片加载单词
           if (currentBankId) {
             console.log('[专注模式] 从词库分片加载:', currentBankId);
             const bankWords = getWordBankWords(currentBankId);
             if (bankWords.length > 0) {
-              // 应用筛选条件后显示
-              words = applyFilters(bankWords);
-              console.log('[专注模式] 词库共', bankWords.length, '个单词，筛选后:', words.length);
+              allLoadedWords = bankWords;
             }
           }
 
           // 如果词库为空或没有 bankId，回退到旧数据库方式加载
-          if (words.length === 0 && currentBankId) {
-            // 词库存在但筛选后为空
-            console.log('[专注模式] 词库存在但筛选后无匹配单词');
-          } else if (words.length === 0) {
+          if (allLoadedWords.length === 0 && currentBankId) {
+            console.log('[专注模式] 词库存在但无单词');
+          } else if (allLoadedWords.length === 0) {
             console.log('[专注模式] 词库为空或未设置，回退到旧数据库加载');
-            let allDocs = [];
             try {
-              allDocs = utools.db.allDocs('words-list');
+              allLoadedWords = utools.db.allDocs('words-list');
             } catch (e) {
-              allDocs = utools.db.allDocs();
+              allLoadedWords = utools.db.allDocs();
             }
-            words = applyFilters(allDocs);
           }
+
+          // 重新计算 isReview 状态
+          upReview(allLoadedWords);
         }
+
+        // 应用筛选条件
+        words = applyFilters(allLoadedWords);
+        console.log('[专注模式] 加载', allLoadedWords.length, '个单词，筛选后:', words.length);
 
         if (words.length === 0) {
           elWord.textContent = '暂无待复习单词';
@@ -680,10 +776,43 @@
       }
     }
 
+    // 渲染听写模式的字母占位符
+    function renderDictationSlots() {
+      var container = document.getElementById('dictation-slots');
+      if (!container) return;
+      var word = words[currentIndex];
+      if (!word) return;
+      var wordText = (word.text || '').replace(/\s+/g, '');
+      var typed = (elDictationInput.value || '').replace(/\s+/g, '');
+      var html = '';
+      for (var i = 0; i < wordText.length; i++) {
+        var cls = 'dictation-slot';
+        var content = '';
+        if (i < typed.length) {
+          cls += ' filled';
+          content = typed[i];
+        } else if (i === typed.length) {
+          cls += ' current';
+        }
+        html += '<span class="' + cls + '">' + content + '</span>';
+      }
+      container.innerHTML = html;
+    }
+
     // 更新显示
     function updateDisplay() {
       var word = words[currentIndex];
-      if (!word) return;
+      if (!word) {
+        // 列表为空，显示完成提示
+        elWord.style.display = 'block';
+        elWord.textContent = '暂无待复习单词';
+        elWord.classList.remove('spelling');
+        elDictationInput.style.display = 'none';
+        document.getElementById('dictation-slots').style.display = 'none';
+        elExplains.style.display = 'none';
+        elCounter.textContent = '0/0';
+        return;
+      }
 
       var wordText = word.text || '无';
 
@@ -692,8 +821,12 @@
         elWord.style.display = 'none';
         elDictationInput.style.display = 'block';
         elDictationInput.value = '';
-        elDictationInput.className = 'dictation-input';
-        elDictationInput.placeholder = Array(wordText.length).fill('_').join(' ');
+        elDictationInput.className = 'dictation-input dictation-slot-mode';
+        elDictationInput.maxLength = wordText.length;
+        var slotsContainer = document.getElementById('dictation-slots');
+        slotsContainer.style.display = 'flex';
+        slotsContainer.className = 'dictation-slots';
+        renderDictationSlots();
         elDictationInput.focus();
         document.getElementById('spell-hint').style.display = 'none';
       }
@@ -701,6 +834,7 @@
       else if (spellMode) {
         elWord.style.display = 'block';
         elDictationInput.style.display = 'none';
+        document.getElementById('dictation-slots').style.display = 'none';
         var html = '';
         for (var i = 0; i < wordText.length; i++) {
           if (i < spellIndex) {
@@ -717,6 +851,7 @@
       } else {
         elWord.style.display = 'block';
         elDictationInput.style.display = 'none';
+        document.getElementById('dictation-slots').style.display = 'none';
         elWord.textContent = wordText;
         elWord.classList.remove('spelling');
         document.getElementById('spell-hint').style.display = 'none';
@@ -762,12 +897,22 @@
 
     // 播放发音
     async function playAudio() {
-      const word = words[currentIndex];
+      var word = words[currentIndex];
       if (!word) return;
       try {
-        const audio = new Audio();
-        audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word.text)}&type=1`;
-        await audio.play();
+        // 优先使用浏览器原生语音合成（不依赖网络，与听写主界面一致）
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          var utterance = new SpeechSynthesisUtterance(word.text);
+          utterance.lang = 'en-US';
+          utterance.rate = 0.8;
+          window.speechSynthesis.speak(utterance);
+        } else {
+          // 回退：使用有道TTS在线播放
+          var audio = new Audio();
+          audio.src = 'https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(word.text) + '&type=1';
+          await audio.play();
+        }
       } catch (e) {
         console.error('播放失败:', e);
       }
@@ -812,7 +957,8 @@
       if (!word) return;
 
       word.level = Math.min(7, (word.level || 1) + 1);
-      word.isReview = word.level < 7;
+      // 答对后设为不需要复习（刚复习过），等 upReview 根据间隔时间重新计算
+      word.isReview = false;
       if (word.level >= 7) word.remember = true;
       word.learnDate = new Date();
 
@@ -830,14 +976,27 @@
       // 如果单词不再符合当前列表模式筛选条件，从列表中移除
       if (!shouldKeepInList(word)) {
         words.splice(currentIndex, 1);
-        if (currentIndex >= words.length) currentIndex = Math.max(0, words.length - 1);
+        // 移除后 currentIndex 自动指向下一个单词，无需递增
+      } else {
+        // 单词仍在列表中，前进到下一个
+        currentIndex++;
+      }
+
+      // 如果已到列表末尾或列表为空，重新加载一轮
+      if (currentIndex >= words.length || words.length === 0) {
+        loadWords().then(function() {
+          if (words.length > 0) {
+            currentIndex = 0;
+            updateDisplay();
+            showToast('继续复习未掌握的单词');
+            if (dictationMode) playAudio();
+          }
+        });
+        return;
       }
 
       updateDisplay();
-
-      if (currentIndex < words.length - 1) {
-        setTimeout(function() { currentIndex++; updateDisplay(); }, 200);
-      }
+      if (dictationMode) playAudio();
     }
 
     // 标记忘记
@@ -862,14 +1021,27 @@
       // 如果单词不再符合当前列表模式筛选条件，从列表中移除（例如：在"已记住"模式下标记忘记）
       if (!shouldKeepInList(word)) {
         words.splice(currentIndex, 1);
-        if (currentIndex >= words.length) currentIndex = Math.max(0, words.length - 1);
+        // 移除后 currentIndex 自动指向下一个单词
+      } else {
+        // 单词仍在列表中，前进到下一个（忘记的单词留在列表中后续再复习）
+        currentIndex++;
+      }
+
+      // 如果已到列表末尾或列表为空，重新加载一轮
+      if (currentIndex >= words.length || words.length === 0) {
+        loadWords().then(function() {
+          if (words.length > 0) {
+            currentIndex = 0;
+            updateDisplay();
+            showToast('继续复习未掌握的单词');
+            if (dictationMode) playAudio();
+          }
+        });
+        return;
       }
 
       updateDisplay();
-
-      if (currentIndex < words.length - 1) {
-        setTimeout(function() { currentIndex++; updateDisplay(); }, 200);
-      }
+      if (dictationMode) playAudio();
     }
 
     // ========== 拼写模式 ==========
@@ -986,6 +1158,9 @@
       elDictationInput.style.display = 'none';
       elDictationInput.value = '';
       elDictationInput.className = 'dictation-input';
+      var slotsContainer = document.getElementById('dictation-slots');
+      slotsContainer.style.display = 'none';
+      slotsContainer.className = 'dictation-slots';
       updateDisplay();
     }
 
@@ -998,6 +1173,13 @@
       }
     });
 
+    // 点击占位符区域聚焦隐藏输入框
+    document.getElementById('dictation-slots').addEventListener('click', function() {
+      if (dictationMode && !dictationChecking) {
+        elDictationInput.focus();
+      }
+    });
+
     // 实时检查：输入长度达到单词长度时自动判定
     elDictationInput.addEventListener('input', function() {
       if (!dictationMode || dictationChecking) return;
@@ -1005,6 +1187,8 @@
       if (!word) return;
       var wordText = (word.text || '').replace(/\s+/g, '');
       var typed = (elDictationInput.value || '').replace(/\s+/g, '');
+      // 更新占位符显示
+      renderDictationSlots();
       // 输入长度达到单词长度时自动判定
       if (typed.length >= wordText.length) {
         checkDictationAnswer();
@@ -1019,7 +1203,9 @@
 
       if (typed === wordText) {
         // 正确
-        elDictationInput.className = 'dictation-input correct';
+        elDictationInput.className = 'dictation-input dictation-slot-mode';
+        var slotsContainer = document.getElementById('dictation-slots');
+        slotsContainer.className = 'dictation-slots correct';
         dictationChecking = true;
         setTimeout(function() {
           dictationChecking = false;
@@ -1027,7 +1213,9 @@
         }, 300);
       } else {
         // 错误
-        elDictationInput.className = 'dictation-input wrong';
+        elDictationInput.className = 'dictation-input dictation-slot-mode';
+        var slotsContainer = document.getElementById('dictation-slots');
+        slotsContainer.className = 'dictation-slots wrong';
         dictationChecking = true;
         // 短暂显示正确答案
         elWord.style.display = 'block';
@@ -1049,8 +1237,19 @@
               if (currentIndex >= words.length) currentIndex = Math.max(0, words.length - 1);
             }
           }
+          // 如果列表已空，重新加载一轮
+          if (words.length === 0) {
+            loadWords().then(function() {
+              if (words.length > 0) {
+                showToast('继续复习未掌握的单词');
+              }
+            });
+            return;
+          }
           elDictationInput.value = '';
-          elDictationInput.className = 'dictation-input';
+          elDictationInput.className = 'dictation-input dictation-slot-mode';
+          var slotsContainer = document.getElementById('dictation-slots');
+          slotsContainer.className = 'dictation-slots';
           updateDisplay();
           // 错误后自动再次发音并聚焦输入框
           playAudio();

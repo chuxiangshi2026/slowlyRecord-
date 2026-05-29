@@ -96,7 +96,7 @@ const props = withDefaults(defineProps<{
 });
 const wordModel = defineModel<Word>({required: true})
 
-const emit = defineEmits(['translation', 'remember', 'forget', 'delete'])
+const emit = defineEmits(['translation', 'remember', 'forget', 'delete', 'toggle-explained'])
 
 // 删除锁，防止连续点击
 const isDeleting = ref(false)
@@ -257,6 +257,7 @@ const hiddenExplain = ref('');
 const translation = () => {
   hiddenExplain.value = cleanWordText.value
   wordModel.value.explainedHidden = !wordModel.value.explainedHidden;
+  emit('toggle-explained');
 }
 
 

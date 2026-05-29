@@ -156,7 +156,7 @@ export const useWordsStore =
              *计算属性,统计已复习的单词数 (不需要复习的 - 已记住数)
              */
             const reviewCount = computed(() => {
-                return words.value.filter((word: Word) => !word.isReview).length - rememberCount.value
+                return words.value.filter((word: Word) => !word.isReview && !word.remember).length
             })
             /**
              * 永久记住的单词数

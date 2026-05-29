@@ -46,6 +46,7 @@
             :disable-actions="listMode"
             v-model="wordsStore.words[getIndexInOriginalList(item)]"
             @delete="deleteWord(getIndexInOriginalList(item))"
+            @toggle-explained="showExplained = -1"
             :showExplained="showExplained"
             :word-index="index"
         />
@@ -339,7 +340,7 @@
         <el-icon :size="18" style="cursor: pointer;" @click="goToLetterMemory"><Tickets /></el-icon>
       </el-tooltip>
       <el-tooltip class="box-item" effect="dark" content="专注模式" placement="top" popper-class="small-tooltip">
-        <i class="iconfont icon-card" @click="openFocusMode"></i>
+        <i class="iconfont icon-card" @click="() => openFocusMode()"></i>
       </el-tooltip>
 
       <el-tooltip class="box-item" effect="dark" content="多端同步" placement="top" popper-class="small-tooltip">
@@ -1433,6 +1434,7 @@ const handleWordChanged = async (payload: any) => {
  */
 const handleOpenDictation = async () => {
   console.log('专注模式请求跳转到听写练习');
+  clearFocusModePendingAction();
 
   // 刷新单词列表数据
   try {
@@ -1441,7 +1443,7 @@ const handleOpenDictation = async () => {
     console.error('刷新单词列表失败:', e);
   }
 
-  // 关闭专注窗口
+  // 先关闭专注窗口
   if (focusWindow && !focusWindow.isDestroyed?.()) {
     try {
       focusWindow.close();
@@ -1462,6 +1464,19 @@ const handleOpenDictation = async () => {
 
   // 跳转到听写页面
   router.push('/dictation');
+
+  // 显示主窗口
+  if (isUtools() && (window as any).utools?.showMainWindow) {
+    (window as any).utools.showMainWindow();
+  }
+
+  // 延迟再次刷新，确保数据加载完毕
+  setTimeout(async () => {
+    await wordsStore.listWords();
+    if (isUtools() && (window as any).utools?.showMainWindow) {
+      (window as any).utools.showMainWindow();
+    }
+  }, 120);
 };
 
 const processFocusModePendingAction = (action: any, source = 'unknown') => {
@@ -2545,8 +2560,8 @@ const exportTextWords = () => {
 }
 
 
-// 是否直接显示或隐藏全部释义（-1 原状态，1显示全部，0 隐藏全部）
-const showExplained = ref(1)
+// 是否直接显示或隐藏全部释义（-1 原状态/单卡控制，1显示全部，0 隐藏全部）
+const showExplained = ref(-1)
 // 单独控制当前的卡片释义
 // const hiddenExplain = ref('')
 /**

@@ -1111,7 +1111,7 @@ async function checkAnswer() {
 
   if (isCorrect) {
     // 正确：记一次记住（等级+1）
-    word.level = Math.min(7, (word.level || 1) + 1);
+    word.level = Math.min(7, (word.level || 1) + 1) as Word['level'];
     word.isReview = word.level < 7;
     if (word.level >= 7) word.remember = true;
     word.learnDate = new Date();
@@ -1125,7 +1125,7 @@ async function checkAnswer() {
     nextWord();
   } else {
     // 错误：触发忘记（等级-1）
-    word.level = Math.max(1, (word.level || 1) - 1);
+    word.level = Math.max(1, (word.level || 1) - 1) as Word['level'];
     word.isReview = true;
 
     await wordsStore.addAndUpdateWord(word);
@@ -1156,7 +1156,7 @@ async function handleForget() {
   const word = currentWord.value;
   if (!word) return;
 
-  word.level = Math.max(1, (word.level || 1) - 1);
+  word.level = Math.max(1, (word.level || 1) - 1) as Word['level'];
   word.isReview = true;
 
   await wordsStore.addAndUpdateWord(word);
