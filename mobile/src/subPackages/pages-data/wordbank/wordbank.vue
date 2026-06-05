@@ -6,7 +6,7 @@
     </view>
 
     <!-- 当前词库切换 -->
-    <view class="current-bank-section">
+<!--    <view class="current-bank-section">
       <view class="section-label">当前词库</view>
       <picker :range="bankNames" @change="onBankChange">
         <view class="bank-picker">
@@ -14,11 +14,11 @@
           <text class="bank-picker-arrow">▼</text>
         </view>
       </picker>
-    </view>
+    </view>-->
 
     <!-- 词库列表 -->
     <view class="section-header">
-      <text class="section-title">词库</text>
+      <text class="section-title">我的词库</text>
       <text class="section-add" @click="showCreateDialog">+ 新建</text>
     </view>
     <view class="bank-list">
@@ -218,7 +218,7 @@ const goTo = (url: string) => {
 
 .bank-list { padding: 0 20rpx; }
 .bank-item { background: #fff; border-radius: 16rpx; padding: 24rpx 30rpx; margin-bottom: 12rpx; display: flex; justify-content: space-between; align-items: center; }
-.bank-item.active { border-left: 6rpx solid #667eea; }
+.bank-item.active { border-left: 16rpx solid #667eea; }
 .bank-info { flex: 1; }
 .bank-name { font-size: 30rpx; font-weight: bold; color: #333; display: block; }
 .bank-count { font-size: 24rpx; color: #999; margin-top: 6rpx; display: block; }

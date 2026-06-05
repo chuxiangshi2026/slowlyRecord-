@@ -40,6 +40,7 @@ export interface WordBankMeta {
 const DB_KEY = 'mobile_words'
 const BANKS_STORAGE_KEY = 'mobile_wordbanks'
 const CURRENT_BANK_KEY = 'mobile_current_bank'
+const IMPORT_PROGRESS_KEY = 'mobile_import_progress'
 
 // 默认词库ID
 const DEFAULT_BANK_ID = 'default'
@@ -308,6 +309,36 @@ export const useMobileWords = defineStore('mobileWords', () => {
       }))
   }
 
+  // ========== 导入进度管理 ==========
+
+  /** 获取某个内置词库导入到某目标词库的进度（已导入数量） */
+  function getImportProgress(targetBankId: string, sourceId: string): number {
+    try {
+      const data = uni.getStorageSync(IMPORT_PROGRESS_KEY)
+      if (data && typeof data === 'object') {
+        const key = `${targetBankId}:${sourceId}`
+        return data[key] || 0
+      }
+    } catch {}
+    return 0
+  }
+
+  /** 设置导入进度 */
+  function setImportProgress(targetBankId: string, sourceId: string, count: number) {
+    try {
+      let data: Record<string, number> = {}
+      try {
+        const raw = uni.getStorageSync(IMPORT_PROGRESS_KEY)
+        if (raw && typeof raw === 'object') data = raw
+      } catch {}
+      const key = `${targetBankId}:${sourceId}`
+      data[key] = count
+      uni.setStorageSync(IMPORT_PROGRESS_KEY, data)
+    } catch (e) {
+      console.error('保存导入进度失败:', e)
+    }
+  }
+
   // ========== 单词 CRUD ==========
 
   async function addWord(word: Omit<MobileWord, 'id'>) {
@@ -397,7 +428,7 @@ export const useMobileWords = defineStore('mobileWords', () => {
    * 批量导入单词：整个词库写为一条 storage 记录
    * 从内存合并已有单词后一次性写入，16k 词 → 1 条记录
    */
-  async function importWords(data: MobileWord[], targetBankId?: string): Promise<MobileWord[]> {
+  async function importWords(data: MobileWord[], targetBankId?: string): Promise<{ imported: MobileWord[]; skippedCount: number }> {
     const bankId = targetBankId || currentBankId.value
 
     const importedWords: MobileWord[] = []
@@ -406,21 +437,24 @@ export const useMobileWords = defineStore('mobileWords', () => {
       importedWords.push({ ...word, id, bankId })
     }
 
-    // 从内存中读取该词库已有单词，合并后写入
+    // 从内存中读取该词库已有单词，按 word 字段去重
     const existingWords = allWords.value.filter(w =>
       w.bankId === bankId || (!w.bankId && bankId === DEFAULT_BANK_ID)
     )
-    const existingIds = new Set(existingWords.map(w => w.id))
-    const newOnly = importedWords.filter(w => !existingIds.has(w.id))
-    const mergedWords = [...existingWords, ...newOnly]
+    const existingWordSet = new Set(existingWords.map(w => w.word))
+    const newOnly = importedWords.filter(w => !existingWordSet.has(w.word))
+    const skippedCount = importedWords.length - newOnly.length
 
-    const db = getDbAdapter()
-    await db.promises.asyncPut({
-      _id: `bank_${bankId}_words`,
-      data: mergedWords
-    })
+    if (newOnly.length > 0) {
+      const mergedWords = [...existingWords, ...newOnly]
+      const db = getDbAdapter()
+      await db.promises.asyncPut({
+        _id: `bank_${bankId}_words`,
+        data: mergedWords
+      })
+    }
 
-    return importedWords
+    return { imported: newOnly, skippedCount }
   }
 
   /** 一次性追加单词到内存（shallowRef 赋值本身很快） */
@@ -491,6 +525,8 @@ export const useMobileWords = defineStore('mobileWords', () => {
     clearBankWords,
     moveWordToBank,
     setBankSource,
-    getBankMappings
+    getBankMappings,
+    getImportProgress,
+    setImportProgress
   }
 })

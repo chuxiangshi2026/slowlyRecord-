@@ -4,7 +4,7 @@
       <text class="title">慢记</text>
       <text class="subtitle">高效记忆，轻松学习</text>
     </view>
-    
+
     <view class="stats-grid">
       <view class="stat-card" @click="goToWords">
         <text class="stat-num">{{ wordCount }}</text>
@@ -24,7 +24,7 @@
       </view>
       <view class="stat-card bank-card" @click="goToWordbank">
         <text class="stat-num bank-name">{{ currentBankName }}</text>
-        <text class="stat-label">默认词库 ›</text>
+        <text class="stat-label">词库管理 ›</text>
       </view>
     </view>
 

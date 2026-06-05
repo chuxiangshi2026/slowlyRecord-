@@ -73,15 +73,25 @@ const handleAction = async (bank: LocalBankInfo) => {
     const words = loadWordBankB(bank.id as any)
     saveWordBankCache(bank.id, words)
     bank.cached = true
+    const progress = wordsStore.getImportProgress(targetBankId.value, bank.id)
+    const remaining = words.length - progress
+    if (remaining <= 0) {
+      uni.showToast({ title: '该词库已全部导入', icon: 'none' })
+      return
+    }
     uni.showActionSheet({
-      itemList: ['导入10个', '导入50个', '导入100个', '全部导入'],
+      itemList: [
+        `续导10个（剩余${remaining}）`,
+        `续导50个（剩余${remaining}）`,
+        `续导100个（剩余${remaining}）`,
+        `全部导入（${remaining}个）`
+      ],
       success: async (res) => {
-        const counts = [10, 50, 100, words.length]
-        const count = counts[res.tapIndex]
+        const counts = [10, 50, 100, remaining]
+        const count = Math.min(counts[res.tapIndex], remaining)
         if (count > 0) {
-          // 记录词库来源映射
           wordsStore.setBankSource(targetBankId.value, 'builtin', bank.id)
-          await importWords(words, count, bank.name)
+          await importWords(words, progress, count, bank.name, bank.id)
         }
       }
     })
@@ -92,8 +102,8 @@ const handleAction = async (bank: LocalBankInfo) => {
   }
 }
 
-async function importWords(words: Word[], count: number, _bankName: string) {
-  const toImport = words.slice(0, count)
+async function importWords(words: Word[], startIndex: number, count: number, _bankName: string, sourceId: string) {
+  const toImport = words.slice(startIndex, startIndex + count)
   const bankId = targetBankId.value
   const now = Date.now()
   const mobileWords = toImport.map(w => ({
@@ -107,11 +117,15 @@ async function importWords(words: Word[], count: number, _bankName: string) {
     nextReviewTime: now,
     bankId
   }))
-  // 批量写入存储（含去重）
-  await wordsStore.importWords(mobileWords, bankId)
-  // 一次性追加到内存
-  wordsStore.appendWordsToMemory(mobileWords)
-  uni.showToast({ title: `已导入 ${mobileWords.length} 个单词`, icon: 'success' })
+  const { imported, skippedCount } = await wordsStore.importWords(mobileWords, bankId)
+  wordsStore.appendWordsToMemory(imported)
+  // 更新导入进度
+  const newProgress = startIndex + count
+  wordsStore.setImportProgress(bankId, sourceId, newProgress)
+  const msg = skippedCount > 0
+    ? `已导入 ${imported.length} 个（跳过${skippedCount}个重复）`
+    : `已导入 ${imported.length} 个单词`
+  uni.showToast({ title: msg, icon: 'none' })
 }
 </script>
 
