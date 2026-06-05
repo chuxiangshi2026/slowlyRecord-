@@ -78,7 +78,11 @@ const handleAction = async (bank: LocalBankInfo) => {
       success: async (res) => {
         const counts = [10, 50, 100, words.length]
         const count = counts[res.tapIndex]
-        if (count > 0) await importWords(words, count, bank.name)
+        if (count > 0) {
+          // 记录词库来源映射
+          wordsStore.setBankSource(targetBankId.value, 'builtin', bank.id)
+          await importWords(words, count, bank.name)
+        }
       }
     })
   } catch (e: any) {
@@ -88,26 +92,26 @@ const handleAction = async (bank: LocalBankInfo) => {
   }
 }
 
-async function importWords(words: Word[], count: number, bankName: string) {
+async function importWords(words: Word[], count: number, _bankName: string) {
   const toImport = words.slice(0, count)
   const bankId = targetBankId.value
-  let success = 0
-  for (const w of toImport) {
-    try {
-      await wordsStore.addWord({
-        word: w.word,
-        meaning: w.meaning,
-        phonetic: w.phonetic,
-        example: w.example,
-        addTime: Date.now(),
-        reviewCount: 0,
-        nextReviewTime: Date.now(),
-        bankId
-      })
-      success++
-    } catch { /* skip */ }
-  }
-  uni.showToast({ title: `已导入 ${success} 个单词`, icon: 'success' })
+  const now = Date.now()
+  const mobileWords = toImport.map(w => ({
+    id: '',
+    word: w.word,
+    meaning: w.meaning,
+    phonetic: w.phonetic || undefined,
+    example: w.example || undefined,
+    addTime: now,
+    reviewCount: 0,
+    nextReviewTime: now,
+    bankId
+  }))
+  // 批量写入存储（含去重）
+  await wordsStore.importWords(mobileWords, bankId)
+  // 一次性追加到内存
+  wordsStore.appendWordsToMemory(mobileWords)
+  uni.showToast({ title: `已导入 ${mobileWords.length} 个单词`, icon: 'success' })
 }
 </script>
 

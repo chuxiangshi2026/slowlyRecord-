@@ -88,6 +88,41 @@
       </view>
     </view>
 
+    <!-- 翻译引擎设置弹窗 -->
+    <view v-if="showTranslationSettingsModal" class="popup-overlay" @click="showTranslationSettingsModal = false">
+      <view class="popup-content translation-settings" @click.stop>
+        <view class="popup-title">翻译引擎设置</view>
+
+        <!-- 引擎切换 -->
+        <view class="section-label">选择引擎</view>
+        <picker :range="Object.keys(platformNames)" :range-key="'value'" @change="(e: any) => { const keys = Object.keys(platformNames); settingsPlatform = keys[e.detail.value] as TranslationPlatform; onTranslationPlatformSelect(settingsPlatform) }">
+          <view class="bank-picker">
+            <text class="bank-picker-text">{{ platformNames[settingsPlatform] }}</text>
+            <text class="bank-picker-arrow">▼</text>
+          </view>
+        </picker>
+
+        <!-- API 密钥配置 -->
+        <view v-if="canConfigureApiKey" class="api-key-section">
+          <view class="section-label">
+            API 密钥配置
+            <text class="link-text" v-if="getPlatformLink(settingsPlatform)" @click="openLink(getPlatformLink(settingsPlatform)!.url)">
+              {{ getPlatformLink(settingsPlatform)!.content }} →
+            </text>
+          </view>
+          <input class="dialog-input" v-model="apiKeyInput.appkey" :placeholder="isAiPlatform ? 'API Key (Bearer Token)' : 'AppKey / SecretId'" />
+          <input class="dialog-input" v-model="apiKeyInput.key" :placeholder="isAiPlatform ? '模型名称 (默认自动)' : 'SecretKey / Key'" />
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="popup-actions">
+          <button class="btn-cancel" @click="showTranslationSettingsModal = false">取消</button>
+          <button v-if="canConfigureApiKey" class="btn-secondary" @click="resetApiKeyForPlatform">恢复默认</button>
+          <button class="btn-confirm" @click="confirmTranslationPlatform">确认</button>
+        </view>
+      </view>
+    </view>
+
     <!-- 拉取输入弹窗 -->
     <view v-if="showPullInput" class="popup-overlay" @click="closePullInput">
       <view class="popup-content" @click.stop>
@@ -109,7 +144,8 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from 'vue'
 import { useMobileWords } from '@/stores/useMobileWords'
-import { pushToServer, pullFromServer, drawQrCode, getTranslationPlatform, setTranslationPlatform, getSyncServerUrl, setSyncServerUrl, checkServerAvailable } from '@/stores/useUtils'
+import { pushToServer, pullFromServer, drawQrCode, getTranslationPlatform, setTranslationPlatform, getTranslationApiKey, setTranslationApiKey, TRANSLATION_PLATFORM_LINKS, getSyncServerUrl, setSyncServerUrl, checkServerAvailable } from '@/stores/useUtils'
+import type { TranslationPlatform } from '@/stores/useUtils'
 // #ifdef H5
 import QRCode from 'qrcode'
 // #endif
@@ -126,12 +162,24 @@ const qrCanvas = ref<HTMLCanvasElement | null>(null)
 const platformNames: Record<string, string> = {
   youdao: '有道翻译',
   baidu: '百度翻译',
-  local: '仅离线词典'
+  ali: '阿里翻译',
+  tencent: '腾讯翻译',
+  deepseek: 'DeepSeek AI',
+  qwen: '通义千问',
+  kimi: 'Kimi 月之暗面',
+  glm: '智谱 GLM',
+  ollama: 'Ollama 本地',
+  local: '仅离线词典',
 }
 
 const currentTranslationPlatform = computed(() => {
-  return platformNames[getTranslationPlatform()] || '有道翻译'
+  return platformNames[getTranslationPlatform()] || '智谱 GLM'
 })
+
+// 翻译引擎设置弹窗
+const showTranslationSettingsModal = ref(false)
+const apiKeyInput = ref({ appkey: '', key: '' })
+const settingsPlatform = ref<TranslationPlatform>('glm')
 
 // 同步服务器显示（依赖 tick 强制刷新）
 const serverRefreshTick = ref(0)
@@ -202,15 +250,48 @@ const showServerSetting = () => {
 
 // 翻译引擎设置
 const showTranslationSetting = () => {
-  uni.showActionSheet({
-    itemList: ['有道翻译', '百度翻译', '仅离线词典'],
-    success: (res) => {
-      const platforms: ('youdao' | 'baidu' | 'local')[] = ['youdao', 'baidu', 'local']
-      setTranslationPlatform(platforms[res.tapIndex])
-      uni.showToast({ title: `已切换为${platformNames[platforms[res.tapIndex]]}`, icon: 'none' })
-    }
-  })
+  settingsPlatform.value = getTranslationPlatform()
+  const keys = getTranslationApiKey(settingsPlatform.value)
+  apiKeyInput.value = { appkey: keys.appkey, key: keys.key }
+  showTranslationSettingsModal.value = true
 }
+
+const onTranslationPlatformSelect = (platform: TranslationPlatform) => {
+  const keys = getTranslationApiKey(platform)
+  apiKeyInput.value = { appkey: keys.appkey, key: keys.key }
+}
+
+const confirmTranslationPlatform = () => {
+  setTranslationPlatform(settingsPlatform.value)
+  // 如果当前选中的平台有自定义密钥，保存
+  if (apiKeyInput.value.appkey.trim() || apiKeyInput.value.key.trim()) {
+    setTranslationApiKey(settingsPlatform.value, apiKeyInput.value.appkey.trim(), apiKeyInput.value.key.trim())
+  }
+  showTranslationSettingsModal.value = false
+  uni.showToast({ title: `已切换为${platformNames[settingsPlatform.value]}`, icon: 'none' })
+}
+
+const resetApiKeyForPlatform = () => {
+  setTranslationApiKey(settingsPlatform.value, '', '')
+  apiKeyInput.value = { appkey: '', key: '' }
+  uni.showToast({ title: '已恢复默认密钥', icon: 'success' })
+}
+
+// 获取平台的申请链接
+const getPlatformLink = (platform: TranslationPlatform) => {
+  const info = TRANSLATION_PLATFORM_LINKS.find(l => l.key === platform)
+  return info || null
+}
+
+const canConfigureApiKey = computed(() => {
+  const p = settingsPlatform.value
+  return p !== 'local'
+})
+
+const isAiPlatform = computed(() => {
+  const p = settingsPlatform.value
+  return p === 'deepseek' || p === 'qwen' || p === 'kimi' || p === 'glm' || p === 'ollama'
+})
 
 // 同步操作菜单
 const showSyncActionSheet = () => {
@@ -450,6 +531,15 @@ const clearData = () => {
   })
 }
 
+const openLink = (url: string) => {
+  // #ifdef H5
+  window.open(url, '_blank')
+  // #endif
+  // #ifdef MP-WEIXIN
+  uni.setClipboardData({ data: url, success: () => { uni.showToast({ title: '链接已复制，请在浏览器中打开', icon: 'none' }) } })
+  // #endif
+}
+
 const showAbout = () => {
   uni.showModal({
     title: '关于慢记',
@@ -598,6 +688,76 @@ const showAbout = () => {
   border-radius: 16rpx;
   padding: 40rpx;
   width: 600rpx;
+}
+
+/* 翻译设置弹窗 */
+.translation-settings {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.translation-settings .section-label {
+  font-size: 26rpx;
+  color: #999;
+  margin: 16rpx 0 10rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.translation-settings .bank-picker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: #f0f2ff;
+  border-radius: 12rpx;
+  margin-bottom: 10rpx;
+}
+
+.translation-settings .bank-picker-text {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.translation-settings .bank-picker-arrow {
+  font-size: 24rpx;
+  color: #667eea;
+}
+
+.translation-settings .api-key-section {
+  margin-top: 20rpx;
+}
+
+.translation-settings .dialog-input {
+  height: 80rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  margin-bottom: 12rpx;
+  font-size: 28rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.translation-settings .link-text {
+  font-size: 24rpx;
+  color: #1976d2;
+}
+
+.translation-settings .popup-actions {
+  margin-top: 20rpx;
+}
+
+.translation-settings .btn-secondary {
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  height: 80rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  padding: 0 16rpx;
 }
 
 .popup-title {

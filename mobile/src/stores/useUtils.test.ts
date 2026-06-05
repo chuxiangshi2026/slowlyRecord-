@@ -39,6 +39,7 @@ vi.mock('@/subPackages/wordbank-level8/wordbanks/level8', () => ({ default: [] }
 vi.mock('@/subPackages/wordbank-c/wordbanks/sat', () => ({ default: [] }))
 vi.mock('@/subPackages/wordbank-b/wordbanks/toefl', () => ({ default: [] }))
 vi.mock('@/subPackages/wordbank-b/wordbanks/zsb', () => ({ default: [] }))
+vi.mock('@/subPackages/wordbank-b/wordbanks/nul', () => ({ default: [] }))
 
 // Mock uni API (运行时设置，非 vi.mock)
 const mockStorage = new Map<string, any>()
@@ -67,6 +68,10 @@ const mockUni: any = {
 import {
   setTranslationPlatform,
   getTranslationPlatform,
+  getTranslationApiKey,
+  setTranslationApiKey,
+  hasCustomTranslationApiKey,
+  TRANSLATION_PLATFORM_LINKS,
   getPronunciationUrl,
   playPronunciation,
   queryOfflineDict,
@@ -89,6 +94,7 @@ import {
 } from './useUtils'
 
 import type {
+  TranslationPlatform,
   TranslationResult,
   MobileSyncBank,
   SyncResult,
@@ -103,8 +109,8 @@ beforeEach(() => {
 // ==================== 翻译平台设置测试 ====================
 
 describe('翻译平台设置', () => {
-  it('默认翻译平台应为 baidu', () => {
-    expect(getTranslationPlatform()).toBe('baidu')
+  it('默认翻译平台应为 glm（与桌面端一致）', () => {
+    expect(getTranslationPlatform()).toBe('glm')
   })
 
   it('可以设置为 youdao', () => {
@@ -118,9 +124,91 @@ describe('翻译平台设置', () => {
     expect(getTranslationPlatform()).toBe('baidu')
   })
 
+  it('可以设置为 ali', () => {
+    setTranslationPlatform('ali')
+    expect(getTranslationPlatform()).toBe('ali')
+  })
+
+  it('可以设置为 tencent', () => {
+    setTranslationPlatform('tencent')
+    expect(getTranslationPlatform()).toBe('tencent')
+  })
+
+  it('可以设置为 deepseek', () => {
+    setTranslationPlatform('deepseek')
+    expect(getTranslationPlatform()).toBe('deepseek')
+  })
+
+  it('可以设置为 glm', () => {
+    setTranslationPlatform('glm')
+    expect(getTranslationPlatform()).toBe('glm')
+  })
+
   it('可以设置为 local', () => {
     setTranslationPlatform('local')
     expect(getTranslationPlatform()).toBe('local')
+  })
+})
+
+describe('翻译 API 密钥管理', () => {
+  const plat: TranslationPlatform = 'glm'
+
+  it('getTranslationApiKey 应返回默认配置的密钥', () => {
+    const keys = getTranslationApiKey('youdao')
+    expect(keys.appkey).toBeTruthy()
+    expect(keys.key).toBeTruthy()
+  })
+
+  it('没有默认密钥的平台应返回空字符串（deepseek）', () => {
+    const keys = getTranslationApiKey('deepseek')
+    expect(keys.appkey).toBe('')
+    expect(keys.key).toBe('deepseek-chat') // 默认模型名
+  })
+
+  it('setTranslationApiKey 应保存自定义密钥', () => {
+    setTranslationApiKey(plat, 'my-custom-key', 'my-model')
+    const keys = getTranslationApiKey(plat)
+    expect(keys.appkey).toBe('my-custom-key')
+    expect(keys.key).toBe('my-model')
+  })
+
+  it('hasCustomTranslationApiKey 在设置密钥后应返回 true', () => {
+    setTranslationApiKey(plat, 'test-key', '')
+    expect(hasCustomTranslationApiKey(plat)).toBe(true)
+  })
+
+  it('hasCustomTranslationApiKey 在清空密钥后应返回 false', () => {
+    setTranslationApiKey(plat, '', '')
+    expect(hasCustomTranslationApiKey(plat)).toBe(false)
+  })
+
+  it('setTranslationApiKey 空值应清空', () => {
+    setTranslationApiKey(plat, 'temp', 'temp')
+    setTranslationApiKey(plat, '', '')
+    const keys = getTranslationApiKey(plat)
+    expect(keys.appkey).toBe('REDACTED_GLM_APIKEY') // 回退到默认
+  })
+})
+
+describe('TRANSLATION_PLATFORM_LINKS', () => {
+  it('应包含各个平台的申请链接', () => {
+    expect(TRANSLATION_PLATFORM_LINKS.length).toBeGreaterThan(0)
+    const keys = TRANSLATION_PLATFORM_LINKS.map(l => l.key)
+    expect(keys).toContain('youdao')
+    expect(keys).toContain('baidu')
+    expect(keys).toContain('glm')
+    expect(keys).toContain('deepseek')
+    expect(keys).toContain('kimi')
+    expect(keys).toContain('ollama')
+  })
+
+  it('每个链接应包含 name、key、content、url', () => {
+    for (const link of TRANSLATION_PLATFORM_LINKS) {
+      expect(link.name).toBeTruthy()
+      expect(link.key).toBeTruthy()
+      expect(link.content).toBeTruthy()
+      expect(link.url).toBeTruthy()
+    }
   })
 })
 
@@ -288,6 +376,7 @@ describe('WORDBANK_LIST', () => {
     expect(ids).toContain('sat')
     expect(ids).toContain('kaogong')
     expect(ids).toContain('kaoyan')
+    expect(ids).toContain('nul')
   })
 
   it('每个词库应有 id、name、description、wordCount', () => {

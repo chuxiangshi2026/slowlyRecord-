@@ -1,6 +1,7 @@
 import { ref, computed, shallowRef, triggerRef } from 'vue'
 import { defineStore } from 'pinia'
 import { getDbAdapter, type DbDoc } from '@/adapters/index'
+import { WORDBANK_LIST } from './useUtils'
 
 // 默认复习间隔（单位：分钟）与桌面端保持一致
 const DEFAULT_INTERVALS = [
@@ -210,15 +211,7 @@ export const useMobileWords = defineStore('mobileWords', () => {
     } catch {
       currentBankId.value = DEFAULT_BANK_ID
     }
-    // 迁移：将"我的词库"或"基础词库"重命名为"默认词库"
-    let needSave = false
-    for (const bank of bankList.value) {
-      if (bank.name === '我的词库' || bank.name === '基础词库') {
-        bank.name = '默认词库'
-        needSave = true
-      }
-    }
-    if (needSave) _saveBankList()
+    // 移动端无需旧数据迁移（未上线）
   }
 
   function _saveBankList() {
@@ -289,6 +282,30 @@ export const useMobileWords = defineStore('mobileWords', () => {
 
   function getBankWordCount(bankId: string): number {
     return allWords.value.filter(w => w.bankId === bankId || (!w.bankId && bankId === DEFAULT_BANK_ID)).length
+  }
+
+  /** 标记词库的来源（从内置词库导入时记录映射关系） */
+  function setBankSource(bankId: string, sourceType: WordBankMeta['sourceType'], sourceId: string) {
+    const bank = bankList.value.find(b => b.id === bankId)
+    if (!bank) return
+    bank.sourceType = sourceType
+    bank.sourceId = sourceId
+    bank.updatedAt = Date.now()
+    _saveBankList()
+  }
+
+  /** 获取已导入内置词库的映射列表（哪些内置词库映射到了哪些用户词库） */
+  function getBankMappings(): { sourceId: string; sourceName: string; bankId: string; bankName: string; wordCount: number }[] {
+    const wordbankInfoMap = new Map(WORDBANK_LIST.map(w => [w.id, w.name]))
+    return bankList.value
+      .filter(b => b.sourceType === 'builtin' && b.sourceId)
+      .map(b => ({
+        sourceId: b.sourceId!,
+        sourceName: wordbankInfoMap.get(b.sourceId!) || b.sourceId!,
+        bankId: b.id,
+        bankName: b.name,
+        wordCount: getBankWordCount(b.id)
+      }))
   }
 
   // ========== 单词 CRUD ==========
@@ -472,6 +489,8 @@ export const useMobileWords = defineStore('mobileWords', () => {
     getBankById,
     getBankWordCount,
     clearBankWords,
-    moveWordToBank
+    moveWordToBank,
+    setBankSource,
+    getBankMappings
   }
 })

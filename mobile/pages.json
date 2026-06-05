@@ -76,15 +76,9 @@
           }
         },
         {
-          "path": "wrong-words/wrong-words",
-          "style": {
-            "navigationBarTitleText": "错题复习"
-          }
-        },
-        {
           "path": "wordbank/wordbank",
           "style": {
-            "navigationBarTitleText": "词库管理"
+            "navigationBarTitleText": "默认词库"
           }
         }
       ]

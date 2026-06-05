@@ -1,7 +1,7 @@
 <template>
   <view class="wordbank-container">
     <view class="header">
-      <text class="title">词库管理</text>
+      <text class="title">默认词库</text>
       <text class="subtitle">管理你的词库，高效备考</text>
     </view>
 
@@ -37,6 +37,19 @@
       </view>
     </view>
 
+    <!-- 已导入词库映射 -->
+    <view v-if="bankMappings.length > 0" class="section-header">
+      <text class="section-title">已导入内置词库</text>
+    </view>
+    <view v-for="mapping in bankMappings" :key="mapping.sourceId" class="mapping-item">
+      <view class="mapping-left">
+        <text class="mapping-source">{{ mapping.sourceName }}</text>
+        <text class="mapping-arrow">→</text>
+        <text class="mapping-bank">{{ mapping.bankName }}</text>
+      </view>
+      <text class="mapping-count">{{ mapping.wordCount }} 词</text>
+    </view>
+
     <!-- 内置词库入口 -->
     <view class="section-header">
       <text class="section-title">导入内置词库</text>
@@ -45,7 +58,7 @@
       <view class="section-item" @click="goTo('/subPackages/wordbank-b/wordbankB')">
         <view class="section-info">
           <text class="section-name">默认词库</text>
-          <text class="section-desc">四六级、商务英语、雅思、托福等</text>
+          <text class="section-desc">四六级、商务英语、雅思、托福、新概念等</text>
         </view>
         <text class="arrow">›</text>
       </view>
@@ -104,6 +117,9 @@ const currentBankName = computed(() => {
 })
 
 const bankNames = computed(() => wordsStore.bankList.map(b => b.name))
+
+// 已导入的内置词库映射列表
+const bankMappings = computed(() => wordsStore.getBankMappings())
 
 function getBankCount(bankId: string): number {
   return wordsStore.getBankWordCount(bankId)
@@ -210,6 +226,38 @@ const goTo = (url: string) => {
 .action-text { font-size: 24rpx; color: #667eea; }
 .action-text.danger { color: #e53935; }
 .action-text.muted { color: #ccc; }
+
+.mapping-item {
+  background: #f0f2ff;
+  border-radius: 12rpx;
+  padding: 20rpx 30rpx;
+  margin: 0 20rpx 12rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mapping-left {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.mapping-source {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #667eea;
+}
+.mapping-arrow {
+  font-size: 24rpx;
+  color: #999;
+}
+.mapping-bank {
+  font-size: 26rpx;
+  color: #333;
+}
+.mapping-count {
+  font-size: 24rpx;
+  color: #999;
+}
 
 .builtin-section { padding: 0 20rpx; }
 .section-item { background: #fff; border-radius: 16rpx; padding: 36rpx 30rpx; margin-bottom: 16rpx; display: flex; justify-content: space-between; align-items: center; }

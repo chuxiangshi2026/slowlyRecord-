@@ -24,7 +24,7 @@
       </view>
       <view class="stat-card bank-card" @click="goToWordbank">
         <text class="stat-num bank-name">{{ currentBankName }}</text>
-        <text class="stat-label">当前词库 ›</text>
+        <text class="stat-label">默认词库 ›</text>
       </view>
     </view>
 
@@ -51,13 +51,9 @@
           <view class="action-icon signin">📅</view>
           <text class="action-text">每日打卡</text>
         </view>
-        <view class="action-item" @click="goToWrongWords">
-          <view class="action-icon wrong">❌</view>
-          <text class="action-text">错题复习</text>
-        </view>
         <view class="action-item" @click="goToWordbank">
           <view class="action-icon wordbank">📚</view>
-          <text class="action-text">词库下载</text>
+          <text class="action-text">默认词库</text>
         </view>
         <view class="action-item" @click="goToNumberMemory">
           <view class="action-icon memory">🔢</view>
@@ -123,10 +119,6 @@ const goToTranslate = () => {
 
 const goToSignin = () => {
   uni.navigateTo({ url: '/subPackages/pages-data/signin/signin' })
-}
-
-const goToWrongWords = () => {
-  uni.navigateTo({ url: '/subPackages/pages-data/wrong-words/wrong-words' })
 }
 
 const goToWordbank = () => {
@@ -254,7 +246,6 @@ const goToMemoryTest = () => {
 .action-icon.translate { background: #388e3c; }
 .action-icon.words { background: #f57c00; }
 .action-icon.signin { background: #e91e63; }
-.action-icon.wrong { background: #d32f2f; }
 .action-icon.wordbank { background: #5e35b1; }
 .action-icon.memory { background: #00897b; }
 .action-icon.text { background: #43a047; }
