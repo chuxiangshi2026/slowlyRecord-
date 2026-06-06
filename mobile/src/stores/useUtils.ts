@@ -395,35 +395,38 @@ function hmacSha1Base64(message: string, key: string): string {
   return uint8ToBase64(result)
 }
 
-/** 纯JS SHA-1（使用 number[] 避免 Uint8Array 没有 push 方法的问题） */
+/** 纯JS SHA-1（使用 DataView 大端序，经过 Node.js crypto 验证） */
 function sha1Raw(data: Uint8Array): Uint8Array {
-  const bytes: number[] = []
-  for (let i = 0; i < data.length; i++) bytes.push(data[i])
-  const ml = bytes.length * 8
-  bytes.push(0x80)
-  while ((bytes.length % 64) !== 56) bytes.push(0)
-  // 64-bit big-endian length
-  for (let i = 7; i >= 0; i--) bytes.push((i < 4) ? 0 : ((ml >>> ((7 - i) * 8)) & 0xff))
+  const msgLen = data.length
+  const bitLen = msgLen * 8
+  let paddedLen = msgLen + 1
+  while (paddedLen % 64 !== 56) paddedLen++
+  paddedLen += 8
+  const padded = new Uint8Array(paddedLen)
+  padded.set(data)
+  padded[msgLen] = 0x80
+  const dv = new DataView(padded.buffer)
+  dv.setUint32(paddedLen - 4, bitLen, false) // big-endian 64-bit length (high 32 = 0)
   let h0 = 0x67452301, h1 = 0xEFCDAB89, h2 = 0x98BADCFE, h3 = 0x10325476, h4 = 0xC3D2E1F0
-  for (let i = 0; i < bytes.length; i += 64) {
+  for (let offset = 0; offset < paddedLen; offset += 64) {
     const w = new Uint32Array(80)
-    for (let j = 0; j < 16; j++) w[j] = ((bytes[i + j * 4] << 24) | (bytes[i + j * 4 + 1] << 16) | (bytes[i + j * 4 + 2] << 8) | bytes[i + j * 4 + 3]) >>> 0
-    for (let j = 16; j < 80; j++) { w[j] = rotl32(w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16], 1) }
+    for (let i = 0; i < 16; i++) w[i] = dv.getUint32(offset + i * 4, false)
+    for (let i = 16; i < 80; i++) w[i] = ((w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16]) << 1) | ((w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16]) >>> 31)
     let a = h0, b = h1, c = h2, d = h3, e = h4
-    for (let j = 0; j < 80; j++) {
+    for (let i = 0; i < 80; i++) {
       let f: number, k: number
-      if (j < 20) { f = (b & c) | ((~b) & d); k = 0x5A827999 }
-      else if (j < 40) { f = b ^ c ^ d; k = 0x6ED9EBA1 }
-      else if (j < 60) { f = (b & c) | (b & d) | (c & d); k = 0x8F1BBCDC }
+      if (i < 20) { f = (b & c) | (~b & d); k = 0x5A827999 }
+      else if (i < 40) { f = b ^ c ^ d; k = 0x6ED9EBA1 }
+      else if (i < 60) { f = (b & c) | (b & d) | (c & d); k = 0x8F1BBCDC }
       else { f = b ^ c ^ d; k = 0xCA62C1D6 }
-      const temp = (rotl32(a, 5) + f + e + k + w[j]) >>> 0
-      e = d; d = c; c = rotl32(b, 30); b = a; a = temp
+      const temp = (((a << 5) | (a >>> 27)) + (f >>> 0) + e + k + w[i]) >>> 0
+      e = d; d = c; c = ((b << 30) | (b >>> 2)); b = a; a = temp
     }
     h0 = (h0 + a) >>> 0; h1 = (h1 + b) >>> 0; h2 = (h2 + c) >>> 0; h3 = (h3 + d) >>> 0; h4 = (h4 + e) >>> 0
   }
   const out = new Uint8Array(20)
-  const hs = [h0, h1, h2, h3, h4]
-  for (let i = 0; i < 5; i++) { out[i * 4] = (hs[i] >>> 24) & 0xff; out[i * 4 + 1] = (hs[i] >>> 16) & 0xff; out[i * 4 + 2] = (hs[i] >>> 8) & 0xff; out[i * 4 + 3] = hs[i] & 0xff }
+  const rdv = new DataView(out.buffer)
+  rdv.setUint32(0, h0, false); rdv.setUint32(4, h1, false); rdv.setUint32(8, h2, false); rdv.setUint32(12, h3, false); rdv.setUint32(16, h4, false)
   return out
 }
 
@@ -964,7 +967,11 @@ function sha256Pure(data: Uint8Array): string {
     }
     for (let j = 0; j < 8; j++) state[j] = (state[j] + [a, b, c, d, e, f, g, h][j]) >>> 0
   }
-  return arrayToHex(new Uint8Array(state.buffer))
+  return Array.from(state).map(v => {
+    const out = new Uint8Array(4)
+    new DataView(out.buffer).setUint32(0, v, false)
+    return Array.from(out).map(b => b.toString(16).padStart(2, '0')).join('')
+  }).join('')
 }
 
 function rotR32(x: number, n: number): number { return ((x >>> n) | (x << (32 - n))) >>> 0 }
