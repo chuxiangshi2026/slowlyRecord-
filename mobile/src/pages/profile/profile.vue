@@ -168,7 +168,6 @@ const platformNames: Record<string, string> = {
   qwen: '通义千问',
   kimi: 'Kimi 月之暗面',
   glm: '智谱 GLM',
-  ollama: 'Ollama 本地',
   local: '仅离线词典',
 }
 

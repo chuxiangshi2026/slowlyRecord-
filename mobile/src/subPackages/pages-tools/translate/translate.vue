@@ -206,14 +206,15 @@ const handleCapture = async () => {
 
 .result-lang {
   font-size: 24rpx;
-  color: #999;
+  color: #666;
 }
 
 .result-text {
   font-size: 34rpx;
-  color: #333;
+  color: #1a1a1a;
   line-height: 1.6;
   display: block;
+  font-weight: 500;
 }
 
 .phonetic {
@@ -221,7 +222,7 @@ const handleCapture = async () => {
   padding-top: 20rpx;
   border-top: 1rpx solid #eee;
   font-size: 26rpx;
-  color: #666;
+  color: #444;
 }
 
 .offline-tag {
