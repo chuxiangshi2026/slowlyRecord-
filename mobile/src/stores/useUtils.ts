@@ -215,6 +215,7 @@ export async function translateText(
         success: true,
         explains: offline,
         translatedText: offline,
+        phonetic: queryPhoneticFromCache(trimmed) || undefined,
         pronunciation: getPronunciationUrl(trimmed),
         platform: 'local'
       }
@@ -223,19 +224,25 @@ export async function translateText(
 
   // 2. 使用当前选择的翻译引擎
   try {
+    let result: TranslationResult
     switch (currentPlatform) {
-      case 'youdao': return await translateWithYoudao(text, from, to)
-      case 'baidu': return await translateWithBaidu(text, from, to)
-      case 'ali': return await translateWithAli(text, from, to)
-      case 'tencent': return await translateWithTencent(text, from, to)
-      case 'deepseek': return await translateWithDeepseek(text, from, to)
-      case 'qwen': return await translateWithQwen(text, from, to)
-      case 'kimi': return await translateWithKimi(text, from, to)
-      case 'glm': return await translateWithGlm(text, from, to)
-      case 'ollama': return await translateWithOllama(text, from, to)
-      case 'local': return await translateWithLocalDict(text, from, to)
-      default: return await translateWithGlm(text, from, to)
+      case 'youdao': result = await translateWithYoudao(text, from, to); break
+      case 'baidu': result = await translateWithBaidu(text, from, to); break
+      case 'ali': result = await translateWithAli(text, from, to); break
+      case 'tencent': result = await translateWithTencent(text, from, to); break
+      case 'deepseek': result = await translateWithDeepseek(text, from, to); break
+      case 'qwen': result = await translateWithQwen(text, from, to); break
+      case 'kimi': result = await translateWithKimi(text, from, to); break
+      case 'glm': result = await translateWithGlm(text, from, to); break
+      case 'ollama': result = await translateWithOllama(text, from, to); break
+      case 'local': result = await translateWithLocalDict(text, from, to); break
+      default: result = await translateWithGlm(text, from, to); break
     }
+    // 引擎未返回音标时，从词库缓存补充
+    if (!result.phonetic && !trimmed.includes(' ')) {
+      result.phonetic = queryPhoneticFromCache(trimmed) || undefined
+    }
+    return result
   } catch (e) {
     return {
       success: false,
@@ -1152,6 +1159,23 @@ export function hasOfflineDict(word: string): boolean {
 
 export function getOfflineDictSize(): number {
   return Object.keys(OFFLINE_DICT).length
+}
+
+/** 从已缓存的词库中查询音标 */
+export function queryPhoneticFromCache(word: string): string | null {
+  const normalized = word.toLowerCase().trim()
+  const types: WordBankType[] = ['cet4', 'cet6', 'bec', 'gmat', 'gre', 'ielts', 'kaogong', 'kaoyan', 'level4', 'level8', 'sat', 'toefl', 'zsb', 'nul']
+  for (const type of types) {
+    try {
+      const cacheStr = uni.getStorageSync(CACHE_KEY_PREFIX + type)
+      if (!cacheStr) continue
+      const cache: CacheData = JSON.parse(cacheStr)
+      if (Date.now() - cache.timestamp > CACHE_EXPIRY) continue
+      const found = cache.words.find(w => w.word.toLowerCase() === normalized)
+      if (found?.phonetic) return found.phonetic
+    } catch { continue }
+  }
+  return null
 }
 
 // ==================== 同步服务 ====================

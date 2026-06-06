@@ -39,8 +39,8 @@
       />
     </view>
 
-    <!-- 例句 -->
-    <view class="form-group">
+    <!-- 例句（仅 AI 引擎可自动填充时显示） -->
+    <view v-if="showExampleField" class="form-group">
       <text class="form-label">例句（可选）</text>
       <textarea
         class="form-textarea"
@@ -65,6 +65,7 @@ import { translateText } from '@/stores/useUtils'
 
 const wordsStore = useMobileWords()
 const translating = ref(false)
+const showExampleField = ref(false)
 const newWord = ref({ 
   word: '', 
   meaning: '',
@@ -87,6 +88,7 @@ const autoTranslate = async () => {
       if (result.examples && result.examples.length > 0 && !newWord.value.example.trim()) {
         const ex = result.examples[0]
         newWord.value.example = ex.english + (ex.chinese ? ' — ' + ex.chinese : '')
+        showExampleField.value = true
       }
     } else if (!result.success) {
       console.warn('翻译失败:', result.errorMsg, 'platform:', result.platform)
