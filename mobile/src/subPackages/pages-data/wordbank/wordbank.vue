@@ -269,7 +269,7 @@ const goTo = (url: string) => {
 .dialog-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 999; }
 .dialog { background: #fff; border-radius: 24rpx; padding: 40rpx; width: 80%; }
 .dialog-title { font-size: 34rpx; font-weight: bold; text-align: center; display: block; margin-bottom: 30rpx; }
-.dialog-input { border: 2rpx solid #e0e0e0; border-radius: 12rpx; padding: 20rpx; font-size: 30rpx; width: 100%; box-sizing: border-box; }
+.dialog-input { border: 2rpx solid #e0e0e0; border-radius: 12rpx; padding: 20rpx; font-size: 30rpx; width: 100%; box-sizing: border-box; height: 80rpx; line-height: 40rpx; }
 .dialog-buttons { display: flex; justify-content: space-between; margin-top: 30rpx; gap: 20rpx; }
 .dialog-btn { flex: 1; text-align: center; padding: 20rpx; border-radius: 12rpx; font-size: 30rpx; }
 .dialog-btn.cancel { background: #f5f5f5; color: #666; }
