@@ -46,6 +46,12 @@
           "style": {
             "navigationBarTitleText": "添加单词"
           }
+        },
+        {
+          "path": "sync/sync",
+          "style": {
+            "navigationBarTitleText": "数据同步"
+          }
         }
       ]
     },
@@ -134,7 +140,6 @@
       ]
     }
   ],
-  "lazyCodeLoading": "requiredComponents",
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "慢记",

@@ -1,6 +1,6 @@
 /**
- * 移动端截图/选图适配器封装
- * 基于 UniApp API 实现
+ * 截图适配器 - 仅被分包页面引用
+ * 从 adapters/ 迁移到分包目录，避免打入主包
  */
 
 export interface CaptureResult {
@@ -32,7 +32,6 @@ class UniAppCaptureAdapter implements CaptureAdapter {
             return
           }
 
-          // 使用 uni.getFileSystemManager 读取为 base64
           // #ifdef MP-WEIXIN
           try {
             const fs = uni.getFileSystemManager()
@@ -64,18 +63,16 @@ class UniAppCaptureAdapter implements CaptureAdapter {
   }
 
   async ocr(_imageData: string): Promise<OCRResult[]> {
-    // 移动端 OCR 需要接入第三方服务（腾讯/百度/阿里 OCR）
-    // 这里返回空，实际使用时可通过云函数调用
     uni.showToast({ title: 'OCR 功能需配置云服务', icon: 'none' })
     return []
   }
 }
 
-let _adapter: CaptureAdapter | null = null
+let _captureAdapter: CaptureAdapter | null = null
 
 export function getCaptureAdapter(): CaptureAdapter {
-  if (!_adapter) {
-    _adapter = new UniAppCaptureAdapter()
+  if (!_captureAdapter) {
+    _captureAdapter = new UniAppCaptureAdapter()
   }
-  return _adapter
+  return _captureAdapter
 }

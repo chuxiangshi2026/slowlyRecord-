@@ -23,17 +23,10 @@
     </view>
 
     <view class="menu-list">
-      <!-- 同步 -->
-      <view class="menu-item" @click="showSyncActionSheet">
+      <!-- 同步（跳转分包页面） -->
+      <view class="menu-item" @click="goSyncPage">
         <text class="menu-icon sync">S</text>
         <text class="menu-text">数据同步</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <!-- 同步服务器设置 -->
-      <view class="menu-item" @click="showServerSetting">
-        <text class="menu-icon server">V</text>
-        <text class="menu-text">同步服务器</text>
-        <text class="menu-value">{{ currentServerDisplay }}</text>
         <text class="menu-arrow">›</text>
       </view>
       <!-- 翻译设置 -->
@@ -66,25 +59,6 @@
         <text class="menu-icon">A</text>
         <text class="menu-text">关于</text>
         <text class="menu-arrow">›</text>
-      </view>
-    </view>
-
-    <!-- 推送结果弹窗 -->
-    <view v-if="showPushResult" class="popup-overlay" @click="closePushResult">
-      <view class="popup-content" @click.stop>
-        <view class="popup-title">推送成功</view>
-        <view class="sync-code-box">
-          <text class="sync-code-label">同步码：</text>
-          <text class="sync-code-value" selectable>{{ syncCode }}</text>
-        </view>
-        <view class="sync-qr-wrapper">
-          <canvas ref="qrCanvas" canvas-id="syncQrCanvas" class="sync-qr-canvas" style="width: 180px; height: 180px;"></canvas>
-          <text class="sync-qr-hint">在另一台设备输入同步码或扫码</text>
-        </view>
-        <view class="popup-actions">
-          <button class="btn-confirm" @click="copySyncCode">复制同步码</button>
-          <button class="btn-cancel" @click="closePushResult">关闭</button>
-        </view>
       </view>
     </view>
 
@@ -122,43 +96,16 @@
         </view>
       </view>
     </view>
-
-    <!-- 拉取输入弹窗 -->
-    <view v-if="showPullInput" class="popup-overlay" @click="closePullInput">
-      <view class="popup-content" @click.stop>
-        <view class="popup-title">拉取数据</view>
-        <input
-          class="popup-input"
-          v-model="inputSyncCode"
-          placeholder="输入同步码"
-        />
-        <view class="popup-actions">
-          <button class="btn-confirm" @click="handlePull">拉取</button>
-          <button class="btn-cancel" @click="closePullInput">取消</button>
-        </view>
-      </view>
-    </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 import { useMobileWords } from '@/stores/useMobileWords'
-import { getTranslationPlatform, setTranslationPlatform, getTranslationApiKey, setTranslationApiKey, hasCustomTranslationApiKey, TRANSLATION_PLATFORM_LINKS } from '@/stores/useUtils/translation'
+import { getTranslationPlatform, setTranslationPlatform, getTranslationApiKey, setTranslationApiKey, hasCustomTranslationApiKey, TRANSLATION_PLATFORM_LINKS } from '@/stores/useUtils/translation-settings'
 import type { TranslationPlatform } from '@/stores/useUtils/types'
-import { pushToServer, pullFromServer, getSyncServerUrl, setSyncServerUrl, checkServerAvailable } from '@/stores/useUtils/sync'
-import { drawQrCode } from '@/stores/useUtils/qrcode'
-// #ifdef H5
-import QRCode from 'qrcode'
-// #endif
 
 const wordsStore = useMobileWords()
-
-const showPushResult = ref(false)
-const showPullInput = ref(false)
-const syncCode = ref('')
-const inputSyncCode = ref('')
-const qrCanvas = ref<HTMLCanvasElement | null>(null)
 
 // 翻译引擎显示名
 const platformNames: Record<string, string> = {
@@ -186,71 +133,9 @@ const apiKeyInput = ref({ appkey: '', key: '' })
 const settingsPlatform = ref<TranslationPlatform>('glm')
 const translationRefreshTick = ref(0)
 
-// 同步服务器显示（依赖 tick 强制刷新）
-const serverRefreshTick = ref(0)
-const currentServerDisplay = computed(() => {
-  serverRefreshTick.value // 强制依赖
-  const url = getSyncServerUrl()
-  if (url.includes('tencentscf.com')) return '默认服务器'
-  // 提取 IP 或域名简化显示
-  try {
-    const match = url.match(/https?:\/\/([^\/]+)/)
-    return match ? match[1] : '自定义'
-  } catch {
-    return '自定义'
-  }
-})
-
-// 同步服务器设置
-const showServerSetting = () => {
-  const currentUrl = getSyncServerUrl()
-  const isDefault = currentUrl.includes('tencentscf.com')
-
-  uni.showActionSheet({
-    itemList: [
-      isDefault ? '✓ 默认服务器' : '默认服务器',
-      '设置自定义服务器',
-      '测试连接'
-    ],
-    success: async (res) => {
-      if (res.tapIndex === 0) {
-        // 恢复默认
-        setSyncServerUrl('')
-        serverRefreshTick.value++
-        uni.showToast({ title: '已恢复默认服务器', icon: 'success' })
-      } else if (res.tapIndex === 1) {
-        // 设置自定义服务器
-        uni.showModal({
-          title: '设置同步服务器',
-          content: '请输入服务器地址，如：http://192.168.1.100:3000',
-          editable: true,
-          placeholderText: 'http://your-server:3000',
-          success: (modalRes) => {
-            if (modalRes.confirm && modalRes.content) {
-              const url = modalRes.content.trim()
-              // 简单验证 URL 格式
-              if (!url.match(/^https?:\/\/[^\s]+/)) {
-                uni.showToast({ title: '地址格式错误', icon: 'none' })
-                return
-              }
-              setSyncServerUrl(url)
-              serverRefreshTick.value++
-              uni.showToast({ title: '已保存', icon: 'success' })
-            }
-          }
-        })
-      } else if (res.tapIndex === 2) {
-        // 测试连接
-        uni.showLoading({ title: '测试中...' })
-        const ok = await checkServerAvailable()
-        uni.hideLoading()
-        uni.showToast({
-          title: ok ? '连接成功' : '连接失败',
-          icon: ok ? 'success' : 'none'
-        })
-      }
-    }
-  })
+// 同步页面跳转（移至分包，避免主包体积膨胀）
+const goSyncPage = () => {
+  uni.navigateTo({ url: '/subPackages/pages-tools/sync/sync' })
 }
 
 // 翻译引擎设置
@@ -277,10 +162,8 @@ const onTranslationPlatformSelect = (platform: TranslationPlatform) => {
 const confirmTranslationPlatform = () => {
   setTranslationPlatform(settingsPlatform.value)
   if (apiKeyInput.value.appkey.trim() || apiKeyInput.value.key.trim()) {
-    // 用户填写了自定义密钥，保存
     setTranslationApiKey(settingsPlatform.value, apiKeyInput.value.appkey.trim(), apiKeyInput.value.key.trim())
   } else {
-    // 用户未填写，清除自定义密钥以回退到默认
     setTranslationApiKey(settingsPlatform.value, '', '')
   }
   translationRefreshTick.value++
@@ -294,201 +177,19 @@ const resetApiKeyForPlatform = () => {
   uni.showToast({ title: '已恢复默认密钥', icon: 'success' })
 }
 
-// 获取平台的申请链接
 const getPlatformLink = (platform: TranslationPlatform) => {
   const info = TRANSLATION_PLATFORM_LINKS.find(l => l.key === platform)
   return info || null
 }
 
 const canConfigureApiKey = computed(() => {
-  const p = settingsPlatform.value
-  return p !== 'local'
+  return settingsPlatform.value !== 'local'
 })
 
 const isAiPlatform = computed(() => {
   const p = settingsPlatform.value
   return p === 'deepseek' || p === 'qwen' || p === 'kimi' || p === 'glm' || p === 'ollama'
 })
-
-// 同步操作菜单
-const showSyncActionSheet = () => {
-  uni.showActionSheet({
-    itemList: ['推送数据（上传）', '拉取数据（下载）', '扫码拉取'],
-    success: (res) => {
-      if (res.tapIndex === 0) handlePush()
-      else if (res.tapIndex === 1) showPullInput.value = true
-      else if (res.tapIndex === 2) scanAndPull()
-    },
-  })
-}
-
-// 推送（按词库分组上传）
-const handlePush = async () => {
-  uni.showLoading({ title: '推送中...' })
-  try {
-    const banks = wordsStore.bankList.map(bank => ({
-      id: bank.id,
-      name: bank.name,
-      words: wordsStore.allWords.filter(w => w.bankId === bank.id || (!w.bankId && bank.id === 'default')),
-    })).filter(b => b.words.length > 0)
-    const result = await pushToServer(banks)
-    uni.hideLoading()
-    if (result.success && result.code) {
-      syncCode.value = result.code
-      showPushResult.value = true
-      await nextTick()
-      drawQRCode(result.code)
-    } else {
-      uni.showToast({ title: result.error || '推送失败', icon: 'none' })
-    }
-  } catch (e) {
-    uni.hideLoading()
-    uni.showToast({ title: '推送失败', icon: 'none' })
-  }
-}
-
-// 按词库分组导入同步数据
-async function importBanks(banks: any[]) {
-  const allImportedWords: any[] = []
-  let doneBanks = 0
-  const totalBanks = banks.length
-
-  for (const bank of banks) {
-    const bankName = bank.name || '未命名词库'
-    const pct = Math.round(doneBanks / totalBanks * 100)
-    uni.showLoading({ title: `导入 ${pct}%` })
-
-    let targetBank = wordsStore.bankList.find(b => b.name === bankName)
-    if (!targetBank) {
-      targetBank = wordsStore.createBank(bankName)
-    }
-    const wordsArr = Array.isArray(bank.words) ? bank.words : []
-    if (wordsArr.length > 0) {
-      try {
-        const imported = await wordsStore.importWords(wordsArr, targetBank.id)
-        for (const w of imported) allImportedWords.push(w)
-      } catch (e) {
-        console.error(`导入词库 ${bankName} 失败:`, e)
-      }
-    }
-    doneBanks++
-  }
-
-  // 一次性追加到内存
-  if (allImportedWords.length > 0) {
-    wordsStore.appendWordsToMemory(allImportedWords)
-  }
-
-  return allImportedWords.length
-}
-
-// 拉取
-const handlePull = async () => {
-  if (!inputSyncCode.value.trim()) {
-    uni.showToast({ title: '请输入同步码', icon: 'none' })
-    return
-  }
-  uni.showLoading({ title: '拉取中...' })
-  try {
-    const result = await pullFromServer(inputSyncCode.value.trim())
-    if (result.success && result.banks) {
-      uni.showLoading({ title: '导入中...' })
-      const total = await importBanks(result.banks)
-      uni.hideLoading()
-      uni.showModal({
-        title: '拉取成功',
-        content: `共 ${total} 个单词已同步`,
-        showCancel: false,
-      })
-      closePullInput()
-    } else {
-      uni.hideLoading()
-      uni.showToast({ title: result.error || '拉取失败', icon: 'none' })
-    }
-  } catch (e) {
-    uni.hideLoading()
-    uni.showToast({ title: '拉取失败', icon: 'none' })
-  }
-}
-
-// 扫码拉取
-const scanAndPull = () => {
-  // #ifdef MP-WEIXIN || APP-PLUS
-  uni.scanCode({
-    success: async (res) => {
-      if (res.result) {
-        uni.showLoading({ title: '拉取中...' })
-        try {
-          const result = await pullFromServer(res.result)
-          if (result.success && result.banks) {
-            uni.showLoading({ title: '导入中...' })
-            const total = await importBanks(result.banks)
-            uni.hideLoading()
-            uni.showModal({
-              title: '拉取成功',
-              content: `共 ${total} 个单词已同步`,
-              showCancel: false,
-            })
-          } else {
-            uni.hideLoading()
-            uni.showToast({ title: result.error || '拉取失败', icon: 'none' })
-          }
-        } catch (e) {
-          uni.hideLoading()
-          uni.showToast({ title: '拉取失败', icon: 'none' })
-        }
-      }
-    },
-    fail: () => {
-      uni.showToast({ title: '扫码取消', icon: 'none' })
-    },
-  })
-  // #endif
-
-  // #ifdef H5
-  uni.showToast({ title: 'H5 不支持扫码，请手动输入', icon: 'none' })
-  // #endif
-}
-
-// 绘制二维码
-const drawQRCode = (text: string) => {
-  // #ifdef MP-WEIXIN || APP-PLUS
-  try {
-    drawQrCode('syncQrCanvas', text, null, { size: 180, margin: 2 })
-  } catch (e) {
-    console.error('二维码生成失败', e)
-  }
-  // #endif
-
-  // #ifdef H5
-  try {
-    QRCode.toCanvas(qrCanvas.value, text, { width: 180, margin: 2 }, (err: any) => {
-      if (err) console.error('二维码生成失败', err)
-    })
-  } catch (e) {
-    console.error('二维码生成失败', e)
-  }
-  // #endif
-}
-
-const copySyncCode = () => {
-  uni.setClipboardData({
-    data: syncCode.value,
-    success: () => {
-      uni.showToast({ title: '已复制', icon: 'success' })
-    },
-  })
-}
-
-const closePushResult = () => {
-  showPushResult.value = false
-  syncCode.value = ''
-}
-
-const closePullInput = () => {
-  showPullInput.value = false
-  inputSyncCode.value = ''
-}
 
 // 导出数据
 const exportData = () => {
@@ -659,11 +360,6 @@ const showAbout = () => {
   color: #4caf50;
 }
 
-.menu-icon.server {
-  background: #fff3e0;
-  color: #ff9800;
-}
-
 .menu-icon.danger {
   background: #ffebee;
   color: #f44336;
@@ -784,15 +480,6 @@ const showAbout = () => {
   margin-bottom: 30rpx;
 }
 
-.popup-input {
-  height: 80rpx;
-  background: #f5f5f5;
-  border-radius: 8rpx;
-  padding: 0 20rpx;
-  margin-bottom: 20rpx;
-  font-size: 28rpx;
-}
-
 .popup-actions {
   display: flex;
   gap: 20rpx;
@@ -815,41 +502,5 @@ const showAbout = () => {
 .btn-confirm {
   background: #1976d2;
   color: #fff;
-}
-
-.sync-code-box {
-  background: #f5f5f5;
-  border-radius: 8rpx;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-}
-
-.sync-code-label {
-  font-size: 26rpx;
-  color: #666;
-}
-
-.sync-code-value {
-  font-size: 26rpx;
-  color: #1976d2;
-  font-weight: bold;
-  word-break: break-all;
-}
-
-.sync-qr-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16rpx;
-  margin-bottom: 20rpx;
-}
-
-.sync-qr-canvas {
-  border-radius: 8rpx;
-}
-
-.sync-qr-hint {
-  font-size: 24rpx;
-  color: #999;
 }
 </style>

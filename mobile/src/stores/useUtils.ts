@@ -1,10 +1,11 @@
 /**
  * 移动端工具模块 - 重导出入口
- * 保持向后兼容：从 '@/stores/useUtils' 导入时仍可用
+ * 仅保留主包页面需要的导出
  * 
- * ⚠️ 优化提示：建议从具体子模块直接导入，减少主包体积
- *   - 主包页面只需：import { queryOfflineDict } from '@/stores/useUtils/offline-dict'
- *   - 分包页面按需：import { translateText } from '@/stores/useUtils/translation'
+ * ⚠️ 翻译引擎、OCR、截图适配器已迁移到分包目录
+ *   - 翻译引擎: import from '@/subPackages/pages-tools/utils/translation'
+ *   - OCR: import from '@/subPackages/pages-tools/utils/ocr'
+ *   - 截图适配器: import from '@/subPackages/pages-tools/utils/capture'
  */
 
 // 类型
@@ -16,14 +17,9 @@ export { WORDBANK_LIST, DEFAULT_STRATEGY, loadWordBank, isWordBankCached, saveWo
 // 离线词典
 export { queryOfflineDict, hasOfflineDict, getOfflineDictSize, queryPhoneticFromCache, getPronunciationUrl, playPronunciation } from './useUtils/offline-dict'
 
-// 翻译
-export { translateText, batchTranslate, setTranslationPlatform, getTranslationPlatform, getTranslationApiKey, setTranslationApiKey, hasCustomTranslationApiKey, TRANSLATION_PLATFORM_LINKS } from './useUtils/translation'
+// 翻译设置（轻量，主包安全）
+export { setTranslationPlatform, getTranslationPlatform, getTranslationApiKey, setTranslationApiKey, hasCustomTranslationApiKey, TRANSLATION_PLATFORM_LINKS } from './useUtils/translation-settings'
 
-// 同步
-export { pushToServer, pullFromServer, setSyncServerUrl, getSyncServerUrl, resetSyncServer, checkServerAvailable } from './useUtils/sync'
-
-// 二维码
-export { generateQRMatrix, drawQrCode } from './useUtils/qrcode'
-
-// OCR
-export { recognizeImageWords } from './useUtils/ocr'
+// 同步和二维码已迁移到分包：
+//   import { pushToServer } from '@/subPackages/pages-tools/utils/sync'
+//   import { drawQrCode } from '@/subPackages/pages-tools/utils/qrcode'

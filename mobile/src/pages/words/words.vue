@@ -302,41 +302,7 @@ const showAddDialog = () => {
   })
 }
 
-// 备用：简单输入弹窗
-const showSimpleAddDialog = () => {
-  uni.showModal({
-    title: '添加单词',
-    editable: true,
-    placeholderText: '输入单词（如：apple）',
-    success: async (res) => {
-      if (res.confirm && res.content) {
-        const word = res.content.trim()
-        if (!word) return
-        // 自动翻译
-        uni.showLoading({ title: '翻译中' })
-        try {
-          const { translateText } = await import('@/stores/useUtils')
-          const result = await translateText(word, 'auto', 'zh')
-          const meaning = result.translatedText || '暂无释义'
-          await wordsStore.addWord({
-            word,
-            meaning,
-            phonetic: result.phonetic || undefined,
-            example: result.examples?.[0] ? result.examples[0].english + ' — ' + result.examples[0].chinese : undefined,
-            addTime: Date.now(),
-            reviewCount: 0,
-            nextReviewTime: Date.now() + 24 * 60 * 60 * 1000
-          })
-          uni.showToast({ title: '添加成功', icon: 'success' })
-        } catch (e) {
-          uni.showToast({ title: '添加失败', icon: 'none' })
-        } finally {
-          uni.hideLoading()
-        }
-      }
-    }
-  })
-}
+// 添加单词已统一走分包 add-word 页面（带翻译功能）
 
 const showWordDetail = (word: any) => {
   detailWord.value = { ...word }

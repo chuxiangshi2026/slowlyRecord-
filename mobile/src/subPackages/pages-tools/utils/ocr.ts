@@ -1,9 +1,10 @@
 /**
  * OCR 图片识别 - 重量级模块
  * 依赖 translation.ts 中的 tencentCloudRequest 和 translateText
+ * 已迁移到分包目录
  */
 
-import type { OcrWordResult } from './types'
+import type { OcrWordResult } from '@/stores/useUtils/types'
 export type { OcrWordResult }
 import { tencentCloudRequest, getTranslationApiKey, translateText } from './translation'
 

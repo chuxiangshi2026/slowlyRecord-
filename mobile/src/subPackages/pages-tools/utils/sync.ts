@@ -1,9 +1,9 @@
 /**
- * 同步服务 - 重量级模块，仅被 profile.vue 引用
+ * 同步服务 - 重量级模块，已迁移到分包
  * 包含 XOR 加密、pako 压缩、服务器通信
  */
 
-import type { MobileSyncBank, MobileSyncData, SyncResult, RestoreResult } from './types'
+import type { MobileSyncBank, MobileSyncData, SyncResult, RestoreResult } from '@/stores/useUtils/types'
 
 export type { MobileSyncBank, MobileSyncData, SyncResult, RestoreResult }
 

@@ -2,83 +2,17 @@
  * 翻译引擎 - 重量级模块，仅被分包页面引用
  * 包含 10 个翻译引擎 + MD5/HMAC-SHA1/SHA-1 签名
  * 
- * 翻译设置（轻量 get/set）由此模块导出，
- * 主包 profile.vue 如需仅引用设置函数，应从本模块导入
+ * ⚠️ 已迁移到分包目录，主包页面请从 translation-settings.ts 导入设置函数
  */
 
-import type { TranslationPlatform, TranslationResult } from './types'
-import type { Word } from './types'
+import type { TranslationResult } from '@/stores/useUtils/types'
+export type { TranslationPlatform, TranslationResult } from '@/stores/useUtils/types'
 
-export type { TranslationPlatform, TranslationResult }
+// 从轻量设置模块重导出
+export { setTranslationPlatform, getTranslationPlatform, getTranslationApiKey, setTranslationApiKey, hasCustomTranslationApiKey, TRANSLATION_PLATFORM_LINKS, currentPlatform } from '@/stores/useUtils/translation-settings'
 
-import { DefaultApiKeys } from '@/config'
-import { queryOfflineDict, queryPhoneticFromCache, getPronunciationUrl } from './offline-dict'
-
-// ==================== 翻译设置管理 ====================
-
-const STORAGE_KEY_TRANSLATION_PLATFORM = 'slowly_translation_platform'
-const STORAGE_KEY_TRANSLATION_KEYS = 'slowly_translation_keys'
-
-export const TRANSLATION_PLATFORM_LINKS: { name: string; key: TranslationPlatform; content: string; url: string }[] = [
-  { name: '有道', key: 'youdao', content: '申请有道密钥', url: 'https://ai.youdao.com/console/#/service-singleton/text-translation' },
-  { name: '阿里', key: 'ali', content: '申请阿里密钥', url: 'https://mt.console.aliyun.com/service' },
-  { name: '百度', key: 'baidu', content: '申请百度密钥', url: 'https://fanyi-api.baidu.com/choose' },
-  { name: '阿里千问', key: 'qwen', content: '申请千问密钥', url: 'https://bailian.console.aliyun.com/cn-beijing/?tab=model#/efm/model_experience_center/text' },
-  { name: 'DeepSeek', key: 'deepseek', content: '申请DeepSeek密钥', url: 'https://platform.deepseek.com/usage' },
-  { name: 'Kimi', key: 'kimi', content: '申请Kimi密钥', url: 'https://platform.moonshot.cn/console/account' },
-  { name: 'Ollama', key: 'ollama', content: '下载Ollama', url: 'https://ollama.com/download' },
-  { name: '智谱GLM', key: 'glm', content: '申请GLM密钥（有免费额度）', url: 'https://open.bigmodel.cn/usercenter/apikeys' },
-]
-
-let currentPlatform: TranslationPlatform = 'glm'
-
-function loadTranslationSettings() {
-  try {
-    const saved = uni.getStorageSync(STORAGE_KEY_TRANSLATION_PLATFORM)
-    if (saved && typeof saved === 'string') {
-      currentPlatform = saved as TranslationPlatform
-    }
-  } catch { /* ignore */ }
-}
-
-try { loadTranslationSettings() } catch { /* ignore */ }
-
-const userApiKeys: Record<TranslationPlatform, { appkey: string; key: string }> = (() => {
-  try {
-    const saved = uni.getStorageSync(STORAGE_KEY_TRANSLATION_KEYS)
-    if (saved && typeof saved === 'object') return saved
-  } catch { /* ignore */ }
-  return {} as Record<TranslationPlatform, { appkey: string; key: string }>
-})()
-
-export function setTranslationPlatform(platform: TranslationPlatform) {
-  currentPlatform = platform
-  try { uni.setStorageSync(STORAGE_KEY_TRANSLATION_PLATFORM, platform) } catch { /* ignore */ }
-}
-
-export function getTranslationPlatform(): TranslationPlatform {
-  return currentPlatform
-}
-
-export function getTranslationApiKey(provider: TranslationPlatform): { appkey: string; key: string } {
-  const userKey = userApiKeys[provider]
-  const defaultKey = DefaultApiKeys[provider]
-  const appkey = (userKey?.appkey?.trim()) ? userKey.appkey.trim() : (defaultKey?.appkey || '')
-  const key = (userKey?.key?.trim()) ? userKey.key.trim() : (defaultKey?.key || '')
-  return { appkey, key }
-}
-
-export function setTranslationApiKey(provider: TranslationPlatform, appkey: string, key: string) {
-  if (!userApiKeys[provider]) userApiKeys[provider] = { appkey: '', key: '' }
-  userApiKeys[provider].appkey = appkey
-  userApiKeys[provider].key = key
-  try { uni.setStorageSync(STORAGE_KEY_TRANSLATION_KEYS, userApiKeys) } catch { /* ignore */ }
-}
-
-export function hasCustomTranslationApiKey(provider: TranslationPlatform): boolean {
-  const uk = userApiKeys[provider]
-  return !!(uk?.appkey?.trim())
-}
+import { getTranslationApiKey, currentPlatform } from '@/stores/useUtils/translation-settings'
+import { queryOfflineDict, queryPhoneticFromCache, getPronunciationUrl } from '@/stores/useUtils/offline-dict'
 
 // ==================== MD5 辅助函数 ====================
 

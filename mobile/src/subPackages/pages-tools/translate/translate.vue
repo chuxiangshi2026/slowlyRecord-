@@ -46,9 +46,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { translateText } from '@/stores/useUtils/translation'
+import { translateText } from '../utils/translation'
 import { queryOfflineDict } from '@/stores/useUtils/offline-dict'
-import { getCaptureAdapter } from '@/adapters/index'
+import { getCaptureAdapter } from '../utils/capture'
 
 const inputText = ref('')
 const result = ref<any>(null)
