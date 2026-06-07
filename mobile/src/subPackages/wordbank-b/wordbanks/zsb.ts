@@ -1,4 +1,4 @@
-import type { Word } from '@/stores/useUtils'
+import type { Word } from '@/stores/useUtils/wordbank'
 export default [
   {"word": "abandon", "phonetic": "/əˈbændən/", "explains": "v. 放弃；抛弃"},
   {"word": "ability", "phonetic": "/əˈbɪləti/", "explains": "n. 能力；才能"},

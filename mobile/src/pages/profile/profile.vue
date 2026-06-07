@@ -144,8 +144,10 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from 'vue'
 import { useMobileWords } from '@/stores/useMobileWords'
-import { pushToServer, pullFromServer, drawQrCode, getTranslationPlatform, setTranslationPlatform, getTranslationApiKey, setTranslationApiKey, hasCustomTranslationApiKey, TRANSLATION_PLATFORM_LINKS, getSyncServerUrl, setSyncServerUrl, checkServerAvailable } from '@/stores/useUtils'
-import type { TranslationPlatform } from '@/stores/useUtils'
+import { getTranslationPlatform, setTranslationPlatform, getTranslationApiKey, setTranslationApiKey, hasCustomTranslationApiKey, TRANSLATION_PLATFORM_LINKS } from '@/stores/useUtils/translation'
+import type { TranslationPlatform } from '@/stores/useUtils/types'
+import { pushToServer, pullFromServer, getSyncServerUrl, setSyncServerUrl, checkServerAvailable } from '@/stores/useUtils/sync'
+import { drawQrCode } from '@/stores/useUtils/qrcode'
 // #ifdef H5
 import QRCode from 'qrcode'
 // #endif

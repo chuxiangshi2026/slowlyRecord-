@@ -1,4 +1,4 @@
-import type { Word, WordBankType } from '@/stores/useUtils'
+import type { Word, WordBankType } from '@/stores/useUtils/wordbank'
 import kaoyan from './wordbanks/kaoyan'
 import gmat from './wordbanks/gmat'
 

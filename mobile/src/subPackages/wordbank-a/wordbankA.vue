@@ -34,7 +34,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useMobileWords } from '@/stores/useMobileWords'
-import { WORDBANK_LIST, type WordBankInfo, type Word, isWordBankCached, saveWordBankCache } from '@/stores/useUtils'
+import { WORDBANK_LIST, isWordBankCached, saveWordBankCache } from '@/stores/useUtils/wordbank'
+import type { WordBankInfo, Word } from '@/stores/useUtils/wordbank'
 import { loadWordBankA, WORDBANK_A_IDS } from './loaderA'
 
 interface LocalBankInfo extends WordBankInfo {

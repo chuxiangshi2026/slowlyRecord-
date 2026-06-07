@@ -1,4 +1,4 @@
-import type { Word } from '@/stores/useUtils'
+import type { Word } from '@/stores/useUtils/wordbank'
 export default [
   {"word": "abide", "phonetic": "/əˈbaɪd/", "explains": "v. 遵守；忍受"},
   {"word": "abolish", "phonetic": "/əˈbɒlɪʃ/", "explains": "v. 废除；废止"},

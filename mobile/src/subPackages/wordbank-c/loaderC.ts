@@ -1,4 +1,4 @@
-import type { Word, WordBankType } from '@/stores/useUtils'
+import type { Word, WordBankType } from '@/stores/useUtils/wordbank'
 import gre from './wordbanks/gre'
 import sat from './wordbanks/sat'
 import level4 from './wordbanks/level4'

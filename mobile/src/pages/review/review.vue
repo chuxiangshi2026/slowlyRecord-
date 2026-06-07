@@ -160,7 +160,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useMobileWords } from '@/stores/useMobileWords'
 import { getTtsAdapter } from '@/adapters/index'
-import { queryOfflineDict } from '@/stores/useUtils'
+import { queryOfflineDict } from '@/stores/useUtils/offline-dict'
 
 const wordsStore = useMobileWords()
 const currentIndex = ref(0)

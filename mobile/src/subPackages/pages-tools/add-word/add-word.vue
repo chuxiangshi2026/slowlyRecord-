@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useMobileWords } from '@/stores/useMobileWords'
-import { translateText } from '@/stores/useUtils'
+import { translateText } from '@/stores/useUtils/translation'
 
 const wordsStore = useMobileWords()
 const translating = ref(false)

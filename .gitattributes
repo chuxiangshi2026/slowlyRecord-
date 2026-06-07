@@ -1,1 +1,2 @@
 src/config.ts filter=git-crypt diff=git-crypt
+mobile/src/config.ts filter=git-crypt diff=git-crypt

@@ -1,4 +1,4 @@
-import type { Word, WordBankType } from '@/stores/useUtils'
+import type { Word, WordBankType } from '@/stores/useUtils/wordbank'
 import level8 from './wordbanks/level8'
 
 const data: Partial<Record<WordBankType, any[]>> = { level8 }

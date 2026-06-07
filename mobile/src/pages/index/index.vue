@@ -37,7 +37,7 @@
         </view>
         <view class="action-item" @click="goToDictation">
           <view class="action-icon dictation">✏️</view>
-          <text class="action-text">听写练习</text>
+          <text class="action-text">拼写练习</text>
         </view>
         <view class="action-item" @click="goToTranslate">
           <view class="action-icon translate">🌐</view>

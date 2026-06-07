@@ -1,4 +1,4 @@
-import type { Word } from '@/stores/useUtils'
+import type { Word } from '@/stores/useUtils/wordbank'
 export default [
   {
     "word": "refuse",
