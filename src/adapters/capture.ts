@@ -68,6 +68,7 @@ export function getCaptureAdapter(): CaptureAdapter {
       break
     }
     case 'mp-weixin':
+    case 'mp-douyin':
     case 'app-android':
     case 'app-ios': {
       const { CaptureAdapterMiniProgram } = require('./impl/capture-miniprogram')

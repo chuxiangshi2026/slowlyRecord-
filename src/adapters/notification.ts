@@ -48,6 +48,25 @@ class WxNotification implements NotificationAdapter {
   }
 }
 
+class DouyinNotification implements NotificationAdapter {
+  show(title: string, body?: string): void {
+    const tt = (window as any).tt
+    tt.showToast({ title: body || title, icon: 'none' })
+  }
+  success(message: string): void {
+    const tt = (window as any).tt
+    tt.showToast({ title: message, icon: 'success' })
+  }
+  warning(message: string): void {
+    const tt = (window as any).tt
+    tt.showToast({ title: message, icon: 'none' })
+  }
+  error(message: string): void {
+    const tt = (window as any).tt
+    tt.showToast({ title: message, icon: 'error' })
+  }
+}
+
 class WebNotification implements NotificationAdapter {
   show(title: string, body?: string): void {
     if (Notification.permission === 'granted') {
@@ -83,6 +102,9 @@ export function getNotificationAdapter(): NotificationAdapter {
       break
     case 'mp-weixin':
       _notificationAdapter = new WxNotification()
+      break
+    case 'mp-douyin':
+      _notificationAdapter = new DouyinNotification()
       break
     default:
       _notificationAdapter = new WebNotification()

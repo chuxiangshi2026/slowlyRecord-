@@ -1,12 +1,12 @@
 /**
  * 小程序 Storage 数据库适配器
- * 用于微信小程序环境
+ * 用于微信小程序和抖音小程序环境
  * 
- * 基于 wx.setStorage / wx.getStorage 实现
+ * 基于 wx.setStorage / wx.getStorage（微信）或 tt.setStorage / tt.getStorage（抖音）实现
  * 小程序单条 Storage 上限 1MB，超过则自动分片
  * 
  * 存储结构：
- * - 每个文档以 _id 为 key 存储到 wx.Storage
+ * - 每个文档以 _id 为 key 存储到 Storage
  * - 大文档（超过 MAX_CHUNK_SIZE）自动分片
  * - 分片 key 格式: `${_id}::__chunk__${index}`
  * - 元数据 key: `${_id}::__meta` 记录分片信息
@@ -17,10 +17,12 @@ import type { DbAdapter, DbDoc, DbReturn } from '../db'
 const MAX_CHUNK_SIZE = 900 * 1024 // 900KB
 
 /**
- * 获取 wx 对象（小程序环境）
+ * 获取小程序原生 API 对象
+ * 支持微信小程序 (wx) 和抖音小程序 (tt)
  */
-function getWx(): any {
-  return (window as any).wx || (globalThis as any).wx
+function getMiniProgramApi(): any {
+  const g = (typeof window !== 'undefined' ? window : globalThis) as any
+  return g.wx || g.tt
 }
 
 /**
@@ -33,20 +35,20 @@ function estimateSize(obj: any): number {
 /**
  * 同步存储接口（小程序同步 API）
  */
-interface WxStorageSync {
+interface MpStorageSync {
   setStorageSync(key: string, data: any): void
   getStorageSync(key: string): any
   removeStorageSync(key: string): void
   getStorageInfoSync(): { keys: string[]; currentSize: number; limitSize: number }
 }
 
-function getStorageSync(): WxStorageSync {
-  const wx = getWx()
+function getStorageSync(): MpStorageSync {
+  const mp = getMiniProgramApi()
   return {
-    setStorageSync: wx?.setStorageSync?.bind(wx) || ((key: string, data: any) => localStorage.setItem(key, JSON.stringify(data))),
-    getStorageSync: wx?.getStorageSync?.bind(wx) || ((key: string) => { try { return JSON.parse(localStorage.getItem(key) || 'null') } catch { return null } }),
-    removeStorageSync: wx?.removeStorageSync?.bind(wx) || ((key: string) => localStorage.removeItem(key)),
-    getStorageInfoSync: wx?.getStorageInfoSync?.bind(wx) || (() => ({ keys: Object.keys(localStorage), currentSize: 0, limitSize: 10240 })),
+    setStorageSync: mp?.setStorageSync?.bind(mp) || ((key: string, data: any) => localStorage.setItem(key, JSON.stringify(data))),
+    getStorageSync: mp?.getStorageSync?.bind(mp) || ((key: string) => { try { return JSON.parse(localStorage.getItem(key) || 'null') } catch { return null } }),
+    removeStorageSync: mp?.removeStorageSync?.bind(mp) || ((key: string) => localStorage.removeItem(key)),
+    getStorageInfoSync: mp?.getStorageInfoSync?.bind(mp) || (() => ({ keys: Object.keys(localStorage), currentSize: 0, limitSize: 10240 })),
   }
 }
 
@@ -57,7 +59,7 @@ export class DbAdapterMiniprogram implements DbAdapter {
     return `${Date.now()}-${++this.revCounter}`
   }
 
-  private get storage(): WxStorageSync {
+  private get storage(): MpStorageSync {
     return getStorageSync()
   }
 

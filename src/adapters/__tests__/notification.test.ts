@@ -172,6 +172,52 @@ describe('notification adapter', () => {
     })
   })
 
+  describe('DouyinNotification', () => {
+    const mockShowToast = vi.fn()
+
+    beforeEach(() => {
+      setPlatform('mp-douyin')
+      setNotificationAdapter(null as any)
+      ;(window as any).tt = {
+        showToast: mockShowToast,
+      }
+    })
+
+    afterEach(() => {
+      delete (window as any).tt
+      mockShowToast.mockClear()
+    })
+
+    it('在 mp-douyin 平台下返回 DouyinNotification 实例', () => {
+      const adapter = getNotificationAdapter()
+      expect(adapter).toBeDefined()
+    })
+
+    it('show 应该调用 tt.showToast with icon none', () => {
+      const adapter = getNotificationAdapter()
+      adapter.show('标题', '内容')
+      expect(mockShowToast).toHaveBeenCalledWith({ title: '内容', icon: 'none' })
+    })
+
+    it('success 应该调用 tt.showToast with icon success', () => {
+      const adapter = getNotificationAdapter()
+      adapter.success('成功')
+      expect(mockShowToast).toHaveBeenCalledWith({ title: '成功', icon: 'success' })
+    })
+
+    it('warning 应该调用 tt.showToast with icon none', () => {
+      const adapter = getNotificationAdapter()
+      adapter.warning('警告')
+      expect(mockShowToast).toHaveBeenCalledWith({ title: '警告', icon: 'none' })
+    })
+
+    it('error 应该调用 tt.showToast with icon error', () => {
+      const adapter = getNotificationAdapter()
+      adapter.error('错误')
+      expect(mockShowToast).toHaveBeenCalledWith({ title: '错误', icon: 'error' })
+    })
+  })
+
   describe('工厂方法缓存', () => {
     it('多次调用返回相同实例', () => {
       setPlatform('web')

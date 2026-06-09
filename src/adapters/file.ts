@@ -138,6 +138,43 @@ class WxFileAdapter implements FileAdapter {
   }
 }
 
+class DouyinFileAdapter implements FileAdapter {
+  async readText(path: string): Promise<string> {
+    const tt = (window as any).tt
+    const fs = tt.getFileSystemManager()
+    return fs.readFileSync(path, 'utf-8') as string
+  }
+  async writeText(path: string, content: string): Promise<void> {
+    const tt = (window as any).tt
+    const fs = tt.getFileSystemManager()
+    fs.writeFileSync(path, content, 'utf-8')
+  }
+  async readJSON<T = any>(path: string): Promise<T> {
+    const text = await this.readText(path)
+    return JSON.parse(text)
+  }
+  async pickFile(_options?: { accept?: string; multiple?: boolean }): Promise<File | File[]> {
+    const tt = (window as any).tt
+    return new Promise((resolve, reject) => {
+      tt.chooseMessageFile({
+        count: _options?.multiple ? 10 : 1,
+        success: (res: any) => {
+          resolve(res.tempFiles)
+        },
+        fail: (err: any) => reject(err),
+      })
+    })
+  }
+  async downloadFile(data: Blob | string, filename: string): Promise<void> {
+    const tt = (window as any).tt
+    if (typeof data === 'string') {
+      const fs = tt.getFileSystemManager()
+      const filePath = `${tt.env.USER_DATA_PATH}/${filename}`
+      fs.writeFileSync(filePath, data, 'utf-8')
+    }
+  }
+}
+
 let _fileAdapter: FileAdapter | null = null
 
 export function getFileAdapter(): FileAdapter {
@@ -160,6 +197,9 @@ export function getFileAdapter(): FileAdapter {
     }
     case 'mp-weixin':
       _fileAdapter = new WxFileAdapter()
+      break
+    case 'mp-douyin':
+      _fileAdapter = new DouyinFileAdapter()
       break
     default:
       _fileAdapter = new WebFileAdapter()

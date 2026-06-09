@@ -6,10 +6,11 @@
  * - Electron 桌面应用
  * - Web 浏览器
  * - 微信小程序
+ * - 抖音小程序
  * - UniApp (Android/iOS)
  */
 
-export type Platform = 'utools' | 'electron' | 'web' | 'mp-weixin' | 'app-android' | 'app-ios'
+export type Platform = 'utools' | 'electron' | 'web' | 'mp-weixin' | 'mp-douyin' | 'app-android' | 'app-ios'
 
 // 缓存检测结果
 let _platform: Platform | null = null
@@ -38,7 +39,7 @@ export function isElectron(): boolean {
  */
 export function isWeb(): boolean {
   if (typeof window === 'undefined') return false
-  return !isUtools() && !isElectron() && !isMiniProgram() && !isApp()
+  return !isUtools() && !isElectron() && !isMiniProgram() && !isDouyin() && !isApp()
 }
 
 /**
@@ -48,6 +49,15 @@ export function isMiniProgram(): boolean {
   if (typeof window === 'undefined') return false
   return typeof (window as any).wx !== 'undefined' && 
     typeof (window as any).wx.getSystemInfoSync !== 'undefined'
+}
+
+/**
+ * 检测是否在抖音小程序环境中
+ */
+export function isDouyin(): boolean {
+  if (typeof window === 'undefined') return false
+  return typeof (window as any).tt !== 'undefined' && 
+    typeof (window as any).tt.getSystemInfoSync !== 'undefined'
 }
 
 /**
@@ -68,7 +78,7 @@ export function isApp(): boolean {
  * 检测是否为移动端（小程序或 App）
  */
 export function isMobile(): boolean {
-  return isMiniProgram() || isApp()
+  return isMiniProgram() || isDouyin() || isApp()
 }
 
 /**
@@ -80,7 +90,7 @@ export function isDesktop(): boolean {
 
 /**
  * 获取当前平台标识
- * 优先级：uTools > Electron > 小程序 > App > Web
+ * 优先级：uTools > Electron > 微信小程序 > 抖音小程序 > App > Web
  */
 export function getPlatform(): Platform {
   if (_platform) return _platform
@@ -91,6 +101,8 @@ export function getPlatform(): Platform {
     _platform = 'electron'
   } else if (isMiniProgram()) {
     _platform = 'mp-weixin'
+  } else if (isDouyin()) {
+    _platform = 'mp-douyin'
   } else if (isApp()) {
     // 区分 Android 和 iOS
     const uni = (window as any).uni

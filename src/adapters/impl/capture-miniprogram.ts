@@ -1,16 +1,26 @@
 /**
  * 小程序/UniApp 截图适配器实现
  *
- * 使用 wx.chooseImage / uni.chooseImage 调用相机/相册
+ * 使用 wx.chooseImage / tt.chooseImage / uni.chooseImage 调用相机/相册
+ * 自动检测可用 API（优先级：uni > wx > tt）
  */
 import type { CaptureAdapter, CaptureResult, OCRResult } from '../capture'
 
 declare const uni: any
 
+/**
+ * 获取小程序原生 API（自动检测 uni / wx / tt）
+ */
+function getMiniProgramApi(): any {
+  if (typeof uni !== 'undefined' && uni.chooseImage) return uni
+  const w = window as any
+  return w.wx || w.tt
+}
+
 export class CaptureAdapterMiniProgram implements CaptureAdapter {
   async capture(): Promise<CaptureResult> {
     return new Promise((resolve, reject) => {
-      const uniApi = (typeof uni !== 'undefined' ? uni : (window as any).wx) as any
+      const uniApi = getMiniProgramApi()
       if (!uniApi?.chooseImage) {
         reject(new Error('chooseImage API 不可用'))
         return

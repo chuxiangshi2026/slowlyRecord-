@@ -573,8 +573,8 @@
       <span class="icon icon-forgot" id="btn-forgot" title="忘记">
         <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
       </span>
-      <!-- 记得 -->
-      <span class="icon icon-remember" id="btn-remember" title="记得">
+      <!-- 认识 -->
+      <span class="icon icon-remember" id="btn-remember" title="认识">
         <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
       </span>
       <!-- 下一个 -->
@@ -951,7 +951,7 @@
       return !!word.isReview;  // 默认0：待复习
     }
 
-    // 标记记得
+    // 标记认识
     function markRemembered() {
       var word = words[currentIndex];
       if (!word) return;

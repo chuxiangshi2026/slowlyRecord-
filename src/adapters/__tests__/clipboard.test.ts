@@ -137,6 +137,40 @@ describe('clipboard adapter', () => {
     })
   })
 
+  describe('DouyinClipboard', () => {
+    beforeEach(() => {
+      setPlatform('mp-douyin')
+      setClipboardAdapter(null as any)
+      ;(window as any).tt = {
+        setClipboardData: vi.fn(),
+        getClipboardData: vi.fn(({ success }: any) => success({ data: 'tt-text' })),
+      }
+    })
+
+    afterEach(() => {
+      delete (window as any).tt
+    })
+
+    it('在 mp-douyin 平台下返回 DouyinClipboard 实例', () => {
+      const adapter = getClipboardAdapter()
+      expect(adapter).toBeDefined()
+      expect(typeof adapter.copyText).toBe('function')
+      expect(typeof adapter.readText).toBe('function')
+    })
+
+    it('copyText 应该调用 tt.setClipboardData', () => {
+      const adapter = getClipboardAdapter()
+      adapter.copyText('tt text')
+      expect((window as any).tt.setClipboardData).toHaveBeenCalledWith({ data: 'tt text' })
+    })
+
+    it('readText 应该调用 tt.getClipboardData 并返回数据', async () => {
+      const adapter = getClipboardAdapter()
+      const result = await adapter.readText()
+      expect(result).toBe('tt-text')
+    })
+  })
+
   describe('工厂方法缓存', () => {
     it('多次调用返回相同实例', () => {
       setPlatform('web')

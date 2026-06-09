@@ -253,7 +253,7 @@ const openLink = (url: string) => {
   // #ifdef H5
   window.open(url, '_blank')
   // #endif
-  // #ifdef MP-WEIXIN
+  // #ifdef MP-WEIXIN || MP-TOUTIAO
   uni.setClipboardData({ data: url, success: () => { uni.showToast({ title: '链接已复制，请在浏览器中打开', icon: 'none' }) } })
   // #endif
 }

@@ -369,7 +369,7 @@ function playWord() {
   speechSynthesis.speak(utterance)
   // #endif
 
-  // #ifdef MP-WEIXIN
+  // #ifdef MP-WEIXIN || MP-TOUTIAO
   // 使用有道 TTS 接口（免费，无需密钥）
   const ttsUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word.word)}&type=2`
   const tts = getTtsAdapter()

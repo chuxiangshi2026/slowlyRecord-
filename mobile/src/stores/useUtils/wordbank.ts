@@ -78,15 +78,15 @@ export async function loadWordBank(
 
   try {
     let rawData: any
-    // #ifdef MP-WEIXIN
-    // 微信小程序：词库数据在分包中，主包只从缓存读取
+    // #ifdef MP-WEIXIN || MP-TOUTIAO
+    // 小程序：词库数据在分包中，主包只从缓存读取
     const cached = getFromCache(type)
     if (cached && cached.length > 0) {
       return cached
     }
     throw new Error('请先在"词库管理"页面下载词库')
     // #endif
-    // #ifndef MP-WEIXIN
+    // #ifndef MP-WEIXIN || MP-TOUTIAO
     const importLoaders: Record<string, () => Promise<any>> = {
       cet4: () => import('@/subPackages/wordbank-b/wordbanks/cet4'),
       cet6: () => import('@/subPackages/wordbank-b/wordbanks/cet6'),

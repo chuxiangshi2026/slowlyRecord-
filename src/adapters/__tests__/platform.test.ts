@@ -7,6 +7,7 @@ import {
   isElectron,
   isWeb,
   isMiniProgram,
+  isDouyin,
   isApp,
   isMobile,
   isDesktop,
@@ -22,6 +23,7 @@ describe('platform detection', () => {
     delete (window as any).utools
     delete (window as any).electronAPI
     delete (window as any).wx
+    delete (window as any).tt
     delete (window as any).uni
   })
 
@@ -82,6 +84,22 @@ describe('platform detection', () => {
     })
   })
 
+  describe('isDouyin', () => {
+    it('should return false when tt is not defined', () => {
+      expect(isDouyin()).toBe(false)
+    })
+
+    it('should return false when tt exists but getSystemInfoSync is missing', () => {
+      ;(window as any).tt = {}
+      expect(isDouyin()).toBe(false)
+    })
+
+    it('should return true when tt with getSystemInfoSync is defined', () => {
+      ;(window as any).tt = { getSystemInfoSync: vi.fn() }
+      expect(isDouyin()).toBe(true)
+    })
+  })
+
   describe('isApp', () => {
     it('should return false when uni is not defined', () => {
       expect(isApp()).toBe(false)
@@ -131,6 +149,11 @@ describe('platform detection', () => {
       expect(isMobile()).toBe(true)
     })
 
+    it('isMobile should return true for douyin', () => {
+      ;(window as any).tt = { getSystemInfoSync: vi.fn() }
+      expect(isMobile()).toBe(true)
+    })
+
     it('isMobile should return true for app', () => {
       ;(window as any).uni = {
         getSystemInfoSync: () => ({ platform: 'android' }),
@@ -165,6 +188,11 @@ describe('platform detection', () => {
       expect(getPlatform()).toBe('mp-weixin')
     })
 
+    it('should return mp-douyin when tt is available', () => {
+      ;(window as any).tt = { getSystemInfoSync: vi.fn() }
+      expect(getPlatform()).toBe('mp-douyin')
+    })
+
     it('should return app-android when uni platform is android', () => {
       ;(window as any).uni = {
         getSystemInfoSync: () => ({ platform: 'android' }),
@@ -193,11 +221,24 @@ describe('platform detection', () => {
       expect(getPlatform()).toBe('utools')
     })
 
-    it('should respect priority: utools > electron > miniprogram > app > web', () => {
+    it('should respect priority: utools > electron > mp-weixin > mp-douyin > app > web', () => {
       ;(window as any).utools = { getPath: vi.fn() }
       ;(window as any).electronAPI = {}
       ;(window as any).wx = { getSystemInfoSync: vi.fn() }
+      ;(window as any).tt = { getSystemInfoSync: vi.fn() }
       expect(getPlatform()).toBe('utools')
+    })
+
+    it('should return mp-douyin when both wx and tt are available but wx is checked first', () => {
+      ;(window as any).wx = { getSystemInfoSync: vi.fn() }
+      ;(window as any).tt = { getSystemInfoSync: vi.fn() }
+      expect(getPlatform()).toBe('mp-weixin')
+    })
+
+    it('should return mp-douyin when only tt is available', () => {
+      resetPlatformCache()
+      ;(window as any).tt = { getSystemInfoSync: vi.fn() }
+      expect(getPlatform()).toBe('mp-douyin')
     })
   })
 

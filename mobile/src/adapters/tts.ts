@@ -9,11 +9,11 @@ export interface TtsAdapter {
   playAudio(url: string): Promise<void>
 }
 
-class WxTtsAdapter implements TtsAdapter {
-  private innerAudio: WechatMiniprogram.InnerAudioContext | null = null
+class MiniProgramTtsAdapter implements TtsAdapter {
+  private innerAudio: any = null
 
   speak(_text: string, _options?: { lang?: string; rate?: number; pitch?: number }): void {
-    console.warn('WxTtsAdapter.speak: Use playAudio with TTS URL instead')
+    console.warn('MiniProgramTtsAdapter.speak: Use playAudio with TTS URL instead')
   }
 
   stop(): void {
@@ -38,7 +38,7 @@ let _ttsAdapter: TtsAdapter | null = null
 
 export function getTtsAdapter(): TtsAdapter {
   if (!_ttsAdapter) {
-    _ttsAdapter = new WxTtsAdapter()
+    _ttsAdapter = new MiniProgramTtsAdapter()
   }
   return _ttsAdapter
 }

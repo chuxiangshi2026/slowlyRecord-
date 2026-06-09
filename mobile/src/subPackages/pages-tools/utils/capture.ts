@@ -32,7 +32,7 @@ class UniAppCaptureAdapter implements CaptureAdapter {
             return
           }
 
-          // #ifdef MP-WEIXIN
+          // #ifdef MP-WEIXIN || MP-TOUTIAO
           try {
             const fs = uni.getFileSystemManager()
             const base64 = fs.readFileSync(tempPath, 'base64')

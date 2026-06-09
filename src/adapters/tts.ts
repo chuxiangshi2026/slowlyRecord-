@@ -73,6 +73,33 @@ class WxTtsAdapter implements TtsAdapter {
   }
 }
 
+class DouyinTtsAdapter implements TtsAdapter {
+  private innerAudio: any = null
+
+  speak(_text: string, _options?: { lang?: string; rate?: number; pitch?: number }): void {
+    // 抖音小程序没有原生 SpeechSynthesis，需要使用在线 TTS API
+    console.warn('DouyinTtsAdapter.speak: Use playAudio with TTS URL instead')
+  }
+
+  stop(): void {
+    if (this.innerAudio) {
+      this.innerAudio.stop()
+      this.innerAudio = null
+    }
+  }
+
+  async playAudio(url: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const tt = (window as any).tt
+      this.innerAudio = tt.createInnerAudioContext()
+      this.innerAudio.src = url
+      this.innerAudio.onEnded = () => { this.innerAudio = null; resolve() }
+      this.innerAudio.onError = (err: any) => { this.innerAudio = null; reject(err) }
+      this.innerAudio.play()
+    })
+  }
+}
+
 let _ttsAdapter: TtsAdapter | null = null
 
 export function getTtsAdapter(): TtsAdapter {
@@ -82,6 +109,9 @@ export function getTtsAdapter(): TtsAdapter {
   switch (platform) {
     case 'mp-weixin':
       _ttsAdapter = new WxTtsAdapter()
+      break
+    case 'mp-douyin':
+      _ttsAdapter = new DouyinTtsAdapter()
       break
     default:
       _ttsAdapter = new WebTtsAdapter()

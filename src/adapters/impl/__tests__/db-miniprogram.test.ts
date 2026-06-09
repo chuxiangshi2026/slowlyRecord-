@@ -6,14 +6,14 @@ import { DbAdapterMiniprogram } from '../db-miniprogram'
 import type { DbDoc } from '../../db'
 
 /**
- * 创建 mock wx 存储
+ * 创建 mock 小程序存储（用于 wx 或 tt API）
  */
-function createMockStorage() {
+function createMockStorage(apiType: 'wx' | 'tt' = 'wx') {
   const store: Map<string, any> = new Map()
 
   return {
     store,
-    wx: {
+    [apiType]: {
       setStorageSync: vi.fn((key: string, data: any) => { store.set(key, data) }),
       getStorageSync: vi.fn((key: string) => store.get(key) ?? null),
       removeStorageSync: vi.fn((key: string) => { store.delete(key) }),
@@ -184,5 +184,68 @@ describe('DbAdapterMiniprogram', () => {
       expect(adapter.get('large-1')).toBeNull()
       expect(mockStorage.store.has('large-1::__meta')).toBe(false)
     })
+  })
+})
+
+describe('DbAdapterMiniprogram (抖音 tt API)', () => {
+  let adapter: DbAdapterMiniprogram
+  let mockStorage: ReturnType<typeof createMockStorage>
+
+  beforeEach(() => {
+    delete (window as any).wx
+    mockStorage = createMockStorage('tt')
+    ;(window as any).tt = mockStorage.tt
+    adapter = new DbAdapterMiniprogram()
+  })
+
+  afterEach(() => {
+    delete (window as any).tt
+  })
+
+  it('使用 tt API 创建和读取文档', async () => {
+    await adapter.promises.put({ _id: 'tt-doc', name: 'douyin' })
+
+    const result = adapter.get('tt-doc')
+    expect(result).not.toBeNull()
+    expect(result?.name).toBe('douyin')
+  })
+
+  it('使用 tt API 删除文档', async () => {
+    await adapter.promises.put({ _id: 'tt-remove', name: 'temp' })
+    const result = adapter.remove('tt-remove')
+    expect(result.ok).toBe(true)
+    expect(adapter.get('tt-remove')).toBeNull()
+  })
+
+  it('使用 tt API 批量写入', () => {
+    const docs: DbDoc[] = [
+      { _id: 'tt-b1', text: 'a' },
+      { _id: 'tt-b2', text: 'b' },
+    ]
+    const results = adapter.bulkDocs(docs)
+    expect(results).toHaveLength(2)
+    results.forEach(r => expect(r.ok).toBe(true))
+  })
+
+  it('使用 tt API allDocs 过滤前缀', async () => {
+    await adapter.promises.put({ _id: 'tt-word-1', text: 'a' })
+    await adapter.promises.put({ _id: 'tt-dict-1', text: 'b' })
+
+    const docs = adapter.allDocs('tt-word')
+    expect(docs).toHaveLength(1)
+    expect(docs[0]._id).toBe('tt-word-1')
+  })
+
+  it('使用 tt API 处理大文档分片', async () => {
+    const largeData = 'x'.repeat(500000)
+    await adapter.promises.put({ _id: 'tt-large', data: largeData })
+
+    const result = adapter.get('tt-large')
+    expect(result).not.toBeNull()
+    expect(result?.data.length).toBe(500000)
+
+    const meta = mockStorage.store.get('tt-large::__meta')
+    expect(meta).toBeDefined()
+    expect(meta.chunked).toBe(true)
   })
 })

@@ -162,7 +162,8 @@ export async function getDbAdapterAsync(): Promise<DbAdapter> {
         adapter = new DbAdapterUtools()
         break
       }
-      case 'mp-weixin': {
+      case 'mp-weixin':
+      case 'mp-douyin': {
         const { DbAdapterMiniprogram } = await import('./impl/db-miniprogram')
         adapter = new DbAdapterMiniprogram()
         break
@@ -258,6 +259,17 @@ export function getDbStorage(): DbStorageAdapter {
       setItem: (key: string, value: any) => wxGlobal.setStorageSync(key, value),
       getItem: (key: string) => wxGlobal.getStorageSync(key) || null,
       removeItem: (key: string) => wxGlobal.removeStorageSync(key),
+    }
+    return _dbStorage
+  }
+
+  // 抖音小程序环境
+  const ttGlobal = typeof window !== 'undefined' ? (window as any).tt : undefined
+  if (ttGlobal && ttGlobal.setStorageSync) {
+    _dbStorage = {
+      setItem: (key: string, value: any) => ttGlobal.setStorageSync(key, value),
+      getItem: (key: string) => ttGlobal.getStorageSync(key) || null,
+      removeItem: (key: string) => ttGlobal.removeStorageSync(key),
     }
     return _dbStorage
   }

@@ -180,4 +180,135 @@ describe('theme adapter', () => {
       expect(a1).toBe(a2)
     })
   })
+
+  describe('WxThemeAdapter', () => {
+    beforeEach(() => {
+      setPlatform('mp-weixin')
+      setThemeAdapter(null as any)
+      ;(window as any).wx = {
+        getSystemInfoSync: vi.fn(() => ({ theme: 'light' })),
+        onThemeChange: vi.fn(),
+        offThemeChange: vi.fn(),
+        setPageStyle: vi.fn(),
+      }
+    })
+
+    afterEach(() => {
+      delete (window as any).wx
+    })
+
+    it('在 mp-weixin 平台下返回 WxThemeAdapter 实例', () => {
+      const adapter = getThemeAdapter()
+      expect(adapter).toBeDefined()
+      expect(typeof adapter.getTheme).toBe('function')
+    })
+
+    it('getTheme 返回系统主题 light', () => {
+      const adapter = getThemeAdapter()
+      expect(adapter.getTheme()).toBe('light')
+    })
+
+    it('getTheme 返回系统主题 dark', () => {
+      ;(window as any).wx.getSystemInfoSync = vi.fn(() => ({ theme: 'dark' }))
+      setThemeAdapter(null as any)
+      const adapter = getThemeAdapter()
+      expect(adapter.getTheme()).toBe('dark')
+    })
+
+    it('getTheme 异常时返回 light', () => {
+      ;(window as any).wx.getSystemInfoSync = vi.fn(() => { throw new Error('fail') })
+      setThemeAdapter(null as any)
+      const adapter = getThemeAdapter()
+      expect(adapter.getTheme()).toBe('light')
+    })
+
+    it('onThemeChange 注册 wx.onThemeChange 回调', () => {
+      const adapter = getThemeAdapter()
+      const callback = vi.fn()
+      adapter.onThemeChange(callback)
+      expect((window as any).wx.onThemeChange).toHaveBeenCalled()
+    })
+
+    it('onThemeChange 返回取消函数', () => {
+      const adapter = getThemeAdapter()
+      const unsubscribe = adapter.onThemeChange(() => {})
+      expect(typeof unsubscribe).toBe('function')
+      unsubscribe()
+    })
+
+    it('applyTheme 不报错', () => {
+      const adapter = getThemeAdapter()
+      expect(() => adapter.applyTheme('dark')).not.toThrow()
+    })
+  })
+
+  describe('DouyinThemeAdapter', () => {
+    beforeEach(() => {
+      setPlatform('mp-douyin')
+      setThemeAdapter(null as any)
+      ;(window as any).tt = {
+        getSystemInfoSync: vi.fn(() => ({ theme: 'light' })),
+        onThemeChange: vi.fn(),
+        offThemeChange: vi.fn(),
+        setPageStyle: vi.fn(),
+      }
+    })
+
+    afterEach(() => {
+      delete (window as any).tt
+    })
+
+    it('在 mp-douyin 平台下返回 DouyinThemeAdapter 实例', () => {
+      const adapter = getThemeAdapter()
+      expect(adapter).toBeDefined()
+      expect(typeof adapter.getTheme).toBe('function')
+    })
+
+    it('getTheme 返回系统主题 light', () => {
+      const adapter = getThemeAdapter()
+      expect(adapter.getTheme()).toBe('light')
+    })
+
+    it('getTheme 返回系统主题 dark', () => {
+      ;(window as any).tt.getSystemInfoSync = vi.fn(() => ({ theme: 'dark' }))
+      setThemeAdapter(null as any)
+      const adapter = getThemeAdapter()
+      expect(adapter.getTheme()).toBe('dark')
+    })
+
+    it('getTheme 异常时返回 light', () => {
+      ;(window as any).tt.getSystemInfoSync = vi.fn(() => { throw new Error('fail') })
+      setThemeAdapter(null as any)
+      const adapter = getThemeAdapter()
+      expect(adapter.getTheme()).toBe('light')
+    })
+
+    it('onThemeChange 注册 tt.onThemeChange 回调', () => {
+      const adapter = getThemeAdapter()
+      const callback = vi.fn()
+      adapter.onThemeChange(callback)
+      expect((window as any).tt.onThemeChange).toHaveBeenCalled()
+    })
+
+    it('onThemeChange 返回取消函数', () => {
+      const adapter = getThemeAdapter()
+      const unsubscribe = adapter.onThemeChange(() => {})
+      expect(typeof unsubscribe).toBe('function')
+      unsubscribe()
+    })
+
+    it('onThemeChange 在 tt 不支持时降级返回空函数', () => {
+      delete (window as any).tt.onThemeChange
+      setThemeAdapter(null as any)
+      const adapter = getThemeAdapter()
+      const unsubscribe = adapter.onThemeChange(() => {})
+      expect(typeof unsubscribe).toBe('function')
+      unsubscribe() // 不应报错
+    })
+
+    it('applyTheme 不报错', () => {
+      const adapter = getThemeAdapter()
+      expect(() => adapter.applyTheme('dark')).not.toThrow()
+    })
+  })
 })

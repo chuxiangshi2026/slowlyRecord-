@@ -182,6 +182,66 @@ describe('tts adapter', () => {
     })
   })
 
+  describe('DouyinTtsAdapter', () => {
+    beforeEach(() => {
+      setPlatform('mp-douyin')
+      setTtsAdapter(null as any)
+      ;(window as any).tt = {
+        createInnerAudioContext: vi.fn(() => ({
+          src: '',
+          play: vi.fn(),
+          stop: vi.fn(),
+          onEnded: null as any,
+          onError: null as any,
+        })),
+      }
+    })
+
+    afterEach(() => {
+      delete (window as any).tt
+    })
+
+    it('在 mp-douyin 平台下返回 DouyinTtsAdapter 实例', () => {
+      const adapter = getTtsAdapter()
+      expect(adapter).toBeDefined()
+    })
+
+    it('speak 在抖音小程序中仅输出警告', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const adapter = getTtsAdapter()
+      adapter.speak('hello')
+      expect(warnSpy).toHaveBeenCalledWith(
+        'DouyinTtsAdapter.speak: Use playAudio with TTS URL instead'
+      )
+      warnSpy.mockRestore()
+    })
+
+    it('stop 应该停止内部音频', () => {
+      const adapter = getTtsAdapter()
+      adapter.stop()
+      // 初始时 innerAudio 为 null，不应报错
+    })
+
+    it('playAudio 应该创建 innerAudioContext', async () => {
+      const adapter = getTtsAdapter()
+      const playPromise = adapter.playAudio('https://example.com/audio.mp3')
+      expect((window as any).tt.createInnerAudioContext).toHaveBeenCalled()
+      const audioCtx = (window as any).tt.createInnerAudioContext.mock.results[0].value
+      expect(audioCtx.src).toBe('https://example.com/audio.mp3')
+      // 模拟播放完成
+      audioCtx.onEnded()
+      await playPromise
+    })
+
+    it('playAudio 错误处理', () => {
+      const adapter = getTtsAdapter()
+      const playPromise = adapter.playAudio('bad-url')
+      const audioCtx = (window as any).tt.createInnerAudioContext.mock.results[0].value
+      audioCtx.onError(new Error('Playback error'))
+      return expect(playPromise).rejects.toBeDefined()
+    })
+  })
+
   describe('工厂方法缓存', () => {
     it('多次调用返回相同实例', () => {
       setPlatform('web')

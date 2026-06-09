@@ -77,6 +77,7 @@ function bytesToUtf8(bytes: Uint8Array): string {
 
 function uint8ArrayToBase64(bytes: Uint8Array): string {
   try { if (typeof wx !== 'undefined' && wx.arrayBufferToBase64) return wx.arrayBufferToBase64(bytes.buffer as ArrayBuffer) } catch { /* */ }
+  try { if (typeof tt !== 'undefined' && tt.arrayBufferToBase64) return tt.arrayBufferToBase64(bytes.buffer as ArrayBuffer) } catch { /* */ }
   try {
     const CHUNK = 0x8000, chunks: string[] = []
     for (let i = 0; i < bytes.length; i += CHUNK) { const slice = bytes.subarray(i, Math.min(i + CHUNK, bytes.length)); chunks.push(String.fromCharCode.apply(null, Array.from(slice))) }
@@ -95,6 +96,7 @@ function uint8ArrayToBase64(bytes: Uint8Array): string {
 
 function base64ToUint8Array(base64: string): Uint8Array {
   try { if (typeof wx !== 'undefined' && wx.base64ToArrayBuffer) return new Uint8Array(wx.base64ToArrayBuffer(base64)) } catch { /* */ }
+  try { if (typeof tt !== 'undefined' && tt.base64ToArrayBuffer) return new Uint8Array(tt.base64ToArrayBuffer(base64)) } catch { /* */ }
   try { const binary = atob(base64); const bytes = new Uint8Array(binary.length); for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i); return bytes } catch { /* */ }
   const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   const lookup = new Uint8Array(256); for (let i = 0; i < base64Chars.length; i++) lookup[base64Chars.charCodeAt(i)] = i

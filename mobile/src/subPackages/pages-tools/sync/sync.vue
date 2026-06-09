@@ -129,7 +129,7 @@ const handlePull = async () => {
 
 // 扫码拉取
 const scanAndPull = () => {
-  // #ifdef MP-WEIXIN || APP-PLUS
+  // #ifdef MP-WEIXIN || MP-TOUTIAO || APP-PLUS
   uni.scanCode({
     success: async (res) => {
       if (res.result) {

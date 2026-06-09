@@ -79,6 +79,95 @@ class WebThemeAdapter implements ThemeAdapter {
   }
 }
 
+/**
+ * 抖音小程序主题适配器
+ * 通过 tt.getSystemInfoSync() 获取系统主题
+ * 通过 tt.onThemeChange 监听主题变化（抖音 API 支持）
+ */
+class DouyinThemeAdapter implements ThemeAdapter {
+  getTheme(): ThemeMode {
+    try {
+      const tt = (window as any).tt
+      const info = tt?.getSystemInfoSync?.()
+      return info?.theme === 'dark' ? 'dark' : 'light'
+    } catch {
+      return 'light'
+    }
+  }
+
+  onThemeChange(callback: (theme: ThemeMode) => void): () => void {
+    const tt = (window as any).tt
+    if (tt?.onThemeChange) {
+      tt.onThemeChange((res: { theme: 'light' | 'dark' }) => {
+        callback(res.theme)
+      })
+      return () => {
+        tt.offThemeChange?.()
+      }
+    }
+    // 降级：不支持则返回空取消函数
+    return () => {}
+  }
+
+  applyTheme(theme: ThemeMode): void {
+    // 抖音小程序通过页面级配置控制主题，此处仅做标记
+    const app = (window as any).tt
+    if (app && theme !== 'auto') {
+      try {
+        app.setPageStyle?.({
+          style: { backgroundColor: theme === 'dark' ? '#1a1a2e' : '#ffffff' }
+        })
+      } catch {
+        // 忽略不支持的情况
+      }
+    }
+  }
+}
+
+/**
+ * 微信小程序主题适配器
+ * 通过 wx.getSystemInfoSync() 获取系统主题
+ * 通过 wx.onThemeChange 监听主题变化
+ */
+class WxThemeAdapter implements ThemeAdapter {
+  getTheme(): ThemeMode {
+    try {
+      const wx = (window as any).wx
+      const info = wx?.getSystemInfoSync?.()
+      return info?.theme === 'dark' ? 'dark' : 'light'
+    } catch {
+      return 'light'
+    }
+  }
+
+  onThemeChange(callback: (theme: ThemeMode) => void): () => void {
+    const wx = (window as any).wx
+    if (wx?.onThemeChange) {
+      wx.onThemeChange((res: { theme: 'light' | 'dark' }) => {
+        callback(res.theme)
+      })
+      return () => {
+        wx.offThemeChange?.()
+      }
+    }
+    return () => {}
+  }
+
+  applyTheme(theme: ThemeMode): void {
+    // 微信小程序通过页面级配置控制主题，此处仅做标记
+    const app = (window as any).wx
+    if (app && theme !== 'auto') {
+      try {
+        app.setPageStyle?.({
+          style: { backgroundColor: theme === 'dark' ? '#1a1a2e' : '#ffffff' }
+        })
+      } catch {
+        // 忽略不支持的情况
+      }
+    }
+  }
+}
+
 let _themeAdapter: ThemeAdapter | null = null
 
 export function getThemeAdapter(): ThemeAdapter {
@@ -88,6 +177,12 @@ export function getThemeAdapter(): ThemeAdapter {
   switch (platform) {
     case 'utools':
       _themeAdapter = new UtoolsThemeAdapter()
+      break
+    case 'mp-weixin':
+      _themeAdapter = new WxThemeAdapter()
+      break
+    case 'mp-douyin':
+      _themeAdapter = new DouyinThemeAdapter()
       break
     default:
       _themeAdapter = new WebThemeAdapter()

@@ -32,6 +32,19 @@ class WxClipboard implements ClipboardAdapter {
   }
 }
 
+class DouyinClipboard implements ClipboardAdapter {
+  copyText(text: string): void {
+    const tt = (window as any).tt
+    tt.setClipboardData({ data: text })
+  }
+  async readText(): Promise<string> {
+    return new Promise((resolve) => {
+      const tt = (window as any).tt
+      tt.getClipboardData({ success: (res: any) => resolve(res.data) })
+    })
+  }
+}
+
 class WebClipboard implements ClipboardAdapter {
   copyText(text: string): void {
     navigator.clipboard.writeText(text)
@@ -53,6 +66,9 @@ export function getClipboardAdapter(): ClipboardAdapter {
       break
     case 'mp-weixin':
       _clipboard = new WxClipboard()
+      break
+    case 'mp-douyin':
+      _clipboard = new DouyinClipboard()
       break
     default:
       _clipboard = new WebClipboard()
